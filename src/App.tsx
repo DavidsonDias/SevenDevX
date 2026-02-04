@@ -95,9 +95,9 @@ import Blocker from "@/components/security/Blocker";
 import AppLoaderOrbital from "@/components/ui/AppLoaderOrbital";
 import AppInstallerButton from "@/components/AppInstallerButton";
 import PWAUpdatePrompt from '@/components/PWAUpdatePrompt';
+import AIChatbot from "@/components/AIChatbot";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { LanguageProvider } from "@/i18n/LanguageContext";
-
 
 
 // ════════════════════════════════════════════════════════════════
@@ -116,6 +116,11 @@ const Store = lazy(() => import("./pages/Store"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const Fornecedores = lazy(() => import("./pages/Fornecedores"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+
+// 🆕 Enterprise Pages
+const Blog = lazy(() => import("./pages/Blog"));
+const Auth = lazy(() => import("./pages/Auth"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 
 // ════════════════════════════════════════════════════════════════
 // ⚙️ 2. REACT QUERY CLIENT (Configuração Otimizada)
@@ -242,7 +247,8 @@ export default function App() {
 
             <PWAUpdatePrompt />
 
-
+            {/* 🤖 AI Chatbot Global */}
+            <AIChatbot />
             {/* ════════════════════════════════════════════════════
                 🛰️ ROTEAMENTO PRINCIPAL
                 ════════════════════════════════════════════════════ */}
@@ -267,6 +273,11 @@ export default function App() {
                   <Route path="/store" element={<Store />} />
                   <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                   <Route path="/fornecedores" element={<Fornecedores />} />
+                  
+                  {/* 🆕 Enterprise Routes */}
+                  <Route path="/blog" element={<Blog />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/admin" element={<AdminDashboard />} />
 
                   {/* 🚨 Catch-all (404) */}
                   <Route path="*" element={<NotFound />} />
