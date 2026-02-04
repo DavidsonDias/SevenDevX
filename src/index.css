@@ -1,0 +1,251 @@
+/* ==========================================================================
+   🌌 SevenDevX — Global Styles v1.0 PRO++ (Dark Edition)
+   ========================================================================== 
+   ✅ SpaceX-style design system (dark-first, modo escuro fixo)
+   ✅ Performance otimizada (sem alternância de tema)
+   ✅ UX refinado: foco visível, seleção e suavização global
+   ✅ Acessibilidade A11y Ready
+   ✅ Layout responsivo e compatível com 4K
+   ✅ Dynamic theme customization (CSS vars + JS ready)
+   ✅ Todas as cores via HSL quando aplicável
+   --------------------------------------------------------------------------
+   Coloque em: src/index.css (ou arquivo global equivalente)
+   ========================================================================== */
+
+/* src/index.css */
+
+/* ═══════════════════════════════════════════════════════════════
+   ✅ IMPORTAR FONTES LOCAIS (PRIMEIRO!)
+   ═══════════════════════════════════════════════════════════════ */
+@import './fonts.css';
+
+/* ═══════════════════════════════════════════════════════════════
+   TAILWIND DIRECTIVES
+   ═══════════════════════════════════════════════════════════════ */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ═══════════════════════════════════════════════════════════════
+   SEU CSS GLOBAL (resto do arquivo)
+   ═══════════════════════════════════════════════════════════════ */
+
+
+/* 🎨 Design System - Paleta HSL (dark-first) */
+@layer base {
+  :root {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+
+    --card: 0 0% 0%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 0 0% 5%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
+
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 70%;
+
+    --accent: 0 0% 100%;
+    --accent-foreground: 0 0% 0%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 20%;
+    --input: 0 0% 100%;
+    --ring: 0 0% 100%;
+
+    --radius: 0;
+  }
+}
+
+/* 🌐 Base global */
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Evita overflow horizontal indesejado em mobile */
+body {
+  overflow-x: hidden;
+}
+
+/* =========================
+   Tailwind base layer
+   ========================= */
+@layer base {
+  * {
+    @apply border-border;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-background text-foreground font-poppins antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-orbitron font-bold tracking-tight;
+  }
+
+  /* Links padrão */
+  a {
+    color: hsl(var(--primary));
+    text-decoration: none;
+  }
+}
+
+/* =========================
+   Section overlay - SpaceX style
+   ========================= */
+.section-overlay {
+  position: relative;
+}
+.section-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.28), rgba(0,0,0,0.72));
+  z-index: 1;
+}
+.section-overlay > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* =========================
+   Text selection (subtle)
+   ========================= */
+::selection {
+  background-color: hsla(var(--primary), 0.18);
+  color: hsl(var(--primary-foreground));
+}
+
+/* =========================
+   Acessibilidade - foco visível
+   ========================= */
+/* foco consistente, visível em dark */
+*:focus-visible {
+  outline: 2px solid hsl(var(--primary));
+  outline-offset: 2px;
+}
+button:focus-visible,
+a:focus-visible {
+  outline-offset: 4px;
+}
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline-offset: 2px;
+}
+
+/* =========================
+   Prefer-reduced-motion support
+   ========================= */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* =========================
+   Mobile & responsive tweaks
+   ========================= */
+/* Mobile landscape safe min-height */
+@media (max-height: 500px) and (orientation: landscape) {
+  section, .h-screen {
+    min-height: 100vh !important;
+  }
+}
+
+/* Tablet portrait adjustments */
+@media (min-width: 768px) and (max-width: 1023px) and (orientation: portrait) {
+  h1 { font-size: clamp(2rem, 5vw, 3.5rem) !important; }
+  h2 { font-size: clamp(1.75rem, 4vw, 3rem) !important; }
+}
+
+/* High resolution / 4k */
+@media (min-width: 1920px) {
+  .container { max-width: 1600px; }
+}
+
+/* =========================
+   Animations & utilities
+   ========================= */
+
+/* WhatsApp button shake */
+@keyframes shake {
+  0%, 100% { transform: translate(0, 0); }
+  20%, 60% { transform: translate(-4px, 0); }
+  40%, 80% { transform: translate(4px, 0); }
+}
+.shake { animation: shake 0.6s ease; }
+
+/* Toast fade */
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(20px); }
+  10%, 90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(20px); }
+}
+.animate-fade-in-out { animation: fadeInOut 2.5s ease forwards; }
+
+/* Premium shimmer (hover) */
+@keyframes shimmer {
+  0% { background-position: -1000px 0; }
+  100% { background-position: 1000px 0; }
+}
+.hover-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+  background-size: 1000px 100%;
+  animation: shimmer 3s infinite;
+}
+
+/* Smooth transitions for interactive elements */
+button, a, input, textarea, select {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Orbit slow spin utility (use para loader orbital) */
+@keyframes spin-slow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.animate-spin-slow { animation: spin-slow 4s linear infinite; }
+
+/* Shimmer bar (progresso visual) */
+@keyframes slide-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+.animate-shimmer { animation: slide-shimmer 2s infinite linear; }
+
+/* =========================
+   Small helpers
+   ========================= */
+.container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+/* Utilities que ajudam ao usar Tailwind + componentes shadcn */
+.bg-card { background-color: rgba(0,0,0,0.6); }
+.text-muted { color: rgba(255,255,255,0.65); }
+
+/* =========================
+   FIM — SevenDevX Global Styles v1.0 PRO++
+   ========================= */

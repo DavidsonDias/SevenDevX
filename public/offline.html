@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Offline - SevenDevX</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+      font-family: system-ui, -apple-system, sans-serif;
+      color: #fff;
+      text-align: center;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 400px;
+    }
+    .icon {
+      font-size: 4rem;
+      margin-bottom: 1.5rem;
+      opacity: 0.9;
+    }
+    h1 {
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+      background: linear-gradient(90deg, #00d9ff, #00ff88);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    p {
+      color: rgba(255,255,255,0.7);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+    button {
+      background: linear-gradient(135deg, #00d9ff 0%, #00ff88 100%);
+      border: none;
+      padding: 0.875rem 2rem;
+      border-radius: 8px;
+      color: #0f0f23;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 217, 255, 0.3);
+    }
+    .logo {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 1.5rem;
+      border-radius: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <img src="/logo-512.png" alt="SevenDevX" class="logo">
+    <h1>Você está Offline</h1>
+    <p>Parece que você perdeu a conexão com a internet. Verifique sua conexão e tente novamente.</p>
+    <button onclick="window.location.reload()">Tentar Novamente</button>
+  </div>
+</body>
+</html>
