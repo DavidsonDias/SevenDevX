@@ -416,8 +416,12 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 import SEOHead from "@/components/SEOHead";
 import ExitIntentPopup from "@/components/ExitIntentPopup";
 import SectionDivider from "@/components/SectionDivider";
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 const Home = () => {
+  // 📊 Track page view
+  useAnalytics();
+
   return (
     <>
       {/* =========================

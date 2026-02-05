@@ -631,6 +631,7 @@ import serviceMaintenance from "@/assets/images/service-maintenance.webp";
 import serviceLanding from "@/assets/images/service-landing.webp";
 import serviceConsulting from "@/assets/images/service-consulting.webp";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 const serviceImages = [serviceDev, serviceSoftware, serviceMaintenance];
 const serviceIcons = [Code, Settings, Wrench];
@@ -638,6 +639,9 @@ const serviceIcons = [Code, Settings, Wrench];
 
 const Services = () => {
   const { t, language } = useLanguage();
+  
+  // 📊 Track page view
+  useAnalytics();
 
   // Configuração dos serviços com i18n
   const services = [

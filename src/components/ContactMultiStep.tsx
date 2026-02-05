@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import { ChevronRight, ChevronLeft, Check } from "lucide-react";
 import contactBackground from "@/assets/images/contact-background.webp";
 import DOMPurify from "dompurify";
+import { useContacts } from "@/hooks/useContacts";
 
 /**
  * 💬 ContactMultiStep.tsx — SevenDevX v1.0 PRO++
@@ -26,6 +27,7 @@ import DOMPurify from "dompurify";
 
 const ContactMultiStep: React.FC = () => {
   const { toast } = useToast();
+  const { saveAndOpenWhatsApp, isSubmitting } = useContacts();
 
   // Estado do step atual (1..totalSteps)
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -127,7 +129,7 @@ const ContactMultiStep: React.FC = () => {
   };
 
   // Form submit final — sanitiza e redireciona para WhatsApp
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // valida o último step (confirmação)
@@ -170,11 +172,19 @@ ${sanitizedMessage}
 ✅ Dados confirmados
 ✅ Política aceita`;
 
-    // Número: +55 31 98474-0625 -> no wa.me usa sem símbolos: 5531984740625
-    const whatsappUrl = `https://wa.me/5531984740625?text=${encodeURIComponent(whatsappMessage)}`;
-
-    // Abre em nova aba
-    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+    // 💾 Salva no banco E abre WhatsApp
+    await saveAndOpenWhatsApp(
+      {
+        name: sanitizedName,
+        email: sanitizedEmail,
+        phone: sanitizedPhone,
+        message: sanitizedMessage,
+        service_type: sanitizedProjectType,
+        budget: sanitizedBudget,
+        source: "multi_step_form",
+      },
+      whatsappMessage
+    );
 
     // Reset de estado
     setFormData({
@@ -190,11 +200,6 @@ ${sanitizedMessage}
     setPoliticaPrivacidade(false);
     setErrors({});
     setCurrentStep(1);
-
-    toast({
-      title: "Sucesso",
-      description: "Você será redirecionado para o WhatsApp.",
-    });
   };
 
   // Handle change genérico

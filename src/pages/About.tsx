@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/i18n/LanguageContext";
 import Header from "@/components/Header";
@@ -23,6 +24,9 @@ import {
 
 const About = () => {
   const { t, language } = useLanguage();
+  
+  // 📊 Track page view
+  useAnalytics();
 
   useEffect(() => {
     window.scrollTo(0, 0);
