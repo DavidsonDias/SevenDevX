@@ -505,6 +505,7 @@ import SEOHead from "@/components/SEOHead";
 import AppLoaderOrbital from "@/components/ui/AppLoaderOrbital";
 import SectionDivider from "@/components/SectionDivider";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { useAnalytics } from "@/hooks/useAnalytics";
 
 import heroBackground from "@/assets/images/hero-tech-workspace.webp";
 import projectsShowcase from "@/assets/images/projects-showcase.webp";
@@ -514,6 +515,9 @@ const PortfolioCarousel3D = lazy(() => import("@/components/PortfolioCarousel3D"
 
 const Projects = () => {
   const { t } = useLanguage();
+  
+  // 📊 Track page view
+  useAnalytics();
   
   // Preload images (prevent CLS)
   useEffect(() => {

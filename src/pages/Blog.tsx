@@ -16,6 +16,7 @@ import GlassCard from "@/components/GlassCard";
 import { BlogPostSkeleton } from "@/components/SkeletonLoader";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
+import { useAnalytics } from "@/hooks/useAnalytics";
 import { fadeInUpVariants, staggerContainerVariants } from "@/components/PageTransition";
 
 interface BlogPost {
@@ -44,6 +45,10 @@ interface BlogCategory {
 
 const Blog = () => {
   const { t } = useLanguage();
+  
+  // 📊 Track page view
+  useAnalytics();
+  
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [categories, setCategories] = useState<BlogCategory[]>([]);
   const [isLoading, setIsLoading] = useState(true);

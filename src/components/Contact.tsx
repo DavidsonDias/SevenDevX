@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { useContacts } from "@/hooks/useContacts";
 
 /**
  * 💬 Contact — Versão PRO++ SevenDevX (i18n)
@@ -22,6 +23,7 @@ import { useLanguage } from "@/i18n/LanguageContext";
 const Contact = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
+  const { saveAndOpenWhatsApp, isSubmitting } = useContacts();
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -38,7 +40,7 @@ const Contact = () => {
   const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   // 📤 Envio de formulário
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // 🧱 Proteção anti-spam (bots preenchem campos ocultos)
@@ -88,23 +90,23 @@ const Contact = () => {
 
 🚀 *SevenDevX - Contato pelo site* 🚀`;
 
-    // 🌐 Redirecionamento para WhatsApp
-    const whatsappUrl = `https://wa.me/5531984740625?text=${encodeURIComponent(
+    // 💾 Salva no banco E abre WhatsApp
+    await saveAndOpenWhatsApp(
+      {
+        name: sanitizedData.name,
+        email: sanitizedData.email,
+        phone: sanitizedData.phone,
+        message: sanitizedData.message,
+        source: "contact_form",
+      },
       whatsappMessage
-    )}`;
-
-    window.open(whatsappUrl, "_blank");
+    );
 
     // 🔄 Reset form
     setFormData({ name: "", phone: "", email: "", message: "", honeypot: "" });
     setConfirmacaoDados(false);
     setPoliticaPrivacidade(false);
     setErrors({});
-
-    toast({
-      title: t.contact.successTitle,
-      description: t.contact.successMessage,
-    });
   };
 
   // 🧠 Atualização de campos
@@ -330,9 +332,10 @@ const Contact = () => {
             {/* Botão */}
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold py-4 px-8 text-sm tracking-widest uppercase transition-all duration-300"
+              disabled={isSubmitting}
+              className="w-full bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-bold py-4 px-8 text-sm tracking-widest uppercase transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {t.contact.submit}
+              {isSubmitting ? "Enviando..." : t.contact.submit}
             </button>
           </motion.form>
         </div>

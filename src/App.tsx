@@ -119,6 +119,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 
 // 🆕 Enterprise Pages
 const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
 const Auth = lazy(() => import("./pages/Auth"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
 
@@ -276,6 +277,7 @@ export default function App() {
                   
                   {/* 🆕 Enterprise Routes */}
                   <Route path="/blog" element={<Blog />} />
+                  <Route path="/blog/:slug" element={<BlogPost />} />
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/admin" element={<AdminDashboard />} />
 
