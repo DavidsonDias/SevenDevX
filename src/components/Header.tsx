@@ -57,8 +57,8 @@ const Header = () => {
     { name: t.header.projects, path: "/projects" },
     { name: t.header.contact, path: "/#contact" },
     { name: t.header.store, path: "/store" },
-    { name: "Blog", path: "/blog" },
-    { name: "Login", path: "/auth" },
+    { name: "BLOG", path: "/blog" },
+    { name: "LOGIN", path: "/auth" },
   ];
 
   const handleLinkClick = () => {
