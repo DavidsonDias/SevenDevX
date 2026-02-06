@@ -76,27 +76,51 @@ export const useAuth = () => {
   }, [checkAdminRole]);
 
   const signIn = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    return { data, error };
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      return { data, error };
+    } catch (err) {
+      console.error("[useAuth] signIn network error:", err);
+      return { 
+        data: null, 
+        error: { 
+          message: "Erro de conexão. Verifique sua internet e tente novamente.",
+          name: "NetworkError",
+          status: 0
+        } as any 
+      };
+    }
   };
 
   const signUp = async (email: string, password: string, fullName?: string) => {
     const redirectUrl = `${window.location.origin}/`;
     
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: {
-          full_name: fullName,
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          emailRedirectTo: redirectUrl,
+          data: {
+            full_name: fullName,
+          },
         },
-      },
-    });
-    return { data, error };
+      });
+      return { data, error };
+    } catch (err) {
+      console.error("[useAuth] signUp network error:", err);
+      return { 
+        data: null, 
+        error: { 
+          message: "Erro de conexão. Verifique sua internet e tente novamente.",
+          name: "NetworkError",
+          status: 0
+        } as any 
+      };
+    }
   };
 
   const signOut = async () => {

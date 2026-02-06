@@ -99,6 +99,12 @@ const Auth = () => {
               description: "Verifique seu email para confirmar a conta",
               variant: "destructive",
             });
+          } else if (error.message.includes("conexão") || error.name === "NetworkError") {
+            toast({
+              title: "Erro de conexão",
+              description: "Verifique sua internet e tente novamente",
+              variant: "destructive",
+            });
           } else {
             toast({
               title: "Erro ao entrar",
@@ -136,6 +142,12 @@ const Auth = () => {
               description: "Use outro email ou faça login",
               variant: "destructive",
             });
+          } else if (error.message.includes("conexão") || error.name === "NetworkError") {
+            toast({
+              title: "Erro de conexão",
+              description: "Verifique sua internet e tente novamente",
+              variant: "destructive",
+            });
           } else {
             toast({
               title: "Erro ao cadastrar",
@@ -148,8 +160,8 @@ const Auth = () => {
         }
 
         toast({
-          title: "Conta criada!",
-          description: "Verifique seu email para confirmar o cadastro",
+          title: "Conta criada com sucesso!",
+          description: "Você já pode fazer login",
         });
         setMode("login");
       }

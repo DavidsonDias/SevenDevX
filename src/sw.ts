@@ -108,6 +108,31 @@ cleanupOutdatedCaches();
 if (DEBUG) console.log(`${LOG_PREFIX} Iniciando registro de rotas...`);
 
 /* ═══════════════════════════════════════════════════════════════════
+   🔐 SUPABASE AUTH (NetworkOnly - NEVER cache auth requests!)
+   ═══════════════════════════════════════════════════════════════════ */
+registerRoute(
+  ({ url, request }) => {
+    const isSupabase = url.hostname.includes("supabase.co");
+    const isAuthPath = url.pathname.includes("/auth/");
+    const isPostOrPut = request.method === "POST" || request.method === "PUT" || request.method === "DELETE" || request.method === "PATCH";
+    return isSupabase && (isAuthPath || isPostOrPut);
+  },
+  new NetworkOnly(),
+  "POST"
+);
+
+// Also handle GET requests to auth endpoints
+registerRoute(
+  ({ url }) => {
+    const isSupabase = url.hostname.includes("supabase.co");
+    const isAuthPath = url.pathname.includes("/auth/");
+    return isSupabase && isAuthPath;
+  },
+  new NetworkOnly(),
+  "GET"
+);
+
+/* ═══════════════════════════════════════════════════════════════════
    🔍 TRACKING (NetworkOnly)
    ═══════════════════════════════════════════════════════════════════ */
 registerRoute(
