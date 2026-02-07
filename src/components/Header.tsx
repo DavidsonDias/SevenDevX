@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import logo from "@/assets/logo.svg";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { useAuth } from "@/hooks/useAuth";
 
 /**
  * 🌌 Header.tsx — SevenDevX v1.1 PRO++ i18n
@@ -26,7 +27,15 @@ const Header = () => {
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { t } = useLanguage();
+  const { user, isAdmin, isLoading: authLoading, signOut } = useAuth();
+
+  const handleLogout = async () => {
+    setIsMenuOpen(false);
+    await signOut();
+    navigate("/");
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -58,7 +67,8 @@ const Header = () => {
     { name: t.header.contact, path: "/#contact" },
     { name: t.header.store, path: "/store" },
     { name: "BLOG", path: "/blog" },
-    { name: "LOGIN", path: "/auth" },
+    ...(!authLoading && isAdmin ? [{ name: "ADMIN", path: "/admin" }] : []),
+    ...(!authLoading && !user ? [{ name: "LOGIN", path: "/auth" }] : []),
   ];
 
   const handleLinkClick = () => {
@@ -102,6 +112,16 @@ const Header = () => {
                 </Link>
               ))}
               <LanguageSwitcher />
+
+              {!authLoading && user && (
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="text-xs tracking-[0.2em] font-light text-white/70 hover:text-white transition-colors"
+                >
+                  LOGOUT
+                </button>
+              )}
             </nav>
 
             {/* Ícone do menu hambúrguer - Sempre à direita */}
@@ -184,6 +204,29 @@ const Header = () => {
                 >
                   <LanguageSwitcher />
                 </motion.div>
+
+                {/* Logout (somente autenticado) */}
+                {!authLoading && user && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 20 }}
+                    transition={{
+                      duration: 0.3,
+                      delay: 0.1 + (navLinks.length + 1) * 0.08,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                    className="w-full"
+                  >
+                    <button
+                      type="button"
+                      onClick={handleLogout}
+                      className="w-full py-6 text-right text-base md:text-lg tracking-[0.3em] font-light border-b border-white/10 text-white/80 hover:text-white transition-colors"
+                    >
+                      LOGOUT
+                    </button>
+                  </motion.div>
+                )}
               </div>
             </motion.nav>
           </>
