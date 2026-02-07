@@ -122,6 +122,7 @@ const Blog = lazy(() => import("./pages/Blog"));
 const BlogPost = lazy(() => import("./pages/BlogPost"));
 const Auth = lazy(() => import("./pages/Auth"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard"));
+const Profile = lazy(() => import("./pages/Profile"));
 
 // ════════════════════════════════════════════════════════════════
 // ⚙️ 2. REACT QUERY CLIENT (Configuração Otimizada)
@@ -279,6 +280,7 @@ export default function App() {
                   <Route path="/blog" element={<Blog />} />
                   <Route path="/blog/:slug" element={<BlogPost />} />
                   <Route path="/auth" element={<Auth />} />
+                  <Route path="/profile" element={<Profile />} />
                   <Route path="/admin" element={<AdminDashboard />} />
 
                   {/* 🚨 Catch-all (404) */}

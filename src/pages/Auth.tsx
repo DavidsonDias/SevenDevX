@@ -93,13 +93,19 @@ const Auth = () => {
               description: "Email ou senha incorretos",
               variant: "destructive",
             });
-          } else if (error.message.includes("Email not confirmed")) {
+          } else if (
+            error.message.includes("Email not confirmed")
+          ) {
             toast({
               title: "Email não confirmado",
               description: "Verifique seu email para confirmar a conta",
               variant: "destructive",
             });
-          } else if (error.message.includes("conexão") || error.name === "NetworkError") {
+          } else if (
+            error.message.toLowerCase().includes("failed to fetch") ||
+            error.message.includes("conexão") ||
+            error.name === "NetworkError"
+          ) {
             toast({
               title: "Erro de conexão",
               description: "Verifique sua internet e tente novamente",
@@ -142,7 +148,11 @@ const Auth = () => {
               description: "Use outro email ou faça login",
               variant: "destructive",
             });
-          } else if (error.message.includes("conexão") || error.name === "NetworkError") {
+          } else if (
+            error.message.toLowerCase().includes("failed to fetch") ||
+            error.message.includes("conexão") ||
+            error.name === "NetworkError"
+          ) {
             toast({
               title: "Erro de conexão",
               description: "Verifique sua internet e tente novamente",

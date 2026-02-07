@@ -108,26 +108,27 @@ cleanupOutdatedCaches();
 if (DEBUG) console.log(`${LOG_PREFIX} Iniciando registro de rotas...`);
 
 /* ═══════════════════════════════════════════════════════════════════
-   🔐 SUPABASE AUTH (NetworkOnly - NEVER cache auth requests!)
-   ═══════════════════════════════════════════════════════════════════ */
-registerRoute(
-  ({ url, request }) => {
-    const isSupabase = url.hostname.includes("supabase.co");
-    const isAuthPath = url.pathname.includes("/auth/");
-    const isPostOrPut = request.method === "POST" || request.method === "PUT" || request.method === "DELETE" || request.method === "PATCH";
-    return isSupabase && (isAuthPath || isPostOrPut);
-  },
-  new NetworkOnly(),
-  "POST"
-);
+   🔐 BACKEND AUTH + MUTATIONS (NetworkOnly)
+   ═══════════════════════════════════════════════════════════════════
+   IMPORTANTE:
+   - Workbox strategies (NetworkFirst/CacheFirst/etc) são focadas em GET.
+   - Requests non-GET (POST/PUT/PATCH/DELETE/OPTIONS) podem falhar se caírem
+     no handler padrão (ex.: preflight OPTIONS).
+   - Para evitar “Failed to fetch” e garantir mutations confiáveis, forçamos
+     NetworkOnly para qualquer request non-GET do backend.
+*/
 
-// Also handle GET requests to auth endpoints
+const isBackendHost = (url: URL) => url.hostname.includes("supabase.co");
+
+// ✅ Non-GET: sempre rede
+registerRoute(({ url }) => isBackendHost(url), new NetworkOnly(), "POST");
+registerRoute(({ url }) => isBackendHost(url), new NetworkOnly(), "PUT");
+registerRoute(({ url }) => isBackendHost(url), new NetworkOnly(), "PATCH");
+registerRoute(({ url }) => isBackendHost(url), new NetworkOnly(), "DELETE");
+
+// ✅ GET em endpoints de auth: nunca cachear
 registerRoute(
-  ({ url }) => {
-    const isSupabase = url.hostname.includes("supabase.co");
-    const isAuthPath = url.pathname.includes("/auth/");
-    return isSupabase && isAuthPath;
-  },
+  ({ url }) => isBackendHost(url) && url.pathname.includes("/auth/"),
   new NetworkOnly(),
   "GET"
 );
