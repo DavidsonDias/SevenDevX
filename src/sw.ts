@@ -41,7 +41,7 @@ declare const self: ServiceWorkerGlobalScope;
 /* ═══════════════════════════════════════════════════════════════════
    📌 CONFIGURAÇÕES GLOBAIS
    ═══════════════════════════════════════════════════════════════════ */
-const VERSION = "8.6.1";
+const VERSION = "8.6.0";
 const LOG_PREFIX = `[SevenDevX SW v${VERSION}]`;
 const DEBUG = true; // Ativar logs detalhados
 
@@ -124,7 +124,6 @@ const isBackendHost = (url: URL) => url.hostname.includes("supabase.co");
 registerRoute(({ url }) => isBackendHost(url), new NetworkOnly(), "POST");
 registerRoute(({ url }) => isBackendHost(url), new NetworkOnly(), "PUT");
 registerRoute(({ url }) => isBackendHost(url), new NetworkOnly(), "PATCH");
-registerRoute(({ url }) => isBackendHost(url), new NetworkOnly(), "DELETE");
 registerRoute(({ url }) => isBackendHost(url), new NetworkOnly(), "DELETE");
 
 // ✅ GET em endpoints de auth: nunca cachear
@@ -335,20 +334,13 @@ registerRoute(
 /* ═══════════════════════════════════════════════════════════════════
    DEFAULT HANDLER
    ═══════════════════════════════════════════════════════════════════ */
-const defaultGetHandler = new NetworkFirst({
-  cacheName: CACHE_NAMES.fallback,
-  networkTimeoutSeconds: 3,
-  plugins: [cacheable],
-});
-
-// ⚠️ Workbox strategies são para GET. Para non-GET (ex.: preflight), bypass total.
-setDefaultHandler(async ({ event, request }) => {
-  if (request.method !== "GET") {
-    if (DEBUG) console.log(`${LOG_PREFIX} 🌐 Bypass non-GET: ${request.method} ${request.url}`);
-    return fetch(request);
-  }
-  return defaultGetHandler.handle({ event, request });
-});
+setDefaultHandler(
+  new NetworkFirst({
+    cacheName: CACHE_NAMES.fallback,
+    networkTimeoutSeconds: 3,
+    plugins: [cacheable],
+  })
+);
 
 /* ═══════════════════════════════════════════════════════════════════
    OFFLINE FALLBACK
