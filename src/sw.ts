@@ -41,7 +41,7 @@ declare const self: ServiceWorkerGlobalScope;
 /* ═══════════════════════════════════════════════════════════════════
    📌 CONFIGURAÇÕES GLOBAIS
    ═══════════════════════════════════════════════════════════════════ */
-const VERSION = "8.6.0";
+const VERSION = "8.6.1";
 const LOG_PREFIX = `[SevenDevX SW v${VERSION}]`;
 const DEBUG = true; // Ativar logs detalhados
 
@@ -120,7 +120,8 @@ if (DEBUG) console.log(`${LOG_PREFIX} Iniciando registro de rotas...`);
 
 const isBackendHost = (url: URL) => url.hostname.includes("supabase.co");
 
-// ✅ Non-GET: sempre rede
+// ✅ Non-GET: sempre rede (inclui CORS preflight OPTIONS)
+registerRoute(({ url }) => isBackendHost(url), new NetworkOnly(), ("OPTIONS" as any));
 registerRoute(({ url }) => isBackendHost(url), new NetworkOnly(), "POST");
 registerRoute(({ url }) => isBackendHost(url), new NetworkOnly(), "PUT");
 registerRoute(({ url }) => isBackendHost(url), new NetworkOnly(), "PATCH");
