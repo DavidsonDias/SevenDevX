@@ -120,11 +120,11 @@ if (DEBUG) console.log(`${LOG_PREFIX} Iniciando registro de rotas...`);
 
 const isBackendHost = (url: URL) => url.hostname.includes("supabase.co");
 
-// ✅ Non-GET: sempre rede (inclui CORS preflight OPTIONS)
-registerRoute(({ url }) => isBackendHost(url), new NetworkOnly(), ("OPTIONS" as any));
+// ✅ Non-GET: sempre rede
 registerRoute(({ url }) => isBackendHost(url), new NetworkOnly(), "POST");
 registerRoute(({ url }) => isBackendHost(url), new NetworkOnly(), "PUT");
 registerRoute(({ url }) => isBackendHost(url), new NetworkOnly(), "PATCH");
+registerRoute(({ url }) => isBackendHost(url), new NetworkOnly(), "DELETE");
 registerRoute(({ url }) => isBackendHost(url), new NetworkOnly(), "DELETE");
 
 // ✅ GET em endpoints de auth: nunca cachear
@@ -335,13 +335,20 @@ registerRoute(
 /* ═══════════════════════════════════════════════════════════════════
    DEFAULT HANDLER
    ═══════════════════════════════════════════════════════════════════ */
-setDefaultHandler(
-  new NetworkFirst({
-    cacheName: CACHE_NAMES.fallback,
-    networkTimeoutSeconds: 3,
-    plugins: [cacheable],
-  })
-);
+const defaultGetHandler = new NetworkFirst({
+  cacheName: CACHE_NAMES.fallback,
+  networkTimeoutSeconds: 3,
+  plugins: [cacheable],
+});
+
+// ⚠️ Workbox strategies são para GET. Para non-GET (ex.: preflight), bypass total.
+setDefaultHandler(async ({ event, request }) => {
+  if (request.method !== "GET") {
+    if (DEBUG) console.log(`${LOG_PREFIX} 🌐 Bypass non-GET: ${request.method} ${request.url}`);
+    return fetch(request);
+  }
+  return defaultGetHandler.handle({ event, request });
+});
 
 /* ═══════════════════════════════════════════════════════════════════
    OFFLINE FALLBACK
