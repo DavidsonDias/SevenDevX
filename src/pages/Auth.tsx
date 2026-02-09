@@ -12,6 +12,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import SEOHead from "@/components/SEOHead";
 import GlassCard from "@/components/GlassCard";
+import { getAuthErrorToast } from "@/utils/authErrors";
 
 // Validation schemas
 const loginSchema = z.object({
@@ -84,48 +85,37 @@ const Auth = () => {
           return;
         }
 
-        const { error } = await signIn(formData.email, formData.password);
-        
+        const redirect = searchParams.get("redirect") || "/";
+
+        const { data, error } = await signIn(formData.email, formData.password);
+
         if (error) {
-          if (error.message.includes("Invalid login")) {
-            toast({
-              title: "Erro ao entrar",
-              description: "Email ou senha incorretos",
-              variant: "destructive",
-            });
-          } else if (
-            error.message.includes("Email not confirmed")
-          ) {
-            toast({
-              title: "Email não confirmado",
-              description: "Verifique seu email para confirmar a conta",
-              variant: "destructive",
-            });
-          } else if (
-            error.message.toLowerCase().includes("failed to fetch") ||
-            error.message.includes("conexão") ||
-            error.name === "NetworkError"
-          ) {
-            toast({
-              title: "Erro de conexão",
-              description: "Verifique sua internet e tente novamente",
-              variant: "destructive",
-            });
-          } else {
-            toast({
-              title: "Erro ao entrar",
-              description: error.message,
-              variant: "destructive",
-            });
-          }
-          setIsSubmitting(false);
+          const info = getAuthErrorToast(error, "login");
+          toast({
+            title: info.title,
+            description: info.description,
+            variant: "destructive",
+          });
           return;
         }
 
+        // Sessão criada com sucesso
+        if (data?.session) {
+          toast({
+            title: "Bem-vindo!",
+            description: "Login realizado com sucesso",
+          });
+          navigate(redirect);
+          return;
+        }
+
+        // Caso raro: sem sessão
         toast({
-          title: "Bem-vindo!",
-          description: "Login realizado com sucesso",
+          title: "Login incompleto",
+          description: "Não foi possível iniciar sessão. Tente novamente.",
+          variant: "destructive",
         });
+        return;
 
       } else {
         const result = signupSchema.safeParse(formData);
@@ -135,43 +125,44 @@ const Auth = () => {
             fieldErrors[err.path[0]] = err.message;
           });
           setErrors(fieldErrors);
-          setIsSubmitting(false);
           return;
         }
 
-        const { error } = await signUp(formData.email, formData.password, formData.fullName);
-        
+        const redirect = searchParams.get("redirect") || "/";
+        const { data, error } = await signUp(
+          formData.email,
+          formData.password,
+          formData.fullName
+        );
+
         if (error) {
-          if (error.message.includes("already registered")) {
-            toast({
-              title: "Email já cadastrado",
-              description: "Use outro email ou faça login",
-              variant: "destructive",
-            });
-          } else if (
-            error.message.toLowerCase().includes("failed to fetch") ||
-            error.message.includes("conexão") ||
-            error.name === "NetworkError"
-          ) {
-            toast({
-              title: "Erro de conexão",
-              description: "Verifique sua internet e tente novamente",
-              variant: "destructive",
-            });
-          } else {
-            toast({
-              title: "Erro ao cadastrar",
-              description: error.message,
-              variant: "destructive",
-            });
+          const info = getAuthErrorToast(error, "signup");
+          toast({
+            title: info.title,
+            description: info.description,
+            variant: "destructive",
+          });
+
+          if (info.action === "switch_to_login") {
+            setMode("login");
           }
-          setIsSubmitting(false);
           return;
         }
 
+        // Se o backend retornar sessão, já autentica e redireciona
+        if (data?.session) {
+          toast({
+            title: "Bem-vindo!",
+            description: "Conta criada e login realizado com sucesso",
+          });
+          navigate(redirect);
+          return;
+        }
+
+        // Sem sessão => fluxo com confirmação de email
         toast({
-          title: "Conta criada com sucesso!",
-          description: "Você já pode fazer login",
+          title: "Conta criada!",
+          description: "Verifique seu email para confirmar a conta.",
         });
         setMode("login");
       }

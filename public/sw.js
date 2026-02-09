@@ -545,9 +545,9 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // 5) APIs Supabase — Stale While Revalidate
+  // 5) Backend APIs (auth/db) — Network Only (não cachear)
   if (url.hostname.includes('supabase.co')) {
-    event.respondWith(staleWhileRevalidate(req, STATIC_CACHE));
+    event.respondWith(fetch(req));
     return;
   }
 
