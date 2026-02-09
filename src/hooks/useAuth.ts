@@ -24,12 +24,11 @@ export const useAuth = () => {
 
   // Check if user is admin
   const checkAdminRole = useCallback(async (userId: string) => {
-    const { data, error } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", userId)
-      .eq("role", "admin")
-      .maybeSingle();
+    // Usa função security definer no backend (mais confiável que SELECT direto)
+    const { data, error } = await supabase.rpc("has_role", {
+      _user_id: userId,
+      _role: "admin",
+    });
 
     if (error) return false;
     return !!data;
@@ -102,22 +101,24 @@ export const useAuth = () => {
         password,
       });
       return { data, error };
-    } catch (err) {
-      console.error("[useAuth] signIn network error:", err);
-      return { 
-        data: null, 
-        error: { 
-          message: "Erro de conexão. Verifique sua internet e tente novamente.",
-          name: "NetworkError",
-          status: 0
-        } as any 
+    } catch (err: any) {
+      // Não mascarar erros: mantém a mensagem original (sem dados sensíveis)
+      const message = String(err?.message || "Falha inesperada ao autenticar.");
+      console.error("[useAuth] signIn error:", err);
+      return {
+        data: null,
+        error: {
+          message,
+          name: err?.name || "NetworkError",
+          status: 0,
+        } as any,
       };
     }
   };
 
   const signUp = async (email: string, password: string, fullName?: string) => {
     const redirectUrl = `${window.location.origin}/`;
-    
+
     try {
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -130,15 +131,16 @@ export const useAuth = () => {
         },
       });
       return { data, error };
-    } catch (err) {
-      console.error("[useAuth] signUp network error:", err);
-      return { 
-        data: null, 
-        error: { 
-          message: "Erro de conexão. Verifique sua internet e tente novamente.",
-          name: "NetworkError",
-          status: 0
-        } as any 
+    } catch (err: any) {
+      const message = String(err?.message || "Falha inesperada ao criar conta.");
+      console.error("[useAuth] signUp error:", err);
+      return {
+        data: null,
+        error: {
+          message,
+          name: err?.name || "NetworkError",
+          status: 0,
+        } as any,
       };
     }
   };
