@@ -11,7 +11,7 @@ import {
   Calendar, Filter, Download, RefreshCw, LogOut, BarChart3,
   Mail, Phone, Clock, ChevronDown
 } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuthContext as useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import SEOHead from "@/components/SEOHead";
 import GlassCard from "@/components/GlassCard";
