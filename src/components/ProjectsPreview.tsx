@@ -53,7 +53,7 @@ const ProjectsPreview = () => {
             <div>
               <p className="text-xs text-muted-foreground uppercase tracking-[0.3em] mb-3">PORTFÓLIO</p>
               <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tight leading-tight">
-                {t.projects.title || "Projetos em Destaque"}
+                {t.projects.heroTitle || "Projetos em Destaque"}
               </h2>
             </div>
             <Link to="/projects" className="flex-shrink-0">
