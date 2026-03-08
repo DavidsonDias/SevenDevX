@@ -42,7 +42,7 @@ const TechPreview = () => {
       opacity: 1,
       y: 0,
       scale: 1,
-      transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
+      transition: { duration: 0.5, ease: "easeOut" as const },
     },
   };
 
@@ -179,13 +179,13 @@ const TechPreview = () => {
                       {tech.name}
                     </span>
 
-                    {/* Proficiency bar */}
+                    {/* Accent line */}
                     <div className="w-full h-[2px] bg-foreground/10 mt-2 overflow-hidden hidden sm:block">
                       <motion.div
                         className="h-full"
                         style={{ backgroundColor: tech.color }}
                         initial={{ width: 0 }}
-                        animate={isInView ? { width: `${tech.proficiency}%` } : {}}
+                        animate={isInView ? { width: "100%" } : {}}
                         transition={{ duration: 1, delay: 0.5 + index * 0.1 }}
                       />
                     </div>
