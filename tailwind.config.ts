@@ -101,6 +101,10 @@ const config: Config = {
           "0%": { transform: "scale(1)", opacity: "0.3" },
           "100%": { transform: "scale(1.6)", opacity: "0" },
         },
+        "ai-pulse": {
+          "0%": { transform: "scale(1)", opacity: "0.2" },
+          "100%": { transform: "scale(1.6)", opacity: "0" },
+        },
       },
 
       animation: {
