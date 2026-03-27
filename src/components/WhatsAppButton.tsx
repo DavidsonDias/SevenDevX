@@ -18,11 +18,40 @@ const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
 }) => {
   const [visible, setVisible] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [shouldShake, setShouldShake] = useState(false);
+  const hasShaken = useRef(false);
+  const lastScrollTop = useRef(0);
 
+  // Exibe após delay + dispara shake inicial
   useEffect(() => {
-    const timer = setTimeout(() => setVisible(true), delay);
+    const timer = setTimeout(() => {
+      setVisible(true);
+      if (!hasShaken.current) {
+        hasShaken.current = true;
+        setShouldShake(true);
+      }
+    }, delay);
     return () => clearTimeout(timer);
   }, [delay]);
+
+  // Scroll: mostra ao descer, esconde ao subir
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      if (scrollTop > lastScrollTop.current) {
+        setVisible(true);
+        if (!hasShaken.current) {
+          hasShaken.current = true;
+          setShouldShake(true);
+        }
+      } else {
+        setVisible(false);
+      }
+      lastScrollTop.current = Math.max(scrollTop, 0);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleClick = useCallback(() => {
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
