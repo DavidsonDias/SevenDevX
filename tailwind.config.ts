@@ -97,6 +97,10 @@ const config: Config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "wa-pulse": {
+          "0%": { transform: "scale(1)", opacity: "0.3" },
+          "100%": { transform: "scale(1.6)", opacity: "0" },
+        },
       },
 
       animation: {

@@ -1,91 +1,88 @@
-import { useEffect, useRef, useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface WhatsAppButtonProps {
   phone?: string;
+  message?: string;
   delay?: number;
+  position?: "left" | "right";
+  tooltipText?: string;
 }
 
 const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
   phone = "5531984740625",
+  message = "Olá, gostaria de saber mais sobre seus serviços!",
   delay = 3000,
+  position = "right",
+  tooltipText = "Fale conosco no WhatsApp",
 }) => {
   const [visible, setVisible] = useState(false);
-  const [hasAnimated, setHasAnimated] = useState(false);
-  const lastScrollTop = useRef(0);
-  const buttonRef = useRef<HTMLAnchorElement | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
 
-  // Exibe o botão após o delay configurado
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setVisible(true);
-      triggerShake();
-    }, delay);
+    const timer = setTimeout(() => setVisible(true), delay);
     return () => clearTimeout(timer);
   }, [delay]);
 
-  // Controla visibilidade com base no scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+  const handleClick = useCallback(() => {
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  }, [phone, message]);
 
-      if (scrollTop > lastScrollTop.current) {
-        setVisible(true);
-        if (!hasAnimated) triggerShake();
-      } else {
-        setVisible(false);
-      }
-
-      lastScrollTop.current = Math.max(scrollTop, 0);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [hasAnimated]);
-
-  // Animação de "shake" (uma vez só)
-  const triggerShake = () => {
-    if (hasAnimated || !buttonRef.current) return;
-    setHasAnimated(true);
-    const btn = buttonRef.current;
-    btn.classList.add("shake");
-    btn.addEventListener(
-      "animationend",
-      () => btn.classList.remove("shake"),
-      { once: true }
-    );
-  };
+  const positionClass = position === "left" ? "left-6" : "right-6";
 
   return (
-    <a
-      ref={buttonRef}
-      href={`https://wa.me/${phone}?text=Olá%2C%20gostaria%20de%20saber%20mais%20sobre%20seus%20serviços!`}
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label="Fale conosco no WhatsApp"
-      title="Enviar mensagem no WhatsApp"
-      className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 transform
-        ${visible ? "opacity-100 scale-100" : "opacity-0 scale-0"}
-        bg-[#25D366] hover:scale-110 hover:shadow-[0_0_15px_rgba(37,211,102,0.7)] hover:brightness-125`}
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 512 512"
-        className="w-7 h-7 text-white fill-current"
-      >
-        <path
-          fill="#EDEDED"
-          d="M0,512l35.31-128C12.359,344.276,0,300.138,0,254.234C0,114.759,114.759,0,255.117,0S512,114.759,512,254.234S395.476,512,255.117,512c-44.138,0-86.51-14.124-124.469-35.31L0,512z"
-        />
-        <path
-          fill="#55CD6C"
-          d="M137.71,430.786l7.945,4.414c32.662,20.303,70.621,32.662,110.345,32.662 c115.641,0,211.862-96.221,211.862-213.628S371.641,44.138,255.117,44.138S44.138,137.71,44.138,254.234 c0,40.607,11.476,80.331,32.662,113.876l5.297,7.945l-20.303,74.152L137.71,430.786z"
-        />
-        <path
-          fill="#FEFEFE"
-          d="M187.145,135.945l-16.772-0.883c-5.297,0-10.593,1.766-14.124,5.297 c-7.945,7.062-21.186,20.303-24.717,37.959c-6.179,26.483,3.531,58.262,26.483,90.041s67.09,82.979,144.772,105.048 c24.717,7.062,44.138,2.648,60.028-7.062c12.359-7.945,20.303-20.303,22.952-33.545l2.648-12.359 c0.883-3.531-0.883-7.945-4.414-9.71l-55.614-25.6c-3.531-1.766-7.945-0.883-10.593,2.648l-22.069,28.248 c-1.766,1.766-4.414,2.648-7.062,1.766c-15.007-5.297-65.324-26.483-92.69-79.448c-0.883-2.648-0.883-5.297,0.883-7.062 l21.186-23.834c1.766-2.648,2.648-6.179,1.766-8.828l-25.6-57.379C193.324,138.593,190.676,135.945,187.145,135.945"
-        />
-      </svg>
-    </a>
+    <AnimatePresence>
+      {visible && (
+        <motion.div
+          className={`fixed bottom-6 ${positionClass} z-50 flex items-center gap-3`}
+          initial={{ opacity: 0, scale: 0.8, y: 20 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.8, y: 20 }}
+          transition={{ type: "spring", stiffness: 260, damping: 20 }}
+          style={{ flexDirection: position === "left" ? "row-reverse" : "row" }}
+        >
+          {/* Tooltip - desktop only */}
+          <AnimatePresence>
+            {isHovered && (
+              <motion.span
+                initial={{ opacity: 0, x: position === "right" ? 10 : -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: position === "right" ? 10 : -10 }}
+                transition={{ duration: 0.2 }}
+                className="hidden md:block pointer-events-none whitespace-nowrap rounded-lg bg-black/90 px-3 py-2 text-xs font-medium text-white shadow-lg backdrop-blur-sm"
+              >
+                {tooltipText}
+              </motion.span>
+            )}
+          </AnimatePresence>
+
+          {/* Button */}
+          <motion.button
+            type="button"
+            onClick={handleClick}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            aria-label={tooltipText}
+            className="relative flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] shadow-[0_4px_20px_rgba(37,211,102,0.4)] outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black transition-shadow duration-300 hover:shadow-[0_4px_30px_rgba(37,211,102,0.6)]"
+          >
+            {/* Pulse ring */}
+            <span className="absolute inset-0 rounded-full animate-[wa-pulse_2s_ease-out_infinite] bg-[#25D366]" />
+
+            {/* Icon */}
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              className="relative z-10 h-7 w-7 fill-white"
+            >
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+            </svg>
+          </motion.button>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 
