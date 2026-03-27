@@ -1,4 +1,4 @@
-# 🚀 SevenDevX — Soluções Tecnológicas Modernas e Inovadoras  
+# 🚀 SevenDevX — Soluções Tecnológicas Modernass e Inovadoras  
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![Last Commit](https://img.shields.io/github/last-commit/DavidsonDias/sevendevx)
