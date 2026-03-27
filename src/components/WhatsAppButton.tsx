@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface WhatsAppButtonProps {
@@ -18,11 +18,40 @@ const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
 }) => {
   const [visible, setVisible] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [shouldShake, setShouldShake] = useState(false);
+  const hasShaken = useRef(false);
+  const lastScrollTop = useRef(0);
 
+  // Exibe após delay + dispara shake inicial
   useEffect(() => {
-    const timer = setTimeout(() => setVisible(true), delay);
+    const timer = setTimeout(() => {
+      setVisible(true);
+      if (!hasShaken.current) {
+        hasShaken.current = true;
+        setShouldShake(true);
+      }
+    }, delay);
     return () => clearTimeout(timer);
   }, [delay]);
+
+  // Scroll: mostra ao descer, esconde ao subir
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      if (scrollTop > lastScrollTop.current) {
+        setVisible(true);
+        if (!hasShaken.current) {
+          hasShaken.current = true;
+          setShouldShake(true);
+        }
+      } else {
+        setVisible(false);
+      }
+      lastScrollTop.current = Math.max(scrollTop, 0);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const handleClick = useCallback(() => {
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
@@ -63,6 +92,11 @@ const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
             onClick={handleClick}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
+            animate={shouldShake
+              ? { rotate: [0, -8, 8, -6, 6, -3, 3, 0], transition: { duration: 0.6, ease: "easeInOut" } }
+              : { rotate: 0 }
+            }
+            onAnimationComplete={() => setShouldShake(false)}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label={tooltipText}
