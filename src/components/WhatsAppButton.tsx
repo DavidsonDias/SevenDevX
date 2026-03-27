@@ -92,6 +92,11 @@ const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
             onClick={handleClick}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
+            animate={shouldShake
+              ? { rotate: [0, -8, 8, -6, 6, -3, 3, 0], transition: { duration: 0.6, ease: "easeInOut" } }
+              : { rotate: 0 }
+            }
+            onAnimationComplete={() => setShouldShake(false)}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
             aria-label={tooltipText}
