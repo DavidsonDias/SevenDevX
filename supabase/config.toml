@@ -1,7 +1,1 @@
-project_id = "nutdqwobpqkmtvavssdv"
-
-[functions.ai-chat]
-verify_jwt = false
-
-[functions.track-analytics]
-verify_jwt = false
+project_id = "phdmdnopdlfywymptimy"
