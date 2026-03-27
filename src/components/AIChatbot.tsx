@@ -55,8 +55,44 @@ export const AIChatbot = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
+  const [buttonVisible, setButtonVisible] = useState(false);
+  const [shouldShake, setShouldShake] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const hasShaken = useRef(false);
+  const lastScrollTop = useRef(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Show button after delay + trigger shake
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setButtonVisible(true);
+      if (!hasShaken.current) {
+        hasShaken.current = true;
+        setShouldShake(true);
+      }
+    }, 3500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Scroll: show on scroll down, hide on scroll up
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      if (scrollTop > lastScrollTop.current) {
+        setButtonVisible(true);
+        if (!hasShaken.current) {
+          hasShaken.current = true;
+          setShouldShake(true);
+        }
+      } else {
+        setButtonVisible(false);
+      }
+      lastScrollTop.current = Math.max(scrollTop, 0);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Auto-scroll to bottom
   const scrollToBottom = useCallback(() => {
@@ -210,30 +246,55 @@ export const AIChatbot = () => {
     <>
       {/* Floating Button */}
       <AnimatePresence>
-        {!isOpen && (
-          <motion.button
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0, opacity: 0 }}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            onClick={() => setIsOpen(true)}
-            className="fixed bottom-24 right-6 z-50 w-14 h-14 bg-white text-black rounded-full shadow-2xl flex items-center justify-center group"
-            aria-label="Abrir chat com IA"
+        {!isOpen && buttonVisible && (
+          <motion.div
+            className="fixed bottom-24 right-6 z-50 flex items-center gap-3"
+            initial={{ opacity: 0, scale: 0.8, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.8, y: 20 }}
+            transition={{ type: "spring", stiffness: 260, damping: 20 }}
           >
-            <Bot className="w-6 h-6" />
-            <motion.div
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ repeat: Infinity, duration: 2 }}
-              className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"
-            />
-            
-            {/* Tooltip */}
-            <div className="absolute right-full mr-3 px-3 py-2 bg-white text-black text-sm rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-              <Sparkles className="w-4 h-4 inline mr-1" />
-              Fale com a 7AI
-            </div>
-          </motion.button>
+            {/* Tooltip - desktop only */}
+            <AnimatePresence>
+              {isHovered && (
+                <motion.span
+                  initial={{ opacity: 0, x: 10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 10 }}
+                  transition={{ duration: 0.2 }}
+                  className="hidden md:block pointer-events-none whitespace-nowrap rounded-lg bg-black/90 px-3 py-2 text-xs font-medium text-white shadow-lg backdrop-blur-sm"
+                >
+                  <Sparkles className="w-3 h-3 inline mr-1" />
+                  Fale com a 7AI
+                </motion.span>
+              )}
+            </AnimatePresence>
+
+            <motion.button
+              onClick={() => setIsOpen(true)}
+              onMouseEnter={() => setIsHovered(true)}
+              onMouseLeave={() => setIsHovered(false)}
+              animate={shouldShake
+                ? { rotate: [0, -8, 8, -6, 6, -3, 3, 0], transition: { duration: 0.6, ease: "easeInOut" } }
+                : { rotate: 0 }
+              }
+              onAnimationComplete={() => setShouldShake(false)}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.95 }}
+              aria-label="Abrir chat com IA"
+              className="relative flex h-14 w-14 items-center justify-center rounded-full bg-white text-black shadow-[0_4px_20px_rgba(255,255,255,0.3)] outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black transition-shadow duration-300 hover:shadow-[0_4px_30px_rgba(255,255,255,0.5)]"
+            >
+              {/* Pulse ring */}
+              <span className="absolute inset-0 rounded-full animate-[ai-pulse_2s_ease-out_infinite] bg-white" />
+
+              <Bot className="relative z-10 w-6 h-6" />
+              <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ repeat: Infinity, duration: 2 }}
+                className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white z-10"
+              />
+            </motion.button>
+          </motion.div>
         )}
       </AnimatePresence>
 
