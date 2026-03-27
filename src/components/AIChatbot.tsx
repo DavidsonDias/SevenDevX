@@ -55,8 +55,44 @@ export const AIChatbot = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
+  const [buttonVisible, setButtonVisible] = useState(false);
+  const [shouldShake, setShouldShake] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const hasShaken = useRef(false);
+  const lastScrollTop = useRef(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Show button after delay + trigger shake
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setButtonVisible(true);
+      if (!hasShaken.current) {
+        hasShaken.current = true;
+        setShouldShake(true);
+      }
+    }, 3500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Scroll: show on scroll down, hide on scroll up
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      if (scrollTop > lastScrollTop.current) {
+        setButtonVisible(true);
+        if (!hasShaken.current) {
+          hasShaken.current = true;
+          setShouldShake(true);
+        }
+      } else {
+        setButtonVisible(false);
+      }
+      lastScrollTop.current = Math.max(scrollTop, 0);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Auto-scroll to bottom
   const scrollToBottom = useCallback(() => {
