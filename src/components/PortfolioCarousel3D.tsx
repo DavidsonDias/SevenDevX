@@ -628,7 +628,7 @@ const ProjectCard3D = ({
           </div>
 
           <div className="flex gap-2 pt-3" onClick={(e) => e.stopPropagation()}>
-            {isValidLiveUrl(project.liveUrl) ? (
+            {isValidLiveUrl(project.liveUrl) && (
               <Button
                 size="sm"
                 variant="default"
@@ -645,18 +645,17 @@ const ProjectCard3D = ({
                   {t.projects.viewProject}
                 </a>
               </Button>
-            ) : (
-              <Button
-                size="sm"
-                variant="default"
-                className="flex-1"
-                onClick={onOpenModal}
-                aria-label={`${t.common.learnMore} - ${project.title}`}
-              >
-                <ExternalLink className="h-4 w-4 mr-2" />
-                {t.common.learnMore}
-              </Button>
             )}
+
+            <Button
+              size="sm"
+              variant={isValidLiveUrl(project.liveUrl) ? "outline" : "default"}
+              className="flex-1"
+              onClick={onOpenModal}
+              aria-label={`${t.common.learnMore} - ${project.title}`}
+            >
+              {t.common.learnMore}
+            </Button>
 
             {project.githubUrl && (
               <Button
