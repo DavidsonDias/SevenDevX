@@ -172,13 +172,89 @@ ProjectModal.displayName = "ProjectModal";
 // 🃏 Project Card
 // ---------------------------------------------------------
 
-const ProjectCard = memo(({ project, index, isFeatured, onOpenModal }: {
+const ProjectCard = memo(({ project, index, isFeatured, isHero, onOpenModal }: {
   project: Project;
   index: number;
   isFeatured: boolean;
+  isHero: boolean;
   onOpenModal: (p: Project) => void;
 }) => {
   const { t } = useLanguage();
+
+  // Hero card: full-width horizontal layout
+  if (isHero) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+        className="col-span-1 sm:col-span-2 lg:col-span-3"
+      >
+        <Card
+          className="group relative overflow-hidden border border-primary/30 bg-card/60 backdrop-blur-md rounded-2xl cursor-pointer transition-all duration-300 hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/20"
+          onClick={() => onOpenModal(project)}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2">
+            <div className="relative overflow-hidden">
+              <img
+                src={project.image}
+                alt={project.title}
+                className="w-full h-64 sm:h-72 md:h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                loading="eager"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black/60 hidden md:block" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:hidden" />
+              <div className="absolute top-4 left-4 flex items-center gap-1.5 px-4 py-1.5 bg-primary rounded-full text-xs font-bold text-primary-foreground z-10 shadow-lg shadow-primary/40">
+                <Sparkles className="w-3.5 h-3.5" /> Destaque Principal
+              </div>
+              {project.tags && project.tags.length > 0 && (
+                <div className="absolute top-4 right-4 flex gap-1.5 z-10">
+                  {project.tags.map((tag) => (
+                    <span key={tag} className="px-2.5 py-1 bg-black/60 backdrop-blur-sm rounded-full text-[11px] font-medium text-foreground/90 border border-border/30">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+            <CardContent className="p-6 sm:p-8 flex flex-col justify-center space-y-4">
+              <h3 className="font-orbitron font-bold text-2xl sm:text-3xl text-foreground group-hover:text-primary transition-colors">
+                {project.title}
+              </h3>
+              <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
+                {project.longDescription || project.description}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {project.techs.map((tech) => {
+                  const Icon = tech.icon;
+                  return (
+                    <div key={tech.name} className="flex items-center gap-1.5 px-3 py-1.5 bg-muted/20 rounded-full border border-border text-xs">
+                      <Icon className="text-sm" style={{ color: tech.color }} />
+                      <span className="font-medium text-foreground">{tech.name}</span>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="flex gap-3 pt-2" onClick={(e) => e.stopPropagation()}>
+                {isValidLiveUrl(project.liveUrl) && (
+                  <Button size="default" variant="default" className="shadow-lg shadow-primary/20" asChild>
+                    <a href={project.liveUrl!} target="_blank" rel="noopener noreferrer">
+                      <ExternalLink className="h-4 w-4 mr-2" />
+                      {t.projects.viewProject}
+                    </a>
+                  </Button>
+                )}
+                <Button size="default" variant="outline" onClick={() => onOpenModal(project)}>
+                  {t.common.learnMore}
+                </Button>
+              </div>
+            </CardContent>
+          </div>
+        </Card>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div
@@ -187,22 +263,25 @@ const ProjectCard = memo(({ project, index, isFeatured, onOpenModal }: {
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.4, delay: Math.min(index * 0.06, 0.36) }}
       whileHover={{ scale: 1.02 }}
-      className={isFeatured ? "sm:col-span-2" : ""}
     >
       <Card
-        className="group relative overflow-hidden border border-border/50 bg-card/60 backdrop-blur-md rounded-2xl cursor-pointer transition-all duration-300 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10 h-full"
+        className={cn(
+          "group relative overflow-hidden border bg-card/60 backdrop-blur-md rounded-2xl cursor-pointer transition-all duration-300 hover:shadow-xl h-full",
+          isFeatured
+            ? "border-primary/20 hover:border-primary/40 hover:shadow-primary/15"
+            : "border-border/50 hover:border-border hover:shadow-primary/5"
+        )}
         onClick={() => onOpenModal(project)}
       >
         <div className="relative overflow-hidden">
           <img
             src={project.image}
             alt={project.title}
-            className={`w-full object-cover transition-transform duration-700 group-hover:scale-110 ${isFeatured ? "h-64 sm:h-72 lg:h-80" : "h-48 sm:h-52"}`}
+            className={`w-full object-cover transition-transform duration-700 group-hover:scale-110 ${isFeatured ? "h-52 sm:h-60" : "h-48 sm:h-52"}`}
             loading="lazy"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-70 group-hover:opacity-90 transition-opacity duration-500" />
 
-          {/* Hover overlay */}
           <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <span className="px-4 py-2 bg-primary/90 text-primary-foreground rounded-full text-sm font-medium backdrop-blur-sm">
               {t.common.learnMore}
