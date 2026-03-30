@@ -23,29 +23,13 @@
 
 import { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { motion, useMotionValue, useTransform, useSpring, PanInfo, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { ExternalLink, Github, ChevronLeft, ChevronRight } from "lucide-react";
+import { ExternalLink, Github, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { FaReact, FaNodeJs } from "react-icons/fa";
-import {
-  SiFirebase,
-  SiTypescript,
-  SiD3Dotjs,
-  SiTailwindcss,
-  SiPostgresql,
-  SiNextdotjs,
-} from "react-icons/si";
 import { useLanguage } from "@/i18n/LanguageContext";
-
-// Assets
-import projectEcommerce from "@/assets/project-ecommerce.jpg";
-import projectDelivery from "@/assets/project-delivery.jpg";
-import projectAnalytics from "@/assets/project-analytics.jpg";
-import projectErp from "@/assets/project-erp.jpg";
-import projectMedical from "@/assets/project-medical.jpg";
-import projectArchitecture from "@/assets/project-architecture.jpg";
-import projectManagement from "@/assets/project-management.jpg";
+import { projects, isValidLiveUrl, type Project } from "@/data/projects";
 
 // ---------------------------------------------------------
 // 🧱 Types & Constants
