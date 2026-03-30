@@ -38,6 +38,7 @@ export default function AppRouter() {
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/projects-hub" element={<ProjectsHub />} />
 
           {/* Protected Routes */}
           <Route path="/profile" element={
