@@ -705,6 +705,24 @@ const PortfolioCarousel3D = () => {
           onCardClick={handleCardClick}
           onOpenModal={handleOpenModal}
         />
+
+        {/* Ver todos os projetos */}
+        <motion.div
+          className="flex justify-center pt-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          <Button
+            size="lg"
+            className="group px-8 py-3 rounded-full shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all duration-300"
+            onClick={() => navigate('/projects-hub')}
+          >
+            Ver todos os projetos
+            <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+          </Button>
+        </motion.div>
       </div>
 
       <ProjectModal project={openProject} onClose={() => setOpenProject(null)} />

@@ -16,6 +16,7 @@ const BlogPost = lazy(() => import("@/pages/BlogPost"));
 const Auth = lazy(() => import("@/pages/Auth"));
 const Profile = lazy(() => import("@/pages/Profile"));
 const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
+const ProjectsHub = lazy(() => import("@/pages/ProjectsHub"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
 export default function AppRouter() {
