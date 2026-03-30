@@ -28,6 +28,9 @@ const sortedProjects = [
   ...projects.filter((p) => !FEATURED_IDS.includes(p.id)),
 ];
 
+// The very first featured project gets a special hero layout
+const HERO_ID = FEATURED_IDS[0];
+
 // ---------------------------------------------------------
 // 🎭 Project Modal
 // ---------------------------------------------------------
