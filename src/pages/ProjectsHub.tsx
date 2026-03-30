@@ -6,6 +6,7 @@
 import { useState, useMemo, useCallback, memo, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ExternalLink, Github, Sparkles, ArrowLeft } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
 
 import Header from "@/components/Header";
