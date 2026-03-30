@@ -604,6 +604,7 @@ const Carousel3D = ({ projects, onCardClick, onOpenModal }: Carousel3DProps) => 
 
 const PortfolioCarousel3D = () => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [openProject, setOpenProject] = useState<Project | null>(null);
 
