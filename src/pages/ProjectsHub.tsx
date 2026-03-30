@@ -527,7 +527,8 @@ const ProjectsHub = () => {
                         key={project.id}
                         project={project}
                         index={index}
-                        isFeatured={FEATURED_IDS.includes(project.id) && index < 3}
+                        isFeatured={FEATURED_IDS.includes(project.id)}
+                        isHero={project.id === HERO_ID && selectedFilters.length === 0}
                         onOpenModal={handleOpenModal}
                       />
                     ))}
