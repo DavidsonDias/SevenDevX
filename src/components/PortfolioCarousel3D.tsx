@@ -32,19 +32,8 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { projects, isValidLiveUrl, type Project } from "@/data/projects";
 
 // ---------------------------------------------------------
-// 🧱 Types & Constants
+// 🧱 Constants
 // ---------------------------------------------------------
-
-interface Project {
-  id: number;
-  title: string;
-  description: string;
-  longDescription?: string;
-  image: string;
-  techs: { name: string; icon: React.ElementType; color: string }[];
-  liveUrl?: string | null;
-  githubUrl?: string | null;
-}
 
 // 🎨 Configuração do efeito 3D (ajustável)
 const CAROUSEL_CONFIG = {
