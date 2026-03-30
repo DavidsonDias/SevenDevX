@@ -95,6 +95,7 @@ const projects: Project[] = [
     id: 101,
     title: "PsicoOne",
     description: "Plataforma SaaS para psicólogos com IA, prontuário inteligente, agenda e teleatendimento.",
+    longDescription: "PsicoOne é um SaaS vertical projetado exclusivamente para psicólogos e clínicas de psicologia no Brasil. A plataforma centraliza prontuário eletrônico com geração assistida por IA e transcrição de sessões, agenda com detecção de conflitos e sincronização com Google Calendar, teleatendimento WebRTC com sala de espera e chat em tempo real, gestão financeira com projeções e categorização, e portal do paciente. O diferencial está na integração profunda entre módulos — uma sessão de teleatendimento gera automaticamente o prontuário, vincula à agenda e registra a transação financeira — eliminando retrabalho e devolvendo ao profissional o tempo que deveria ser dedicado ao paciente.",
     image: projectMedical,
     techs: [
       { name: "React", icon: FaReact, color: "#61DAFB" },
@@ -108,6 +109,7 @@ const projects: Project[] = [
     id: 102,
     title: "Barbearia George Fiuza",
     description: "Landing page de alta conversão com agendamento e experiência cinematográfica.",
+    longDescription: "Landing page de performance projetada para posicionar a Barbearia George Fiuza como referência premium em Belo Horizonte. A solução integra agendamento direto via WhatsApp e AppBarber, exibe avaliações no estilo Google Reviews com contadores animados de prova social, e entrega uma experiência dark-mode cinematográfica com microinterações em Framer Motion — tudo otimizado para SEO local e conversão mobile-first.",
     image: projectManagement,
     techs: [
       { name: "React", icon: FaReact, color: "#61DAFB" },
@@ -120,6 +122,7 @@ const projects: Project[] = [
     id: 103,
     title: "Psicóloga Roane",
     description: "Site institucional premium focado em conversão e experiência do paciente.",
+    longDescription: "Site institucional premium desenvolvido para a Psicóloga Roane Stéphane, especialista em Terapia Cognitivo-Comportamental e Psicologia Infantojuvenil. A interface combina animações cinematográficas, tipografia refinada e uma paleta de tons verdes e dourados que transmitem equilíbrio emocional. O diferencial está na arquitetura de conversão silenciosa: cada seção guia o visitante naturalmente até o agendamento via WhatsApp, sem fricção.",
     image: projectMedical,
     techs: [
       { name: "React", icon: FaReact, color: "#61DAFB" },
@@ -132,6 +135,7 @@ const projects: Project[] = [
     id: 104,
     title: "Portfólio Davidson",
     description: "Portfólio 3D imersivo com animações avançadas e experiência interativa.",
+    longDescription: "Portfólio de desenvolvedor full stack que transcende o padrão de sites pessoais. Construído com identidade visual futurista inspirada na SpaceX, combina cenas 3D com Three.js, micro-interações magnéticas, terminal interativo com comandos reais (neofetch, matrix), cursor neon customizado com trail de partículas e intro cinematográfica com clip-path reveal. A fusão entre engenharia de software de alto nível e design de produto premium entrega performance 60fps mesmo com múltiplas camadas de efeitos visuais.",
     image: projectArchitecture,
     techs: [
       { name: "React", icon: FaReact, color: "#61DAFB" },
@@ -144,6 +148,7 @@ const projects: Project[] = [
     id: 105,
     title: "GitHub Repo Viewer",
     description: "Dashboard com analytics de repositórios e AI code review.",
+    longDescription: "SaaS analítico que consolida dados de repositórios GitHub em um dashboard visual de nível enterprise. Oferece contribution heatmaps, distribuição de linguagens, AI code review automatizado, comparação lado a lado de repositórios e command palette inspirado no VS Code. Como PWA com suporte offline completo, funciona como app instalável em qualquer dispositivo — um diferencial inexistente em concorrentes como GitKraken ou Sourcegraph.",
     image: projectAnalytics,
     techs: [
       { name: "React", icon: FaReact, color: "#61DAFB" },
@@ -156,6 +161,7 @@ const projects: Project[] = [
     id: 106,
     title: "Vortexx",
     description: "Plataforma privacy-first com processamento local e pipeline avançado.",
+    longDescription: "SaaS privacy-first projetado para usuários e equipes que precisam capturar mídia de mais de 50 plataformas com qualidade até 4K, sem comprometer dados pessoais. O processamento acontece inteiramente no navegador via FFmpeg.wasm — nenhum arquivo toca um servidor externo. Pipeline profissional de 7 estágios (validação → extração → transcodificação → sanitização de metadados → verificação de integridade → compressão → entrega), sistema de agendamento, downloads em lote e assistente IA contextual. Arquitetura zero-trust: processamento local, zero logs, remoção automática de EXIF/GPS e criptografia ponta-a-ponta.",
     image: projectDelivery,
     techs: [
       { name: "React", icon: FaReact, color: "#61DAFB" },
@@ -168,6 +174,7 @@ const projects: Project[] = [
     id: 107,
     title: "Stellar Navigator",
     description: "Simulador 3D do sistema solar com dados da NASA.",
+    longDescription: "Aplicação web que renderiza o Sistema Solar completo em 3D com simulação orbital realista, dados científicos ao vivo da NASA e narração educativa gerada por inteligência artificial. Combina precisão científica (posições, órbitas e rotações reais), interface cinematográfica com HUD holográfico, scanner planetário com estrutura interna animada e sonificação espacial via Web Audio API — tudo rodando diretamente no navegador, sem instalação, em qualquer dispositivo.",
     image: projectArchitecture,
     techs: [
       { name: "React", icon: FaReact, color: "#61DAFB" },
@@ -180,6 +187,7 @@ const projects: Project[] = [
     id: 108,
     title: "Amigo Oculto Inteligente",
     description: "SaaS multi-tenant com sorteio automatizado e notificações.",
+    longDescription: "Plataforma SaaS multi-tenant que digitaliza e eleva a experiência de organizar sorteios de Amigo Oculto para famílias, empresas e comunidades. Oferece gerenciamento centralizado de participantes com perfis visuais, wishlists interativas com links e imagens, algoritmo de sorteio justo com isolamento criptográfico por token, notificação automatizada via WhatsApp, e landing pages públicas personalizáveis por grupo. Arquitetura multi-perfil com Row-Level Security garantindo isolamento total de dados entre tenants, RPCs seguras e painel de analytics exclusivo para owners com KPIs de engajamento.",
     image: projectManagement,
     techs: [
       { name: "React", icon: FaReact, color: "#61DAFB" },
