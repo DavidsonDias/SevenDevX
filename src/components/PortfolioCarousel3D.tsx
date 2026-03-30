@@ -90,6 +90,105 @@ const CAROUSEL_CONFIG = {
 // ---------------------------------------------------------
 
 const projects: Project[] = [
+  // 🚀 Novos projetos (destaque)
+  {
+    id: 101,
+    title: "PsicoOne",
+    description: "Plataforma SaaS para psicólogos com IA, prontuário inteligente, agenda e teleatendimento.",
+    image: projectMedical,
+    techs: [
+      { name: "React", icon: FaReact, color: "#61DAFB" },
+      { name: "TypeScript", icon: SiTypescript, color: "#3178C6" },
+      { name: "PostgreSQL", icon: SiPostgresql, color: "#4169E1" },
+    ],
+    liveUrl: "https://psicoone.vercel.app/",
+    githubUrl: null,
+  },
+  {
+    id: 102,
+    title: "Barbearia George Fiuza",
+    description: "Landing page de alta conversão com agendamento e experiência cinematográfica.",
+    image: projectManagement,
+    techs: [
+      { name: "React", icon: FaReact, color: "#61DAFB" },
+      { name: "Tailwind", icon: SiTailwindcss, color: "#38BDF8" },
+    ],
+    liveUrl: "https://georgefiuza.vercel.app",
+    githubUrl: null,
+  },
+  {
+    id: 103,
+    title: "Psicóloga Roane",
+    description: "Site institucional premium focado em conversão e experiência do paciente.",
+    image: projectMedical,
+    techs: [
+      { name: "React", icon: FaReact, color: "#61DAFB" },
+      { name: "TypeScript", icon: SiTypescript, color: "#3178C6" },
+    ],
+    liveUrl: "https://roane.vercel.app/",
+    githubUrl: null,
+  },
+  {
+    id: 104,
+    title: "Portfólio Davidson",
+    description: "Portfólio 3D imersivo com animações avançadas e experiência interativa.",
+    image: projectArchitecture,
+    techs: [
+      { name: "React", icon: FaReact, color: "#61DAFB" },
+      { name: "Three.js", icon: SiD3Dotjs, color: "#F7DF1E" },
+    ],
+    liveUrl: "https://davidsondias.vercel.app/",
+    githubUrl: null,
+  },
+  {
+    id: 105,
+    title: "GitHub Repo Viewer",
+    description: "Dashboard com analytics de repositórios e AI code review.",
+    image: projectAnalytics,
+    techs: [
+      { name: "React", icon: FaReact, color: "#61DAFB" },
+      { name: "Redux", icon: SiTypescript, color: "#764ABC" },
+    ],
+    liveUrl: "https://github-proviewer.vercel.app",
+    githubUrl: null,
+  },
+  {
+    id: 106,
+    title: "Vortexx",
+    description: "Plataforma privacy-first com processamento local e pipeline avançado.",
+    image: projectDelivery,
+    techs: [
+      { name: "React", icon: FaReact, color: "#61DAFB" },
+      { name: "PWA", icon: SiFirebase, color: "#FFCA28" },
+    ],
+    liveUrl: "https://vortexx-alpha.vercel.app",
+    githubUrl: null,
+  },
+  {
+    id: 107,
+    title: "Stellar Navigator",
+    description: "Simulador 3D do sistema solar com dados da NASA.",
+    image: projectArchitecture,
+    techs: [
+      { name: "React", icon: FaReact, color: "#61DAFB" },
+      { name: "Three.js", icon: SiD3Dotjs, color: "#F7DF1E" },
+    ],
+    liveUrl: "https://stellar-navigator.vercel.app",
+    githubUrl: null,
+  },
+  {
+    id: 108,
+    title: "Amigo Oculto Inteligente",
+    description: "SaaS multi-tenant com sorteio automatizado e notificações.",
+    image: projectManagement,
+    techs: [
+      { name: "React", icon: FaReact, color: "#61DAFB" },
+      { name: "Firebase", icon: SiFirebase, color: "#FFCA28" },
+    ],
+    liveUrl: "https://natalfestivo.vercel.app",
+    githubUrl: null,
+  },
+  // 🔽 Projetos originais
   {
     id: 1,
     title: "Sistema ERP Empresarial",
