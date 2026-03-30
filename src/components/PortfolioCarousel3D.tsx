@@ -883,11 +883,7 @@ const PortfolioCarousel3D = () => {
   };
 
   const handleCardClick = (project: Project) => {
-    if (isValidLiveUrl(project.liveUrl)) {
-      window.open(project.liveUrl!, "_blank", "noopener,noreferrer");
-    } else {
-      setOpenProject(project);
-    }
+    setOpenProject(project);
   };
 
   const handleOpenModal = (project: Project) => {
