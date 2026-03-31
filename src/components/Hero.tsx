@@ -4,22 +4,7 @@ import heroBackground from "@/assets/images/hero-tech-workspace.webp";
 import heroVideo from "@/assets/videos/hero-bg.mp4";
 import { useLanguage } from "@/i18n/LanguageContext";
 
-// Animated counter hook
-function useCounter(end: number, duration: number, inView: boolean) {
-  const [count, setCount] = useState(0);
-  useEffect(() => {
-    if (!inView) return;
-    let start = 0;
-    const step = end / (duration / 16);
-    const timer = setInterval(() => {
-      start += step;
-      if (start >= end) { setCount(end); clearInterval(timer); }
-      else setCount(Math.floor(start));
-    }, 16);
-    return () => clearInterval(timer);
-  }, [end, duration, inView]);
-  return count;
-}
+
 
 const Hero = () => {
   const { t } = useLanguage();
