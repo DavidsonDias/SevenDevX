@@ -462,7 +462,20 @@ const Home = () => {
              --------------------------------------------------------- */}
           <ServicesPreview />
 
-          {/* 🔽 DIVISOR 2 — SERVICES → TECH (Médio, padrão) */}
+          {/* 🔽 DIVISOR 2 — SERVICES → PROJECTS */}
+          <SectionDivider
+            size="md"
+            speed={1}
+            glowIntensity="default"
+            className="my-24"
+          />
+
+          {/* ---------------------------------------------------------
+             FEATURED PROJECTS (Prova real)
+             --------------------------------------------------------- */}
+          <FeaturedProjects />
+
+          {/* 🔽 DIVISOR 3 — PROJECTS → TECH */}
           <SectionDivider
             size="md"
             speed={1}
