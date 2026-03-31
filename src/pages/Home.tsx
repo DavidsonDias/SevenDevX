@@ -409,6 +409,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import ServicesPreview from "@/components/ServicesPreview";
+import FeaturedProjects from "@/components/FeaturedProjects";
 import TechPreview from "@/components/TechPreview";
 import TestimonialsCarousel3D from "@/components/TestimonialsCarousel3D";
 import ContactMultiStep from "@/components/ContactMultiStep";
