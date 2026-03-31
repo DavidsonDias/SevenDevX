@@ -47,18 +47,6 @@ const ServicesPreview = () => {
       image: serviceConsulting,
       icon: Lightbulb,
     },
-    {
-      title: t.services.maintenance.title,
-      description: t.services.maintenance.description,
-      image: serviceMaintenance,
-      icon: Wrench,
-    },
-    {
-      title: t.services.software.title,
-      description: t.services.software.description,
-      image: serviceSoftware,
-      icon: Settings,
-    },
   ];
 
   return (

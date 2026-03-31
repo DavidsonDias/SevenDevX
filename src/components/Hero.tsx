@@ -1,10 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { motion, useInView } from "framer-motion";
+import { motion } from "framer-motion";
 import heroBackground from "@/assets/images/hero-tech-workspace.webp";
 import heroVideo from "@/assets/videos/hero-bg.mp4";
 import { useLanguage } from "@/i18n/LanguageContext";
-
-
 
 const Hero = () => {
   const { t } = useLanguage();
@@ -12,12 +10,6 @@ const Hero = () => {
   const [videoFailed, setVideoFailed] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
-  const statsRef = useRef<HTMLDivElement>(null);
-  const statsInView = useInView(statsRef, { once: true });
-
-  const projects = useCounter(50, 1200, statsInView);
-  const clients = useCounter(30, 1200, statsInView);
-  const years = useCounter(5, 800, statsInView);
 
   const scrollToContact = () => {
     document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
@@ -42,12 +34,6 @@ const Hero = () => {
       videoRef.current.play().catch(() => setVideoFailed(true));
     }
   }, [shouldLoadVideo, videoFailed]);
-
-  const stats = [
-    { value: `${projects}+`, label: "PROJETOS" },
-    { value: `${clients}+`, label: "CLIENTES" },
-    { value: `${years}+`, label: "ANOS" },
-  ];
 
   return (
     <section
@@ -107,29 +93,6 @@ const Hero = () => {
             />
             <span className="relative z-10 ml-2 group-hover:translate-x-1 transition-transform">→</span>
           </motion.button>
-
-          {/* Stats Bar */}
-          <motion.div
-            ref={statsRef}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="mt-10 sm:mt-14 flex items-center gap-8 sm:gap-12"
-          >
-            {stats.map((stat, i) => (
-              <div key={stat.label} className="flex items-center gap-8 sm:gap-12">
-                {i > 0 && <div className="w-px h-8 bg-foreground/20 -ml-4 sm:-ml-6" />}
-                <div>
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-bold font-orbitron tabular-nums">
-                    {stat.value}
-                  </div>
-                  <div className="text-[10px] sm:text-xs text-muted-foreground tracking-[0.3em] mt-1">
-                    {stat.label}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </motion.div>
         </motion.div>
       </div>
     </section>
