@@ -21,6 +21,13 @@ import projectGithubProViewer from "@/assets/GithubProViewer.png";
 import projectVortexx from "@/assets/Vortexx.jpg";
 import projectStellarNavigator from "@/assets/StellarNavigator.jpg";
 import projectNatalFestivo from "@/assets/NatalFestivo.png";
+import projectEcommerce from "@/assets/project-ecommerce.jpg";
+import projectDelivery from "@/assets/project-delivery.jpg";
+import projectAnalytics from "@/assets/project-analytics.jpg";
+import projectErp from "@/assets/project-erp.jpg";
+import projectMedical from "@/assets/project-medical.jpg";
+import projectArchitecture from "@/assets/project-architecture.jpg";
+import projectManagement from "@/assets/project-management.jpg";
 
 export interface Project {
   id: number;
