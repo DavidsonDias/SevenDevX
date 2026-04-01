@@ -350,6 +350,7 @@ const ProjectCard = memo(({ project, index, isFeatured, isHero, onOpenModal }: {
         </CardContent>
       </Card>
     </motion.div>
+    </ProjectCard3D>
   );
 });
 ProjectCard.displayName = "ProjectCard";
