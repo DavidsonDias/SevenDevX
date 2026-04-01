@@ -218,7 +218,7 @@ export const projects: Project[] = [
       { name: "TypeScript", icon: SiTypescript, color: "#3178C6" },
       { name: "Tailwind", icon: SiTailwindcss, color: "#38BDF8" },
     ],
-    liveUrl: null,
+    liveUrl: "https://acaios.vercel.app/",
     githubUrl: null,
     featured: true,
     tags: ["SaaS", "Enterprise"],
