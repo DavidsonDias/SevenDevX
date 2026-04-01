@@ -203,7 +203,7 @@ export const projects: Project[] = [
       { name: "TypeScript", icon: SiTypescript, color: "#3178C6" },
       { name: "PostgreSQL", icon: SiPostgresql, color: "#4169E1" },
     ],
-    liveUrl: null,
+    liveUrl: "https://ibanps.vercel.app/",
     githubUrl: null,
     tags: ["SaaS"],
   },
