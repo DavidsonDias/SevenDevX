@@ -171,7 +171,7 @@ export const projects: Project[] = [
       { name: "PostgreSQL", icon: SiPostgresql, color: "#4169E1" },
       { name: "Tailwind", icon: SiTailwindcss, color: "#38BDF8" },
     ],
-    liveUrl: null,
+    liveUrl: "https://nutrismartx.vercel.app/",
     githubUrl: null,
     featured: true,
     tags: ["SaaS", "AI", "PWA"],
