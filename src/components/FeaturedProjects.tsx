@@ -20,14 +20,14 @@ const heroProject = featuredProjects[0];
 const secondaryProjects = featuredProjects.slice(1);
 
 const ProjectCard = memo(({ project, index }: { project: Project; index: number }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 30 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    transition={{ duration: 0.5, delay: 0.1 * index }}
-    whileHover={{ scale: 1.02 }}
-    className="group relative aspect-[4/3] overflow-hidden rounded-xl border border-border/50 bg-card cursor-pointer"
-  >
+  <ProjectCard3D tiltIntensity={5}>
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay: 0.1 * index }}
+      className="group relative aspect-[4/3] overflow-hidden rounded-xl border border-border/50 bg-card cursor-pointer"
+    >
     <img
       src={project.image}
       alt={project.title}
