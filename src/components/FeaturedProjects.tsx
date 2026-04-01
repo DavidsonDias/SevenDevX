@@ -91,13 +91,13 @@ const FeaturedProjects = () => {
 
         {/* Hero Project (PsicoOne) */}
         {heroProject && (
+          <ProjectCard3D tiltIntensity={4} className="mb-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
-            whileHover={{ scale: 1.01 }}
-            className="group relative overflow-hidden rounded-xl border border-primary/20 bg-card mb-6 cursor-pointer"
+            className="group relative overflow-hidden rounded-xl border border-primary/20 bg-card cursor-pointer"
           >
             <div className="grid grid-cols-1 lg:grid-cols-2">
               <div className="relative aspect-video lg:aspect-auto">
