@@ -17,10 +17,16 @@ import projectPsicoOne from "@/assets/PsicoOne.png";
 import projectGeorgeFiuza from "@/assets/GeorgeFiuza.png";
 import projectRoane from "@/assets/Roane.jpg";
 import projectDavidsonDias from "@/assets/DavidsonDias.jpg";
-import projectGithubProViewer from "@/assets/GithubProViewer.png";
+import projectGithubProViewer from "@/assets/GithubProViewer.jpeg";
 import projectVortexx from "@/assets/Vortexx.jpg";
 import projectStellarNavigator from "@/assets/StellarNavigator.jpg";
 import projectNatalFestivo from "@/assets/NatalFestivo.png";
+import projectNutriSmart from "@/assets/NutriSmart.jpeg";
+import projectHomeOS from "@/assets/HomeOS.jpeg";
+import projectIBANPS from "@/assets/Ibanps.jpeg";
+import projectAcaiOS from "@/assets/AcaiOS.jpeg";
+import projectFoodOpsX from "@/assets/FoodOpsX.jpeg";
+
 import projectEcommerce from "@/assets/project-ecommerce.jpg";
 import projectDelivery from "@/assets/project-delivery.jpg";
 import projectAnalytics from "@/assets/project-analytics.jpg";
@@ -164,7 +170,7 @@ export const projects: Project[] = [
     title: "NutriSmart",
     description: "Plataforma SaaS com IA que transforma restrições alimentares em receitas seguras e personalizadas.",
     longDescription: "O NutriSmart é uma plataforma inteligente para pessoas com restrições alimentares — celíacos, intolerantes à lactose, veganos e adeptos de dietas low-carb. A IA embarcada detecta alérgenos, sugere substituições seguras e nunca recomenda ingredientes proibidos. Com 19+ calculadoras especializadas (pizza, panificação, custos, álcool), importação de receitas via vídeo, versionamento, planejamento semanal e análise de custos com margem de lucro, é uma ferramenta enterprise-grade para alimentação segura.",
-    image: projectEcommerce,
+    image: projectNutriSmart,
     techs: [
       { name: "React", icon: FaReact, color: "#61DAFB" },
       { name: "TypeScript", icon: SiTypescript, color: "#3178C6" },
@@ -181,7 +187,7 @@ export const projects: Project[] = [
     title: "HomeOS",
     description: "Sistema inteligente de gestão doméstica que centraliza tarefas, finanças, estoque e compras.",
     longDescription: "O HomeOS é uma plataforma SaaS multi-tenant de gestão residencial inteligente, projetada para famílias e grupos que compartilham um lar. Resolve o caos da organização doméstica — contas esquecidas, estoque descontrolado, tarefas sem dono — unificando finanças, tarefas com Kanban, controle de estoque com alertas, lista de compras colaborativa e insights gerados por IA em uma interface premium com dark mode. O diferencial está na arquitetura enterprise-grade com RBAC granular, sistema de convites, auditoria completa e painel administrativo separado.",
-    image: projectManagement,
+    image: projectHomeOS,
     techs: [
       { name: "React", icon: FaReact, color: "#61DAFB" },
       { name: "TypeScript", icon: SiTypescript, color: "#3178C6" },
@@ -197,7 +203,7 @@ export const projects: Project[] = [
     title: "IBANPS",
     description: "Plataforma de gestão para ministério de louvor: escalas, repertório, ensaios e planejamento de culto.",
     longDescription: "O IBANPS é uma plataforma SaaS desenvolvida para a Igreja Batista Nacional Porto Seguro, projetada para centralizar toda a operação do Ministério de Louvor. Resolve o problema crônico de desorganização em equipes ministeriais — substituindo grupos de WhatsApp, planilhas dispersas e comunicação fragmentada por um sistema unificado com gestão de membros, escalas com rodízio, repertório musical com cifras e transposição, planejamento de culto com cronômetro, calendário de eventos, biblioteca digital e analytics de participação.",
-    image: projectAnalytics,
+    image: projectIBANPS,
     techs: [
       { name: "React", icon: FaReact, color: "#61DAFB" },
       { name: "TypeScript", icon: SiTypescript, color: "#3178C6" },
@@ -212,7 +218,7 @@ export const projects: Project[] = [
     title: "AçaíOS",
     description: "Plataforma operacional completa para açaiterias e franquias — do PDV à inteligência de dados.",
     longDescription: "AçaíOS é um sistema operacional SaaS projetado para negócios de açaí, sorveterias e dark kitchens no Brasil. A plataforma unifica PDV, montagem de pedidos personalizados (Monte seu Açaí), painel de cozinha em tempo real (KDS com Kanban), gestão de produtos e categorias, CRM de clientes e relatórios analíticos — tudo em uma única interface dark-mode com design enterprise.",
-    image: projectDelivery,
+    image: projectAcaiOS,
     techs: [
       { name: "React", icon: FaReact, color: "#61DAFB" },
       { name: "TypeScript", icon: SiTypescript, color: "#3178C6" },
@@ -228,7 +234,7 @@ export const projects: Project[] = [
     title: "FoodOps X",
     description: "Plataforma completa de gestão para restaurantes — do pedido à cozinha em tempo real.",
     longDescription: "FoodOps X é um sistema SaaS de gestão operacional para restaurantes, bares e food services. Projetado para eliminar gargalos entre salão, cozinha e caixa, a plataforma oferece mapa interativo de mesas, pedidos em tempo real via garçom digital, KDS (Kitchen Display System) para a cozinha, cardápio digital com QR Code, PDV completo e assistente com IA integrada.",
-    image: projectErp,
+    image: projectFoodOpsX,
     techs: [
       { name: "React", icon: FaReact, color: "#61DAFB" },
       { name: "TypeScript", icon: SiTypescript, color: "#3178C6" },
