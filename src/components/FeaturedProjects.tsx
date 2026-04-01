@@ -149,6 +149,7 @@ const FeaturedProjects = () => {
               </div>
             </div>
           </motion.div>
+          </ProjectCard3D>
         )}
 
         {/* Secondary Projects */}
