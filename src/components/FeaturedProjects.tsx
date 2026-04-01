@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, ArrowUpRight, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { projects, isValidLiveUrl, type Project } from "@/data/projects";
+import ProjectCard3D from "@/components/ProjectCard3D";
 
 const FEATURED_IDS = [101, 102, 103]; // PsicoOne, Barbearia, Psicóloga Roane
 
