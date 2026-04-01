@@ -11,9 +11,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 interface ProjectCard3DProps {
   children: ReactNode;
   className?: string;
-  /** Tilt intensity in degrees (default: 5) */
   tiltIntensity?: number;
-  /** Enable subtle glow following cursor (default: true) */
   glow?: boolean;
 }
 
@@ -44,6 +42,13 @@ const ProjectCard3D = ({
   const glowX = useTransform(mouseX, [-0.5, 0.5], [0, 100]);
   const glowY = useTransform(mouseY, [-0.5, 0.5], [0, 100]);
 
+  // Must call useTransform at top level, not inside JSX
+  const glowBackground = useTransform(
+    [glowX, glowY],
+    ([x, y]) =>
+      `radial-gradient(circle at ${x}% ${y}%, rgba(255,255,255,0.08) 0%, transparent 60%)`
+  );
+
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
     const rect = cardRef.current.getBoundingClientRect();
@@ -59,7 +64,6 @@ const ProjectCard3D = ({
     mouseY.set(0);
   }, [mouseX, mouseY]);
 
-  // Mobile: just render children with no 3D
   if (isMobile) {
     return <div className={className}>{children}</div>;
   }
@@ -82,16 +86,11 @@ const ProjectCard3D = ({
           willChange: "transform",
         }}
       >
-        {/* Subtle glow */}
         {glow && (
           <motion.div
             className="absolute inset-0 pointer-events-none rounded-inherit z-20"
             style={{
-              background: useTransform(
-                [glowX, glowY],
-                ([x, y]) =>
-                  `radial-gradient(circle at ${x}% ${y}%, rgba(255,255,255,${isHovered ? 0.08 : 0}) 0%, transparent 60%)`
-              ),
+              background: glowBackground,
               opacity: isHovered ? 1 : 0,
               transition: "opacity 0.3s ease",
             }}
