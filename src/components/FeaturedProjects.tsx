@@ -62,6 +62,7 @@ const ProjectCard = memo(({ project, index }: { project: Project; index: number 
       </div>
     </div>
   </motion.div>
+  </ProjectCard3D>
 ));
 ProjectCard.displayName = "ProjectCard";
 
