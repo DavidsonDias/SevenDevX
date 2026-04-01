@@ -19,6 +19,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { projects, isValidLiveUrl, type Project } from "@/data/projects";
+import ProjectCard3D from "@/components/ProjectCard3D";
 
 // Featured project IDs in strategic order
 const FEATURED_IDS = [101, 102, 103, 104, 105, 107, 106];
