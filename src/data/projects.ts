@@ -187,7 +187,7 @@ export const projects: Project[] = [
       { name: "TypeScript", icon: SiTypescript, color: "#3178C6" },
       { name: "PostgreSQL", icon: SiPostgresql, color: "#4169E1" },
     ],
-    liveUrl: null,
+    liveUrl: "https://homeosx.vercel.app/",
     githubUrl: null,
     featured: true,
     tags: ["SaaS", "Enterprise", "PWA"],
