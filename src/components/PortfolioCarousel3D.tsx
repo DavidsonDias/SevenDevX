@@ -73,6 +73,8 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
   const { t } = useLanguage();
   const modalRef = useRef<HTMLDivElement | null>(null);
 
+  useScrollLock(!!project);
+
   useEffect(() => {
     if (!project) return;
     
