@@ -23,6 +23,8 @@ interface Props {
 export default function ProjectModal({ project, onClose }: Props) {
   const { t } = useLanguage();
 
+  useScrollLock(!!project);
+
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", handleEsc);
