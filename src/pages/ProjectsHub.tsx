@@ -20,6 +20,7 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { projects, isValidLiveUrl, type Project } from "@/data/projects";
 import ProjectCard3D from "@/components/ProjectCard3D";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 // Featured project IDs in strategic order
 const FEATURED_IDS = [101, 102, 103, 104, 105, 107, 106];
@@ -41,6 +42,8 @@ const ProjectModal = memo(({ project, onClose }: { project: Project | null; onCl
   const { t } = useLanguage();
   const modalRef = useRef<HTMLDivElement | null>(null);
 
+  useScrollLock(!!project);
+
   useEffect(() => {
     if (!project) return;
     const prevFocus = document.activeElement as HTMLElement | null;
@@ -60,11 +63,9 @@ const ProjectModal = memo(({ project, onClose }: { project: Project | null; onCl
       }
     };
     document.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
     setTimeout(() => modalRef.current?.focus(), 50);
     return () => {
       document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
       prevFocus?.focus();
     };
   }, [project, onClose]);

@@ -4,6 +4,7 @@ import DOMPurify from "dompurify";
 import { X, ExternalLink, Github } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Button } from "@/components/ui/button";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 interface Props {
   project: null | {
@@ -21,6 +22,8 @@ interface Props {
 
 export default function ProjectModal({ project, onClose }: Props) {
   const { t } = useLanguage();
+
+  useScrollLock(!!project);
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };

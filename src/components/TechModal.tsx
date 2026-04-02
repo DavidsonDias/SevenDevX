@@ -4,6 +4,7 @@ import { Technology } from "@/utils/techData";
 import { useEffect } from "react";
 import TechIcon from "./TechIcon";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 interface TechModalProps {
   tech: Technology | null;
@@ -13,6 +14,8 @@ interface TechModalProps {
 const TechModal = ({ tech, onClose }: TechModalProps) => {
   const { t } = useLanguage();
 
+  useScrollLock(!!tech);
+
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -20,12 +23,10 @@ const TechModal = ({ tech, onClose }: TechModalProps) => {
     
     if (tech) {
       window.addEventListener("keydown", handleEsc);
-      document.body.style.overflow = "hidden";
     }
     
     return () => {
       window.removeEventListener("keydown", handleEsc);
-      document.body.style.overflow = "unset";
     };
   }, [tech, onClose]);
 

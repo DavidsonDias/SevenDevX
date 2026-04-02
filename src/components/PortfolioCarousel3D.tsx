@@ -30,6 +30,7 @@ import { ExternalLink, Github, ChevronLeft, ChevronRight, ArrowRight } from "luc
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { projects, isValidLiveUrl, type Project } from "@/data/projects";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 // ---------------------------------------------------------
 // 🧱 Constants
@@ -71,6 +72,8 @@ interface ProjectModalProps {
 const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
   const { t } = useLanguage();
   const modalRef = useRef<HTMLDivElement | null>(null);
+
+  useScrollLock(!!project);
 
   useEffect(() => {
     if (!project) return;
