@@ -42,6 +42,8 @@ const ProjectModal = memo(({ project, onClose }: { project: Project | null; onCl
   const { t } = useLanguage();
   const modalRef = useRef<HTMLDivElement | null>(null);
 
+  useScrollLock(!!project);
+
   useEffect(() => {
     if (!project) return;
     const prevFocus = document.activeElement as HTMLElement | null;
@@ -61,11 +63,9 @@ const ProjectModal = memo(({ project, onClose }: { project: Project | null; onCl
       }
     };
     document.addEventListener("keydown", onKey);
-    document.body.style.overflow = "hidden";
     setTimeout(() => modalRef.current?.focus(), 50);
     return () => {
       document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = "";
       prevFocus?.focus();
     };
   }, [project, onClose]);
