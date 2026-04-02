@@ -1,7 +1,7 @@
 /**
- * 🎴 ProjectCard3D — Subtle 3D tilt for project cards
- * Lighter version of ServiceCard3D: softer rotation, no heavy glow
- * Disabled on mobile for performance
+ * 🎴 ProjectCard3D — Enterprise-grade subtle 3D tilt for project cards
+ * Softer than ServiceCard3D: refined rotation, dynamic glow, scale on hover
+ * Disabled on mobile (replaced with scale + shadow feedback)
  */
 
 import { useRef, useState, useCallback, ReactNode } from "react";
@@ -18,7 +18,7 @@ interface ProjectCard3DProps {
 const ProjectCard3D = ({
   children,
   className = "",
-  tiltIntensity = 5,
+  tiltIntensity = 6,
   glow = true,
 }: ProjectCard3DProps) => {
   const isMobile = useIsMobile();
@@ -28,7 +28,7 @@ const ProjectCard3D = ({
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const springConfig = { stiffness: 200, damping: 25, mass: 0.5 };
+  const springConfig = { stiffness: 150, damping: 20, mass: 0.8 };
 
   const rotateX = useSpring(
     useTransform(mouseY, [-0.5, 0.5], [tiltIntensity, -tiltIntensity]),
@@ -39,14 +39,18 @@ const ProjectCard3D = ({
     springConfig
   );
 
+  const scale = useSpring(
+    useMotionValue(1),
+    { stiffness: 300, damping: 25 }
+  );
+
   const glowX = useTransform(mouseX, [-0.5, 0.5], [0, 100]);
   const glowY = useTransform(mouseY, [-0.5, 0.5], [0, 100]);
 
-  // Must call useTransform at top level, not inside JSX
   const glowBackground = useTransform(
     [glowX, glowY],
     ([x, y]) =>
-      `radial-gradient(circle at ${x}% ${y}%, rgba(255,255,255,0.08) 0%, transparent 60%)`
+      `radial-gradient(circle at ${x}% ${y}%, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.03) 40%, transparent 70%)`
   );
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -58,23 +62,38 @@ const ProjectCard3D = ({
     mouseY.set((e.clientY - centerY) / rect.height);
   }, [mouseX, mouseY]);
 
+  const handleMouseEnter = useCallback(() => {
+    setIsHovered(true);
+    scale.set(1.02);
+  }, [scale]);
+
   const handleMouseLeave = useCallback(() => {
     setIsHovered(false);
     mouseX.set(0);
     mouseY.set(0);
-  }, [mouseX, mouseY]);
+    scale.set(1);
+  }, [mouseX, mouseY, scale]);
 
+  // Mobile: simple scale + shadow on active/touch
   if (isMobile) {
-    return <div className={className}>{children}</div>;
+    return (
+      <motion.div
+        className={className}
+        whileTap={{ scale: 0.98 }}
+        transition={{ type: "spring", stiffness: 400, damping: 25 }}
+      >
+        {children}
+      </motion.div>
+    );
   }
 
   return (
     <motion.div
       ref={cardRef}
-      className={className}
-      style={{ perspective: 800, transformStyle: "preserve-3d" }}
+      className={`${className} will-change-transform`}
+      style={{ perspective: 900, transformStyle: "preserve-3d" }}
       onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHovered(true)}
+      onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       <motion.div
@@ -82,17 +101,18 @@ const ProjectCard3D = ({
         style={{
           rotateX,
           rotateY,
+          scale,
           transformStyle: "preserve-3d",
-          willChange: "transform",
         }}
+        transition={{ type: "spring", stiffness: 150, damping: 20 }}
       >
         {glow && (
           <motion.div
-            className="absolute inset-0 pointer-events-none rounded-inherit z-20"
+            className="absolute inset-0 pointer-events-none rounded-xl z-20"
             style={{
               background: glowBackground,
               opacity: isHovered ? 1 : 0,
-              transition: "opacity 0.3s ease",
+              transition: "opacity 0.4s ease",
             }}
           />
         )}
