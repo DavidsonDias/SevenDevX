@@ -4,6 +4,7 @@ import { Technology } from "@/utils/techData";
 import { useEffect } from "react";
 import TechIcon from "./TechIcon";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 interface TechModalProps {
   tech: Technology | null;
