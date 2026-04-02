@@ -4,6 +4,7 @@ import DOMPurify from "dompurify";
 import { X, ExternalLink, Github } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Button } from "@/components/ui/button";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 interface Props {
   project: null | {
