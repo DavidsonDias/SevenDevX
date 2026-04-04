@@ -3,7 +3,7 @@
  * Apple/Stripe/Vercel-inspired blog experience
  */
 
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Calendar, Clock, Eye, Search, ArrowRight, ChevronRight } from "lucide-react";
@@ -41,14 +41,6 @@ interface BlogCategory {
   slug: string;
   color: string | null;
 }
-
-const CATEGORY_LABELS: Record<string, string> = {
-  "frontend-engineering": "Frontend Engineering",
-  "backend-apis": "Backend & APIs",
-  "ux-product": "UX & Product",
-  "performance": "Performance",
-  "saas-arquitetura": "SaaS & Arquitetura",
-};
 
 const formatDate = (dateString: string | null) => {
   if (!dateString) return "";
@@ -219,6 +211,26 @@ const Blog = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
+  // Smart hide/show filter bar on scroll
+  const [filterVisible, setFilterVisible] = useState(true);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      if (currentY < 200) {
+        setFilterVisible(true);
+      } else if (currentY > lastScrollY.current + 10) {
+        setFilterVisible(false); // scrolling down
+      } else if (currentY < lastScrollY.current - 10) {
+        setFilterVisible(true); // scrolling up
+      }
+      lastScrollY.current = currentY;
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   // Debounce search
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300);
@@ -329,8 +341,12 @@ const Blog = () => {
             </div>
           </section>
 
-          {/* Filters — Sticky */}
-          <section className="py-5 border-b border-border/10 sticky top-16 bg-background/95 backdrop-blur-xl z-30">
+          {/* Filters — Smart hide on scroll down (mobile), sticky on desktop */}
+          <section
+            className={`py-5 border-b border-border/10 sticky top-16 bg-background/95 backdrop-blur-xl z-30 transition-transform duration-300 ${
+              filterVisible ? "translate-y-0" : "-translate-y-full sm:translate-y-0"
+            }`}
+          >
             <div className="container mx-auto px-6">
               <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
                 <div className="relative w-full sm:w-80">
