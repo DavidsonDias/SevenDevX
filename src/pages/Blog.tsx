@@ -58,15 +58,18 @@ const FeaturedArticle = ({ post }: { post: BlogPost }) => (
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+      whileHover={{ scale: 1.005 }}
       className="relative overflow-hidden rounded-2xl border border-border/30 bg-card/40 backdrop-blur-sm"
     >
       <div className="grid grid-cols-1 lg:grid-cols-2">
         <div className="relative aspect-video lg:aspect-auto lg:min-h-[420px] overflow-hidden">
           {post.cover_image ? (
-            <img
+            <motion.img
               src={post.cover_image}
               alt={post.title}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              className="w-full h-full object-cover"
+              whileHover={{ scale: 1.08 }}
+              transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
             />
           ) : (
             <div className="w-full h-full bg-muted/20 flex items-center justify-center">
@@ -75,6 +78,8 @@ const FeaturedArticle = ({ post }: { post: BlogPost }) => (
           )}
           <div className="absolute inset-0 bg-gradient-to-r from-transparent to-background/80 hidden lg:block" />
           <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent lg:hidden" />
+          {/* Subtle glow overlay on hover */}
+          <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
         </div>
 
         <div className="flex flex-col justify-center p-8 lg:p-12 space-y-5">
@@ -96,7 +101,7 @@ const FeaturedArticle = ({ post }: { post: BlogPost }) => (
             </span>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight tracking-tight group-hover:text-primary/90 transition-colors">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight tracking-tight group-hover:text-primary/90 transition-colors duration-300">
             {post.title}
           </h2>
 
@@ -123,7 +128,7 @@ const FeaturedArticle = ({ post }: { post: BlogPost }) => (
 
           <div className="flex items-center gap-2 text-sm font-semibold text-foreground group-hover:text-primary transition-colors pt-2">
             Ler artigo completo
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" />
           </div>
         </div>
       </div>
@@ -136,6 +141,8 @@ const ArticleCard = ({ post, index, variant = "default" }: { post: BlogPost; ind
   <motion.article
     variants={fadeInUpVariants}
     custom={index}
+    whileHover={{ y: -4 }}
+    transition={{ type: "spring", stiffness: 300, damping: 20 }}
     className={variant === "wide" ? "md:col-span-2" : ""}
   >
     <Link to={`/blog/${post.slug}`} className="group block h-full">

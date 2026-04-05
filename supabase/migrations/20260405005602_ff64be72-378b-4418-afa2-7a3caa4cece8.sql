@@ -1,0 +1,6 @@
+UPDATE blog_posts SET cover_image = 'https://phdmdnopdlfywymptimy.supabase.co/storage/v1/object/public/blog-images/arquitetura-fullstack.jpg' WHERE slug = 'arquitetura-fullstack-moderna';
+UPDATE blog_posts SET cover_image = 'https://phdmdnopdlfywymptimy.supabase.co/storage/v1/object/public/blog-images/lighthouse-performance.jpg' WHERE slug = 'lighthouse-90-sem-sacrificar-ux';
+UPDATE blog_posts SET cover_image = 'https://phdmdnopdlfywymptimy.supabase.co/storage/v1/object/public/blog-images/microinteracoes.jpg' WHERE slug = 'microinteracoes-interfaces-premium';
+UPDATE blog_posts SET cover_image = 'https://phdmdnopdlfywymptimy.supabase.co/storage/v1/object/public/blog-images/frontend-escalavel.jpg' WHERE slug = 'frontend-escalavel-react-typescript';
+UPDATE blog_posts SET cover_image = 'https://phdmdnopdlfywymptimy.supabase.co/storage/v1/object/public/blog-images/apis-modernas.jpg' WHERE slug = 'apis-modernas-padroes-robustos';
+UPDATE blog_posts SET cover_image = 'https://phdmdnopdlfywymptimy.supabase.co/storage/v1/object/public/blog-images/produto-enterprise.jpg' WHERE slug = 'produto-digital-nivel-enterprise';
