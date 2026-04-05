@@ -141,6 +141,8 @@ const ArticleCard = ({ post, index, variant = "default" }: { post: BlogPost; ind
   <motion.article
     variants={fadeInUpVariants}
     custom={index}
+    whileHover={{ y: -4 }}
+    transition={{ type: "spring", stiffness: 300, damping: 20 }}
     className={variant === "wide" ? "md:col-span-2" : ""}
   >
     <Link to={`/blog/${post.slug}`} className="group block h-full">
