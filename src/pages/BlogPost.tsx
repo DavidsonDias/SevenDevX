@@ -94,7 +94,7 @@ const BlogPost = () => {
       const transformedPost: BlogPostData = {
         ...postData,
         category: Array.isArray(postData.category) ? postData.category[0] || null : postData.category,
-        author: Array.isArray(postData.author) ? postData.author[0] || null : postData.author,
+        author: null,
       };
 
       setPost(transformedPost);

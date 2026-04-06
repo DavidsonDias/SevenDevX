@@ -333,16 +333,16 @@ const Blog = () => {
                   custom={1}
                   className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-[1.05]"
                 >
-                  Engenharia que{" "}
-                  <span className="text-muted-foreground">gera resultado</span>
+                  Construindo Produtos Digitais{" "}
+                  <span className="text-muted-foreground">com Tecnologia, Performance e Design</span>
                 </motion.h1>
                 <motion.p
                   variants={fadeInUpVariants}
                   custom={2}
                   className="text-base md:text-lg text-muted-foreground max-w-xl leading-relaxed"
                 >
-                  Artigos técnicos, estudos de caso e insights práticos sobre
-                  desenvolvimento, design e performance.
+                  Artigos, tutoriais e insights práticos sobre desenvolvimento moderno,
+                  frontend, backend e criação de produtos digitais.
                 </motion.p>
               </motion.div>
             </div>
