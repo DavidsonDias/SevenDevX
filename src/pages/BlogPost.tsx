@@ -300,7 +300,7 @@ const BlogPost = () => {
                       <p className="font-semibold text-sm">
                         {post.author?.full_name || "SevenDevX"}
                       </p>
-                      <p className="text-xs text-muted-foreground">Equipe de Engenharia</p>
+                      <p className="text-xs text-muted-foreground">Time SevenDevX</p>
                     </div>
                   </div>
                   <button
