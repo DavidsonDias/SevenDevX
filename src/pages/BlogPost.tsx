@@ -80,8 +80,7 @@ const BlogPost = () => {
         .select(`
           id, title, slug, content, excerpt, cover_image,
           published_at, read_time, views_count, tags,
-          category:blog_categories(name, slug, color),
-          author:profiles!blog_posts_author_id_fkey(full_name, avatar_url)
+          category:blog_categories(name, slug, color)
         `)
         .eq("slug", slug)
         .eq("status", "published")
@@ -95,7 +94,7 @@ const BlogPost = () => {
       const transformedPost: BlogPostData = {
         ...postData,
         category: Array.isArray(postData.category) ? postData.category[0] || null : postData.category,
-        author: Array.isArray(postData.author) ? postData.author[0] || null : postData.author,
+        author: null,
       };
 
       setPost(transformedPost);

@@ -218,19 +218,19 @@ const Blog = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  // Smart hide/show filter bar on scroll
-  const [filterVisible, setFilterVisible] = useState(true);
+  // Smart filter: hide at top, show when scrolling
+  const [filterVisible, setFilterVisible] = useState(false);
   const lastScrollY = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
       const currentY = window.scrollY;
-      if (currentY < 200) {
-        setFilterVisible(true);
-      } else if (currentY > lastScrollY.current + 10) {
-        setFilterVisible(false); // scrolling down
-      } else if (currentY < lastScrollY.current - 10) {
-        setFilterVisible(true); // scrolling up
+      if (currentY < 100) {
+        setFilterVisible(false); // at top → hide
+      } else if (currentY > lastScrollY.current + 5) {
+        setFilterVisible(true); // scrolling down → show
+      } else if (currentY < lastScrollY.current - 5) {
+        setFilterVisible(true); // scrolling up → show
       }
       lastScrollY.current = currentY;
     };
@@ -333,16 +333,16 @@ const Blog = () => {
                   custom={1}
                   className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-[1.05]"
                 >
-                  Engenharia que{" "}
-                  <span className="text-muted-foreground">gera resultado</span>
+                  Construindo Produtos Digitais{" "}
+                  <span className="text-muted-foreground">com Tecnologia, Performance e Design</span>
                 </motion.h1>
                 <motion.p
                   variants={fadeInUpVariants}
                   custom={2}
                   className="text-base md:text-lg text-muted-foreground max-w-xl leading-relaxed"
                 >
-                  Artigos técnicos, estudos de caso e insights práticos sobre
-                  desenvolvimento, design e performance.
+                  Artigos, tutoriais e insights práticos sobre desenvolvimento moderno,
+                  frontend, backend e criação de produtos digitais.
                 </motion.p>
               </motion.div>
             </div>
@@ -350,8 +350,8 @@ const Blog = () => {
 
           {/* Filters — Smart hide on scroll down (mobile), sticky on desktop */}
           <section
-            className={`py-5 border-b border-border/10 sticky top-16 bg-background/95 backdrop-blur-xl z-30 transition-transform duration-300 ${
-              filterVisible ? "translate-y-0" : "-translate-y-full sm:translate-y-0"
+            className={`py-5 border-b border-border/10 fixed top-16 left-0 right-0 bg-background/95 backdrop-blur-xl z-30 transition-all duration-300 ease-in-out ${
+              filterVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
             }`}
           >
             <div className="container mx-auto px-6">
