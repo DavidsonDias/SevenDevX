@@ -3,7 +3,7 @@
  * Apple/Stripe/Vercel-inspired blog experience
  */
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Calendar, Clock, Eye, Search, ArrowRight, ChevronRight } from "lucide-react";
