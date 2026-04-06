@@ -3,7 +3,7 @@
  * Apple/Stripe/Vercel-inspired blog experience
  */
 
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Calendar, Clock, Eye, Search, ArrowRight, ChevronRight } from "lucide-react";
@@ -218,25 +218,7 @@ const Blog = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  // Smart filter: hide at top, show when scrolling
-  const [filterVisible, setFilterVisible] = useState(false);
-  const lastScrollY = useRef(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentY = window.scrollY;
-      if (currentY < 100) {
-        setFilterVisible(false); // at top → hide
-      } else if (currentY > lastScrollY.current + 5) {
-        setFilterVisible(true); // scrolling down → show
-      } else if (currentY < lastScrollY.current - 5) {
-        setFilterVisible(true); // scrolling up → show
-      }
-      lastScrollY.current = currentY;
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  // Filter is always visible via sticky positioning — no scroll logic needed
 
   // Debounce search
   useEffect(() => {
@@ -301,7 +283,7 @@ const Blog = () => {
   return (
     <>
       <SEOHead
-        title="Blog — SevenDevX | Engenharia, Design & Performance"
+        title="Blog — SevenDevX | Desenvolvimento, Design & Performance"
         description="Artigos técnicos sobre desenvolvimento web, UX, performance e arquitetura de software. Conteúdo que gera resultado real."
         keywords="blog tecnologia, desenvolvimento web, react, typescript, ux, performance, saas"
         url="https://www.sevendevx.com/blog"
@@ -348,11 +330,9 @@ const Blog = () => {
             </div>
           </section>
 
-          {/* Filters — Smart hide on scroll down (mobile), sticky on desktop */}
+          {/* Filters — Sticky, always visible */}
           <section
-            className={`py-5 border-b border-border/10 fixed top-16 left-0 right-0 bg-background/95 backdrop-blur-xl z-30 transition-all duration-300 ease-in-out ${
-              filterVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
-            }`}
+            className="py-5 border-b border-border/10 sticky top-16 bg-background/95 backdrop-blur-xl z-30"
           >
             <div className="container mx-auto px-6">
               <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
