@@ -218,25 +218,7 @@ const Blog = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  // Smart filter: hide at top, show when scrolling
-  const [filterVisible, setFilterVisible] = useState(false);
-  const lastScrollY = useRef(0);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const currentY = window.scrollY;
-      if (currentY < 100) {
-        setFilterVisible(false); // at top → hide
-      } else if (currentY > lastScrollY.current + 5) {
-        setFilterVisible(true); // scrolling down → show
-      } else if (currentY < lastScrollY.current - 5) {
-        setFilterVisible(true); // scrolling up → show
-      }
-      lastScrollY.current = currentY;
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  // Filter is always visible via sticky positioning — no scroll logic needed
 
   // Debounce search
   useEffect(() => {
