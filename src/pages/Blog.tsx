@@ -218,19 +218,19 @@ const Blog = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  // Smart hide/show filter bar on scroll
-  const [filterVisible, setFilterVisible] = useState(true);
+  // Smart filter: hide at top, show when scrolling
+  const [filterVisible, setFilterVisible] = useState(false);
   const lastScrollY = useRef(0);
 
   useEffect(() => {
     const handleScroll = () => {
       const currentY = window.scrollY;
-      if (currentY < 200) {
-        setFilterVisible(true);
-      } else if (currentY > lastScrollY.current + 10) {
-        setFilterVisible(false); // scrolling down
-      } else if (currentY < lastScrollY.current - 10) {
-        setFilterVisible(true); // scrolling up
+      if (currentY < 100) {
+        setFilterVisible(false); // at top → hide
+      } else if (currentY > lastScrollY.current + 5) {
+        setFilterVisible(true); // scrolling down → show
+      } else if (currentY < lastScrollY.current - 5) {
+        setFilterVisible(true); // scrolling up → show
       }
       lastScrollY.current = currentY;
     };
