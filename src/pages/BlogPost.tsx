@@ -366,7 +366,7 @@ const BlogPost = () => {
                   <div>
                     <p className="font-bold">SevenDevX</p>
                     <p className="text-sm text-muted-foreground mt-0.5">
-                      Engenharia de software, design de produto e performance web.
+                      Desenvolvimento de software, design de interfaces e criação de produtos digitais com foco em performance.
                     </p>
                     <Link
                       to="/#contact"

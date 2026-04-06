@@ -424,7 +424,7 @@ const ProjectsHub = () => {
                   Todos os Projetos
                 </h1>
                 <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                  Explorando soluções reais com engenharia e design de alto nível
+                  Explorando soluções reais com tecnologia e design de alto nível
                 </p>
 
                 <div className="flex items-center justify-center gap-4 pt-4 text-sm text-muted-foreground">

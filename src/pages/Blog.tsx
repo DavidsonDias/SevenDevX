@@ -283,7 +283,7 @@ const Blog = () => {
   return (
     <>
       <SEOHead
-        title="Blog — SevenDevX | Engenharia, Design & Performance"
+        title="Blog — SevenDevX | Desenvolvimento, Design & Performance"
         description="Artigos técnicos sobre desenvolvimento web, UX, performance e arquitetura de software. Conteúdo que gera resultado real."
         keywords="blog tecnologia, desenvolvimento web, react, typescript, ux, performance, saas"
         url="https://www.sevendevx.com/blog"
