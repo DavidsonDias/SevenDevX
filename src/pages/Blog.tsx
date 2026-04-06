@@ -350,8 +350,8 @@ const Blog = () => {
 
           {/* Filters — Smart hide on scroll down (mobile), sticky on desktop */}
           <section
-            className={`py-5 border-b border-border/10 sticky top-16 bg-background/95 backdrop-blur-xl z-30 transition-transform duration-300 ${
-              filterVisible ? "translate-y-0" : "-translate-y-full sm:translate-y-0"
+            className={`py-5 border-b border-border/10 fixed top-16 left-0 right-0 bg-background/95 backdrop-blur-xl z-30 transition-all duration-300 ease-in-out ${
+              filterVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
             }`}
           >
             <div className="container mx-auto px-6">
