@@ -330,11 +330,9 @@ const Blog = () => {
             </div>
           </section>
 
-          {/* Filters — Smart hide on scroll down (mobile), sticky on desktop */}
+          {/* Filters — Sticky, always visible */}
           <section
-            className={`py-5 border-b border-border/10 fixed top-16 left-0 right-0 bg-background/95 backdrop-blur-xl z-30 transition-all duration-300 ease-in-out ${
-              filterVisible ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0 pointer-events-none"
-            }`}
+            className="py-5 border-b border-border/10 sticky top-16 bg-background/95 backdrop-blur-xl z-30"
           >
             <div className="container mx-auto px-6">
               <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
