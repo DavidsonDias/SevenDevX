@@ -196,7 +196,7 @@ const ProjectCard = memo(({ project, index, isFeatured, isHero, onOpenModal }: {
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black/60 hidden md:block" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent md:hidden" />
                 <div className="absolute top-4 left-4 flex items-center gap-1.5 px-4 py-1.5 bg-primary rounded-full text-xs font-bold text-primary-foreground z-10 shadow-lg shadow-primary/40">
-                  <Sparkles className="w-3.5 h-3.5" /> Destaque Principal
+                  <Sparkles className="w-3.5 h-3.5" /> {t.projectsHub.mainFeatured}
                 </div>
                 {project.tags && project.tags.length > 0 && (
                   <div className="absolute top-4 right-4 flex gap-1.5 z-10">
@@ -497,7 +497,7 @@ const ProjectsHub = () => {
                   >
                     <p className="text-lg">{t.projects.noResults}</p>
                     <Button variant="outline" className="mt-4" onClick={clearFilters}>
-                      Limpar filtros
+                      {t.projectsHub.clearFilters}
                     </Button>
                   </motion.div>
                 ) : (
