@@ -554,6 +554,47 @@ export interface Translations {
     testimonialFrom: string;
   };
   
+  // Blog
+  blog: {
+    heroLabel: string;
+    heroTitle: string;
+    heroTitleHighlight: string;
+    heroSubtitle: string;
+    featuredLabel: string;
+    readFullArticle: string;
+    searchPlaceholder: string;
+    allCategories: string;
+    noResults: string;
+    noResultsFor: string;
+    newArticlesSoon: string;
+    ctaTitle: string;
+    ctaSubtitle: string;
+    ctaButton: string;
+    // BlogPost
+    backToBlog: string;
+    readingTime: string;
+    views: string;
+    share: string;
+    authorTeam: string;
+    authorDescription: string;
+    contactLink: string;
+    continuReading: string;
+    likedContent: string;
+    likedContentSubtitle: string;
+  };
+
+  // ProjectsHub
+  projectsHub: {
+    heroTitle: string;
+    heroSubtitle: string;
+    backButton: string;
+    projects: string;
+    highlights: string;
+    clearFilters: string;
+    featured: string;
+    mainFeatured: string;
+  };
+
   // PWA & App
   pwa: {
     installApp: string;
