@@ -104,7 +104,7 @@ const ProjectModal = memo(({ project, onClose }: { project: Project | null; onCl
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               {FEATURED_IDS.includes(project.id) && (
                 <div className="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1 bg-primary/90 rounded-full text-xs font-semibold text-primary-foreground">
-                  <Sparkles className="w-3 h-3" /> Destaque
+                  <Sparkles className="w-3 h-3" /> {t.projectsHub.featured}
                 </div>
               )}
             </div>
@@ -281,7 +281,7 @@ const ProjectCard = memo(({ project, index, isFeatured, isHero, onOpenModal }: {
 
             {isFeatured && (
               <div className="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1 bg-primary/90 rounded-full text-xs font-semibold text-primary-foreground z-10">
-                <Sparkles className="w-3 h-3" /> Destaque
+                <Sparkles className="w-3 h-3" /> {t.projectsHub.featured}
               </div>
             )}
 
