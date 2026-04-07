@@ -14,6 +14,9 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 import AIChatbot from "@/components/AIChatbot";
 import SEOHead from "@/components/SEOHead";
 import { BlogPostSkeleton } from "@/components/SkeletonLoader";
+import { Container } from "@/components/layout/Container";
+import { Section } from "@/components/layout/Section";
+import { useLanguage } from "@/i18n/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -39,9 +42,10 @@ interface BlogPostData {
   } | null;
 }
 
-const formatDate = (dateString: string | null) => {
+const formatDate = (dateString: string | null, lang: string) => {
   if (!dateString) return "";
-  return new Date(dateString).toLocaleDateString("pt-BR", {
+  const locale = lang === "pt" ? "pt-BR" : lang === "es" ? "es-ES" : "en-US";
+  return new Date(dateString).toLocaleDateString(locale, {
     day: "2-digit",
     month: "long",
     year: "numeric",
@@ -51,6 +55,7 @@ const formatDate = (dateString: string | null) => {
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
   const { toast } = useToast();
+  const { t, language } = useLanguage();
   const [post, setPost] = useState<BlogPostData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [relatedPosts, setRelatedPosts] = useState<BlogPostData[]>([]);
@@ -149,8 +154,10 @@ const BlogPost = () => {
     return (
       <div className="min-h-screen bg-background text-foreground">
         <Header />
-        <main className="pt-20 container mx-auto px-6 py-20 max-w-3xl">
-          <BlogPostSkeleton />
+        <main className="pt-20">
+          <Container narrow className="py-20">
+            <BlogPostSkeleton />
+          </Container>
         </main>
         <Footer />
       </div>
@@ -161,19 +168,21 @@ const BlogPost = () => {
     return (
       <div className="min-h-screen bg-background text-foreground">
         <Header />
-        <main className="pt-20 container mx-auto px-6 py-20 text-center">
-          <div className="text-6xl mb-4 opacity-20">📝</div>
-          <h1 className="text-3xl font-bold mb-4">Artigo não encontrado</h1>
-          <p className="text-muted-foreground mb-8">
-            O artigo que você procura não existe ou foi removido.
-          </p>
-          <Link
-            to="/blog"
-            className="inline-flex items-center gap-2 border-2 border-foreground px-6 py-3 text-sm tracking-widest uppercase font-semibold hover:bg-foreground hover:text-background transition-all"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Voltar ao Blog
-          </Link>
+        <main className="pt-20">
+          <Container className="py-20 text-center">
+            <div className="text-6xl mb-4 opacity-20">📝</div>
+            <h1 className="text-3xl font-bold mb-4">{t.blog.noResults}</h1>
+            <p className="text-muted-foreground mb-8">
+              O artigo que você procura não existe ou foi removido.
+            </p>
+            <Link
+              to="/blog"
+              className="inline-flex items-center gap-2 border-2 border-foreground px-6 py-3 text-sm tracking-widest uppercase font-semibold hover:bg-foreground hover:text-background transition-all"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              {t.blog.backToBlog}
+            </Link>
+          </Container>
         </main>
         <Footer />
       </div>
@@ -225,7 +234,7 @@ const BlogPost = () => {
         <main className="pt-20" id="article-content">
           {/* Hero Image */}
           {post.cover_image && (
-            <div className="relative h-[35vh] md:h-[45vh] overflow-hidden">
+            <div className="relative h-[35vh] md:h-[45vh] w-full overflow-hidden">
               <img
                 src={post.cover_image}
                 alt={post.title}
@@ -236,8 +245,8 @@ const BlogPost = () => {
           )}
 
           {/* Article */}
-          <article className="container mx-auto px-6 py-12">
-            <div className="max-w-[700px] mx-auto">
+          <article>
+            <Container narrow className="py-12">
               {/* Back */}
               <motion.div
                 initial={{ opacity: 0, x: -10 }}
@@ -249,7 +258,7 @@ const BlogPost = () => {
                   className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm"
                 >
                   <ArrowLeft className="w-4 h-4" />
-                  Voltar ao Blog
+                  {t.blog.backToBlog}
                 </Link>
               </motion.div>
 
@@ -278,15 +287,15 @@ const BlogPost = () => {
                 <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-8">
                   <span className="flex items-center gap-1.5">
                     <Calendar className="w-4 h-4" />
-                    {formatDate(post.published_at)}
+                    {formatDate(post.published_at, language)}
                   </span>
                   <span className="flex items-center gap-1.5">
                     <Clock className="w-4 h-4" />
-                    {post.read_time || 5} min de leitura
+                    {post.read_time || 5} {t.blog.readingTime}
                   </span>
                   <span className="flex items-center gap-1.5">
                     <Eye className="w-4 h-4" />
-                    {post.views_count || 0} visualizações
+                    {post.views_count || 0} {t.blog.views}
                   </span>
                 </div>
 
@@ -300,7 +309,7 @@ const BlogPost = () => {
                       <p className="font-semibold text-sm">
                         {post.author?.full_name || "SevenDevX"}
                       </p>
-                      <p className="text-xs text-muted-foreground">Time SevenDevX</p>
+                      <p className="text-xs text-muted-foreground">{t.blog.authorTeam}</p>
                     </div>
                   </div>
                   <button
@@ -308,7 +317,7 @@ const BlogPost = () => {
                     className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm"
                   >
                     <Share2 className="w-4 h-4" />
-                    Compartilhar
+                    {t.blog.share}
                   </button>
                 </div>
               </motion.header>
@@ -366,26 +375,26 @@ const BlogPost = () => {
                   <div>
                     <p className="font-bold">SevenDevX</p>
                     <p className="text-sm text-muted-foreground mt-0.5">
-                      Desenvolvimento de software, design de interfaces e criação de produtos digitais com foco em performance.
+                      {t.blog.authorDescription}
                     </p>
                     <Link
                       to="/#contact"
                       className="text-primary text-sm font-medium mt-1 inline-flex items-center gap-1 hover:underline"
                     >
-                      Entre em contato <ArrowRight className="w-3 h-3" />
+                      {t.blog.contactLink} <ArrowRight className="w-3 h-3" />
                     </Link>
                   </div>
                 </div>
               </div>
-            </div>
+            </Container>
           </article>
 
           {/* Related Posts */}
           {relatedPosts.length > 0 && (
-            <section className="py-16 border-t border-border/10">
-              <div className="container mx-auto px-6">
+            <Section className="border-t border-border/10">
+              <Container>
                 <h2 className="text-xl md:text-2xl font-bold mb-8 tracking-tight">
-                  Continue lendo
+                  {t.blog.continuReading}
                 </h2>
                 <div className="grid md:grid-cols-3 gap-6">
                   {relatedPosts.map((relatedPost) => (
@@ -417,34 +426,33 @@ const BlogPost = () => {
                     </Link>
                   ))}
                 </div>
-              </div>
-            </section>
+              </Container>
+            </Section>
           )}
 
           {/* CTA */}
-          <section className="py-16 border-t border-border/10">
-            <div className="container mx-auto px-6 text-center">
+          <Section className="border-t border-border/10">
+            <Container className="text-center">
               <h2 className="text-2xl md:text-3xl font-bold mb-4 tracking-tight">
-                Gostou do conteúdo?
+                {t.blog.likedContent}
               </h2>
               <p className="text-muted-foreground mb-8 text-sm max-w-md mx-auto">
-                Entre em contato para transformar suas ideias em realidade.
+                {t.blog.likedContentSubtitle}
               </p>
               <Link
                 to="/#contact"
                 className="inline-flex items-center gap-2 border-2 border-foreground px-8 py-3.5 text-xs tracking-widest uppercase font-semibold hover:bg-foreground hover:text-background transition-all duration-300"
               >
-                Fale Conosco
+                {t.blog.ctaButton}
               </Link>
-            </div>
-          </section>
+            </Container>
+          </Section>
         </main>
 
         <Footer />
         <WhatsAppButton />
         <AIChatbot />
 
-        {/* JSON-LD Article Schema */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}

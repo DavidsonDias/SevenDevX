@@ -554,6 +554,47 @@ export interface Translations {
     testimonialFrom: string;
   };
   
+  // Blog
+  blog: {
+    heroLabel: string;
+    heroTitle: string;
+    heroTitleHighlight: string;
+    heroSubtitle: string;
+    featuredLabel: string;
+    readFullArticle: string;
+    searchPlaceholder: string;
+    allCategories: string;
+    noResults: string;
+    noResultsFor: string;
+    newArticlesSoon: string;
+    ctaTitle: string;
+    ctaSubtitle: string;
+    ctaButton: string;
+    // BlogPost
+    backToBlog: string;
+    readingTime: string;
+    views: string;
+    share: string;
+    authorTeam: string;
+    authorDescription: string;
+    contactLink: string;
+    continuReading: string;
+    likedContent: string;
+    likedContentSubtitle: string;
+  };
+
+  // ProjectsHub
+  projectsHub: {
+    heroTitle: string;
+    heroSubtitle: string;
+    backButton: string;
+    projects: string;
+    highlights: string;
+    clearFilters: string;
+    featured: string;
+    mainFeatured: string;
+  };
+
   // PWA & App
   pwa: {
     installApp: string;
@@ -1457,6 +1498,42 @@ export const translations: Record<Language, Translations> = {
       closeModal: "Fechar modal",
       testimonialFrom: "Depoimento de",
     },
+    blog: {
+      heroLabel: "Blog & Insights",
+      heroTitle: "Construindo Produtos Digitais",
+      heroTitleHighlight: "com Tecnologia, Performance e Design",
+      heroSubtitle: "Artigos, tutoriais e insights práticos sobre desenvolvimento moderno, frontend, backend e criação de produtos digitais.",
+      featuredLabel: "Artigo em Destaque",
+      readFullArticle: "Ler artigo completo",
+      searchPlaceholder: "Buscar artigos...",
+      allCategories: "Todos",
+      noResults: "Nenhum artigo encontrado",
+      noResultsFor: "Sem resultados para",
+      newArticlesSoon: "Novos artigos em breve.",
+      ctaTitle: "Quer conteúdo exclusivo?",
+      ctaSubtitle: "Entre em contato e descubra como podemos ajudar seu projeto a crescer.",
+      ctaButton: "Fale Conosco",
+      backToBlog: "Voltar ao Blog",
+      readingTime: "min de leitura",
+      views: "visualizações",
+      share: "Compartilhar",
+      authorTeam: "Time SevenDevX",
+      authorDescription: "Desenvolvimento de software, design de interfaces e criação de produtos digitais com foco em performance.",
+      contactLink: "Entre em contato",
+      continuReading: "Continue lendo",
+      likedContent: "Gostou do conteúdo?",
+      likedContentSubtitle: "Entre em contato para transformar suas ideias em realidade.",
+    },
+    projectsHub: {
+      heroTitle: "Todos os Projetos",
+      heroSubtitle: "Explorando soluções reais com tecnologia e design de alto nível",
+      backButton: "Voltar",
+      projects: "projetos",
+      highlights: "destaques",
+      clearFilters: "Limpar filtros",
+      featured: "Destaque",
+      mainFeatured: "Destaque Principal",
+    },
     pwa: {
       installApp: "Instalar aplicativo",
       updateAvailable: "Atualização disponível",
@@ -2356,6 +2433,42 @@ export const translations: Record<Language, Translations> = {
       closeModal: "Close modal",
       testimonialFrom: "Testimonial from",
     },
+    blog: {
+      heroLabel: "Blog & Insights",
+      heroTitle: "Building Digital Products",
+      heroTitleHighlight: "with Technology, Performance and Design",
+      heroSubtitle: "Articles, tutorials and practical insights on modern development, frontend, backend and digital product creation.",
+      featuredLabel: "Featured Article",
+      readFullArticle: "Read full article",
+      searchPlaceholder: "Search articles...",
+      allCategories: "All",
+      noResults: "No articles found",
+      noResultsFor: "No results for",
+      newArticlesSoon: "New articles coming soon.",
+      ctaTitle: "Want exclusive content?",
+      ctaSubtitle: "Get in touch and discover how we can help your project grow.",
+      ctaButton: "Contact Us",
+      backToBlog: "Back to Blog",
+      readingTime: "min read",
+      views: "views",
+      share: "Share",
+      authorTeam: "SevenDevX Team",
+      authorDescription: "Software development, interface design and digital product creation focused on performance.",
+      contactLink: "Get in touch",
+      continuReading: "Continue reading",
+      likedContent: "Enjoyed this content?",
+      likedContentSubtitle: "Get in touch to turn your ideas into reality.",
+    },
+    projectsHub: {
+      heroTitle: "All Projects",
+      heroSubtitle: "Exploring real solutions with high-level technology and design",
+      backButton: "Back",
+      projects: "projects",
+      highlights: "highlights",
+      clearFilters: "Clear filters",
+      featured: "Featured",
+      mainFeatured: "Main Featured",
+    },
     pwa: {
       installApp: "Install app",
       updateAvailable: "Update available",
@@ -3254,6 +3367,42 @@ export const translations: Record<Language, Translations> = {
       collapseSection: "Colapsar sección",
       closeModal: "Cerrar modal",
       testimonialFrom: "Testimonio de",
+    },
+    blog: {
+      heroLabel: "Blog & Insights",
+      heroTitle: "Construyendo Productos Digitales",
+      heroTitleHighlight: "con Tecnología, Rendimiento y Diseño",
+      heroSubtitle: "Artículos, tutoriales e insights prácticos sobre desarrollo moderno, frontend, backend y creación de productos digitales.",
+      featuredLabel: "Artículo Destacado",
+      readFullArticle: "Leer artículo completo",
+      searchPlaceholder: "Buscar artículos...",
+      allCategories: "Todos",
+      noResults: "No se encontraron artículos",
+      noResultsFor: "Sin resultados para",
+      newArticlesSoon: "Nuevos artículos próximamente.",
+      ctaTitle: "¿Quieres contenido exclusivo?",
+      ctaSubtitle: "Contáctenos y descubra cómo podemos ayudar a su proyecto a crecer.",
+      ctaButton: "Contáctenos",
+      backToBlog: "Volver al Blog",
+      readingTime: "min de lectura",
+      views: "visualizaciones",
+      share: "Compartir",
+      authorTeam: "Equipo SevenDevX",
+      authorDescription: "Desarrollo de software, diseño de interfaces y creación de productos digitales enfocados en rendimiento.",
+      contactLink: "Contáctenos",
+      continuReading: "Seguir leyendo",
+      likedContent: "¿Te gustó el contenido?",
+      likedContentSubtitle: "Contáctenos para transformar sus ideas en realidad.",
+    },
+    projectsHub: {
+      heroTitle: "Todos los Proyectos",
+      heroSubtitle: "Explorando soluciones reales con tecnología y diseño de alto nivel",
+      backButton: "Volver",
+      projects: "proyectos",
+      highlights: "destacados",
+      clearFilters: "Limpiar filtros",
+      featured: "Destacado",
+      mainFeatured: "Destacado Principal",
     },
     pwa: {
       installApp: "Instalar aplicación",
