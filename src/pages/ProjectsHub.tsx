@@ -403,7 +403,7 @@ const ProjectsHub = () => {
             <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background to-background" />
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] opacity-50" />
 
-            <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="relative z-10 w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -417,23 +417,23 @@ const ProjectsHub = () => {
                   className="text-muted-foreground hover:text-foreground mb-2"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
-                  Voltar
+                  {t.projectsHub.backButton}
                 </Button>
 
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-orbitron font-bold tracking-tight">
-                  Todos os Projetos
+                <h1 className="text-[clamp(1.8rem,5vw,4.5rem)] font-orbitron font-bold tracking-tight">
+                  {t.projectsHub.heroTitle}
                 </h1>
                 <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                  Explorando soluções reais com tecnologia e design de alto nível
+                  {t.projectsHub.heroSubtitle}
                 </p>
 
                 <div className="flex items-center justify-center gap-4 pt-4 text-sm text-muted-foreground">
                   <span className="flex items-center gap-2">
                     <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                    {projects.length} projetos
+                    {projects.length} {t.projectsHub.projects}
                   </span>
                   <span>•</span>
-                  <span>{FEATURED_IDS.length} destaques</span>
+                  <span>{FEATURED_IDS.length} {t.projectsHub.highlights}</span>
                 </div>
               </motion.div>
             </div>
@@ -447,7 +447,7 @@ const ProjectsHub = () => {
                 : "bg-background/60 backdrop-blur-lg border-transparent"
             }`}
           >
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+            <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
               <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide pb-1 -mb-1">
                 <Badge
                   variant={selectedFilters.length === 0 ? "default" : "outline"}
@@ -477,7 +477,7 @@ const ProjectsHub = () => {
                 ))}
 
                 <span className="text-xs text-muted-foreground whitespace-nowrap flex-shrink-0 pl-2">
-                  {filtered.length} projeto{filtered.length !== 1 ? "s" : ""}
+                  {filtered.length} {t.projectsHub.projects}
                 </span>
               </div>
             </div>
@@ -485,7 +485,7 @@ const ProjectsHub = () => {
 
           {/* Grid */}
           <section id="projects-grid" className="py-10 sm:py-16 md:py-24">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
               <AnimatePresence mode="wait">
                 {filtered.length === 0 ? (
                   <motion.div
