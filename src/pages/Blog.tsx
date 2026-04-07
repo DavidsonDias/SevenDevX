@@ -13,6 +13,8 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 import AIChatbot from "@/components/AIChatbot";
 import SEOHead from "@/components/SEOHead";
 import { BlogPostSkeleton } from "@/components/SkeletonLoader";
+import { Container } from "@/components/layout/Container";
+import { Section } from "@/components/layout/Section";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useAnalytics } from "@/hooks/useAnalytics";
@@ -42,9 +44,10 @@ interface BlogCategory {
   color: string | null;
 }
 
-const formatDate = (dateString: string | null) => {
+const formatDate = (dateString: string | null, lang: string) => {
   if (!dateString) return "";
-  return new Date(dateString).toLocaleDateString("pt-BR", {
+  const locale = lang === "pt" ? "pt-BR" : lang === "es" ? "es-ES" : "en-US";
+  return new Date(dateString).toLocaleDateString(locale, {
     day: "2-digit",
     month: "short",
     year: "numeric",
@@ -52,163 +55,168 @@ const formatDate = (dateString: string | null) => {
 };
 
 /* ── Featured Article (Hero) ── */
-const FeaturedArticle = ({ post }: { post: BlogPost }) => (
-  <Link to={`/blog/${post.slug}`} className="group block">
-    <motion.article
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-      whileHover={{ scale: 1.005 }}
-      className="relative overflow-hidden rounded-2xl border border-border/30 bg-card/40 backdrop-blur-sm"
-    >
-      <div className="grid grid-cols-1 lg:grid-cols-2">
-        <div className="relative aspect-video lg:aspect-auto lg:min-h-[420px] overflow-hidden">
-          {post.cover_image ? (
-            <motion.img
-              src={post.cover_image}
-              alt={post.title}
-              className="w-full h-full object-cover"
-              whileHover={{ scale: 1.08 }}
-              transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-            />
-          ) : (
-            <div className="w-full h-full bg-muted/20 flex items-center justify-center">
-              <span className="text-6xl opacity-10">✍️</span>
-            </div>
-          )}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent to-background/80 hidden lg:block" />
-          <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent lg:hidden" />
-          {/* Subtle glow overlay on hover */}
-          <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-        </div>
+const FeaturedArticle = ({ post, lang }: { post: BlogPost; lang: string }) => {
+  const { t } = useLanguage();
+  return (
+    <Link to={`/blog/${post.slug}`} className="group block">
+      <motion.article
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+        whileHover={{ scale: 1.005 }}
+        className="relative overflow-hidden rounded-2xl border border-border/30 bg-card/40 backdrop-blur-sm"
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-2">
+          <div className="relative aspect-video lg:aspect-auto lg:min-h-[420px] overflow-hidden">
+            {post.cover_image ? (
+              <motion.img
+                src={post.cover_image}
+                alt={post.title}
+                className="w-full h-full object-cover"
+                whileHover={{ scale: 1.08 }}
+                transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
+              />
+            ) : (
+              <div className="w-full h-full bg-muted/20 flex items-center justify-center">
+                <span className="text-6xl opacity-10">✍️</span>
+              </div>
+            )}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-background/80 hidden lg:block" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent lg:hidden" />
+            <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+          </div>
 
-        <div className="flex flex-col justify-center p-8 lg:p-12 space-y-5">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col justify-center p-6 sm:p-8 lg:p-12 space-y-5">
+            <div className="flex items-center gap-3">
+              {post.category && (
+                <span
+                  className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider"
+                  style={{
+                    backgroundColor: `${post.category.color}15`,
+                    color: post.category.color,
+                    border: `1px solid ${post.category.color}30`,
+                  }}
+                >
+                  {post.category.name}
+                </span>
+              )}
+              <span className="text-xs text-muted-foreground uppercase tracking-wider">
+                {t.blog.featuredLabel}
+              </span>
+            </div>
+
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight tracking-tight group-hover:text-primary/90 transition-colors duration-300">
+              {post.title}
+            </h2>
+
+            {post.excerpt && (
+              <p className="text-muted-foreground leading-relaxed line-clamp-3 text-sm lg:text-base">
+                {post.excerpt}
+              </p>
+            )}
+
+            <div className="flex items-center gap-5 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <Calendar className="w-3.5 h-3.5" />
+                {formatDate(post.published_at, lang)}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5" />
+                {post.read_time || 5} min
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Eye className="w-3.5 h-3.5" />
+                {post.views_count || 0}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2 text-sm font-semibold text-foreground group-hover:text-primary transition-colors pt-2">
+              {t.blog.readFullArticle}
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" />
+            </div>
+          </div>
+        </div>
+      </motion.article>
+    </Link>
+  );
+};
+
+/* ── Article Card (Grid) ── */
+const ArticleCard = ({ post, index, variant = "default", lang }: { post: BlogPost; index: number; variant?: "default" | "wide"; lang: string }) => {
+  const { t } = useLanguage();
+  return (
+    <motion.article
+      variants={fadeInUpVariants}
+      custom={index}
+      whileHover={{ y: -4 }}
+      transition={{ type: "spring", stiffness: 300, damping: 20 }}
+      className={variant === "wide" ? "md:col-span-2" : ""}
+    >
+      <Link to={`/blog/${post.slug}`} className="group block h-full">
+        <div className={`h-full overflow-hidden rounded-xl border border-border/20 bg-card/30 backdrop-blur-sm hover:border-border/40 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 ${
+          variant === "wide" ? "grid grid-cols-1 md:grid-cols-2" : ""
+        }`}>
+          <div className={`overflow-hidden bg-muted/10 ${variant === "wide" ? "aspect-video md:aspect-auto" : "aspect-video"}`}>
+            {post.cover_image ? (
+              <img
+                src={post.cover_image}
+                alt={post.title}
+                loading="lazy"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center min-h-[180px]">
+                <span className="text-4xl opacity-10">📝</span>
+              </div>
+            )}
+          </div>
+
+          <div className="p-5 sm:p-6 space-y-3 flex flex-col justify-center">
             {post.category && (
               <span
-                className="px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider"
+                className="self-start px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider"
                 style={{
-                  backgroundColor: `${post.category.color}15`,
+                  backgroundColor: `${post.category.color}12`,
                   color: post.category.color,
-                  border: `1px solid ${post.category.color}30`,
                 }}
               >
                 {post.category.name}
               </span>
             )}
-            <span className="text-xs text-muted-foreground uppercase tracking-wider">
-              Artigo em Destaque
-            </span>
-          </div>
 
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight tracking-tight group-hover:text-primary/90 transition-colors duration-300">
-            {post.title}
-          </h2>
+            <h3 className="text-lg font-bold leading-snug group-hover:text-primary/90 transition-colors line-clamp-2">
+              {post.title}
+            </h3>
 
-          {post.excerpt && (
-            <p className="text-muted-foreground leading-relaxed line-clamp-3 text-sm lg:text-base">
-              {post.excerpt}
-            </p>
-          )}
+            {post.excerpt && (
+              <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">
+                {post.excerpt}
+              </p>
+            )}
 
-          <div className="flex items-center gap-5 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5" />
-              {formatDate(post.published_at)}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Clock className="w-3.5 h-3.5" />
-              {post.read_time || 5} min
-            </span>
-            <span className="flex items-center gap-1.5">
-              <Eye className="w-3.5 h-3.5" />
-              {post.views_count || 0}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2 text-sm font-semibold text-foreground group-hover:text-primary transition-colors pt-2">
-            Ler artigo completo
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" />
+            <div className="flex items-center justify-between pt-3 border-t border-border/10 text-xs text-muted-foreground">
+              <div className="flex items-center gap-3">
+                <span className="flex items-center gap-1">
+                  <Calendar className="w-3 h-3" />
+                  {formatDate(post.published_at, lang)}
+                </span>
+                <span className="flex items-center gap-1">
+                  <Clock className="w-3 h-3" />
+                  {post.read_time || 5} min
+                </span>
+              </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground/50 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+            </div>
           </div>
         </div>
-      </div>
+      </Link>
     </motion.article>
-  </Link>
-);
-
-/* ── Article Card (Grid) ── */
-const ArticleCard = ({ post, index, variant = "default" }: { post: BlogPost; index: number; variant?: "default" | "wide" }) => (
-  <motion.article
-    variants={fadeInUpVariants}
-    custom={index}
-    whileHover={{ y: -4 }}
-    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-    className={variant === "wide" ? "md:col-span-2" : ""}
-  >
-    <Link to={`/blog/${post.slug}`} className="group block h-full">
-      <div className={`h-full overflow-hidden rounded-xl border border-border/20 bg-card/30 backdrop-blur-sm hover:border-border/40 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 ${
-        variant === "wide" ? "grid grid-cols-1 md:grid-cols-2" : ""
-      }`}>
-        <div className={`overflow-hidden bg-muted/10 ${variant === "wide" ? "aspect-video md:aspect-auto" : "aspect-video"}`}>
-          {post.cover_image ? (
-            <img
-              src={post.cover_image}
-              alt={post.title}
-              loading="lazy"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center min-h-[180px]">
-              <span className="text-4xl opacity-10">📝</span>
-            </div>
-          )}
-        </div>
-
-        <div className="p-5 sm:p-6 space-y-3 flex flex-col justify-center">
-          {post.category && (
-            <span
-              className="self-start px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider"
-              style={{
-                backgroundColor: `${post.category.color}12`,
-                color: post.category.color,
-              }}
-            >
-              {post.category.name}
-            </span>
-          )}
-
-          <h3 className="text-lg font-bold leading-snug group-hover:text-primary/90 transition-colors line-clamp-2">
-            {post.title}
-          </h3>
-
-          {post.excerpt && (
-            <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">
-              {post.excerpt}
-            </p>
-          )}
-
-          <div className="flex items-center justify-between pt-3 border-t border-border/10 text-xs text-muted-foreground">
-            <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1">
-                <Calendar className="w-3 h-3" />
-                {formatDate(post.published_at)}
-              </span>
-              <span className="flex items-center gap-1">
-                <Clock className="w-3 h-3" />
-                {post.read_time || 5} min
-              </span>
-            </div>
-            <ChevronRight className="w-4 h-4 text-muted-foreground/50 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
-          </div>
-        </div>
-      </div>
-    </Link>
-  </motion.article>
-);
+  );
+};
 
 /* ── Main Blog Page ── */
 const Blog = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   useAnalytics();
 
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -218,9 +226,6 @@ const Blog = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
-  // Filter is always visible via sticky positioning — no scroll logic needed
-
-  // Debounce search
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300);
     return () => clearTimeout(timer);
@@ -295,8 +300,8 @@ const Blog = () => {
 
         <main className="pt-20">
           {/* Hero */}
-          <section className="py-16 md:py-24 border-b border-border/10">
-            <div className="container mx-auto px-6">
+          <Section className="border-b border-border/10 py-16 md:py-24">
+            <Container>
               <motion.div
                 initial="hidden"
                 animate="visible"
@@ -308,39 +313,36 @@ const Blog = () => {
                   custom={0}
                   className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-4 block"
                 >
-                  Blog & Insights
+                  {t.blog.heroLabel}
                 </motion.span>
                 <motion.h1
                   variants={fadeInUpVariants}
                   custom={1}
-                  className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 tracking-tight leading-[1.05]"
+                  className="text-[clamp(2rem,5vw,4.5rem)] font-bold mb-6 tracking-tight leading-[1.05]"
                 >
-                  Construindo Produtos Digitais{" "}
-                  <span className="text-muted-foreground">com Tecnologia, Performance e Design</span>
+                  {t.blog.heroTitle}{" "}
+                  <span className="text-muted-foreground">{t.blog.heroTitleHighlight}</span>
                 </motion.h1>
                 <motion.p
                   variants={fadeInUpVariants}
                   custom={2}
                   className="text-base md:text-lg text-muted-foreground max-w-xl leading-relaxed"
                 >
-                  Artigos, tutoriais e insights práticos sobre desenvolvimento moderno,
-                  frontend, backend e criação de produtos digitais.
+                  {t.blog.heroSubtitle}
                 </motion.p>
               </motion.div>
-            </div>
-          </section>
+            </Container>
+          </Section>
 
-          {/* Filters — Sticky, always visible */}
-          <section
-            className="py-5 border-b border-border/10 sticky top-16 bg-background/95 backdrop-blur-xl z-30"
-          >
-            <div className="container mx-auto px-6">
+          {/* Filters — Sticky */}
+          <div className="py-5 border-b border-border/10 sticky top-16 bg-background/95 backdrop-blur-xl z-30">
+            <Container>
               <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
                 <div className="relative w-full sm:w-80">
                   <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
                   <input
                     type="text"
-                    placeholder="Buscar artigos..."
+                    placeholder={t.blog.searchPlaceholder}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full pl-10 pr-4 py-2.5 bg-muted/10 border border-border/20 rounded-lg text-sm placeholder:text-muted-foreground/40 focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all"
@@ -356,7 +358,7 @@ const Blog = () => {
                         : "bg-muted/10 text-muted-foreground hover:bg-muted/20"
                     }`}
                   >
-                    Todos
+                    {t.blog.allCategories}
                   </button>
                   {categories.map(category => (
                     <button
@@ -373,12 +375,12 @@ const Blog = () => {
                   ))}
                 </div>
               </div>
-            </div>
-          </section>
+            </Container>
+          </div>
 
           {/* Content */}
-          <section className="py-16 md:py-20">
-            <div className="container mx-auto px-6">
+          <Section className="py-16 md:py-20">
+            <Container>
               {isLoading ? (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {[...Array(6)].map((_, i) => (
@@ -387,12 +389,10 @@ const Blog = () => {
                 </div>
               ) : filteredPosts.length > 0 ? (
                 <div className="space-y-16">
-                  {/* Featured */}
                   {featuredPost && !debouncedSearch && (
-                    <FeaturedArticle post={featuredPost} />
+                    <FeaturedArticle post={featuredPost} lang={language} />
                   )}
 
-                  {/* Asymmetric Grid */}
                   <motion.div
                     initial="hidden"
                     animate="visible"
@@ -404,6 +404,7 @@ const Blog = () => {
                         key={post.id}
                         post={post}
                         index={i}
+                        lang={language}
                         variant={!debouncedSearch && i === 0 ? "wide" : "default"}
                       />
                     ))}
@@ -416,42 +417,42 @@ const Blog = () => {
                   className="text-center py-24"
                 >
                   <div className="text-5xl mb-4 opacity-20">🔍</div>
-                  <h3 className="text-xl font-bold mb-2">Nenhum artigo encontrado</h3>
+                  <h3 className="text-xl font-bold mb-2">{t.blog.noResults}</h3>
                   <p className="text-muted-foreground text-sm">
                     {searchQuery
-                      ? `Sem resultados para "${searchQuery}"`
-                      : "Novos artigos em breve."}
+                      ? `${t.blog.noResultsFor} "${searchQuery}"`
+                      : t.blog.newArticlesSoon}
                   </p>
                 </motion.div>
               )}
-            </div>
-          </section>
+            </Container>
+          </Section>
 
           {/* CTA */}
-          <section className="py-20 border-t border-border/10">
-            <div className="container mx-auto px-6 text-center">
+          <Section className="border-t border-border/10">
+            <Container>
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="max-w-lg mx-auto"
+                className="max-w-lg mx-auto text-center"
               >
                 <h2 className="text-2xl md:text-3xl font-bold mb-4 tracking-tight">
-                  Quer conteúdo exclusivo?
+                  {t.blog.ctaTitle}
                 </h2>
                 <p className="text-muted-foreground mb-8 text-sm">
-                  Entre em contato e descubra como podemos ajudar seu projeto a crescer.
+                  {t.blog.ctaSubtitle}
                 </p>
                 <Link
                   to="/#contact"
                   className="inline-flex items-center gap-2 border-2 border-foreground px-8 py-3.5 text-xs tracking-widest uppercase font-semibold hover:bg-foreground hover:text-background transition-all duration-300"
                 >
-                  Fale Conosco
+                  {t.blog.ctaButton}
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </motion.div>
-            </div>
-          </section>
+            </Container>
+          </Section>
         </main>
 
         <Footer />
