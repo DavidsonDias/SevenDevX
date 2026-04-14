@@ -138,8 +138,7 @@ export default defineConfig(({ mode }) => ({
       registerType: "prompt",
 
       devOptions: {
-        enabled: true,
-        type: "module",
+        enabled: false,
       },
 
       includeAssets: [

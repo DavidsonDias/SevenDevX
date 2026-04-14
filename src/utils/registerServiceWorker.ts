@@ -23,19 +23,25 @@
  */
 
 export const registerServiceWorker = () => {
-  /**
-   * 🚫 1. Verifica se o navegador suporta Service Workers
-   * Safari iOS antigo e navegadores legacy falham aqui.
-   */
   if (!('serviceWorker' in navigator)) {
     console.warn('⚠️ SW não suportado neste navegador.');
     return;
   }
 
-  /**
-   * ⚠️ 2. Apenas registra em produção e HTTPS (obrigatório pelo PWA)
-   * Durante desenvolvimento o SW causa cache agressivo.
-   */
+  // Block in iframes and preview hosts
+  const isInIframe = (() => {
+    try { return window.self !== window.top; } catch { return true; }
+  })();
+  const isPreviewHost =
+    window.location.hostname.includes("id-preview--") ||
+    window.location.hostname.includes("lovableproject.com") ||
+    window.location.hostname.includes("lovable.app");
+
+  if (isInIframe || isPreviewHost) {
+    console.warn('🚫 Service Worker bloqueado — contexto de preview/iframe.');
+    return;
+  }
+
   const isLocalhost = ['localhost', '127.0.0.1'].includes(location.hostname);
   if (!import.meta.env.PROD && !isLocalhost) {
     console.warn('🚫 Service Worker bloqueado — ativado apenas em produção.');

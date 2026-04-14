@@ -388,9 +388,9 @@ const ProjectsHub = () => {
   return (
     <>
       <SEOHead
-        title="Todos os Projetos | SevenDevX"
-        description="Explore todos os projetos da SevenDevX: SaaS, landing pages, dashboards, simuladores 3D e muito mais. Soluções reais com tecnologia e design de alto nível."
-        keywords="SevenDevX projetos, portfólio completo, React, TypeScript, SaaS, desenvolvimento web enterprise"
+        title="Todos os Projetos | SevenDevX — Portfólio Completo de Software"
+        description="Explore todos os projetos da SevenDevX: SaaS, landing pages de alta conversão, dashboards, simuladores 3D e aplicações web modernas. Soluções reais com tecnologia enterprise."
+        keywords="portfólio completo, projetos software, SaaS, landing page alta conversão, dashboard web, desenvolvimento web enterprise, React, TypeScript, Node.js, aplicações web modernas, SevenDevX"
         url="https://www.sevendevx.com/projects-hub"
       />
 
