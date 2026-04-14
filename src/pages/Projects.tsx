@@ -533,9 +533,9 @@ const Projects = () => {
           SEO Optimized
          ========================= */}
       <SEOHead
-        title="Projetos - SevenDevX | Portfólio Moderno"
-        description="Explore projetos profissionais da SevenDevX: sites modernos, sistemas web, e-commerce e soluções personalizadas. Tecnologias: React, TypeScript, Node.js."
-        keywords="SevenDevX projetos, desenvolvimento web, portfólio, React, TypeScript, Node.js, sistemas web, full stack, front-end, back-end"
+        title="Portfólio de Projetos | SevenDevX — Sites, SaaS & Sistemas Web"
+        description="Portfólio completo da SevenDevX: sites profissionais, sistemas web, SaaS, landing pages e dashboards. Projetos reais com React, TypeScript e Node.js."
+        keywords="portfólio desenvolvimento web, projetos React, sites profissionais, SaaS, landing pages, sistemas web, dashboard, e-commerce, SevenDevX, full stack, aplicações web modernas"
         url="https://www.sevendevx.com/projects"
         type="website"
         image="https://www.sevendevx.com/og-image.jpg"
