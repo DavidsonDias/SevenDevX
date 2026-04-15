@@ -430,21 +430,37 @@ const BlogPost = () => {
             </Section>
           )}
 
-          {/* CTA */}
+          {/* Internal Links — SEO */}
           <Section className="border-t border-border/10">
-            <Container className="text-center">
-              <h2 className="text-2xl md:text-3xl font-bold mb-4 tracking-tight">
+            <Container className="text-center space-y-6">
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
                 {t.blog.likedContent}
               </h2>
-              <p className="text-muted-foreground mb-8 text-sm max-w-md mx-auto">
+              <p className="text-muted-foreground text-sm max-w-md mx-auto">
                 {t.blog.likedContentSubtitle}
               </p>
-              <Link
-                to="/#contact"
-                className="inline-flex items-center gap-2 border-2 border-foreground px-8 py-3.5 text-xs tracking-widest uppercase font-semibold hover:bg-foreground hover:text-background transition-all duration-300"
-              >
-                {t.blog.ctaButton}
-              </Link>
+              <div className="flex gap-4 justify-center flex-wrap">
+                <Link
+                  to="/#contact"
+                  className="inline-flex items-center gap-2 border-2 border-foreground px-8 py-3.5 text-xs tracking-widest uppercase font-semibold hover:bg-foreground hover:text-background transition-all duration-300"
+                >
+                  {t.blog.ctaButton}
+                </Link>
+                <Link
+                  to="/services"
+                  className="inline-flex items-center gap-2 border border-border px-6 py-3.5 text-xs tracking-widest uppercase font-semibold hover:bg-muted/20 transition-all duration-300"
+                >
+                  {language === "pt" ? "Nossos Serviços" : language === "es" ? "Nuestros Servicios" : "Our Services"} <ArrowRight className="w-3 h-3" />
+                </Link>
+              </div>
+              <div className="flex gap-4 justify-center text-sm text-muted-foreground pt-4">
+                <Link to="/projects-hub" className="hover:text-primary transition-colors">
+                  {language === "pt" ? "Ver Portfólio →" : language === "es" ? "Ver Portafolio →" : "View Portfolio →"}
+                </Link>
+                <Link to="/blog" className="hover:text-primary transition-colors">
+                  {language === "pt" ? "Mais Artigos →" : language === "es" ? "Más Artículos →" : "More Articles →"}
+                </Link>
+              </div>
             </Container>
           </Section>
         </main>

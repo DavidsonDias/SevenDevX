@@ -971,10 +971,54 @@ const Services = () => {
             glowIntensity="subtle"
             className="mt-16 mb-10"
           />
+          {/* Internal Linking — SEO */}
+          <section className="py-16 px-4 md:px-8 lg:px-16 bg-background border-t border-border/10">
+            <div className="container mx-auto text-center">
+              <p className="text-muted-foreground text-sm mb-4">
+                {language === "pt" ? "Veja nossos projetos reais e artigos técnicos" :
+                 language === "es" ? "Vea nuestros proyectos reales y artículos técnicos" :
+                 "See our real projects and technical articles"}
+              </p>
+              <div className="flex gap-4 justify-center flex-wrap">
+                <a href="/projects-hub" className="text-sm font-semibold text-primary hover:underline">
+                  {language === "pt" ? "Portfólio →" : language === "es" ? "Portafolio →" : "Portfolio →"}
+                </a>
+                <a href="/blog" className="text-sm font-semibold text-primary hover:underline">
+                  Blog →
+                </a>
+              </div>
+            </div>
+          </section>
         </main>
 
         <Footer />
         <WhatsAppButton />
+
+        {/* JSON-LD: Service Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              name: language === "pt" ? "Serviços da SevenDevX" : "SevenDevX Services",
+              itemListElement: services.map((s, i) => ({
+                "@type": "ListItem",
+                position: i + 1,
+                item: {
+                  "@type": "Service",
+                  name: s.title,
+                  description: s.description,
+                  provider: {
+                    "@type": "Organization",
+                    name: "SevenDevX",
+                    url: "https://www.sevendevx.com",
+                  },
+                },
+              })),
+            }),
+          }}
+        />
       </div>
     </>
   );
