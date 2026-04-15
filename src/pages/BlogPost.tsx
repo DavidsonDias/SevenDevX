@@ -208,6 +208,16 @@ const BlogPost = () => {
     },
   };
 
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://www.sevendevx.com" },
+      { "@type": "ListItem", position: 2, name: "Blog", item: "https://www.sevendevx.com/blog" },
+      { "@type": "ListItem", position: 3, name: post.title, item: `https://www.sevendevx.com/blog/${post.slug}` },
+    ],
+  };
+
   return (
     <>
       <SEOHead
@@ -472,6 +482,10 @@ const BlogPost = () => {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
         />
       </div>
     </>

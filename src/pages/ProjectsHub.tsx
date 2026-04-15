@@ -528,6 +528,34 @@ const ProjectsHub = () => {
 
         <Footer />
         <WhatsAppButton />
+
+        {/* JSON-LD: SoftwareApplication schema for projects */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ItemList",
+              name: "SevenDevX Projects",
+              itemListElement: sortedProjects.slice(0, 10).map((p, i) => ({
+                "@type": "ListItem",
+                position: i + 1,
+                item: {
+                  "@type": "SoftwareApplication",
+                  name: p.title,
+                  description: p.description,
+                  applicationCategory: "WebApplication",
+                  operatingSystem: "Web",
+                  author: {
+                    "@type": "Organization",
+                    name: "SevenDevX",
+                    url: "https://www.sevendevx.com",
+                  },
+                },
+              })),
+            }),
+          }}
+        />
       </div>
 
       <ProjectModal project={openProject} onClose={() => setOpenProject(null)} />
