@@ -97,7 +97,13 @@ const About = () => {
 
   return (
     <>
-      <SEOHead title={seoTitles[language]} description={seoDescriptions[language]} type="website" />
+      <SEOHead
+        title={seoTitles[language]}
+        description={seoDescriptions[language]}
+        type="website"
+        url="https://www.sevendevx.com/about"
+        keywords="SevenDevX, sobre nós, quem somos, desenvolvimento web, criação de sites, empresa de tecnologia, Belo Horizonte, desenvolvedor full stack"
+      />
       <div className="min-h-screen bg-background text-foreground">
         <Header />
 
