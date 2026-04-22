@@ -36,7 +36,9 @@ import {
 import { ExpirationPlugin } from "workbox-expiration";
 import { CacheableResponsePlugin } from "workbox-cacheable-response";
 
-declare const self: ServiceWorkerGlobalScope;
+declare const self: ServiceWorkerGlobalScope & {
+  __WB_MANIFEST: Array<{ url: string; revision: string | null }>;
+};
 
 /* ═══════════════════════════════════════════════════════════════════
    📌 CONFIGURAÇÕES GLOBAIS
