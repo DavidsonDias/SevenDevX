@@ -134,6 +134,16 @@ export interface Translations {
       description: string;
       features: string[];
     };
+    process: {
+      title: string;
+      subtitle: string;
+      steps: Array<{ n: string; t: string; d: string }>;
+    };
+    faq: {
+      title: string;
+      subtitle: string;
+      items: Array<{ q: string; a: string }>;
+    };
   };
   
   // Tech
@@ -866,6 +876,28 @@ export const translations: Record<Language, Translations> = {
           "Planejamento de infraestrutura",
           "Seleção de tecnologias",
           "Estratégia de transformação digital",
+        ],
+      },
+      process: {
+        title: "Como Trabalhamos",
+        subtitle: "Um processo claro, transparente e orientado a resultados — do primeiro contato à escala.",
+        steps: [
+          { n: "01", t: "Diagnóstico Estratégico", d: "Reunião rápida para entender seu negócio, público, metas e identificar oportunidades reais de crescimento." },
+          { n: "02", t: "Proposta & Planejamento", d: "Você recebe um plano claro com escopo, cronograma, tecnologias e investimento — sem surpresas." },
+          { n: "03", t: "Desenvolvimento Guiado", d: "Entregas semanais com validação contínua. Você acompanha tudo em tempo real." },
+          { n: "04", t: "Lançamento & Escala", d: "Deploy, otimização, treinamento e suporte para garantir performance e crescimento contínuo." },
+        ],
+      },
+      faq: {
+        title: "Perguntas Frequentes",
+        subtitle: "Respostas claras para as dúvidas mais comuns antes de começarmos.",
+        items: [
+          { q: "Quanto tempo leva para desenvolver um site ou sistema?", a: "Landing pages: de 5 a 10 dias úteis. Sites institucionais: 2 a 4 semanas. Sistemas web e plataformas: a partir de 6 semanas. Cada projeto recebe um cronograma personalizado após o diagnóstico." },
+          { q: "Como funciona o investimento e a forma de pagamento?", a: "Trabalhamos com proposta fechada por escopo, sem cobrança por hora. O pagamento é parcelado em marcos do projeto (entrada, entregas intermediárias e lançamento). Aceitamos PIX, cartão e transferência." },
+          { q: "Vocês oferecem suporte e manutenção após a entrega?", a: "Sim. Todos os projetos incluem 30 dias de garantia. Oferecemos planos mensais de manutenção, atualizações de segurança, monitoramento de performance e evoluções contínuas." },
+          { q: "Quais tecnologias vocês utilizam?", a: "Stack moderna: React, TypeScript, Next.js, Tailwind CSS, Supabase/PostgreSQL, Node.js e infraestrutura na Vercel. Escolhemos cada tecnologia com base no problema, nunca por modismo." },
+          { q: "Posso acompanhar o andamento do projeto?", a: "Sim. Você terá acesso a um ambiente de homologação atualizado em tempo real, reuniões semanais de alinhamento e canal direto com a equipe via WhatsApp." },
+          { q: "Vocês também cuidam de SEO e performance?", a: "Sempre. Todos os projetos são entregues com SEO técnico, Core Web Vitals otimizados, schema.org, sitemap, meta tags dinâmicas e auditoria Lighthouse acima de 90." },
         ],
       },
     },
@@ -1803,6 +1835,28 @@ export const translations: Record<Language, Translations> = {
           "Digital transformation strategy",
         ],
       },
+      process: {
+        title: "How We Work",
+        subtitle: "A clear, transparent and results-driven process — from first contact to scale.",
+        steps: [
+          { n: "01", t: "Strategic Discovery", d: "A quick call to understand your business, audience, goals and identify real growth opportunities." },
+          { n: "02", t: "Proposal & Planning", d: "You receive a clear plan with scope, timeline, technologies and investment — no surprises." },
+          { n: "03", t: "Guided Development", d: "Weekly deliveries with continuous validation. You follow everything in real time." },
+          { n: "04", t: "Launch & Scale", d: "Deployment, optimization, training and support to ensure performance and continuous growth." },
+        ],
+      },
+      faq: {
+        title: "Frequently Asked Questions",
+        subtitle: "Clear answers to the most common questions before we get started.",
+        items: [
+          { q: "How long does it take to develop a website or system?", a: "Landing pages: 5 to 10 business days. Corporate websites: 2 to 4 weeks. Web systems and platforms: from 6 weeks onwards. Each project receives a custom timeline after the discovery call." },
+          { q: "How does pricing and payment work?", a: "We work with fixed scope-based proposals, no hourly billing. Payment is split into project milestones (kickoff, intermediate deliveries and launch). We accept bank transfer, credit card and PIX." },
+          { q: "Do you offer post-launch support and maintenance?", a: "Yes. Every project includes 30 days of warranty. We offer monthly maintenance plans, security updates, performance monitoring and continuous evolution." },
+          { q: "What technologies do you use?", a: "Modern stack: React, TypeScript, Next.js, Tailwind CSS, Supabase/PostgreSQL, Node.js and Vercel infrastructure. We choose each technology based on the problem, never on hype." },
+          { q: "Can I follow the project's progress?", a: "Yes. You'll have access to a staging environment updated in real time, weekly alignment meetings and a direct channel with the team via WhatsApp." },
+          { q: "Do you handle SEO and performance too?", a: "Always. Every project ships with technical SEO, optimized Core Web Vitals, schema.org, sitemap, dynamic meta tags and Lighthouse audit above 90." },
+        ],
+      },
     },
     tech: {
       sectionTitle: "Technologies We Use",
@@ -2736,6 +2790,28 @@ export const translations: Record<Language, Translations> = {
           "Planificación de infraestructura",
           "Selección de tecnologías",
           "Estrategia de transformación digital",
+        ],
+      },
+      process: {
+        title: "Cómo Trabajamos",
+        subtitle: "Un proceso claro, transparente y orientado a resultados — del primer contacto a la escala.",
+        steps: [
+          { n: "01", t: "Diagnóstico Estratégico", d: "Reunión rápida para entender tu negocio, audiencia, metas e identificar oportunidades reales de crecimiento." },
+          { n: "02", t: "Propuesta & Planificación", d: "Recibes un plan claro con alcance, cronograma, tecnologías e inversión — sin sorpresas." },
+          { n: "03", t: "Desarrollo Guiado", d: "Entregas semanales con validación continua. Sigues todo en tiempo real." },
+          { n: "04", t: "Lanzamiento & Escala", d: "Despliegue, optimización, capacitación y soporte para garantizar rendimiento y crecimiento continuo." },
+        ],
+      },
+      faq: {
+        title: "Preguntas Frecuentes",
+        subtitle: "Respuestas claras a las dudas más comunes antes de comenzar.",
+        items: [
+          { q: "¿Cuánto tiempo lleva desarrollar un sitio o sistema?", a: "Landing pages: 5 a 10 días hábiles. Sitios corporativos: 2 a 4 semanas. Sistemas web y plataformas: desde 6 semanas. Cada proyecto recibe un cronograma personalizado tras el diagnóstico." },
+          { q: "¿Cómo funciona la inversión y la forma de pago?", a: "Trabajamos con propuesta cerrada por alcance, sin cobro por hora. El pago se divide en hitos del proyecto (inicio, entregas intermedias y lanzamiento). Aceptamos transferencia, tarjeta y PIX." },
+          { q: "¿Ofrecen soporte y mantenimiento tras la entrega?", a: "Sí. Todos los proyectos incluyen 30 días de garantía. Ofrecemos planes mensuales de mantenimiento, actualizaciones de seguridad, monitoreo de rendimiento y evolución continua." },
+          { q: "¿Qué tecnologías utilizan?", a: "Stack moderno: React, TypeScript, Next.js, Tailwind CSS, Supabase/PostgreSQL, Node.js e infraestructura en Vercel. Elegimos cada tecnología según el problema, nunca por moda." },
+          { q: "¿Puedo seguir el avance del proyecto?", a: "Sí. Tendrás acceso a un entorno de homologación actualizado en tiempo real, reuniones semanales de alineación y canal directo con el equipo vía WhatsApp." },
+          { q: "¿También se encargan de SEO y rendimiento?", a: "Siempre. Todos los proyectos se entregan con SEO técnico, Core Web Vitals optimizados, schema.org, sitemap, meta tags dinámicas y auditoría Lighthouse superior a 90." },
         ],
       },
     },
