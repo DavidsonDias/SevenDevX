@@ -623,6 +623,8 @@ import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import SectionDivider from "@/components/SectionDivider";
 import SEOHead from "@/components/SEOHead";
+import ProcessSection from "@/components/services/ProcessSection";
+import FAQSection from "@/components/services/FAQSection";
 import ServiceCard3D from "@/components/ServiceCard3D";
 import { ArrowRight, Code, Settings, Wrench, FileText, Lightbulb } from "lucide-react";
 import serviceDev from "@/assets/images/service-web-dev.webp";
@@ -915,6 +917,32 @@ const Services = () => {
               </div>
             </div>
           </section>
+
+          {/* 🔽 DIVISOR — SERVIÇOS → PROCESSO */}
+          <SectionDivider
+            size="md"
+            speed={1}
+            glowIntensity="default"
+            className="my-16"
+          />
+
+          {/* ---------------------------------------------------------
+              PROCESSO (How It Works) — Enterprise Premium
+             --------------------------------------------------------- */}
+          <ProcessSection />
+
+          {/* 🔽 DIVISOR — PROCESSO → FAQ */}
+          <SectionDivider
+            size="md"
+            speed={1}
+            glowIntensity="default"
+            className="my-16"
+          />
+
+          {/* ---------------------------------------------------------
+              FAQ — Accordion enterprise + JSON-LD FAQPage
+             --------------------------------------------------------- */}
+          <FAQSection />
 
           {/* 🔽 DIVISOR ANTES CTA */}
           <SectionDivider
