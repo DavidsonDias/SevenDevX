@@ -137,12 +137,37 @@ export interface Translations {
     process: {
       title: string;
       subtitle: string;
-      steps: Array<{ n: string; t: string; d: string }>;
+      expandLabel: string;
+      collapseLabel: string;
+      deliverablesLabel: string;
+      durationLabel: string;
+      toolsLabel: string;
+      ctaLabel: string;
+      steps: Array<{
+        n: string;
+        t: string;
+        d: string;
+        duration: string;
+        deliverables: string[];
+        tools: string[];
+        cta: string;
+      }>;
     };
     faq: {
       title: string;
       subtitle: string;
-      items: Array<{ q: string; a: string }>;
+      searchPlaceholder: string;
+      allLabel: string;
+      noResults: string;
+      ctaTitle: string;
+      ctaSubtitle: string;
+      ctaButton: string;
+      categories: Array<{
+        id: string;
+        label: string;
+        icon: string;
+        items: Array<{ q: string; a: string }>;
+      }>;
     };
   };
   
