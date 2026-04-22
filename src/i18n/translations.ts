@@ -137,12 +137,37 @@ export interface Translations {
     process: {
       title: string;
       subtitle: string;
-      steps: Array<{ n: string; t: string; d: string }>;
+      expandLabel: string;
+      collapseLabel: string;
+      deliverablesLabel: string;
+      durationLabel: string;
+      toolsLabel: string;
+      ctaLabel: string;
+      steps: Array<{
+        n: string;
+        t: string;
+        d: string;
+        duration: string;
+        deliverables: string[];
+        tools: string[];
+        cta: string;
+      }>;
     };
     faq: {
       title: string;
       subtitle: string;
-      items: Array<{ q: string; a: string }>;
+      searchPlaceholder: string;
+      allLabel: string;
+      noResults: string;
+      ctaTitle: string;
+      ctaSubtitle: string;
+      ctaButton: string;
+      categories: Array<{
+        id: string;
+        label: string;
+        icon: string;
+        items: Array<{ q: string; a: string }>;
+      }>;
     };
   };
   
@@ -880,24 +905,146 @@ export const translations: Record<Language, Translations> = {
       },
       process: {
         title: "Como Trabalhamos",
-        subtitle: "Um processo claro, transparente e orientado a resultados — do primeiro contato à escala.",
+        subtitle: "Um método consultivo de 6 etapas — do diagnóstico estratégico à evolução contínua. Transparência em cada passo.",
+        expandLabel: "Ver detalhes",
+        collapseLabel: "Recolher",
+        deliverablesLabel: "Entregáveis",
+        durationLabel: "Duração estimada",
+        toolsLabel: "Ferramentas",
+        ctaLabel: "Falar com especialista",
         steps: [
-          { n: "01", t: "Diagnóstico Estratégico", d: "Reunião rápida para entender seu negócio, público, metas e identificar oportunidades reais de crescimento." },
-          { n: "02", t: "Proposta & Planejamento", d: "Você recebe um plano claro com escopo, cronograma, tecnologias e investimento — sem surpresas." },
-          { n: "03", t: "Desenvolvimento Guiado", d: "Entregas semanais com validação contínua. Você acompanha tudo em tempo real." },
-          { n: "04", t: "Lançamento & Escala", d: "Deploy, otimização, treinamento e suporte para garantir performance e crescimento contínuo." },
+          {
+            n: "01",
+            t: "Descoberta & Diagnóstico",
+            d: "Entendemos seu negócio, público, objetivos e analisamos a concorrência para identificar oportunidades reais.",
+            duration: "1 a 3 dias",
+            deliverables: ["Briefing estratégico", "Análise de concorrência", "Mapa de oportunidades", "KPIs definidos"],
+            tools: ["Notion", "Google Meet", "Figma FigJam"],
+            cta: "Agendar diagnóstico",
+          },
+          {
+            n: "02",
+            t: "Estratégia & Planejamento",
+            d: "Definimos a solução ideal, arquitetura, stack tecnológico e roadmap detalhado para alcançar seus objetivos.",
+            duration: "2 a 5 dias",
+            deliverables: ["Arquitetura técnica", "Roadmap por sprints", "Stack definido", "Fluxos de usuário"],
+            tools: ["Miro", "Notion", "Excalidraw"],
+            cta: "Receber estratégia",
+          },
+          {
+            n: "03",
+            t: "Proposta & Alinhamento",
+            d: "Você recebe escopo detalhado, cronograma por fases e investimento estruturado — com aprovação formal antes de iniciar.",
+            duration: "1 a 2 dias",
+            deliverables: ["Proposta comercial", "Cronograma", "Contrato digital", "Marcos de pagamento"],
+            tools: ["DocuSign", "PandaDoc", "PDF interativo"],
+            cta: "Solicitar orçamento",
+          },
+          {
+            n: "04",
+            t: "Design & Prototipação",
+            d: "Criamos wireframes, UI/UX e protótipos navegáveis para validar cada decisão visual antes de codar uma linha.",
+            duration: "5 a 15 dias",
+            deliverables: ["Wireframes", "UI Kit", "Protótipo navegável", "Design system"],
+            tools: ["Figma", "Framer", "Adobe XD"],
+            cta: "Ver portfólio",
+          },
+          {
+            n: "05",
+            t: "Desenvolvimento & Iteração",
+            d: "Sprints semanais com entregas contínuas, ambiente de homologação em tempo real e feedback ativo do cliente.",
+            duration: "2 a 12 semanas",
+            deliverables: ["Código versionado", "Build em homologação", "Testes automatizados", "Demos semanais"],
+            tools: ["React", "TypeScript", "Supabase", "Vercel"],
+            cta: "Iniciar projeto",
+          },
+          {
+            n: "06",
+            t: "Lançamento & Evolução",
+            d: "Deploy em produção, monitoramento, otimizações de performance, treinamento e suporte contínuo pós-entrega.",
+            duration: "Contínuo",
+            deliverables: ["Deploy produção", "Documentação", "Treinamento", "Plano de evolução"],
+            tools: ["Vercel", "Sentry", "Google Analytics", "Lighthouse"],
+            cta: "Conhecer planos",
+          },
         ],
       },
       faq: {
         title: "Perguntas Frequentes",
-        subtitle: "Respostas claras para as dúvidas mais comuns antes de começarmos.",
-        items: [
-          { q: "Quanto tempo leva para desenvolver um site ou sistema?", a: "Landing pages: de 5 a 10 dias úteis. Sites institucionais: 2 a 4 semanas. Sistemas web e plataformas: a partir de 6 semanas. Cada projeto recebe um cronograma personalizado após o diagnóstico." },
-          { q: "Como funciona o investimento e a forma de pagamento?", a: "Trabalhamos com proposta fechada por escopo, sem cobrança por hora. O pagamento é parcelado em marcos do projeto (entrada, entregas intermediárias e lançamento). Aceitamos PIX, cartão e transferência." },
-          { q: "Vocês oferecem suporte e manutenção após a entrega?", a: "Sim. Todos os projetos incluem 30 dias de garantia. Oferecemos planos mensais de manutenção, atualizações de segurança, monitoramento de performance e evoluções contínuas." },
-          { q: "Quais tecnologias vocês utilizam?", a: "Stack moderna: React, TypeScript, Next.js, Tailwind CSS, Supabase/PostgreSQL, Node.js e infraestrutura na Vercel. Escolhemos cada tecnologia com base no problema, nunca por modismo." },
-          { q: "Posso acompanhar o andamento do projeto?", a: "Sim. Você terá acesso a um ambiente de homologação atualizado em tempo real, reuniões semanais de alinhamento e canal direto com a equipe via WhatsApp." },
-          { q: "Vocês também cuidam de SEO e performance?", a: "Sempre. Todos os projetos são entregues com SEO técnico, Core Web Vitals otimizados, schema.org, sitemap, meta tags dinâmicas e auditoria Lighthouse acima de 90." },
+        subtitle: "Respostas claras e organizadas por tema. Tudo que você precisa saber antes de começar.",
+        searchPlaceholder: "Buscar pergunta...",
+        allLabel: "Todas",
+        noResults: "Nenhuma pergunta encontrada. Tente outro termo.",
+        ctaTitle: "Ainda com dúvidas?",
+        ctaSubtitle: "Fale diretamente com nosso time. Resposta em até 1 hora útil.",
+        ctaButton: "Falar com especialista",
+        categories: [
+          {
+            id: "investimento",
+            label: "Investimento",
+            icon: "💰",
+            items: [
+              { q: "Quanto custa um projeto na SevenDevX?", a: "O investimento varia conforme o escopo. Landing pages premium começam em R$ 2.500, sites institucionais a partir de R$ 6.000 e sistemas web sob orçamento. Após o diagnóstico, você recebe uma proposta fechada — sem cobrança por hora." },
+              { q: "Existe parcelamento?", a: "Sim. Trabalhamos com parcelamento por marcos do projeto: entrada (30%), entregas intermediárias e lançamento. Aceitamos PIX, cartão de crédito (até 12x) e transferência." },
+              { q: "O preço pode mudar durante o projeto?", a: "Não. Trabalhamos com proposta fechada por escopo. Mudanças solicitadas após aprovação são tratadas como adendos com orçamento separado, sempre com sua aprovação prévia." },
+              { q: "Vale a pena investir em um projeto premium?", a: "Sim — quando você precisa de performance, escalabilidade e conversão real. Nossos clientes reportam aumento médio de 3x em leads qualificados nos primeiros 90 dias após o lançamento." },
+            ],
+          },
+          {
+            id: "prazo",
+            label: "Prazo",
+            icon: "⏱",
+            items: [
+              { q: "Quanto tempo leva o projeto?", a: "Landing pages: 5 a 10 dias úteis. Sites institucionais: 2 a 4 semanas. Sistemas web e plataformas: a partir de 6 semanas. Cada projeto recebe cronograma personalizado após o diagnóstico." },
+              { q: "O projeto pode atrasar?", a: "Trabalhamos com sprints semanais e marcos validados pelo cliente. Atrasos só ocorrem por dependência de aprovação ou conteúdo do cliente — sempre comunicados com antecedência." },
+              { q: "Posso solicitar prazo urgente?", a: "Sim, oferecemos modalidade fast-track com equipe dedicada. Cobrança adicional de 30% para projetos com prazo reduzido em 50%. Disponibilidade sujeita à agenda." },
+            ],
+          },
+          {
+            id: "processo",
+            label: "Processo",
+            icon: "🧠",
+            items: [
+              { q: "Como funciona o início do projeto?", a: "Tudo começa com uma reunião de diagnóstico (gratuita, ~45min) onde entendemos seu negócio. Em até 2 dias você recebe a proposta formal. Após aprovação, kickoff em até 5 dias úteis." },
+              { q: "Vou acompanhar o projeto em tempo real?", a: "Sim. Você terá acesso a um ambiente de homologação atualizado continuamente, board no Notion com tarefas, reuniões semanais de alinhamento e canal direto via WhatsApp com a equipe." },
+              { q: "Posso pedir mudanças durante o desenvolvimento?", a: "Sim, ajustes dentro do escopo são esperados e bem-vindos. Mudanças estruturais ou novas funcionalidades são avaliadas e incluídas como adendos com seu aval." },
+              { q: "Vocês ajudam com ideias ou só executam?", a: "Somos parceiros estratégicos. Em cada etapa trazemos recomendações baseadas em dados, benchmarks de mercado e nossa experiência em centenas de projetos digitais." },
+            ],
+          },
+          {
+            id: "tecnologia",
+            label: "Tecnologia",
+            icon: "🛠",
+            items: [
+              { q: "Quais tecnologias vocês utilizam?", a: "Stack moderna: React, TypeScript, Next.js, Tailwind CSS, Supabase/PostgreSQL, Node.js e infraestrutura na Vercel/AWS. Escolhemos cada tecnologia com base no problema, nunca por modismo." },
+              { q: "O sistema é escalável?", a: "Totalmente. Toda nossa arquitetura é cloud-native, com auto-scaling, CDN global, cache inteligente e banco de dados otimizado. Pronto para crescer de 100 a 1 milhão de usuários sem reescrita." },
+              { q: "Posso integrar com outras ferramentas?", a: "Sim. Integramos com CRMs (HubSpot, RD, Pipedrive), gateways de pagamento (Stripe, Mercado Pago), ERPs, WhatsApp Business API, Google/Meta Ads e qualquer API REST/GraphQL." },
+              { q: "Vocês usam IA nos projetos?", a: "Sim, quando agrega valor real. Implementamos chatbots inteligentes, automações com IA generativa, análise preditiva e copilotos personalizados para o seu negócio." },
+            ],
+          },
+          {
+            id: "seguranca",
+            label: "Segurança",
+            icon: "🔒",
+            items: [
+              { q: "Meus dados ficam seguros?", a: "Sim. Aplicamos criptografia ponta a ponta, autenticação multifator, HTTPS obrigatório, RLS (Row Level Security) no banco, backups automáticos e conformidade total com LGPD/GDPR." },
+              { q: "Vocês assinam NDA (acordo de confidencialidade)?", a: "Sim, sem custo adicional. Assinamos NDA antes mesmo do diagnóstico estratégico, garantindo proteção total das informações sensíveis do seu negócio." },
+              { q: "Meu projeto é confidencial?", a: "Absolutamente. Todos os projetos são tratados com sigilo profissional. Só publicamos cases no portfólio com autorização expressa do cliente." },
+            ],
+          },
+          {
+            id: "pos-entrega",
+            label: "Pós-Entrega",
+            icon: "🚀",
+            items: [
+              { q: "Tem suporte após a entrega?", a: "Sim. Todos os projetos incluem 30 dias de garantia para ajustes e correções. Após esse período, oferecemos planos mensais de suporte com SLA definido." },
+              { q: "Tem manutenção contínua?", a: "Oferecemos planos de manutenção a partir de R$ 800/mês incluindo atualizações de segurança, monitoramento, backups, ajustes pequenos e relatórios mensais de performance." },
+              { q: "Posso evoluir o sistema depois?", a: "Sim — e recomendamos. Trabalhamos com roadmap evolutivo: a cada 3 meses revisamos métricas e propomos melhorias baseadas no comportamento real dos usuários." },
+              { q: "E se eu não gostar do resultado?",  a: "Nosso processo prevê validação em cada etapa (design, protótipo, sprints), evitando surpresas. Caso algo escape do escopo, refazemos sem custo adicional dentro do contrato." },
+              { q: "Por que escolher a SevenDevX?", a: "Combinamos estratégia consultiva, design premium, código limpo, performance enterprise e suporte humano. Não vendemos sites — entregamos ativos digitais que geram resultado." },
+              { q: "Vocês trabalham com empresas pequenas ou grandes?", a: "Atendemos desde startups validando MVPs até empresas estabelecidas modernizando seu stack. O método se adapta ao porte e maturidade do cliente." },
+            ],
+          },
         ],
       },
     },
@@ -1837,24 +1984,146 @@ export const translations: Record<Language, Translations> = {
       },
       process: {
         title: "How We Work",
-        subtitle: "A clear, transparent and results-driven process — from first contact to scale.",
+        subtitle: "A 6-step consultative method — from strategic discovery to continuous evolution. Transparency at every step.",
+        expandLabel: "View details",
+        collapseLabel: "Collapse",
+        deliverablesLabel: "Deliverables",
+        durationLabel: "Estimated duration",
+        toolsLabel: "Tools",
+        ctaLabel: "Talk to a specialist",
         steps: [
-          { n: "01", t: "Strategic Discovery", d: "A quick call to understand your business, audience, goals and identify real growth opportunities." },
-          { n: "02", t: "Proposal & Planning", d: "You receive a clear plan with scope, timeline, technologies and investment — no surprises." },
-          { n: "03", t: "Guided Development", d: "Weekly deliveries with continuous validation. You follow everything in real time." },
-          { n: "04", t: "Launch & Scale", d: "Deployment, optimization, training and support to ensure performance and continuous growth." },
+          {
+            n: "01",
+            t: "Discovery & Diagnosis",
+            d: "We understand your business, audience, goals and analyze the competition to identify real opportunities.",
+            duration: "1 to 3 days",
+            deliverables: ["Strategic briefing", "Competitor analysis", "Opportunity map", "Defined KPIs"],
+            tools: ["Notion", "Google Meet", "Figma FigJam"],
+            cta: "Schedule diagnosis",
+          },
+          {
+            n: "02",
+            t: "Strategy & Planning",
+            d: "We define the ideal solution, architecture, tech stack and detailed roadmap to achieve your goals.",
+            duration: "2 to 5 days",
+            deliverables: ["Technical architecture", "Sprint roadmap", "Defined stack", "User flows"],
+            tools: ["Miro", "Notion", "Excalidraw"],
+            cta: "Receive strategy",
+          },
+          {
+            n: "03",
+            t: "Proposal & Alignment",
+            d: "You receive detailed scope, phased timeline and structured investment — with formal approval before kickoff.",
+            duration: "1 to 2 days",
+            deliverables: ["Commercial proposal", "Timeline", "Digital contract", "Payment milestones"],
+            tools: ["DocuSign", "PandaDoc", "Interactive PDF"],
+            cta: "Request quote",
+          },
+          {
+            n: "04",
+            t: "Design & Prototyping",
+            d: "We create wireframes, UI/UX and interactive prototypes to validate every visual decision before writing a line of code.",
+            duration: "5 to 15 days",
+            deliverables: ["Wireframes", "UI Kit", "Interactive prototype", "Design system"],
+            tools: ["Figma", "Framer", "Adobe XD"],
+            cta: "View portfolio",
+          },
+          {
+            n: "05",
+            t: "Development & Iteration",
+            d: "Weekly sprints with continuous deliveries, real-time staging environment and active client feedback.",
+            duration: "2 to 12 weeks",
+            deliverables: ["Versioned code", "Staging build", "Automated tests", "Weekly demos"],
+            tools: ["React", "TypeScript", "Supabase", "Vercel"],
+            cta: "Start project",
+          },
+          {
+            n: "06",
+            t: "Launch & Evolution",
+            d: "Production deployment, monitoring, performance optimizations, training and continuous post-delivery support.",
+            duration: "Ongoing",
+            deliverables: ["Production deploy", "Documentation", "Training", "Evolution plan"],
+            tools: ["Vercel", "Sentry", "Google Analytics", "Lighthouse"],
+            cta: "View plans",
+          },
         ],
       },
       faq: {
         title: "Frequently Asked Questions",
-        subtitle: "Clear answers to the most common questions before we get started.",
-        items: [
-          { q: "How long does it take to develop a website or system?", a: "Landing pages: 5 to 10 business days. Corporate websites: 2 to 4 weeks. Web systems and platforms: from 6 weeks onwards. Each project receives a custom timeline after the discovery call." },
-          { q: "How does pricing and payment work?", a: "We work with fixed scope-based proposals, no hourly billing. Payment is split into project milestones (kickoff, intermediate deliveries and launch). We accept bank transfer, credit card and PIX." },
-          { q: "Do you offer post-launch support and maintenance?", a: "Yes. Every project includes 30 days of warranty. We offer monthly maintenance plans, security updates, performance monitoring and continuous evolution." },
-          { q: "What technologies do you use?", a: "Modern stack: React, TypeScript, Next.js, Tailwind CSS, Supabase/PostgreSQL, Node.js and Vercel infrastructure. We choose each technology based on the problem, never on hype." },
-          { q: "Can I follow the project's progress?", a: "Yes. You'll have access to a staging environment updated in real time, weekly alignment meetings and a direct channel with the team via WhatsApp." },
-          { q: "Do you handle SEO and performance too?", a: "Always. Every project ships with technical SEO, optimized Core Web Vitals, schema.org, sitemap, dynamic meta tags and Lighthouse audit above 90." },
+        subtitle: "Clear answers organized by topic. Everything you need to know before getting started.",
+        searchPlaceholder: "Search question...",
+        allLabel: "All",
+        noResults: "No questions found. Try another term.",
+        ctaTitle: "Still have questions?",
+        ctaSubtitle: "Talk directly to our team. Response within 1 business hour.",
+        ctaButton: "Talk to specialist",
+        categories: [
+          {
+            id: "investment",
+            label: "Investment",
+            icon: "💰",
+            items: [
+              { q: "How much does a SevenDevX project cost?", a: "Investment varies by scope. Premium landing pages start at $500, corporate websites from $1,200 and web systems by quote. After diagnosis, you receive a fixed proposal — no hourly billing." },
+              { q: "Are there installments?", a: "Yes. We work with milestone-based installments: deposit (30%), intermediate deliveries and launch. We accept wire transfer, credit card (up to 12x) and PIX." },
+              { q: "Can the price change during the project?", a: "No. We work with fixed scope-based proposals. Changes requested after approval are treated as addendums with separate quotes, always with your prior approval." },
+              { q: "Is it worth investing in a premium project?", a: "Yes — when you need performance, scalability and real conversion. Our clients report an average 3x increase in qualified leads in the first 90 days after launch." },
+            ],
+          },
+          {
+            id: "timeline",
+            label: "Timeline",
+            icon: "⏱",
+            items: [
+              { q: "How long does the project take?", a: "Landing pages: 5 to 10 business days. Corporate websites: 2 to 4 weeks. Web systems and platforms: from 6 weeks. Each project receives a custom timeline after diagnosis." },
+              { q: "Can the project be delayed?", a: "We work with weekly sprints and client-validated milestones. Delays only occur due to dependency on client approval or content — always communicated in advance." },
+              { q: "Can I request urgent timeline?", a: "Yes, we offer fast-track mode with dedicated team. Additional 30% charge for projects with 50% reduced timeline. Availability subject to schedule." },
+            ],
+          },
+          {
+            id: "process",
+            label: "Process",
+            icon: "🧠",
+            items: [
+              { q: "How does the project start?", a: "It all begins with a diagnosis meeting (free, ~45min) where we understand your business. Within 2 days you receive the formal proposal. After approval, kickoff within 5 business days." },
+              { q: "Will I follow the project in real time?", a: "Yes. You'll have access to a continuously updated staging environment, Notion board with tasks, weekly alignment meetings and direct WhatsApp channel with the team." },
+              { q: "Can I request changes during development?", a: "Yes, adjustments within scope are expected and welcome. Structural changes or new features are evaluated and included as addendums with your approval." },
+              { q: "Do you help with ideas or just execute?", a: "We are strategic partners. At each stage we bring data-driven recommendations, market benchmarks and our experience from hundreds of digital projects." },
+            ],
+          },
+          {
+            id: "technology",
+            label: "Technology",
+            icon: "🛠",
+            items: [
+              { q: "What technologies do you use?", a: "Modern stack: React, TypeScript, Next.js, Tailwind CSS, Supabase/PostgreSQL, Node.js and Vercel/AWS infrastructure. We choose each technology based on the problem, never on hype." },
+              { q: "Is the system scalable?", a: "Fully. Our entire architecture is cloud-native, with auto-scaling, global CDN, intelligent caching and optimized database. Ready to grow from 100 to 1 million users without rewriting." },
+              { q: "Can I integrate with other tools?", a: "Yes. We integrate with CRMs (HubSpot, Salesforce, Pipedrive), payment gateways (Stripe, PayPal), ERPs, WhatsApp Business API, Google/Meta Ads and any REST/GraphQL API." },
+              { q: "Do you use AI in projects?", a: "Yes, when it adds real value. We implement intelligent chatbots, generative AI automations, predictive analytics and custom copilots for your business." },
+            ],
+          },
+          {
+            id: "security",
+            label: "Security",
+            icon: "🔒",
+            items: [
+              { q: "Is my data secure?", a: "Yes. We apply end-to-end encryption, multi-factor authentication, mandatory HTTPS, RLS (Row Level Security) on database, automatic backups and full LGPD/GDPR compliance." },
+              { q: "Do you sign NDA (non-disclosure agreement)?", a: "Yes, at no additional cost. We sign NDA even before strategic diagnosis, ensuring full protection of your business sensitive information." },
+              { q: "Is my project confidential?", a: "Absolutely. All projects are treated with professional confidentiality. We only publish portfolio cases with the client's express authorization." },
+            ],
+          },
+          {
+            id: "post-delivery",
+            label: "Post-Delivery",
+            icon: "🚀",
+            items: [
+              { q: "Is there support after delivery?", a: "Yes. All projects include 30 days of warranty for adjustments and corrections. After this period, we offer monthly support plans with defined SLA." },
+              { q: "Is there continuous maintenance?", a: "We offer maintenance plans starting at $160/month including security updates, monitoring, backups, small adjustments and monthly performance reports." },
+              { q: "Can I evolve the system later?", a: "Yes — and we recommend it. We work with evolutionary roadmap: every 3 months we review metrics and propose improvements based on real user behavior." },
+              { q: "What if I don't like the result?", a: "Our process includes validation at each stage (design, prototype, sprints), avoiding surprises. If something escapes scope, we redo it at no additional cost within the contract." },
+              { q: "Why choose SevenDevX?", a: "We combine consultative strategy, premium design, clean code, enterprise performance and human support. We don't sell websites — we deliver digital assets that generate results." },
+              { q: "Do you work with small or large companies?", a: "We serve everyone from startups validating MVPs to established companies modernizing their stack. The method adapts to client size and maturity." },
+            ],
+          },
         ],
       },
     },
@@ -2794,24 +3063,146 @@ export const translations: Record<Language, Translations> = {
       },
       process: {
         title: "Cómo Trabajamos",
-        subtitle: "Un proceso claro, transparente y orientado a resultados — del primer contacto a la escala.",
+        subtitle: "Un método consultivo de 6 etapas — del diagnóstico estratégico a la evolución continua. Transparencia en cada paso.",
+        expandLabel: "Ver detalles",
+        collapseLabel: "Recoger",
+        deliverablesLabel: "Entregables",
+        durationLabel: "Duración estimada",
+        toolsLabel: "Herramientas",
+        ctaLabel: "Hablar con especialista",
         steps: [
-          { n: "01", t: "Diagnóstico Estratégico", d: "Reunión rápida para entender tu negocio, audiencia, metas e identificar oportunidades reales de crecimiento." },
-          { n: "02", t: "Propuesta & Planificación", d: "Recibes un plan claro con alcance, cronograma, tecnologías e inversión — sin sorpresas." },
-          { n: "03", t: "Desarrollo Guiado", d: "Entregas semanales con validación continua. Sigues todo en tiempo real." },
-          { n: "04", t: "Lanzamiento & Escala", d: "Despliegue, optimización, capacitación y soporte para garantizar rendimiento y crecimiento continuo." },
+          {
+            n: "01",
+            t: "Descubrimiento & Diagnóstico",
+            d: "Entendemos tu negocio, audiencia, objetivos y analizamos la competencia para identificar oportunidades reales.",
+            duration: "1 a 3 días",
+            deliverables: ["Briefing estratégico", "Análisis de competencia", "Mapa de oportunidades", "KPIs definidos"],
+            tools: ["Notion", "Google Meet", "Figma FigJam"],
+            cta: "Agendar diagnóstico",
+          },
+          {
+            n: "02",
+            t: "Estrategia & Planificación",
+            d: "Definimos la solución ideal, arquitectura, stack tecnológico y roadmap detallado para alcanzar tus objetivos.",
+            duration: "2 a 5 días",
+            deliverables: ["Arquitectura técnica", "Roadmap por sprints", "Stack definido", "Flujos de usuario"],
+            tools: ["Miro", "Notion", "Excalidraw"],
+            cta: "Recibir estrategia",
+          },
+          {
+            n: "03",
+            t: "Propuesta & Alineación",
+            d: "Recibes alcance detallado, cronograma por fases e inversión estructurada — con aprobación formal antes de iniciar.",
+            duration: "1 a 2 días",
+            deliverables: ["Propuesta comercial", "Cronograma", "Contrato digital", "Hitos de pago"],
+            tools: ["DocuSign", "PandaDoc", "PDF interactivo"],
+            cta: "Solicitar presupuesto",
+          },
+          {
+            n: "04",
+            t: "Diseño & Prototipado",
+            d: "Creamos wireframes, UI/UX y prototipos navegables para validar cada decisión visual antes de programar.",
+            duration: "5 a 15 días",
+            deliverables: ["Wireframes", "UI Kit", "Prototipo navegable", "Design system"],
+            tools: ["Figma", "Framer", "Adobe XD"],
+            cta: "Ver portafolio",
+          },
+          {
+            n: "05",
+            t: "Desarrollo & Iteración",
+            d: "Sprints semanales con entregas continuas, ambiente de homologación en tiempo real y feedback activo del cliente.",
+            duration: "2 a 12 semanas",
+            deliverables: ["Código versionado", "Build en homologación", "Tests automatizados", "Demos semanales"],
+            tools: ["React", "TypeScript", "Supabase", "Vercel"],
+            cta: "Iniciar proyecto",
+          },
+          {
+            n: "06",
+            t: "Lanzamiento & Evolución",
+            d: "Despliegue en producción, monitoreo, optimizaciones de performance, capacitación y soporte continuo.",
+            duration: "Continuo",
+            deliverables: ["Deploy producción", "Documentación", "Capacitación", "Plan de evolución"],
+            tools: ["Vercel", "Sentry", "Google Analytics", "Lighthouse"],
+            cta: "Conocer planes",
+          },
         ],
       },
       faq: {
         title: "Preguntas Frecuentes",
-        subtitle: "Respuestas claras a las dudas más comunes antes de comenzar.",
-        items: [
-          { q: "¿Cuánto tiempo lleva desarrollar un sitio o sistema?", a: "Landing pages: 5 a 10 días hábiles. Sitios corporativos: 2 a 4 semanas. Sistemas web y plataformas: desde 6 semanas. Cada proyecto recibe un cronograma personalizado tras el diagnóstico." },
-          { q: "¿Cómo funciona la inversión y la forma de pago?", a: "Trabajamos con propuesta cerrada por alcance, sin cobro por hora. El pago se divide en hitos del proyecto (inicio, entregas intermedias y lanzamiento). Aceptamos transferencia, tarjeta y PIX." },
-          { q: "¿Ofrecen soporte y mantenimiento tras la entrega?", a: "Sí. Todos los proyectos incluyen 30 días de garantía. Ofrecemos planes mensuales de mantenimiento, actualizaciones de seguridad, monitoreo de rendimiento y evolución continua." },
-          { q: "¿Qué tecnologías utilizan?", a: "Stack moderno: React, TypeScript, Next.js, Tailwind CSS, Supabase/PostgreSQL, Node.js e infraestructura en Vercel. Elegimos cada tecnología según el problema, nunca por moda." },
-          { q: "¿Puedo seguir el avance del proyecto?", a: "Sí. Tendrás acceso a un entorno de homologación actualizado en tiempo real, reuniones semanales de alineación y canal directo con el equipo vía WhatsApp." },
-          { q: "¿También se encargan de SEO y rendimiento?", a: "Siempre. Todos los proyectos se entregan con SEO técnico, Core Web Vitals optimizados, schema.org, sitemap, meta tags dinámicas y auditoría Lighthouse superior a 90." },
+        subtitle: "Respuestas claras organizadas por tema. Todo lo que necesitas saber antes de comenzar.",
+        searchPlaceholder: "Buscar pregunta...",
+        allLabel: "Todas",
+        noResults: "No se encontraron preguntas. Intenta otro término.",
+        ctaTitle: "¿Aún tienes dudas?",
+        ctaSubtitle: "Habla directamente con nuestro equipo. Respuesta en hasta 1 hora hábil.",
+        ctaButton: "Hablar con especialista",
+        categories: [
+          {
+            id: "inversion",
+            label: "Inversión",
+            icon: "💰",
+            items: [
+              { q: "¿Cuánto cuesta un proyecto en SevenDevX?", a: "La inversión varía según el alcance. Landing pages premium desde €450, sitios corporativos desde €1.100 y sistemas web bajo presupuesto. Tras el diagnóstico recibes una propuesta cerrada — sin cobro por hora." },
+              { q: "¿Hay financiación?", a: "Sí. Trabajamos con pagos por hitos del proyecto: entrada (30%), entregas intermedias y lanzamiento. Aceptamos transferencia, tarjeta (hasta 12 cuotas) y PIX." },
+              { q: "¿El precio puede cambiar durante el proyecto?", a: "No. Trabajamos con propuesta cerrada por alcance. Los cambios solicitados tras la aprobación se tratan como adendas con presupuesto separado, siempre con tu aprobación previa." },
+              { q: "¿Vale la pena invertir en un proyecto premium?", a: "Sí — cuando necesitas rendimiento, escalabilidad y conversión real. Nuestros clientes reportan aumento promedio de 3x en leads cualificados en los primeros 90 días tras el lanzamiento." },
+            ],
+          },
+          {
+            id: "plazo",
+            label: "Plazo",
+            icon: "⏱",
+            items: [
+              { q: "¿Cuánto tiempo lleva el proyecto?", a: "Landing pages: 5 a 10 días hábiles. Sitios corporativos: 2 a 4 semanas. Sistemas web y plataformas: desde 6 semanas. Cada proyecto recibe cronograma personalizado tras el diagnóstico." },
+              { q: "¿El proyecto puede atrasarse?", a: "Trabajamos con sprints semanales e hitos validados por el cliente. Los retrasos solo ocurren por dependencia de aprobación o contenido del cliente — siempre comunicados con antelación." },
+              { q: "¿Puedo solicitar plazo urgente?", a: "Sí, ofrecemos modalidad fast-track con equipo dedicado. Cargo adicional del 30% para proyectos con plazo reducido en 50%. Disponibilidad sujeta a agenda." },
+            ],
+          },
+          {
+            id: "proceso",
+            label: "Proceso",
+            icon: "🧠",
+            items: [
+              { q: "¿Cómo empieza el proyecto?", a: "Todo comienza con una reunión de diagnóstico (gratuita, ~45min) donde entendemos tu negocio. En hasta 2 días recibes la propuesta formal. Tras aprobación, kickoff en hasta 5 días hábiles." },
+              { q: "¿Seguiré el proyecto en tiempo real?", a: "Sí. Tendrás acceso a un entorno de homologación actualizado continuamente, board en Notion con tareas, reuniones semanales de alineación y canal directo vía WhatsApp con el equipo." },
+              { q: "¿Puedo pedir cambios durante el desarrollo?", a: "Sí, los ajustes dentro del alcance son esperados y bienvenidos. Los cambios estructurales o nuevas funcionalidades se evalúan e incluyen como adendas con tu aprobación." },
+              { q: "¿Ayudan con ideas o solo ejecutan?", a: "Somos socios estratégicos. En cada etapa traemos recomendaciones basadas en datos, benchmarks de mercado y nuestra experiencia en cientos de proyectos digitales." },
+            ],
+          },
+          {
+            id: "tecnologia",
+            label: "Tecnología",
+            icon: "🛠",
+            items: [
+              { q: "¿Qué tecnologías utilizan?", a: "Stack moderno: React, TypeScript, Next.js, Tailwind CSS, Supabase/PostgreSQL, Node.js e infraestructura en Vercel/AWS. Elegimos cada tecnología según el problema, nunca por moda." },
+              { q: "¿El sistema es escalable?", a: "Totalmente. Toda nuestra arquitectura es cloud-native, con auto-scaling, CDN global, caché inteligente y base de datos optimizada. Lista para crecer de 100 a 1 millón de usuarios sin reescritura." },
+              { q: "¿Puedo integrar con otras herramientas?", a: "Sí. Integramos con CRMs (HubSpot, Salesforce, Pipedrive), gateways de pago (Stripe, PayPal), ERPs, WhatsApp Business API, Google/Meta Ads y cualquier API REST/GraphQL." },
+              { q: "¿Usan IA en los proyectos?", a: "Sí, cuando agrega valor real. Implementamos chatbots inteligentes, automatizaciones con IA generativa, análisis predictivo y copilotos personalizados para tu negocio." },
+            ],
+          },
+          {
+            id: "seguridad",
+            label: "Seguridad",
+            icon: "🔒",
+            items: [
+              { q: "¿Mis datos están seguros?", a: "Sí. Aplicamos cifrado punto a punto, autenticación multifactor, HTTPS obligatorio, RLS (Row Level Security) en base de datos, copias de seguridad automáticas y conformidad total con LGPD/GDPR." },
+              { q: "¿Firman NDA (acuerdo de confidencialidad)?", a: "Sí, sin costo adicional. Firmamos NDA antes incluso del diagnóstico estratégico, garantizando protección total de la información sensible de tu negocio." },
+              { q: "¿Mi proyecto es confidencial?", a: "Absolutamente. Todos los proyectos se tratan con confidencialidad profesional. Solo publicamos casos en el portafolio con autorización expresa del cliente." },
+            ],
+          },
+          {
+            id: "post-entrega",
+            label: "Post-Entrega",
+            icon: "🚀",
+            items: [
+              { q: "¿Hay soporte tras la entrega?", a: "Sí. Todos los proyectos incluyen 30 días de garantía para ajustes y correcciones. Tras este período, ofrecemos planes mensuales de soporte con SLA definido." },
+              { q: "¿Hay mantenimiento continuo?", a: "Ofrecemos planes de mantenimiento desde €140/mes incluyendo actualizaciones de seguridad, monitoreo, copias de seguridad, ajustes pequeños e informes mensuales de rendimiento." },
+              { q: "¿Puedo evolucionar el sistema después?", a: "Sí — y lo recomendamos. Trabajamos con roadmap evolutivo: cada 3 meses revisamos métricas y proponemos mejoras basadas en el comportamiento real de los usuarios." },
+              { q: "¿Y si no me gusta el resultado?", a: "Nuestro proceso prevé validación en cada etapa (diseño, prototipo, sprints), evitando sorpresas. Si algo escapa del alcance, lo rehacemos sin costo adicional dentro del contrato." },
+              { q: "¿Por qué elegir SevenDevX?", a: "Combinamos estrategia consultiva, diseño premium, código limpio, rendimiento enterprise y soporte humano. No vendemos sitios — entregamos activos digitales que generan resultados." },
+              { q: "¿Trabajan con empresas pequeñas o grandes?", a: "Atendemos desde startups validando MVPs hasta empresas establecidas modernizando su stack. El método se adapta al tamaño y madurez del cliente." },
+            ],
+          },
         ],
       },
     },
