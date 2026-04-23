@@ -223,11 +223,17 @@ const AdminDashboard = () => {
                 Admin
               </span>
             </div>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-white/60">{user?.email}</span>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => navigate("/admin/projects")}
+                className="px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-xs uppercase tracking-wider"
+              >
+                Projetos
+              </button>
+              <span className="text-sm text-white/60 hidden sm:inline">{user?.email}</span>
               <button
                 onClick={handleSignOut}
-                className="flex items-center gap-2 px-4 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-sm"
+                className="flex items-center gap-2 px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-sm"
               >
                 <LogOut className="w-4 h-4" />
                 Sair
