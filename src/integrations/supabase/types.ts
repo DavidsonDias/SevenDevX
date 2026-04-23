@@ -327,6 +327,99 @@ export type Database = {
         }
         Relationships: []
       }
+      projects: {
+        Row: {
+          case_study_url: string | null
+          category: string | null
+          client_name: string | null
+          client_segment: string | null
+          cover_image: string | null
+          created_at: string
+          created_by: string | null
+          description: string
+          display_order: number
+          gallery: Json
+          github_url: string | null
+          id: string
+          is_featured: boolean
+          is_published_on_site: boolean
+          live_url: string | null
+          long_description: string | null
+          published_at: string | null
+          seo_description: string | null
+          seo_keywords: string[] | null
+          seo_title: string | null
+          slug: string
+          status: Database["public"]["Enums"]["project_status"]
+          subtitle: string | null
+          tags: string[]
+          technologies: Json
+          title: string
+          updated_at: string
+          views_count: number
+        }
+        Insert: {
+          case_study_url?: string | null
+          category?: string | null
+          client_name?: string | null
+          client_segment?: string | null
+          cover_image?: string | null
+          created_at?: string
+          created_by?: string | null
+          description: string
+          display_order?: number
+          gallery?: Json
+          github_url?: string | null
+          id?: string
+          is_featured?: boolean
+          is_published_on_site?: boolean
+          live_url?: string | null
+          long_description?: string | null
+          published_at?: string | null
+          seo_description?: string | null
+          seo_keywords?: string[] | null
+          seo_title?: string | null
+          slug: string
+          status?: Database["public"]["Enums"]["project_status"]
+          subtitle?: string | null
+          tags?: string[]
+          technologies?: Json
+          title: string
+          updated_at?: string
+          views_count?: number
+        }
+        Update: {
+          case_study_url?: string | null
+          category?: string | null
+          client_name?: string | null
+          client_segment?: string | null
+          cover_image?: string | null
+          created_at?: string
+          created_by?: string | null
+          description?: string
+          display_order?: number
+          gallery?: Json
+          github_url?: string | null
+          id?: string
+          is_featured?: boolean
+          is_published_on_site?: boolean
+          live_url?: string | null
+          long_description?: string | null
+          published_at?: string | null
+          seo_description?: string | null
+          seo_keywords?: string[] | null
+          seo_title?: string | null
+          slug?: string
+          status?: Database["public"]["Enums"]["project_status"]
+          subtitle?: string | null
+          tags?: string[]
+          technologies?: Json
+          title?: string
+          updated_at?: string
+          views_count?: number
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -371,6 +464,7 @@ export type Database = {
         | "proposal"
         | "closed"
         | "lost"
+      project_status: "draft" | "published" | "archived"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -508,6 +602,7 @@ export const Constants = {
         "closed",
         "lost",
       ],
+      project_status: ["draft", "published", "archived"],
     },
   },
 } as const
