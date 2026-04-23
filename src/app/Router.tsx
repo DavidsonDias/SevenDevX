@@ -17,7 +17,9 @@ const BlogPost = lazy(() => import("@/pages/BlogPost"));
 const Auth = lazy(() => import("@/pages/Auth"));
 const Profile = lazy(() => import("@/pages/Profile"));
 const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
+const ProjectsAdmin = lazy(() => import("@/pages/admin/ProjectsAdmin"));
 const ProjectsHub = lazy(() => import("@/pages/ProjectsHub"));
+const ProjectDetail = lazy(() => import("@/pages/ProjectDetail"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
 const pageTransition = {
@@ -58,6 +60,7 @@ function AnimatedRoutes() {
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/projects-hub" element={<ProjectsHub />} />
+            <Route path="/projects/:slug" element={<ProjectDetail />} />
 
             {/* Protected Routes */}
             <Route path="/profile" element={
@@ -68,6 +71,11 @@ function AnimatedRoutes() {
             <Route path="/admin" element={
               <ProtectedRoute requiredRole="admin">
                 <AdminDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/projects" element={
+              <ProtectedRoute requiredRole="admin">
+                <ProjectsAdmin />
               </ProtectedRoute>
             } />
 

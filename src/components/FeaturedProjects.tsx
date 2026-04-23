@@ -8,20 +8,12 @@ import { memo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ArrowUpRight, Sparkles, ExternalLink, Github, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { projects, isValidLiveUrl, type Project } from "@/data/projects";
+import { isValidLiveUrl, type Project } from "@/data/projects";
+import { useFeaturedProjects } from "@/hooks/useProjects";
 import ProjectCard3D from "@/components/ProjectCard3D";
 import { Button } from "@/components/ui/button";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { useLanguage } from "@/i18n/LanguageContext";
-
-const FEATURED_IDS = [101, 102, 103];
-
-const featuredProjects = FEATURED_IDS
-  .map(id => projects.find(p => p.id === id))
-  .filter(Boolean) as Project[];
-
-const heroProject = featuredProjects[0];
-const secondaryProjects = featuredProjects.slice(1);
 
 /* ── Expanded Modal ── */
 const FeaturedModal = ({ project, onClose }: { project: Project | null; onClose: () => void }) => {
@@ -156,6 +148,11 @@ ProjectCard.displayName = "ProjectCard";
 const FeaturedProjects = () => {
   const navigate = useNavigate();
   const [openProject, setOpenProject] = useState<Project | null>(null);
+  const { data: featuredProjects = [] } = useFeaturedProjects(3);
+  const heroProject = featuredProjects[0];
+  const secondaryProjects = featuredProjects.slice(1);
+
+  if (!heroProject) return null;
 
   return (
     <section className="relative bg-background py-20 md:py-28">
