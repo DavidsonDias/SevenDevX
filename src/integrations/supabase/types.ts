@@ -338,6 +338,7 @@ export type Database = {
           created_by: string | null
           description: string
           display_order: number
+          featured_level: Database["public"]["Enums"]["featured_level"]
           gallery: Json
           github_url: string | null
           id: string
@@ -368,6 +369,7 @@ export type Database = {
           created_by?: string | null
           description: string
           display_order?: number
+          featured_level?: Database["public"]["Enums"]["featured_level"]
           gallery?: Json
           github_url?: string | null
           id?: string
@@ -398,6 +400,7 @@ export type Database = {
           created_by?: string | null
           description?: string
           display_order?: number
+          featured_level?: Database["public"]["Enums"]["featured_level"]
           gallery?: Json
           github_url?: string | null
           id?: string
@@ -464,6 +467,7 @@ export type Database = {
         | "proposal"
         | "closed"
         | "lost"
+      featured_level: "none" | "secondary" | "primary"
       project_status: "draft" | "published" | "archived"
     }
     CompositeTypes: {
@@ -602,6 +606,7 @@ export const Constants = {
         "closed",
         "lost",
       ],
+      featured_level: ["none", "secondary", "primary"],
       project_status: ["draft", "published", "archived"],
     },
   },

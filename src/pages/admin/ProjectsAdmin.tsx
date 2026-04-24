@@ -50,7 +50,7 @@ interface FormState {
   live_url: string;
   github_url: string;
   status: "draft" | "published" | "archived";
-  is_featured: boolean;
+  featured_level: "none" | "secondary" | "primary";
   is_published_on_site: boolean;
   display_order: number;
 }
@@ -69,7 +69,7 @@ const emptyForm: FormState = {
   live_url: "",
   github_url: "",
   status: "draft",
-  is_featured: false,
+  featured_level: "none",
   is_published_on_site: false,
   display_order: 0,
 };
@@ -127,6 +127,20 @@ const ProjectsAdmin = () => {
   /* ── Mutations ── */
   const saveMutation = useMutation({
     mutationFn: async (form: FormState) => {
+      // Validation: slug uniqueness + cover image required for published
+      if (!form.slug) throw new Error("Slug é obrigatório.");
+      if (form.is_published_on_site && !form.cover_image) {
+        throw new Error("Imagem de capa é obrigatória para publicar no site.");
+      }
+      const { data: existingSlug } = await supabase
+        .from("projects")
+        .select("id")
+        .eq("slug", form.slug)
+        .maybeSingle();
+      if (existingSlug && existingSlug.id !== form.id) {
+        throw new Error(`Slug "${form.slug}" já está em uso.`);
+      }
+
       const payload: any = {
         slug: form.slug || slugify(form.title),
         title: form.title,
@@ -141,7 +155,8 @@ const ProjectsAdmin = () => {
         live_url: form.live_url || null,
         github_url: form.github_url || null,
         status: form.status,
-        is_featured: form.is_featured,
+        is_featured: form.featured_level !== "none",
+        featured_level: form.featured_level,
         is_published_on_site: form.is_published_on_site,
         display_order: form.display_order,
       };
@@ -192,9 +207,12 @@ const ProjectsAdmin = () => {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["projects"] }),
   });
 
-  const toggleFeaturedMutation = useMutation({
-    mutationFn: async ({ id, value }: { id: string; value: boolean }) => {
-      const { error } = await supabase.from("projects").update({ is_featured: value }).eq("id", id);
+  const setFeaturedLevelMutation = useMutation({
+    mutationFn: async ({ id, level }: { id: string; level: "none" | "secondary" | "primary" }) => {
+      const { error } = await supabase
+        .from("projects")
+        .update({ featured_level: level, is_featured: level !== "none" })
+        .eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["projects"] }),
@@ -240,7 +258,7 @@ const ProjectsAdmin = () => {
       live_url: p.live_url || "",
       github_url: p.github_url || "",
       status: p.status as any,
-      is_featured: p.is_featured,
+      featured_level: ((p as any).featured_level || (p.is_featured ? "secondary" : "none")) as any,
       is_published_on_site: p.is_published_on_site,
       display_order: p.display_order,
     });

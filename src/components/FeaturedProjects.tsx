@@ -1,7 +1,7 @@
 /**
- * 🔥 FeaturedProjects — SevenDevX Home Section
- * Showcases top projects with hero + secondary layout
- * Uses layoutId for seamless card→modal transitions
+ * 🔥 FeaturedProjects — SevenDevX Home Section (Enterprise)
+ * Single source of truth: useProjects() (Supabase).
+ * Hero = featured_level=primary | Secondary grid = featured_level=secondary (até 4)
  */
 
 import { memo, useState } from "react";
@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ArrowUpRight, Sparkles, ExternalLink, Github, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { isValidLiveUrl, type Project } from "@/data/projects";
-import { useFeaturedProjects } from "@/hooks/useProjects";
+import { usePrimaryProject, useSecondaryFeaturedProjects } from "@/hooks/useProjects";
 import ProjectCard3D from "@/components/ProjectCard3D";
 import { Button } from "@/components/ui/button";
 import { useScrollLock } from "@/hooks/useScrollLock";
@@ -148,9 +148,8 @@ ProjectCard.displayName = "ProjectCard";
 const FeaturedProjects = () => {
   const navigate = useNavigate();
   const [openProject, setOpenProject] = useState<Project | null>(null);
-  const { data: featuredProjects = [] } = useFeaturedProjects(3);
-  const heroProject = featuredProjects[0];
-  const secondaryProjects = featuredProjects.slice(1);
+  const { data: heroProject } = usePrimaryProject();
+  const { data: secondaryProjects = [] } = useSecondaryFeaturedProjects(4);
 
   if (!heroProject) return null;
 
@@ -174,76 +173,76 @@ const FeaturedProjects = () => {
           </p>
         </motion.div>
 
-        {/* Hero Project (PsicoOne) */}
-        {heroProject && (
-          <ProjectCard3D tiltIntensity={4} className="mb-6" layoutId={`featured-card-${heroProject.id}`}>
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
-              className="group relative overflow-hidden rounded-xl border border-primary/20 bg-card cursor-pointer"
-              onClick={() => setOpenProject(heroProject)}
-            >
-              <div className="grid grid-cols-1 lg:grid-cols-2">
-                <div className="relative aspect-video lg:aspect-auto">
-                  <img
-                    src={heroProject.image}
-                    alt={heroProject.title}
-                    loading="lazy"
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent to-background/60 hidden lg:block" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent lg:hidden" />
+        {/* Hero Project (primary) */}
+        <ProjectCard3D tiltIntensity={4} className="mb-6" layoutId={`featured-card-${heroProject.id}`}>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className="group relative overflow-hidden rounded-xl border border-primary/20 bg-card cursor-pointer"
+            onClick={() => setOpenProject(heroProject)}
+          >
+            <div className="grid grid-cols-1 lg:grid-cols-2">
+              <div className="relative aspect-video lg:aspect-auto">
+                <img
+                  src={heroProject.image}
+                  alt={heroProject.title}
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent to-background/60 hidden lg:block" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent lg:hidden" />
+              </div>
+              <div className="flex flex-col justify-center p-6 sm:p-8 lg:p-10">
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="inline-flex items-center gap-1 text-[10px] px-3 py-1 rounded-full bg-primary/15 border border-primary/30 text-primary font-medium uppercase tracking-wider">
+                    <Sparkles size={10} /> Destaque Principal
+                  </span>
                 </div>
-                <div className="flex flex-col justify-center p-6 sm:p-8 lg:p-10">
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="inline-flex items-center gap-1 text-[10px] px-3 py-1 rounded-full bg-primary/15 border border-primary/30 text-primary font-medium uppercase tracking-wider">
-                      <Sparkles size={10} /> Destaque Principal
+                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-tight mb-3">
+                  {heroProject.title}
+                </h3>
+                <p className="text-sm sm:text-base text-muted-foreground mb-4 leading-relaxed">
+                  {heroProject.description}
+                </p>
+                <div className="flex flex-wrap gap-2 mb-6">
+                  {heroProject.techs.map(tech => (
+                    <span key={tech.name} className="text-[10px] uppercase tracking-wider text-muted-foreground border border-border px-2 py-1 rounded-sm">
+                      {tech.name}
                     </span>
-                  </div>
-                  <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-tight mb-3">
-                    {heroProject.title}
-                  </h3>
-                  <p className="text-sm sm:text-base text-muted-foreground mb-4 leading-relaxed">
-                    {heroProject.description}
-                  </p>
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    {heroProject.techs.map(tech => (
-                      <span key={tech.name} className="text-[10px] uppercase tracking-wider text-muted-foreground border border-border px-2 py-1 rounded-sm">
-                        {tech.name}
-                      </span>
-                    ))}
-                    {heroProject.tags?.map(tag => (
-                      <span key={tag} className="text-[10px] uppercase tracking-wider text-primary/80 border border-primary/20 bg-primary/5 px-2 py-1 rounded-sm">
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="flex gap-3" onClick={e => e.stopPropagation()}>
-                    {isValidLiveUrl(heroProject.liveUrl) && (
-                      <a
-                        href={heroProject.liveUrl!}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 border-2 border-foreground px-6 py-3 text-xs tracking-widest uppercase font-semibold hover:bg-foreground hover:text-background transition-all duration-300"
-                      >
-                        Ver Projeto <ArrowUpRight size={14} />
-                      </a>
-                    )}
-                  </div>
+                  ))}
+                  {heroProject.tags?.map(tag => (
+                    <span key={tag} className="text-[10px] uppercase tracking-wider text-primary/80 border border-primary/20 bg-primary/5 px-2 py-1 rounded-sm">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+                <div className="flex gap-3" onClick={e => e.stopPropagation()}>
+                  {isValidLiveUrl(heroProject.liveUrl) && (
+                    <a
+                      href={heroProject.liveUrl!}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 border-2 border-foreground px-6 py-3 text-xs tracking-widest uppercase font-semibold hover:bg-foreground hover:text-background transition-all duration-300"
+                    >
+                      Ver Projeto <ArrowUpRight size={14} />
+                    </a>
+                  )}
                 </div>
               </div>
-            </motion.div>
-          </ProjectCard3D>
-        )}
+            </div>
+          </motion.div>
+        </ProjectCard3D>
 
         {/* Secondary Projects */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-12">
-          {secondaryProjects.map((project, i) => (
-            <ProjectCard key={project.id} project={project} index={i} onOpen={setOpenProject} />
-          ))}
-        </div>
+        {secondaryProjects.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-12">
+            {secondaryProjects.slice(0, 2).map((project, i) => (
+              <ProjectCard key={project.id} project={project} index={i} onOpen={setOpenProject} />
+            ))}
+          </div>
+        )}
 
         {/* CTA Button */}
         <motion.div
