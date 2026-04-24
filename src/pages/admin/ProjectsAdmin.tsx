@@ -425,10 +425,10 @@ const ProjectsAdmin = () => {
                             size="icon"
                             variant="ghost"
                             className="h-8 w-8"
-                            onClick={() => toggleFeaturedMutation.mutate({ id: p.id, value: !p.is_featured })}
-                            title={p.is_featured ? "Remover destaque" : "Marcar destaque"}
+                            onClick={() => setFeaturedLevelMutation.mutate({ id: p.id, level: p.featured_level === "none" ? "secondary" : "none" })}
+                            title={p.featured_level !== "none" ? "Remover destaque" : "Marcar como destaque"}
                           >
-                            {p.is_featured ? <StarOff className="w-4 h-4" /> : <Star className="w-4 h-4" />}
+                            {p.featured_level !== "none" ? <StarOff className="w-4 h-4" /> : <Star className="w-4 h-4" />}
                           </Button>
                           {p.is_published_on_site && (
                             <Button
