@@ -425,10 +425,10 @@ const ProjectsAdmin = () => {
                             size="icon"
                             variant="ghost"
                             className="h-8 w-8"
-                            onClick={() => toggleFeaturedMutation.mutate({ id: p.id, value: !p.is_featured })}
-                            title={p.is_featured ? "Remover destaque" : "Marcar destaque"}
+                            onClick={() => setFeaturedLevelMutation.mutate({ id: p.id, level: p.featured_level === "none" ? "secondary" : "none" })}
+                            title={p.featured_level !== "none" ? "Remover destaque" : "Marcar como destaque"}
                           >
-                            {p.is_featured ? <StarOff className="w-4 h-4" /> : <Star className="w-4 h-4" />}
+                            {p.featured_level !== "none" ? <StarOff className="w-4 h-4" /> : <Star className="w-4 h-4" />}
                           </Button>
                           {p.is_published_on_site && (
                             <Button
@@ -689,12 +689,19 @@ const ProjectsAdmin = () => {
                     onCheckedChange={(v) => setEditing({ ...editing, is_published_on_site: v })}
                   />
                 </div>
-                <div className="flex items-center justify-between sm:justify-start gap-2 sm:flex-col sm:items-start">
-                  <Label>Em destaque</Label>
-                  <Switch
-                    checked={editing.is_featured}
-                    onCheckedChange={(v) => setEditing({ ...editing, is_featured: v })}
-                  />
+                <div className="flex flex-col gap-2">
+                  <Label>Nível de destaque</Label>
+                  <Select
+                    value={editing.featured_level}
+                    onValueChange={(v) => setEditing({ ...editing, featured_level: v as "none" | "secondary" | "primary" })}
+                  >
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Nenhum</SelectItem>
+                      <SelectItem value="secondary">Destaque</SelectItem>
+                      <SelectItem value="primary">Destaque principal ⭐</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </div>
