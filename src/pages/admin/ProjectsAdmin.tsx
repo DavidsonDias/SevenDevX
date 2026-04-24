@@ -689,12 +689,19 @@ const ProjectsAdmin = () => {
                     onCheckedChange={(v) => setEditing({ ...editing, is_published_on_site: v })}
                   />
                 </div>
-                <div className="flex items-center justify-between sm:justify-start gap-2 sm:flex-col sm:items-start">
-                  <Label>Em destaque</Label>
-                  <Switch
-                    checked={editing.is_featured}
-                    onCheckedChange={(v) => setEditing({ ...editing, is_featured: v })}
-                  />
+                <div className="flex flex-col gap-2">
+                  <Label>Nível de destaque</Label>
+                  <Select
+                    value={editing.featured_level}
+                    onValueChange={(v) => setEditing({ ...editing, featured_level: v as "none" | "secondary" | "primary" })}
+                  >
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Nenhum</SelectItem>
+                      <SelectItem value="secondary">Destaque</SelectItem>
+                      <SelectItem value="primary">Destaque principal ⭐</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </div>
