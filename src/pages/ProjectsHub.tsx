@@ -1,6 +1,7 @@
 /**
- * 🚀 ProjectsHub — SevenDevX Projects Hub
- * Enterprise-grade project showcase with layoutId card→modal transitions
+ * 🚀 ProjectsHub — SevenDevX Projects Hub (Enterprise)
+ * Single source of truth: useProjects() (Supabase).
+ * Hero = featured_level=primary | Featured = secondary | Sorted by featured DESC, order ASC.
  */
 
 import { useState, useMemo, useCallback, memo, useRef, useEffect } from "react";
@@ -18,19 +19,19 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useAnalytics } from "@/hooks/useAnalytics";
-import { projects, isValidLiveUrl, type Project } from "@/data/projects";
+import { isValidLiveUrl, type Project } from "@/data/projects";
+import { useProjects, type UIProject } from "@/hooks/useProjects";
 import ProjectCard3D from "@/components/ProjectCard3D";
 import { useScrollLock } from "@/hooks/useScrollLock";
-
-const FEATURED_IDS = [101, 102, 103, 104, 105, 107, 106];
-const sortedProjects = [
-  ...FEATURED_IDS.map((id) => projects.find((p) => p.id === id)!).filter(Boolean),
-  ...projects.filter((p) => !FEATURED_IDS.includes(p.id)),
-];
-const HERO_ID = FEATURED_IDS[0];
+import AppLoaderOrbital from "@/components/ui/AppLoaderOrbital";
 
 // ─── Project Modal with layoutId ───
-const ProjectModal = memo(({ project, onClose }: { project: Project | null; onClose: () => void }) => {
+const ProjectModal = memo(({ project, onClose, isPrimary, isFeatured }: {
+  project: Project | null;
+  onClose: () => void;
+  isPrimary?: boolean;
+  isFeatured?: boolean;
+}) => {
   const { t } = useLanguage();
   const modalRef = useRef<HTMLDivElement | null>(null);
 
@@ -102,9 +103,9 @@ const ProjectModal = memo(({ project, onClose }: { project: Project | null; onCl
             <div className="relative h-64 md:h-full overflow-hidden rounded-xl">
               <img src={project.image} alt={project.title} className="w-full h-full object-cover" loading="lazy" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-              {FEATURED_IDS.includes(project.id) && (
+              {(isFeatured || isPrimary) && (
                 <div className="absolute top-3 left-3 flex items-center gap-1.5 px-3 py-1 bg-primary/90 rounded-full text-xs font-semibold text-primary-foreground">
-                  <Sparkles className="w-3 h-3" /> {t.projectsHub.featured}
+                  <Sparkles className="w-3 h-3" /> {isPrimary ? t.projectsHub.mainFeatured : t.projectsHub.featured}
                 </div>
               )}
             </div>
@@ -163,11 +164,11 @@ ProjectModal.displayName = "ProjectModal";
 
 // ─── Project Card ───
 const ProjectCard = memo(({ project, index, isFeatured, isHero, onOpenModal }: {
-  project: Project;
+  project: UIProject;
   index: number;
   isFeatured: boolean;
   isHero: boolean;
-  onOpenModal: (p: Project) => void;
+  onOpenModal: (p: UIProject) => void;
 }) => {
   const { t } = useLanguage();
 
@@ -351,10 +352,12 @@ const ProjectsHub = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
-  const [openProject, setOpenProject] = useState<Project | null>(null);
+  const [openProject, setOpenProject] = useState<UIProject | null>(null);
   const [scrolled, setScrolled] = useState(false);
 
   useAnalytics();
+
+  const { data: projects = [], isLoading } = useProjects();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -369,21 +372,24 @@ const ProjectsHub = () => {
     window.scrollTo({ top: document.getElementById("projects-grid")?.offsetTop ?? 400, behavior: "smooth" });
   }, []);
 
-  const clearFilters = useCallback(() => {
-    setSelectedFilters([]);
-  }, []);
+  const clearFilters = useCallback(() => setSelectedFilters([]), []);
 
   const filtered = useMemo(() => {
-    if (selectedFilters.length === 0) return sortedProjects;
-    return sortedProjects.filter((p) => {
+    if (selectedFilters.length === 0) return projects;
+    return projects.filter((p) => {
       const allTags = [...p.techs.map((t) => t.name), ...(p.tags || [])];
       return selectedFilters.some((f) => allTags.includes(f));
     });
-  }, [selectedFilters]);
+  }, [projects, selectedFilters]);
 
-  const handleOpenModal = useCallback((project: Project) => {
+  const heroProject = projects.find((p) => p.featuredLevel === "primary");
+  const featuredCount = projects.filter((p) => p.featuredLevel !== "none").length;
+
+  const handleOpenModal = useCallback((project: UIProject) => {
     setOpenProject(project);
   }, []);
+
+  if (isLoading) return <AppLoaderOrbital />;
 
   return (
     <>
@@ -433,7 +439,7 @@ const ProjectsHub = () => {
                     {projects.length} {t.projectsHub.projects}
                   </span>
                   <span>•</span>
-                  <span>{FEATURED_IDS.length} {t.projectsHub.highlights}</span>
+                  <span>{featuredCount} {t.projectsHub.highlights}</span>
                 </div>
               </motion.div>
             </div>
@@ -511,11 +517,15 @@ const ProjectsHub = () => {
                   >
                     {filtered.map((project, index) => (
                       <ProjectCard
-                        key={project.id}
+                        key={project.dbId}
                         project={project}
                         index={index}
-                        isFeatured={FEATURED_IDS.includes(project.id)}
-                        isHero={project.id === HERO_ID && selectedFilters.length === 0}
+                        isFeatured={project.featuredLevel !== "none"}
+                        isHero={
+                          selectedFilters.length === 0 &&
+                          !!heroProject &&
+                          project.dbId === heroProject.dbId
+                        }
                         onOpenModal={handleOpenModal}
                       />
                     ))}
@@ -529,7 +539,7 @@ const ProjectsHub = () => {
         <Footer />
         <WhatsAppButton />
 
-        {/* JSON-LD: SoftwareApplication schema for projects */}
+        {/* JSON-LD: ItemList of projects */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -537,7 +547,7 @@ const ProjectsHub = () => {
               "@context": "https://schema.org",
               "@type": "ItemList",
               name: "SevenDevX Projects",
-              itemListElement: sortedProjects.slice(0, 10).map((p, i) => ({
+              itemListElement: projects.slice(0, 10).map((p, i) => ({
                 "@type": "ListItem",
                 position: i + 1,
                 item: {
@@ -546,6 +556,7 @@ const ProjectsHub = () => {
                   description: p.description,
                   applicationCategory: "WebApplication",
                   operatingSystem: "Web",
+                  url: `https://www.sevendevx.com/projects/${p.slug}`,
                   author: {
                     "@type": "Organization",
                     name: "SevenDevX",
@@ -558,7 +569,12 @@ const ProjectsHub = () => {
         />
       </div>
 
-      <ProjectModal project={openProject} onClose={() => setOpenProject(null)} />
+      <ProjectModal
+        project={openProject}
+        onClose={() => setOpenProject(null)}
+        isPrimary={openProject?.featuredLevel === "primary"}
+        isFeatured={openProject?.featuredLevel === "secondary"}
+      />
     </>
   );
 };

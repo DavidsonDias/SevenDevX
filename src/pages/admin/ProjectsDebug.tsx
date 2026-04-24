@@ -190,9 +190,9 @@ const IssueGroup = <T,>({
   <div className="rounded-lg border border-border bg-card p-4">
     <h3 className="font-semibold text-sm mb-3 flex items-center gap-2">
       {items.length === 0 ? (
-        <CheckCircle2 className="w-4 h-4 text-green-500" />
+        <CheckCircle2 className="w-4 h-4 text-primary" />
       ) : (
-        <AlertTriangle className="w-4 h-4 text-yellow-500" />
+        <AlertTriangle className="w-4 h-4 text-destructive" />
       )}
       {title} <span className="text-muted-foreground font-normal">({items.length})</span>
     </h3>
