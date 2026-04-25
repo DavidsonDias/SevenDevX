@@ -613,15 +613,18 @@ const PortfolioCarousel3D = () => {
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [openProject, setOpenProject] = useState<Project | null>(null);
 
-  const allTags = useMemo(
-    () => Array.from(new Set(projects.flatMap((p) => p.techs.map((t) => t.name)))),
-    []
+  // 🔥 Single source of truth: Supabase projects (published only)
+  const { data: projects = [], isLoading } = useProjects();
+
+  const allTags = useMemo<string[]>(
+    () => Array.from(new Set(projects.flatMap((p) => p.techs.map((tech) => tech.name)))),
+    [projects]
   );
 
   const filtered = useMemo(() => {
     if (!selectedTag) return projects;
-    return projects.filter((p) => p.techs.some((t) => t.name === selectedTag));
-  }, [selectedTag]);
+    return projects.filter((p) => p.techs.some((tech) => tech.name === selectedTag));
+  }, [projects, selectedTag]);
 
   const handleFilterChange = (tag: string | null) => {
     setSelectedTag(selectedTag === tag ? null : tag);
