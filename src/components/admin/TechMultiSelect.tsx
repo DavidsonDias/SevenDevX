@@ -14,7 +14,7 @@ import { TechIconCDN } from "@/components/TechIconCDN";
 import { useToast } from "@/hooks/use-toast";
 
 export interface SelectedTech {
-  slug: string;
+  slug?: string;
   name: string;
   color: string;
 }
