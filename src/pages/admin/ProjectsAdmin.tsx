@@ -35,6 +35,8 @@ import {
 } from "@/components/ui/select";
 import { resolveProjectImage } from "@/data/projectImages";
 import type { DbProject } from "@/hooks/useProjects";
+import { TechMultiSelect, type SelectedTech } from "@/components/admin/TechMultiSelect";
+import { TagMultiSelect } from "@/components/admin/TagMultiSelect";
 
 interface FormState {
   id?: string;
