@@ -9,8 +9,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Plus, Pencil, Trash2, Eye, EyeOff, Star, StarOff,
-  ExternalLink, Loader2, Upload, X, GripVertical, Save, Search,
+  ExternalLink, Loader2, Upload, X, GripVertical, Save, Search, Home as HomeIcon, Sparkles,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthContext } from "@/contexts/AuthContext";
@@ -300,18 +301,30 @@ const ProjectsAdmin = () => {
               <Button variant="ghost" size="sm" onClick={() => navigate("/admin")}>
                 <ArrowLeft className="w-4 h-4 mr-2" /> Dashboard
               </Button>
-              <div>
-                <h1 className="text-lg sm:text-xl font-orbitron font-bold tracking-tight">Projetos</h1>
-                <p className="text-xs text-muted-foreground hidden sm:block">
-                  Gerencie todos os projetos exibidos no site
-                </p>
+              <Link to="/" aria-label="Ir para o site SevenDevX" className="hidden md:block hover:opacity-80 transition-opacity">
+                <h1 className="text-lg font-orbitron font-bold tracking-tight">
+                  SEVEN<span className="text-muted-foreground">DEVX</span>
+                </h1>
+              </Link>
+              <div className="hidden lg:block border-l border-border pl-3">
+                <h2 className="text-sm font-orbitron font-semibold">Projetos</h2>
+                <p className="text-xs text-muted-foreground">CMS</p>
               </div>
+              <h2 className="lg:hidden text-base font-orbitron font-bold">Projetos</h2>
             </div>
-            <Button onClick={openCreate} className="shrink-0">
-              <Plus className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">Novo projeto</span>
-              <span className="sm:hidden">Novo</span>
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex" title="Abrir site em nova aba">
+                <a href="/" target="_blank" rel="noopener noreferrer">
+                  <HomeIcon className="w-4 h-4 mr-2" />
+                  Ver site
+                </a>
+              </Button>
+              <Button onClick={openCreate} className="shrink-0">
+                <Plus className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline">Novo projeto</span>
+                <span className="sm:hidden">Novo</span>
+              </Button>
+            </div>
           </div>
         </header>
 
