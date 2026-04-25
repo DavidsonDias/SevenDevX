@@ -95,8 +95,7 @@ const ProjectsAdmin = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [editing, setEditing] = useState<FormState | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [techInput, setTechInput] = useState("");
-  const [tagInput, setTagInput] = useState("");
+  // tech/tag inputs are handled by Multi-select components
   const [uploading, setUploading] = useState(false);
 
   // Auth guard
