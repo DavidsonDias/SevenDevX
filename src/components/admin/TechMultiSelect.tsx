@@ -65,7 +65,7 @@ export const TechMultiSelect = ({ value, onChange }: Props) => {
     }
   };
 
-  const remove = (slug: string) => onChange(value.filter((v) => v.slug !== slug));
+  const remove = (key: string) => onChange(value.filter((v) => (v.slug || v.name.toLowerCase()) !== key));
 
   return (
     <div className="space-y-2">
