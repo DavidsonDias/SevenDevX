@@ -129,23 +129,26 @@ export const TechMultiSelect = ({ value, onChange }: Props) => {
 
       {value.length > 0 && (
         <div className="flex flex-wrap gap-1.5 pt-1">
-          {value.map((t) => (
-            <span
-              key={t.slug}
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs border"
-              style={{
-                background: `${t.color}15`,
-                borderColor: `${t.color}55`,
-                color: t.color,
-              }}
-            >
-              <TechIconCDN slug={t.slug} name={t.name} color={t.color} size={14} />
-              <span className="font-medium">{t.name}</span>
-              <button type="button" onClick={() => remove(t.slug)} className="hover:opacity-70" aria-label={`Remover ${t.name}`}>
-                <X className="w-3 h-3" />
-              </button>
-            </span>
-          ))}
+          {value.map((t) => {
+            const key = t.slug || t.name.toLowerCase();
+            return (
+              <span
+                key={key}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs border"
+                style={{
+                  background: `${t.color}15`,
+                  borderColor: `${t.color}55`,
+                  color: t.color,
+                }}
+              >
+                <TechIconCDN slug={t.slug || ""} name={t.name} color={t.color} size={14} />
+                <span className="font-medium">{t.name}</span>
+                <button type="button" onClick={() => remove(key)} className="hover:opacity-70" aria-label={`Remover ${t.name}`}>
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            );
+          })}
         </div>
       )}
     </div>
