@@ -41,7 +41,7 @@ export interface Project {
   description: string;
   longDescription?: string;
   image: string;
-  techs: { name: string; icon: React.ElementType; color: string }[];
+  techs: { name: string; icon: React.ElementType; color: string; slug?: string }[];
   liveUrl?: string | null;
   githubUrl?: string | null;
   featured?: boolean;
