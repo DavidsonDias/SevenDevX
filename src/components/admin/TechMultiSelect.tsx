@@ -46,7 +46,7 @@ export const TechMultiSelect = ({ value, onChange }: Props) => {
 
   const toggle = (t: TechEntry) => {
     if (selectedSlugs.has(t.slug)) {
-      onChange(value.filter((v) => v.slug !== t.slug));
+      onChange(value.filter((v) => (v.slug || v.name.toLowerCase()) !== t.slug));
     } else {
       onChange([...value, { slug: t.slug, name: t.name, color: t.color }]);
     }
