@@ -29,8 +29,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ExternalLink, Github, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { projects, isValidLiveUrl, type Project } from "@/data/projects";
+import { isValidLiveUrl, type Project } from "@/data/projects";
+import { useProjects } from "@/hooks/useProjects";
 import { useScrollLock } from "@/hooks/useScrollLock";
+import { Loader2 } from "lucide-react";
 
 // ---------------------------------------------------------
 // 🧱 Constants
