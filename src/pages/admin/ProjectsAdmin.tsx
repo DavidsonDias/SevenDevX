@@ -265,30 +265,7 @@ const ProjectsAdmin = () => {
       display_order: p.display_order,
     });
 
-  const addTech = () => {
-    if (!techInput.trim() || !editing) return;
-    setEditing({
-      ...editing,
-      technologies: [...editing.technologies, { name: techInput.trim(), color: "#ffffff" }],
-    });
-    setTechInput("");
-  };
-
-  const removeTech = (i: number) => {
-    if (!editing) return;
-    setEditing({ ...editing, technologies: editing.technologies.filter((_, idx) => idx !== i) });
-  };
-
-  const addTag = () => {
-    if (!tagInput.trim() || !editing) return;
-    setEditing({ ...editing, tags: [...editing.tags, tagInput.trim()] });
-    setTagInput("");
-  };
-
-  const removeTag = (i: number) => {
-    if (!editing) return;
-    setEditing({ ...editing, tags: editing.tags.filter((_, idx) => idx !== i) });
-  };
+  // (tech/tag mutations are now handled inline by Multi-select components)
 
   return (
     <>
