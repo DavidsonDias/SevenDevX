@@ -662,57 +662,69 @@ const PortfolioCarousel3D = () => {
             {t.projects.sectionSubtitle}
           </p>
         </motion.div>
-        
-        {/* Filters */}
-        <div className="flex flex-wrap justify-center gap-3" role="group" aria-label={t.projects.technologies}>
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <Badge
-              variant={selectedTag === null ? "default" : "outline"}
-              className={`cursor-pointer px-5 py-2.5 text-sm rounded-full transition-all duration-300 hover:scale-110 ${
-                selectedTag === null
-                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30"
-                  : "border-border hover:bg-muted/30 hover:border-primary/50"
-              }`}
-              onClick={() => handleFilterChange(null)}
-            >
-              {t.common.viewAll}
-            </Badge>
-          </motion.div>
 
-          {allTags.map((tag, i) => (
-            <motion.div
-              key={tag}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: (i + 1) * 0.08, duration: 0.6 }}
-            >
-              <Badge
-                variant={selectedTag === tag ? "default" : "outline"}
-                className={`cursor-pointer px-5 py-2.5 text-sm rounded-full transition-all duration-300 hover:scale-110 ${
-                  selectedTag === tag
-                    ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30"
-                    : "border-border hover:bg-muted/30 hover:border-primary/50"
-                }`}
-                onClick={() => handleFilterChange(tag)}
+        {isLoading ? (
+          <div className="flex justify-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          </div>
+        ) : projects.length === 0 ? (
+          <div className="text-center py-20 text-muted-foreground">
+            {t.projects.noResults}
+          </div>
+        ) : (
+          <>
+            {/* Filters */}
+            <div className="flex flex-wrap justify-center gap-3" role="group" aria-label={t.projects.technologies}>
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
               >
-                {tag}
-              </Badge>
-            </motion.div>
-          ))}
-        </div>
+                <Badge
+                  variant={selectedTag === null ? "default" : "outline"}
+                  className={`cursor-pointer px-5 py-2.5 text-sm rounded-full transition-all duration-300 hover:scale-110 ${
+                    selectedTag === null
+                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30"
+                      : "border-border hover:bg-muted/30 hover:border-primary/50"
+                  }`}
+                  onClick={() => handleFilterChange(null)}
+                >
+                  {t.common.viewAll}
+                </Badge>
+              </motion.div>
 
-        {/* 3D Carousel */}
-        <Carousel3D
-          projects={filtered}
-          onCardClick={handleCardClick}
-          onOpenModal={handleOpenModal}
-        />
+              {allTags.map((tag, i) => (
+                <motion.div
+                  key={tag}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: (i + 1) * 0.08, duration: 0.6 }}
+                >
+                  <Badge
+                    variant={selectedTag === tag ? "default" : "outline"}
+                    className={`cursor-pointer px-5 py-2.5 text-sm rounded-full transition-all duration-300 hover:scale-110 ${
+                      selectedTag === tag
+                        ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30"
+                        : "border-border hover:bg-muted/30 hover:border-primary/50"
+                    }`}
+                    onClick={() => handleFilterChange(tag)}
+                  >
+                    {tag}
+                  </Badge>
+                </motion.div>
+              ))}
+            </div>
+
+            {/* 3D Carousel */}
+            <Carousel3D
+              projects={filtered}
+              onCardClick={handleCardClick}
+              onOpenModal={handleOpenModal}
+            />
+          </>
+        )}
 
         {/* Ver todos os projetos */}
         <motion.div
