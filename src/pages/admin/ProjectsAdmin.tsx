@@ -46,7 +46,7 @@ interface FormState {
   description: string;
   long_description: string;
   cover_image: string;
-  technologies: { name: string; color: string }[];
+  technologies: SelectedTech[];
   tags: string[];
   category: string;
   client_name: string;
