@@ -9,8 +9,9 @@ import { useNavigate } from "react-router-dom";
 import { 
   Users, Eye, MessageCircle, TrendingUp, ArrowUp, ArrowDown,
   Calendar, Filter, Download, RefreshCw, LogOut, BarChart3,
-  Mail, Phone, Clock, ChevronDown
+  Mail, Phone, Clock, ChevronDown, ExternalLink, Home as HomeIcon
 } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useAuthContext as useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import SEOHead from "@/components/SEOHead";
@@ -216,27 +217,37 @@ const AdminDashboard = () => {
         <header className="border-b border-white/10 sticky top-0 bg-black/95 backdrop-blur-lg z-50">
           <div className="container mx-auto px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <h1 className="text-xl font-bold font-orbitron">
-                SEVEN<span className="text-white/60">DEVX</span>
-              </h1>
+              <Link to="/" aria-label="Ir para o site SevenDevX" className="hover:opacity-80 transition-opacity">
+                <h1 className="text-xl font-bold font-orbitron">
+                  SEVEN<span className="text-white/60">DEVX</span>
+                </h1>
+              </Link>
               <span className="text-xs uppercase tracking-wider text-white/40 border border-white/20 px-2 py-1 rounded">
                 Admin
               </span>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <Link
+                to="/"
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-xs uppercase tracking-wider"
+                title="Abrir site"
+              >
+                <HomeIcon className="w-3.5 h-3.5" />
+                Ver site
+              </Link>
               <button
                 onClick={() => navigate("/admin/projects")}
                 className="px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-xs uppercase tracking-wider"
               >
                 Projetos
               </button>
-              <span className="text-sm text-white/60 hidden sm:inline">{user?.email}</span>
+              <span className="text-sm text-white/60 hidden md:inline">{user?.email}</span>
               <button
                 onClick={handleSignOut}
                 className="flex items-center gap-2 px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-sm"
               >
                 <LogOut className="w-4 h-4" />
-                Sair
+                <span className="hidden sm:inline">Sair</span>
               </button>
             </div>
           </div>

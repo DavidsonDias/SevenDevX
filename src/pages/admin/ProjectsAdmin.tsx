@@ -9,8 +9,9 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Plus, Pencil, Trash2, Eye, EyeOff, Star, StarOff,
-  ExternalLink, Loader2, Upload, X, GripVertical, Save, Search,
+  ExternalLink, Loader2, Upload, X, GripVertical, Save, Search, Home as HomeIcon, Sparkles,
 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthContext } from "@/contexts/AuthContext";
@@ -300,18 +301,30 @@ const ProjectsAdmin = () => {
               <Button variant="ghost" size="sm" onClick={() => navigate("/admin")}>
                 <ArrowLeft className="w-4 h-4 mr-2" /> Dashboard
               </Button>
-              <div>
-                <h1 className="text-lg sm:text-xl font-orbitron font-bold tracking-tight">Projetos</h1>
-                <p className="text-xs text-muted-foreground hidden sm:block">
-                  Gerencie todos os projetos exibidos no site
-                </p>
+              <Link to="/" aria-label="Ir para o site SevenDevX" className="hidden md:block hover:opacity-80 transition-opacity">
+                <h1 className="text-lg font-orbitron font-bold tracking-tight">
+                  SEVEN<span className="text-muted-foreground">DEVX</span>
+                </h1>
+              </Link>
+              <div className="hidden lg:block border-l border-border pl-3">
+                <h2 className="text-sm font-orbitron font-semibold">Projetos</h2>
+                <p className="text-xs text-muted-foreground">CMS</p>
               </div>
+              <h2 className="lg:hidden text-base font-orbitron font-bold">Projetos</h2>
             </div>
-            <Button onClick={openCreate} className="shrink-0">
-              <Plus className="w-4 h-4 mr-2" />
-              <span className="hidden sm:inline">Novo projeto</span>
-              <span className="sm:hidden">Novo</span>
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex" title="Abrir site em nova aba">
+                <a href="/" target="_blank" rel="noopener noreferrer">
+                  <HomeIcon className="w-4 h-4 mr-2" />
+                  Ver site
+                </a>
+              </Button>
+              <Button onClick={openCreate} className="shrink-0">
+                <Plus className="w-4 h-4 mr-2" />
+                <span className="hidden sm:inline">Novo projeto</span>
+                <span className="sm:hidden">Novo</span>
+              </Button>
+            </div>
           </div>
         </header>
 
@@ -341,10 +354,11 @@ const ProjectsAdmin = () => {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
             <StatChip label="Total" value={projects?.length ?? 0} />
-            <StatChip label="Publicados" value={projects?.filter((p) => p.is_published_on_site).length ?? 0} />
-            <StatChip label="Em destaque" value={projects?.filter((p) => p.is_featured).length ?? 0} />
+            <StatChip label="Publicados" value={projects?.filter((p) => p.is_published_on_site && p.status === "published").length ?? 0} />
+            <StatChip label="⭐ Principal" value={projects?.filter((p) => p.featured_level === "primary").length ?? 0} />
+            <StatChip label="Destaques" value={projects?.filter((p) => p.featured_level === "secondary").length ?? 0} />
             <StatChip label="Rascunhos" value={projects?.filter((p) => p.status === "draft").length ?? 0} />
           </div>
 
@@ -376,12 +390,16 @@ const ProjectsAdmin = () => {
                         className="w-full h-full object-cover transition-transform group-hover:scale-105"
                         loading="lazy"
                       />
-                      <div className="absolute top-2 left-2 flex gap-1.5">
-                        {p.is_featured && (
+                      <div className="absolute top-2 left-2 flex gap-1.5 flex-wrap max-w-[calc(100%-1rem)]">
+                        {p.featured_level === "primary" ? (
+                          <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-black text-[10px] font-bold flex items-center gap-1 shadow-lg shadow-amber-500/30">
+                            <Sparkles className="w-3 h-3" /> Principal
+                          </span>
+                        ) : p.featured_level === "secondary" ? (
                           <span className="px-2 py-0.5 rounded-full bg-amber-500/90 text-black text-[10px] font-semibold flex items-center gap-1">
                             <Star className="w-3 h-3" /> Destaque
                           </span>
-                        )}
+                        ) : null}
                         <span
                           className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
                             p.status === "published"
