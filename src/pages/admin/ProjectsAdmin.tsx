@@ -354,10 +354,11 @@ const ProjectsAdmin = () => {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-6">
             <StatChip label="Total" value={projects?.length ?? 0} />
-            <StatChip label="Publicados" value={projects?.filter((p) => p.is_published_on_site).length ?? 0} />
-            <StatChip label="Em destaque" value={projects?.filter((p) => p.is_featured).length ?? 0} />
+            <StatChip label="Publicados" value={projects?.filter((p) => p.is_published_on_site && p.status === "published").length ?? 0} />
+            <StatChip label="⭐ Principal" value={projects?.filter((p) => p.featured_level === "primary").length ?? 0} />
+            <StatChip label="Destaques" value={projects?.filter((p) => p.featured_level === "secondary").length ?? 0} />
             <StatChip label="Rascunhos" value={projects?.filter((p) => p.status === "draft").length ?? 0} />
           </div>
 
@@ -389,12 +390,16 @@ const ProjectsAdmin = () => {
                         className="w-full h-full object-cover transition-transform group-hover:scale-105"
                         loading="lazy"
                       />
-                      <div className="absolute top-2 left-2 flex gap-1.5">
-                        {p.is_featured && (
+                      <div className="absolute top-2 left-2 flex gap-1.5 flex-wrap max-w-[calc(100%-1rem)]">
+                        {p.featured_level === "primary" ? (
+                          <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 text-black text-[10px] font-bold flex items-center gap-1 shadow-lg shadow-amber-500/30">
+                            <Sparkles className="w-3 h-3" /> Principal
+                          </span>
+                        ) : p.featured_level === "secondary" ? (
                           <span className="px-2 py-0.5 rounded-full bg-amber-500/90 text-black text-[10px] font-semibold flex items-center gap-1">
                             <Star className="w-3 h-3" /> Destaque
                           </span>
-                        )}
+                        ) : null}
                         <span
                           className={`px-2 py-0.5 rounded-full text-[10px] font-semibold ${
                             p.status === "published"
