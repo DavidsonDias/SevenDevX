@@ -86,8 +86,9 @@ const mapDbToProject = (row: DbProject, index: number): UIProject => {
   const techs = techsRaw.map((t: any) => {
     const name = typeof t === "string" ? t : t?.name || "Tech";
     const color = typeof t === "object" ? t?.color : undefined;
+    const slug = typeof t === "object" ? t?.slug : undefined;
     const resolved = resolveTechIcon(name, color);
-    return { name, icon: resolved.icon, color: color || resolved.color };
+    return { name, slug, icon: resolved.icon, color: color || resolved.color };
   });
 
   return {
