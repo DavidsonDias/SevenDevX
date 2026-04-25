@@ -423,6 +423,81 @@ export type Database = {
         }
         Relationships: []
       }
+      tag_registry: {
+        Row: {
+          color: string
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          slug: string
+          updated_at: string
+          usage_count: number
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          slug: string
+          updated_at?: string
+          usage_count?: number
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          updated_at?: string
+          usage_count?: number
+        }
+        Relationships: []
+      }
+      tech_registry: {
+        Row: {
+          category: string | null
+          color: string
+          created_at: string
+          icon_url: string | null
+          id: string
+          is_active: boolean
+          name: string
+          slug: string
+          updated_at: string
+          usage_count: number
+        }
+        Insert: {
+          category?: string | null
+          color?: string
+          created_at?: string
+          icon_url?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          slug: string
+          updated_at?: string
+          usage_count?: number
+        }
+        Update: {
+          category?: string | null
+          color?: string
+          created_at?: string
+          icon_url?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          updated_at?: string
+          usage_count?: number
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string

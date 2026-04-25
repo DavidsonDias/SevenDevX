@@ -35,6 +35,8 @@ import {
 } from "@/components/ui/select";
 import { resolveProjectImage } from "@/data/projectImages";
 import type { DbProject } from "@/hooks/useProjects";
+import { TechMultiSelect, type SelectedTech } from "@/components/admin/TechMultiSelect";
+import { TagMultiSelect } from "@/components/admin/TagMultiSelect";
 
 interface FormState {
   id?: string;
@@ -44,7 +46,7 @@ interface FormState {
   description: string;
   long_description: string;
   cover_image: string;
-  technologies: { name: string; color: string }[];
+  technologies: SelectedTech[];
   tags: string[];
   category: string;
   client_name: string;
@@ -93,8 +95,7 @@ const ProjectsAdmin = () => {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [editing, setEditing] = useState<FormState | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [techInput, setTechInput] = useState("");
-  const [tagInput, setTagInput] = useState("");
+  // tech/tag inputs are handled by Multi-select components
   const [uploading, setUploading] = useState(false);
 
   // Auth guard
@@ -264,30 +265,7 @@ const ProjectsAdmin = () => {
       display_order: p.display_order,
     });
 
-  const addTech = () => {
-    if (!techInput.trim() || !editing) return;
-    setEditing({
-      ...editing,
-      technologies: [...editing.technologies, { name: techInput.trim(), color: "#ffffff" }],
-    });
-    setTechInput("");
-  };
-
-  const removeTech = (i: number) => {
-    if (!editing) return;
-    setEditing({ ...editing, technologies: editing.technologies.filter((_, idx) => idx !== i) });
-  };
-
-  const addTag = () => {
-    if (!tagInput.trim() || !editing) return;
-    setEditing({ ...editing, tags: [...editing.tags, tagInput.trim()] });
-    setTagInput("");
-  };
-
-  const removeTag = (i: number) => {
-    if (!editing) return;
-    setEditing({ ...editing, tags: editing.tags.filter((_, idx) => idx !== i) });
-  };
+  // (tech/tag mutations are now handled inline by Multi-select components)
 
   return (
     <>
@@ -634,55 +612,28 @@ const ProjectsAdmin = () => {
                 </div>
               </div>
 
-              {/* Technologies */}
+              {/* Technologies — Smart multi-select with Simple Icons CDN */}
               <div>
                 <Label>Tecnologias</Label>
-                <div className="flex gap-2 mt-2">
-                  <Input
-                    value={techInput}
-                    onChange={(e) => setTechInput(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addTech())}
-                    placeholder="React, TypeScript..."
-                  />
-                  <Button type="button" onClick={addTech} variant="outline">Adicionar</Button>
-                </div>
-                <div className="flex flex-wrap gap-1.5 mt-3">
-                  {editing.technologies.map((t, i) => (
-                    <span
-                      key={i}
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-muted/40 border border-border text-xs"
-                    >
-                      {t.name}
-                      <button onClick={() => removeTech(i)} className="hover:text-destructive">
-                        <X className="w-3 h-3" />
-                      </button>
-                    </span>
-                  ))}
-                </div>
+                <p className="text-xs text-muted-foreground mt-1 mb-2">
+                  Busque do catálogo ou crie uma nova. Ícones renderizados via Simple Icons CDN.
+                </p>
+                <TechMultiSelect
+                  value={editing.technologies}
+                  onChange={(next) => setEditing({ ...editing, technologies: next })}
+                />
               </div>
 
-              {/* Tags */}
+              {/* Tags — Smart multi-select */}
               <div>
                 <Label>Tags</Label>
-                <div className="flex gap-2 mt-2">
-                  <Input
-                    value={tagInput}
-                    onChange={(e) => setTagInput(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addTag())}
-                    placeholder="SaaS, AI, PWA..."
-                  />
-                  <Button type="button" onClick={addTag} variant="outline">Adicionar</Button>
-                </div>
-                <div className="flex flex-wrap gap-1.5 mt-3">
-                  {editing.tags.map((t, i) => (
-                    <Badge key={i} variant="secondary" className="text-xs gap-1">
-                      {t}
-                      <button onClick={() => removeTag(i)} className="hover:text-destructive">
-                        <X className="w-3 h-3" />
-                      </button>
-                    </Badge>
-                  ))}
-                </div>
+                <p className="text-xs text-muted-foreground mt-1 mb-2">
+                  Busque do catálogo de tags ou crie uma nova.
+                </p>
+                <TagMultiSelect
+                  value={editing.tags}
+                  onChange={(next) => setEditing({ ...editing, tags: next })}
+                />
               </div>
 
               {/* Status + flags */}
