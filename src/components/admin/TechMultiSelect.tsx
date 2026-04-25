@@ -31,7 +31,7 @@ export const TechMultiSelect = ({ value, onChange }: Props) => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
 
-  const selectedSlugs = useMemo(() => new Set(value.map((v) => v.slug)), [value]);
+  const selectedSlugs = useMemo(() => new Set(value.map((v) => v.slug || v.name.toLowerCase())), [value]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
