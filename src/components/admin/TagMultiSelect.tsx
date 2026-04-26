@@ -2,17 +2,17 @@
  * 🏷️ TagMultiSelect — Stripe-level autocomplete for tags
  * - Search/filter from `tag_registry`
  * - Create new tag inline
+ * - Mobile-friendly scroll + opaque popover background
  */
 import { useState, useMemo } from "react";
-import { Check, Plus, X, Loader2 } from "lucide-react";
+import { Check, Plus, X, Loader2, Search } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
 import { useTagRegistry, useCreateTag, type TagEntry } from "@/hooks/useRegistry";
 import { useToast } from "@/hooks/use-toast";
 
 interface Props {
-  value: string[]; // array of tag slugs (or names; we normalize)
+  value: string[];
   onChange: (next: string[]) => void;
 }
 
@@ -59,65 +59,120 @@ export const TagMultiSelect = ({ value, onChange }: Props) => {
 
   const remove = (name: string) => onChange(value.filter((v) => v !== name));
 
+  const highlight = (text: string) => {
+    const q = query.trim();
+    if (!q) return text;
+    const idx = text.toLowerCase().indexOf(q.toLowerCase());
+    if (idx < 0) return text;
+    return (
+      <>
+        {text.slice(0, idx)}
+        <mark className="bg-primary/20 text-primary rounded-sm px-0.5">
+          {text.slice(idx, idx + q.length)}
+        </mark>
+        {text.slice(idx + q.length)}
+      </>
+    );
+  };
+
   return (
     <div className="space-y-2">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button type="button" variant="outline" className="w-full justify-start font-normal">
             <Plus className="w-4 h-4 mr-2" />
-            {value.length ? `${value.length} tag${value.length > 1 ? "s" : ""} selecionada${value.length > 1 ? "s" : ""}` : "Buscar ou criar tag…"}
+            {value.length
+              ? `${value.length} tag${value.length > 1 ? "s" : ""} selecionada${value.length > 1 ? "s" : ""}`
+              : "Buscar ou criar tag…"}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[320px] p-0" align="start">
-          <Command shouldFilter={false}>
-            <CommandInput placeholder="SaaS, AI, Enterprise…" value={query} onValueChange={setQuery} />
-            <CommandList>
+        <PopoverContent
+          className="w-[min(320px,calc(100vw-2rem))] p-0 bg-popover border-border shadow-xl"
+          align="start"
+          sideOffset={6}
+        >
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2 border-b border-border px-3 py-2.5">
+              <Search className="w-4 h-4 text-muted-foreground shrink-0" />
+              <input
+                type="text"
+                autoFocus
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="SaaS, AI, Enterprise…"
+                className="flex-1 bg-transparent outline-none text-sm placeholder:text-muted-foreground"
+              />
+              {query && (
+                <button
+                  type="button"
+                  onClick={() => setQuery("")}
+                  className="text-muted-foreground hover:text-foreground"
+                  aria-label="Limpar busca"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            <div
+              className="max-h-[280px] overflow-y-auto overscroll-contain"
+              style={{ WebkitOverflowScrolling: "touch" }}
+            >
               {isLoading && (
-                <div className="flex items-center justify-center py-6">
+                <div className="flex items-center justify-center py-8">
                   <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
                 </div>
               )}
-              {!isLoading && filtered.length === 0 && !query.trim() && (
-                <CommandEmpty>Nenhuma tag.</CommandEmpty>
-              )}
-              {!isLoading && (
-                <CommandGroup>
-                  {filtered.map((t) => {
-                    const checked = selected.has(t.name);
-                    return (
-                      <CommandItem key={t.id} value={t.slug} onSelect={() => toggle(t)} className="cursor-pointer">
-                        <span
-                          className="w-2.5 h-2.5 rounded-full mr-2"
-                          style={{ background: t.color }}
-                        />
-                        <span className="flex-1">{t.name}</span>
-                        {checked && <Check className="w-4 h-4 text-primary" />}
-                      </CommandItem>
-                    );
-                  })}
-                </CommandGroup>
-              )}
-              {query.trim() && !exactMatch && (
-                <div className="border-t border-border p-2">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start"
-                    onClick={handleCreate}
-                    disabled={createTag.isPending}
-                  >
-                    {createTag.isPending ? (
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    ) : (
-                      <Plus className="w-4 h-4 mr-2" />
-                    )}
-                    Criar "{query.trim()}"
-                  </Button>
+
+              {!isLoading && filtered.length === 0 && (
+                <div className="px-3 py-6 text-center text-sm text-muted-foreground">
+                  {query ? "Nenhum resultado." : "Catálogo vazio."}
                 </div>
               )}
-            </CommandList>
-          </Command>
+
+              {!isLoading &&
+                filtered.map((t) => {
+                  const checked = selected.has(t.name);
+                  return (
+                    <button
+                      type="button"
+                      key={t.id}
+                      onClick={() => toggle(t)}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 text-left text-sm transition-colors hover:bg-accent/60 focus:bg-accent/60 focus:outline-none ${
+                        checked ? "bg-accent/40" : ""
+                      }`}
+                    >
+                      <span
+                        className="w-2.5 h-2.5 rounded-full shrink-0"
+                        style={{ background: t.color }}
+                      />
+                      <span className="flex-1 truncate">{highlight(t.name)}</span>
+                      {checked && <Check className="w-4 h-4 text-primary shrink-0" />}
+                    </button>
+                  );
+                })}
+            </div>
+
+            {query.trim() && !exactMatch && (
+              <div className="border-t border-border p-2">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="w-full justify-start"
+                  onClick={handleCreate}
+                  disabled={createTag.isPending}
+                >
+                  {createTag.isPending ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <Plus className="w-4 h-4 mr-2" />
+                  )}
+                  Criar "{query.trim()}"
+                </Button>
+              </div>
+            )}
+          </div>
         </PopoverContent>
       </Popover>
 
@@ -136,7 +191,12 @@ export const TagMultiSelect = ({ value, onChange }: Props) => {
                 }}
               >
                 {name}
-                <button type="button" onClick={() => remove(name)} className="hover:opacity-70" aria-label={`Remover ${name}`}>
+                <button
+                  type="button"
+                  onClick={() => remove(name)}
+                  className="hover:opacity-70"
+                  aria-label={`Remover ${name}`}
+                >
                   <X className="w-3 h-3" />
                 </button>
               </span>

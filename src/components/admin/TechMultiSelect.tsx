@@ -3,11 +3,11 @@
  * - Search/filter from `tech_registry`
  * - Create new tech inline (auto-slug + color)
  * - Visual chips with CDN icons
+ * - Mobile-friendly scroll + opaque popover background
  */
 import { useState, useMemo } from "react";
-import { Check, Plus, X, Loader2 } from "lucide-react";
+import { Check, Plus, X, Loader2, Search } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Button } from "@/components/ui/button";
 import { useTechRegistry, useCreateTech, type TechEntry } from "@/hooks/useRegistry";
 import { TechIconCDN } from "@/components/TechIconCDN";
@@ -31,12 +31,17 @@ export const TechMultiSelect = ({ value, onChange }: Props) => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
 
-  const selectedSlugs = useMemo(() => new Set(value.map((v) => v.slug || v.name.toLowerCase())), [value]);
+  const selectedSlugs = useMemo(
+    () => new Set(value.map((v) => v.slug || v.name.toLowerCase())),
+    [value]
+  );
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return registry;
-    return registry.filter((t) => t.name.toLowerCase().includes(q) || t.slug.includes(q));
+    return registry.filter(
+      (t) => t.name.toLowerCase().includes(q) || t.slug.includes(q)
+    );
   }, [registry, query]);
 
   const exactMatch = useMemo(
@@ -65,7 +70,25 @@ export const TechMultiSelect = ({ value, onChange }: Props) => {
     }
   };
 
-  const remove = (key: string) => onChange(value.filter((v) => (v.slug || v.name.toLowerCase()) !== key));
+  const remove = (key: string) =>
+    onChange(value.filter((v) => (v.slug || v.name.toLowerCase()) !== key));
+
+  // Highlight matching substring
+  const highlight = (text: string) => {
+    const q = query.trim();
+    if (!q) return text;
+    const idx = text.toLowerCase().indexOf(q.toLowerCase());
+    if (idx < 0) return text;
+    return (
+      <>
+        {text.slice(0, idx)}
+        <mark className="bg-primary/20 text-primary rounded-sm px-0.5">
+          {text.slice(idx, idx + q.length)}
+        </mark>
+        {text.slice(idx + q.length)}
+      </>
+    );
+  };
 
   return (
     <div className="space-y-2">
@@ -73,57 +96,103 @@ export const TechMultiSelect = ({ value, onChange }: Props) => {
         <PopoverTrigger asChild>
           <Button type="button" variant="outline" className="w-full justify-start font-normal">
             <Plus className="w-4 h-4 mr-2" />
-            {value.length ? `${value.length} tecnologia${value.length > 1 ? "s" : ""} selecionada${value.length > 1 ? "s" : ""}` : "Buscar ou criar tecnologia…"}
+            {value.length
+              ? `${value.length} tecnologia${value.length > 1 ? "s" : ""} selecionada${value.length > 1 ? "s" : ""}`
+              : "Buscar ou criar tecnologia…"}
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[360px] p-0" align="start">
-          <Command shouldFilter={false}>
-            <CommandInput placeholder="React, TypeScript, Postgres…" value={query} onValueChange={setQuery} />
-            <CommandList>
+        <PopoverContent
+          className="w-[min(360px,calc(100vw-2rem))] p-0 bg-popover border-border shadow-xl"
+          align="start"
+          sideOffset={6}
+        >
+          <div className="flex flex-col">
+            {/* Search input */}
+            <div className="flex items-center gap-2 border-b border-border px-3 py-2.5">
+              <Search className="w-4 h-4 text-muted-foreground shrink-0" />
+              <input
+                type="text"
+                autoFocus
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="React, TypeScript, Postgres…"
+                className="flex-1 bg-transparent outline-none text-sm placeholder:text-muted-foreground"
+              />
+              {query && (
+                <button
+                  type="button"
+                  onClick={() => setQuery("")}
+                  className="text-muted-foreground hover:text-foreground"
+                  aria-label="Limpar busca"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+
+            {/* Scrollable list — mobile optimized */}
+            <div
+              className="max-h-[280px] overflow-y-auto overscroll-contain"
+              style={{ WebkitOverflowScrolling: "touch" }}
+            >
               {isLoading && (
-                <div className="flex items-center justify-center py-6">
+                <div className="flex items-center justify-center py-8">
                   <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
                 </div>
               )}
-              {!isLoading && filtered.length === 0 && !query.trim() && (
-                <CommandEmpty>Nenhuma tecnologia.</CommandEmpty>
-              )}
-              {!isLoading && (
-                <CommandGroup>
-                  {filtered.map((t) => {
-                    const checked = selectedSlugs.has(t.slug);
-                    return (
-                      <CommandItem key={t.id} value={t.slug} onSelect={() => toggle(t)} className="cursor-pointer">
-                        <TechIconCDN slug={t.slug} name={t.name} color={t.color} size={18} className="mr-2" />
-                        <span className="flex-1">{t.name}</span>
-                        {t.category && <span className="text-[10px] text-muted-foreground mr-2">{t.category}</span>}
-                        {checked && <Check className="w-4 h-4 text-primary" />}
-                      </CommandItem>
-                    );
-                  })}
-                </CommandGroup>
-              )}
-              {query.trim() && !exactMatch && (
-                <div className="border-t border-border p-2">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="w-full justify-start"
-                    onClick={handleCreate}
-                    disabled={createTech.isPending}
-                  >
-                    {createTech.isPending ? (
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    ) : (
-                      <Plus className="w-4 h-4 mr-2" />
-                    )}
-                    Criar "{query.trim()}"
-                  </Button>
+
+              {!isLoading && filtered.length === 0 && (
+                <div className="px-3 py-6 text-center text-sm text-muted-foreground">
+                  {query ? "Nenhum resultado." : "Catálogo vazio."}
                 </div>
               )}
-            </CommandList>
-          </Command>
+
+              {!isLoading &&
+                filtered.map((t) => {
+                  const checked = selectedSlugs.has(t.slug);
+                  return (
+                    <button
+                      type="button"
+                      key={t.id}
+                      onClick={() => toggle(t)}
+                      className={`w-full flex items-center gap-3 px-3 py-2.5 text-left text-sm transition-colors hover:bg-accent/60 focus:bg-accent/60 focus:outline-none ${
+                        checked ? "bg-accent/40" : ""
+                      }`}
+                    >
+                      <TechIconCDN slug={t.slug} name={t.name} color={t.color} size={20} />
+                      <span className="flex-1 truncate">{highlight(t.name)}</span>
+                      {t.category && (
+                        <span className="text-[10px] uppercase tracking-wide text-muted-foreground/70">
+                          {t.category}
+                        </span>
+                      )}
+                      {checked && <Check className="w-4 h-4 text-primary shrink-0" />}
+                    </button>
+                  );
+                })}
+            </div>
+
+            {/* Create new */}
+            {query.trim() && !exactMatch && (
+              <div className="border-t border-border p-2">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="w-full justify-start"
+                  onClick={handleCreate}
+                  disabled={createTech.isPending}
+                >
+                  {createTech.isPending ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <Plus className="w-4 h-4 mr-2" />
+                  )}
+                  Criar "{query.trim()}"
+                </Button>
+              </div>
+            )}
+          </div>
         </PopoverContent>
       </Popover>
 
@@ -143,7 +212,12 @@ export const TechMultiSelect = ({ value, onChange }: Props) => {
               >
                 <TechIconCDN slug={t.slug || ""} name={t.name} color={t.color} size={14} />
                 <span className="font-medium">{t.name}</span>
-                <button type="button" onClick={() => remove(key)} className="hover:opacity-70" aria-label={`Remover ${t.name}`}>
+                <button
+                  type="button"
+                  onClick={() => remove(key)}
+                  className="hover:opacity-70"
+                  aria-label={`Remover ${t.name}`}
+                >
                   <X className="w-3 h-3" />
                 </button>
               </span>
