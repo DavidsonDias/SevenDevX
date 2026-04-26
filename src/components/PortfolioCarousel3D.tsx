@@ -33,6 +33,7 @@ import { isValidLiveUrl, type Project } from "@/data/projects";
 import { useProjects } from "@/hooks/useProjects";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { Loader2 } from "lucide-react";
+import { TechIconCDN } from "@/components/TechIconCDN";
 
 // ---------------------------------------------------------
 // 🧱 Constants
@@ -189,7 +190,11 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
                       key={tech.name}
                       className="flex items-center gap-2 px-3 py-1.5 bg-muted/30 rounded-full border border-border"
                     >
-                      <Icon className="text-base" style={{ color: tech.color }} />
+                      {tech.slug ? (
+                        <TechIconCDN slug={tech.slug} name={tech.name} color={tech.color} size={16} />
+                      ) : (
+                        <Icon className="text-base" style={{ color: tech.color }} />
+                      )}
                       <span className="text-xs font-medium uppercase">
                         {tech.name}
                       </span>
@@ -362,7 +367,11 @@ const ProjectCard3D = ({
                   className="relative flex items-center gap-2 px-3 py-1.5 bg-muted/20 rounded-full border border-border hover:border-primary/50 transition-all"
                   title={tech.name}
                 >
-                  <Icon className="text-lg" style={{ color: tech.color }} />
+                  {tech.slug ? (
+                    <TechIconCDN slug={tech.slug} name={tech.name} color={tech.color} size={18} />
+                  ) : (
+                    <Icon className="text-lg" style={{ color: tech.color }} />
+                  )}
                   <span className="text-xs font-medium text-foreground">
                     {tech.name}
                   </span>

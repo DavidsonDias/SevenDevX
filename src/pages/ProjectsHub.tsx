@@ -24,6 +24,7 @@ import { useProjects, type UIProject } from "@/hooks/useProjects";
 import ProjectCard3D from "@/components/ProjectCard3D";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import AppLoaderOrbital from "@/components/ui/AppLoaderOrbital";
+import { TechIconCDN } from "@/components/TechIconCDN";
 
 // ─── Project Modal with layoutId ───
 const ProjectModal = memo(({ project, onClose, isPrimary, isFeatured }: {
@@ -118,7 +119,11 @@ const ProjectModal = memo(({ project, onClose, isPrimary, isFeatured }: {
                   const Icon = tech.icon;
                   return (
                     <div key={tech.name} className="flex items-center gap-2 px-3 py-1.5 bg-muted/30 rounded-full border border-border">
-                      <Icon className="text-base" style={{ color: tech.color }} />
+                      {tech.slug ? (
+                        <TechIconCDN slug={tech.slug} name={tech.name} color={tech.color} size={16} />
+                      ) : (
+                        <Icon className="text-base" style={{ color: tech.color }} />
+                      )}
                       <span className="text-xs font-medium uppercase">{tech.name}</span>
                     </div>
                   );
@@ -221,7 +226,11 @@ const ProjectCard = memo(({ project, index, isFeatured, isHero, onOpenModal }: {
                     const Icon = tech.icon;
                     return (
                       <div key={tech.name} className="flex items-center gap-1.5 px-3 py-1.5 bg-muted/20 rounded-full border border-border text-xs">
-                        <Icon className="text-sm" style={{ color: tech.color }} />
+                        {tech.slug ? (
+                          <TechIconCDN slug={tech.slug} name={tech.name} color={tech.color} size={14} />
+                        ) : (
+                          <Icon className="text-sm" style={{ color: tech.color }} />
+                        )}
                         <span className="font-medium text-foreground">{tech.name}</span>
                       </div>
                     );
@@ -312,7 +321,11 @@ const ProjectCard = memo(({ project, index, isFeatured, isHero, onOpenModal }: {
                 const Icon = tech.icon;
                 return (
                   <div key={tech.name} className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1 bg-muted/20 rounded-full border border-border text-xs">
-                    <Icon className="text-sm" style={{ color: tech.color }} />
+                    {tech.slug ? (
+                      <TechIconCDN slug={tech.slug} name={tech.name} color={tech.color} size={14} />
+                    ) : (
+                      <Icon className="text-sm" style={{ color: tech.color }} />
+                    )}
                     <span className="font-medium text-foreground">{tech.name}</span>
                   </div>
                 );

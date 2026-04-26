@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { useProjectBySlug } from "@/hooks/useProjects";
 import { isValidLiveUrl } from "@/data/projects";
 import AppLoaderOrbital from "@/components/ui/AppLoaderOrbital";
+import { TechIconCDN } from "@/components/TechIconCDN";
 
 const ProjectDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -192,7 +193,11 @@ const ProjectDetail = () => {
                         key={tech.name}
                         className="flex items-center gap-2 px-4 py-2 bg-muted/30 rounded-full border border-border"
                       >
-                        <Icon className="text-base" style={{ color: tech.color }} />
+                        {tech.slug ? (
+                          <TechIconCDN slug={tech.slug} name={tech.name} color={tech.color} size={18} />
+                        ) : (
+                          <Icon className="text-base" style={{ color: tech.color }} />
+                        )}
                         <span className="text-sm font-medium">{tech.name}</span>
                       </div>
                     );
