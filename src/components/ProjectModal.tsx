@@ -5,6 +5,7 @@ import { X, ExternalLink, Github } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { useScrollLock } from "@/hooks/useScrollLock";
+import { TechIconCDN } from "@/components/TechIconCDN";
 
 interface Props {
   project: null | {
@@ -13,7 +14,7 @@ interface Props {
     description: string;
     longDescription?: string;
     image: string;
-    techs: { name: string }[];
+    techs: { name: string; slug?: string; color?: string; icon?: any }[];
     liveUrl?: string;
     githubUrl?: string;
   };
@@ -91,14 +92,22 @@ export default function ProjectModal({ project, onClose }: Props) {
                 <div>
                   <h4 className="text-sm font-semibold text-primary mb-2">{t.projectModal.techStack}</h4>
                   <div className="flex flex-wrap gap-2">
-                    {project.techs.map((tech) => (
-                      <span 
-                        key={tech.name}
-                        className="px-3 py-1 bg-muted/30 rounded-full text-xs font-medium border border-border"
-                      >
-                        {tech.name}
-                      </span>
-                    ))}
+                    {project.techs.map((tech) => {
+                      const Icon = tech.icon;
+                      return (
+                        <span
+                          key={tech.name}
+                          className="inline-flex items-center gap-2 px-3 py-1.5 bg-muted/30 rounded-full text-xs font-medium border border-border"
+                        >
+                          {tech.slug ? (
+                            <TechIconCDN slug={tech.slug} name={tech.name} color={tech.color} size={16} />
+                          ) : Icon ? (
+                            <Icon className="text-base" style={{ color: tech.color }} />
+                          ) : null}
+                          <span>{tech.name}</span>
+                        </span>
+                      );
+                    })}
                   </div>
                 </div>
               )}
