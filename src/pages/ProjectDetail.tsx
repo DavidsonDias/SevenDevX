@@ -17,6 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { useProjectBySlug } from "@/hooks/useProjects";
 import { isValidLiveUrl } from "@/data/projects";
 import AppLoaderOrbital from "@/components/ui/AppLoaderOrbital";
+import { TechIconCDN } from "@/components/TechIconCDN";
 
 const ProjectDetail = () => {
   const { slug } = useParams<{ slug: string }>();

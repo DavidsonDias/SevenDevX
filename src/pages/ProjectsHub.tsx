@@ -24,6 +24,7 @@ import { useProjects, type UIProject } from "@/hooks/useProjects";
 import ProjectCard3D from "@/components/ProjectCard3D";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import AppLoaderOrbital from "@/components/ui/AppLoaderOrbital";
+import { TechIconCDN } from "@/components/TechIconCDN";
 
 // ─── Project Modal with layoutId ───
 const ProjectModal = memo(({ project, onClose, isPrimary, isFeatured }: {
