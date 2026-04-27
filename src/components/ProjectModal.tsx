@@ -6,6 +6,7 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { TechIconCDN } from "@/components/TechIconCDN";
+import { TagIcon } from "@/components/TagIcon";
 
 interface Props {
   project: null | {
@@ -15,6 +16,7 @@ interface Props {
     longDescription?: string;
     image: string;
     techs: { name: string; slug?: string; color?: string; icon?: any }[];
+    tags?: string[];
     liveUrl?: string;
     githubUrl?: string;
   };
@@ -109,6 +111,17 @@ export default function ProjectModal({ project, onClose }: Props) {
                       );
                     })}
                   </div>
+                </div>
+              )}
+
+              {project.tags && project.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {project.tags.map((tag) => (
+                    <span key={tag} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs border border-border bg-muted/30 text-muted-foreground">
+                      <TagIcon name={tag} size={13} />
+                      {tag}
+                    </span>
+                  ))}
                 </div>
               )}
 
