@@ -147,7 +147,7 @@ export const TagMultiSelect = ({ value, onChange }: Props) => {
                         checked ? "bg-accent/40" : ""
                       }`}
                     >
-                      <TagIcon name={t.name} slug={t.slug} color={t.color} size={18} />
+                      <TagIcon name={t.name} slug={t.slug} color={t.color} size={18} iconUrl={t.icon_url} />
                       <span className="flex-1 truncate">{highlight(t.name)}</span>
                       {checked && <Check className="w-4 h-4 text-primary shrink-0" />}
                     </button>
