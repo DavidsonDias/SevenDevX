@@ -15,6 +15,7 @@ import { Link } from "react-router-dom";
 import { useAuthContext as useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import SEOHead from "@/components/SEOHead";
+import AiInsightsBlock from "@/components/admin/AiInsightsBlock";
 import GlassCard from "@/components/GlassCard";
 import { StatsCardSkeleton } from "@/components/SkeletonLoader";
 import { useToast } from "@/hooks/use-toast";
@@ -399,32 +400,31 @@ const AdminDashboard = () => {
             </GlassCard>
           </div>
 
-          {/* Quick Access — Content Management */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-            <button
-              onClick={() => navigate("/admin/projects")}
-              className="text-left p-5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group"
-            >
-              <div className="text-xs uppercase tracking-wider text-white/50 mb-1">Conteúdo</div>
-              <div className="text-lg font-semibold mb-1">Projetos</div>
-              <div className="text-xs text-white/60">Gerencie portfólio e cases.</div>
-            </button>
-            <button
-              onClick={() => navigate("/admin/technologies")}
-              className="text-left p-5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group"
-            >
-              <div className="text-xs uppercase tracking-wider text-white/50 mb-1">Registry</div>
-              <div className="text-lg font-semibold mb-1">Tecnologias</div>
-              <div className="text-xs text-white/60">Catálogo central de techs e logos.</div>
-            </button>
-            <button
-              onClick={() => navigate("/admin/tags")}
-              className="text-left p-5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group"
-            >
-              <div className="text-xs uppercase tracking-wider text-white/50 mb-1">Registry</div>
-              <div className="text-lg font-semibold mb-1">Tags</div>
-              <div className="text-xs text-white/60">Categorias visuais dos projetos.</div>
-            </button>
+          {/* AI Insights */}
+          <AiInsightsBlock stats={stats} contactsCount={contacts.length} />
+
+          {/* Quick Access — Sistema Operacional */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-8">
+            {[
+              { to: "/admin/clients", label: "Clientes", section: "CRM", desc: "Perfil + timeline + IA" },
+              { to: "/admin/pipeline", label: "Pipeline", section: "Operação", desc: "Kanban de projetos" },
+              { to: "/admin/projects", label: "Projetos", section: "Conteúdo", desc: "Cases e portfólio" },
+              { to: "/admin/process", label: "Processo", section: "Engine", desc: "6 etapas + IA" },
+              { to: "/admin/services", label: "Serviços", section: "CMS", desc: "Catálogo do site" },
+              { to: "/admin/faq", label: "FAQ", section: "CMS", desc: "Perguntas dinâmicas" },
+              { to: "/admin/technologies", label: "Tecnologias", section: "Registry", desc: "Logos oficiais" },
+              { to: "/admin/tags", label: "Tags", section: "Registry", desc: "Categorias visuais" },
+            ].map((c) => (
+              <button
+                key={c.to}
+                onClick={() => navigate(c.to)}
+                className="text-left p-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all"
+              >
+                <div className="text-[10px] uppercase tracking-wider text-white/50 mb-1">{c.section}</div>
+                <div className="text-base font-semibold mb-0.5">{c.label}</div>
+                <div className="text-xs text-white/60">{c.desc}</div>
+              </button>
+            ))}
           </div>
 
           {/* Contacts Table */}

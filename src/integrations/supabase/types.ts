@@ -201,6 +201,118 @@ export type Database = {
           },
         ]
       }
+      client_interactions: {
+        Row: {
+          client_id: string
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          metadata: Json
+          occurred_at: string
+          title: string
+          type: Database["public"]["Enums"]["interaction_type"]
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          metadata?: Json
+          occurred_at?: string
+          title: string
+          type: Database["public"]["Enums"]["interaction_type"]
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          metadata?: Json
+          occurred_at?: string
+          title?: string
+          type?: Database["public"]["Enums"]["interaction_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_interactions_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      clients: {
+        Row: {
+          ai_summary: string | null
+          ai_summary_updated_at: string | null
+          avatar_url: string | null
+          company: string | null
+          contact_id: string | null
+          created_at: string
+          created_by: string | null
+          email: string | null
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          revenue_range: string | null
+          segment: string | null
+          status: Database["public"]["Enums"]["client_status"]
+          updated_at: string
+          whatsapp: string | null
+        }
+        Insert: {
+          ai_summary?: string | null
+          ai_summary_updated_at?: string | null
+          avatar_url?: string | null
+          company?: string | null
+          contact_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          revenue_range?: string | null
+          segment?: string | null
+          status?: Database["public"]["Enums"]["client_status"]
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Update: {
+          ai_summary?: string | null
+          ai_summary_updated_at?: string | null
+          avatar_url?: string | null
+          company?: string | null
+          contact_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          revenue_range?: string | null
+          segment?: string | null
+          status?: Database["public"]["Enums"]["client_status"]
+          updated_at?: string
+          whatsapp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clients_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contacts: {
         Row: {
           assigned_to: string | null
@@ -252,6 +364,83 @@ export type Database = {
         }
         Relationships: []
       }
+      faq_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_order: number
+          id: string
+          is_active: boolean
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_order?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      faq_items: {
+        Row: {
+          answer: string
+          category_id: string | null
+          created_at: string
+          display_order: number
+          helpful_count: number
+          id: string
+          is_active: boolean
+          question: string
+          updated_at: string
+          views_count: number
+        }
+        Insert: {
+          answer: string
+          category_id?: string | null
+          created_at?: string
+          display_order?: number
+          helpful_count?: number
+          id?: string
+          is_active?: boolean
+          question: string
+          updated_at?: string
+          views_count?: number
+        }
+        Update: {
+          answer?: string
+          category_id?: string | null
+          created_at?: string
+          display_order?: number
+          helpful_count?: number
+          id?: string
+          is_active?: boolean
+          question?: string
+          updated_at?: string
+          views_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "faq_items_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "faq_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       page_views: {
         Row: {
           city: string | null
@@ -297,6 +486,95 @@ export type Database = {
         }
         Relationships: []
       }
+      process_template_stages: {
+        Row: {
+          ai_prompt: string | null
+          color: string | null
+          created_at: string
+          default_checklist: Json
+          default_deliverables: Json
+          description: string | null
+          display_order: number
+          icon: string | null
+          id: string
+          is_visible_on_site: boolean
+          name: string
+          slug: string
+          template_id: string
+          updated_at: string
+        }
+        Insert: {
+          ai_prompt?: string | null
+          color?: string | null
+          created_at?: string
+          default_checklist?: Json
+          default_deliverables?: Json
+          description?: string | null
+          display_order?: number
+          icon?: string | null
+          id?: string
+          is_visible_on_site?: boolean
+          name: string
+          slug: string
+          template_id: string
+          updated_at?: string
+        }
+        Update: {
+          ai_prompt?: string | null
+          color?: string | null
+          created_at?: string
+          default_checklist?: Json
+          default_deliverables?: Json
+          description?: string | null
+          display_order?: number
+          icon?: string | null
+          id?: string
+          is_visible_on_site?: boolean
+          name?: string
+          slug?: string
+          template_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "process_template_stages_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "process_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      process_templates: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          is_default: boolean
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          is_default?: boolean
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          is_default?: boolean
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -327,10 +605,86 @@ export type Database = {
         }
         Relationships: []
       }
+      project_stages: {
+        Row: {
+          ai_output: string | null
+          ai_output_updated_at: string | null
+          completed_at: string | null
+          created_at: string
+          display_order: number
+          due_at: string | null
+          files: Json
+          id: string
+          name: string
+          notes: string | null
+          project_id: string
+          responsible_user_id: string | null
+          slug: string
+          started_at: string | null
+          status: Database["public"]["Enums"]["stage_status"]
+          template_stage_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          ai_output?: string | null
+          ai_output_updated_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          display_order?: number
+          due_at?: string | null
+          files?: Json
+          id?: string
+          name: string
+          notes?: string | null
+          project_id: string
+          responsible_user_id?: string | null
+          slug: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["stage_status"]
+          template_stage_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          ai_output?: string | null
+          ai_output_updated_at?: string | null
+          completed_at?: string | null
+          created_at?: string
+          display_order?: number
+          due_at?: string | null
+          files?: Json
+          id?: string
+          name?: string
+          notes?: string | null
+          project_id?: string
+          responsible_user_id?: string | null
+          slug?: string
+          started_at?: string | null
+          status?: Database["public"]["Enums"]["stage_status"]
+          template_stage_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_stages_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_stages_template_stage_id_fkey"
+            columns: ["template_stage_id"]
+            isOneToOne: false
+            referencedRelation: "process_template_stages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projects: {
         Row: {
           case_study_url: string | null
           category: string | null
+          client_id: string | null
           client_name: string | null
           client_segment: string | null
           cover_image: string | null
@@ -346,6 +700,7 @@ export type Database = {
           is_published_on_site: boolean
           live_url: string | null
           long_description: string | null
+          pipeline_stage: Database["public"]["Enums"]["project_pipeline_stage"]
           published_at: string | null
           seo_description: string | null
           seo_keywords: string[] | null
@@ -362,6 +717,7 @@ export type Database = {
         Insert: {
           case_study_url?: string | null
           category?: string | null
+          client_id?: string | null
           client_name?: string | null
           client_segment?: string | null
           cover_image?: string | null
@@ -377,6 +733,7 @@ export type Database = {
           is_published_on_site?: boolean
           live_url?: string | null
           long_description?: string | null
+          pipeline_stage?: Database["public"]["Enums"]["project_pipeline_stage"]
           published_at?: string | null
           seo_description?: string | null
           seo_keywords?: string[] | null
@@ -393,6 +750,7 @@ export type Database = {
         Update: {
           case_study_url?: string | null
           category?: string | null
+          client_id?: string | null
           client_name?: string | null
           client_segment?: string | null
           cover_image?: string | null
@@ -408,6 +766,7 @@ export type Database = {
           is_published_on_site?: boolean
           live_url?: string | null
           long_description?: string | null
+          pipeline_stage?: Database["public"]["Enums"]["project_pipeline_stage"]
           published_at?: string | null
           seo_description?: string | null
           seo_keywords?: string[] | null
@@ -421,7 +780,125 @@ export type Database = {
           updated_at?: string
           views_count?: number
         }
+        Relationships: [
+          {
+            foreignKeyName: "projects_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      services_cms: {
+        Row: {
+          color: string | null
+          cover_image: string | null
+          created_at: string
+          deliverables: Json
+          description: string
+          display_order: number
+          features: Json
+          icon: string | null
+          id: string
+          is_featured: boolean
+          is_published: boolean
+          long_description: string | null
+          price_from: number | null
+          price_label: string | null
+          seo_description: string | null
+          seo_title: string | null
+          slug: string
+          subtitle: string | null
+          technologies: Json
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          color?: string | null
+          cover_image?: string | null
+          created_at?: string
+          deliverables?: Json
+          description: string
+          display_order?: number
+          features?: Json
+          icon?: string | null
+          id?: string
+          is_featured?: boolean
+          is_published?: boolean
+          long_description?: string | null
+          price_from?: number | null
+          price_label?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug: string
+          subtitle?: string | null
+          technologies?: Json
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          color?: string | null
+          cover_image?: string | null
+          created_at?: string
+          deliverables?: Json
+          description?: string
+          display_order?: number
+          features?: Json
+          icon?: string | null
+          id?: string
+          is_featured?: boolean
+          is_published?: boolean
+          long_description?: string | null
+          price_from?: number | null
+          price_label?: string | null
+          seo_description?: string | null
+          seo_title?: string | null
+          slug?: string
+          subtitle?: string | null
+          technologies?: Json
+          title?: string
+          updated_at?: string
+        }
         Relationships: []
+      }
+      stage_checklist_items: {
+        Row: {
+          created_at: string
+          display_order: number
+          done_at: string | null
+          id: string
+          is_done: boolean
+          stage_id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          display_order?: number
+          done_at?: string | null
+          id?: string
+          is_done?: boolean
+          stage_id: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          display_order?: number
+          done_at?: string | null
+          id?: string
+          is_done?: boolean
+          stage_id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stage_checklist_items_stage_id_fkey"
+            columns: ["stage_id"]
+            isOneToOne: false
+            referencedRelation: "project_stages"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       tag_registry: {
         Row: {
@@ -541,6 +1018,7 @@ export type Database = {
     Enums: {
       app_role: "admin" | "moderator" | "user"
       blog_status: "draft" | "published" | "archived"
+      client_status: "lead" | "qualified" | "active" | "finished" | "lost"
       contact_status:
         | "new"
         | "contacted"
@@ -549,7 +1027,23 @@ export type Database = {
         | "closed"
         | "lost"
       featured_level: "none" | "secondary" | "primary"
+      interaction_type:
+        | "meeting"
+        | "proposal"
+        | "message"
+        | "call"
+        | "note"
+        | "email"
+        | "file"
+      project_pipeline_stage:
+        | "lead"
+        | "discovery"
+        | "proposal"
+        | "execution"
+        | "launch"
+        | "done"
       project_status: "draft" | "published" | "archived"
+      stage_status: "pending" | "in_progress" | "completed" | "blocked"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -679,6 +1173,7 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "moderator", "user"],
       blog_status: ["draft", "published", "archived"],
+      client_status: ["lead", "qualified", "active", "finished", "lost"],
       contact_status: [
         "new",
         "contacted",
@@ -688,7 +1183,25 @@ export const Constants = {
         "lost",
       ],
       featured_level: ["none", "secondary", "primary"],
+      interaction_type: [
+        "meeting",
+        "proposal",
+        "message",
+        "call",
+        "note",
+        "email",
+        "file",
+      ],
+      project_pipeline_stage: [
+        "lead",
+        "discovery",
+        "proposal",
+        "execution",
+        "launch",
+        "done",
+      ],
       project_status: ["draft", "published", "archived"],
+      stage_status: ["pending", "in_progress", "completed", "blocked"],
     },
   },
 } as const

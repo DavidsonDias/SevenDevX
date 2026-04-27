@@ -21,6 +21,11 @@ const ProjectsAdmin = lazy(() => import("@/pages/admin/ProjectsAdmin"));
 const ProjectsDebug = lazy(() => import("@/pages/admin/ProjectsDebug"));
 const TechnologiesAdmin = lazy(() => import("@/pages/admin/TechnologiesAdmin"));
 const TagsAdmin = lazy(() => import("@/pages/admin/TagsAdmin"));
+const ClientsAdmin = lazy(() => import("@/pages/admin/ClientsAdmin"));
+const PipelineAdmin = lazy(() => import("@/pages/admin/PipelineAdmin"));
+const ProcessAdmin = lazy(() => import("@/pages/admin/ProcessAdmin"));
+const FaqAdmin = lazy(() => import("@/pages/admin/FaqAdmin"));
+const ServicesAdmin = lazy(() => import("@/pages/admin/ServicesAdmin"));
 const ProjectsHub = lazy(() => import("@/pages/ProjectsHub"));
 const ProjectDetail = lazy(() => import("@/pages/ProjectDetail"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
@@ -95,6 +100,21 @@ function AnimatedRoutes() {
               <ProtectedRoute requiredRole="admin">
                 <TagsAdmin />
               </ProtectedRoute>
+            } />
+            <Route path="/admin/clients" element={
+              <ProtectedRoute requiredRole="admin"><ClientsAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/pipeline" element={
+              <ProtectedRoute requiredRole="admin"><PipelineAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/process" element={
+              <ProtectedRoute requiredRole="admin"><ProcessAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/faq" element={
+              <ProtectedRoute requiredRole="admin"><FaqAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/services" element={
+              <ProtectedRoute requiredRole="admin"><ServicesAdmin /></ProtectedRoute>
             } />
 
             <Route path="*" element={<NotFound />} />
