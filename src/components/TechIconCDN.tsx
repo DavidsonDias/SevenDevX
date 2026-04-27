@@ -44,11 +44,18 @@ const SLUG_ALIASES: Record<string, string> = {
   "shadcn-ui": "shadcnui",
 };
 
-/** Convert a slug like "tailwindcss" → "SiTailwindcss". */
+/**
+ * Convert a slug like "tailwindcss" → "SiTailwindcss", "d3dotjs" → "SiD3Dotjs".
+ * Rule (matches react-icons/si convention): capitalize the first letter, and
+ * also capitalize any letter immediately following a digit.
+ */
 const slugToComponentName = (slug: string): string => {
   const normalized = (SLUG_ALIASES[slug.toLowerCase()] || slug.toLowerCase())
     .replace(/[^a-z0-9]/g, "");
-  return "Si" + normalized.charAt(0).toUpperCase() + normalized.slice(1);
+  if (!normalized) return "";
+  const head = normalized.charAt(0).toUpperCase() + normalized.slice(1);
+  const cased = head.replace(/(\d)([a-z])/g, (_, d, l) => `${d}${l.toUpperCase()}`);
+  return "Si" + cased;
 };
 
 export const TechIconCDN = ({ slug, name, color, size = 20, className = "" }: TechIconCDNProps) => {
