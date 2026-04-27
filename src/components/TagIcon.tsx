@@ -1,12 +1,12 @@
 import {
-  Activity, BarChart3, Bot, BriefcaseBusiness, Building2, CalendarCheck, ChartNoAxesCombined,
-  Code2, Cpu, Cuboid, FileText, Gamepad2, Globe2, HeartPulse, LayoutDashboard,
-  Megaphone, MessageCircle, MonitorSmartphone, Network, PackageOpen, PanelsTopLeft,
-  Rocket, Settings2, ShoppingCart, Smartphone, Sparkles, Store, Tags, Video,
+  Activity, Bot, BriefcaseBusiness, Building2, CalendarCheck, ChartNoAxesCombined,
+  Code2, FileText, Gamepad2, Globe2, HeartPulse, LayoutDashboard,
+  Megaphone, MonitorSmartphone, Network, PackageOpen, PanelsTopLeft,
+  Rocket, Smartphone, Sparkles, Store, Tags, Video,
   Workflow, Zap,
 } from "lucide-react";
 import * as SiIcons from "react-icons/si";
-import type { IconType } from "react-icons";
+import type { ElementType } from "react";
 
 interface TagIconProps {
   name: string;
@@ -16,7 +16,7 @@ interface TagIconProps {
   className?: string;
 }
 
-const TAG_ICON_MAP: Record<string, IconType> = {
+const TAG_ICON_MAP: Record<string, ElementType> = {
   "3d": SiIcons.SiThreedotjs,
   ai: SiIcons.SiOpenai,
   analytics: SiIcons.SiGoogleanalytics,
@@ -32,7 +32,7 @@ const TAG_ICON_MAP: Record<string, IconType> = {
   streaming: Video,
 };
 
-const FALLBACK_TAGS: Record<string, IconType> = {
+const FALLBACK_TAGS: Record<string, ElementType> = {
   automation: Workflow,
   b2b: Building2,
   b2c: Store,
