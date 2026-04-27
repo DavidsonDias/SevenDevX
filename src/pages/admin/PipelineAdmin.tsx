@@ -2,6 +2,7 @@
  * 🧭 PipelineAdmin — Kanban de projetos por estágio comercial
  */
 import { useMemo } from "react";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 import AdminPageShell from "@/components/admin/AdminPageShell";
@@ -62,10 +63,12 @@ export default function PipelineAdmin() {
                   <motion.div
                     key={p.id}
                     layout
-                    className="bg-zinc-950 border border-white/10 rounded-lg p-3 cursor-move"
+                    className="bg-zinc-950 border border-white/10 rounded-lg p-3 hover:border-white/30 transition-colors group"
                   >
-                    <h4 className="font-medium text-sm truncate">{p.title}</h4>
-                    {p.client_name && <p className="text-xs text-white/50 truncate mt-0.5">{p.client_name}</p>}
+                    <Link to={`/admin/projects/${p.id}`} className="block">
+                      <h4 className="font-medium text-sm truncate group-hover:text-blue-400 transition-colors">{p.title}</h4>
+                      {p.client_name && <p className="text-xs text-white/50 truncate mt-0.5">{p.client_name}</p>}
+                    </Link>
                     <select
                       value={p.pipeline_stage || "lead"}
                       onChange={(e) => move(p.id, e.target.value)}
