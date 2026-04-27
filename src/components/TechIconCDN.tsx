@@ -69,6 +69,23 @@ const SLUG_ALIASES: Record<string, string> = {
   kafka: "apachekafka",
   scikit: "scikitlearn",
   "scikit-learn": "scikitlearn",
+  threejs: "threedotjs",
+  "three.js": "threedotjs",
+  d3: "d3dotjs",
+  "d3.js": "d3dotjs",
+  p5: "p5dotjs",
+  "p5.js": "p5dotjs",
+  chartjs: "chartdotjs",
+  "chart.js": "chartdotjs",
+  phoenix: "phoenixframework",
+  cockroachdb: "cockroachlabs",
+  cassandra: "apachecassandra",
+  apachekafka: "apachekafka",
+  "fly.io": "fly",
+  flyio: "fly",
+  gemini: "googlegemini",
+  "google-gemini": "googlegemini",
+  mistral: "mistralai",
 };
 
 /**
