@@ -399,6 +399,34 @@ const AdminDashboard = () => {
             </GlassCard>
           </div>
 
+          {/* Quick Access — Content Management */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+            <button
+              onClick={() => navigate("/admin/projects")}
+              className="text-left p-5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group"
+            >
+              <div className="text-xs uppercase tracking-wider text-white/50 mb-1">Conteúdo</div>
+              <div className="text-lg font-semibold mb-1">Projetos</div>
+              <div className="text-xs text-white/60">Gerencie portfólio e cases.</div>
+            </button>
+            <button
+              onClick={() => navigate("/admin/technologies")}
+              className="text-left p-5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group"
+            >
+              <div className="text-xs uppercase tracking-wider text-white/50 mb-1">Registry</div>
+              <div className="text-lg font-semibold mb-1">Tecnologias</div>
+              <div className="text-xs text-white/60">Catálogo central de techs e logos.</div>
+            </button>
+            <button
+              onClick={() => navigate("/admin/tags")}
+              className="text-left p-5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group"
+            >
+              <div className="text-xs uppercase tracking-wider text-white/50 mb-1">Registry</div>
+              <div className="text-lg font-semibold mb-1">Tags</div>
+              <div className="text-xs text-white/60">Categorias visuais dos projetos.</div>
+            </button>
+          </div>
+
           {/* Contacts Table */}
           <GlassCard padding="none">
             <div className="p-6 border-b border-white/10 flex items-center justify-between">
