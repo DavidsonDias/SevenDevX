@@ -17,23 +17,42 @@ import {
 } from "@/components/ui/accordion";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useAnalytics } from "@/hooks/useAnalytics";
+import { useFaqPublic } from "@/hooks/useEcosystem";
 
 const FAQSection = () => {
   const { t } = useLanguage();
   const { trackEvent } = useAnalytics();
   const reduce = useReducedMotion();
   const data = t.servicesPage.faq;
+  const { data: dbFaq } = useFaqPublic();
 
   const [activeCategory, setActiveCategory] = useState<string>("all");
   const [search, setSearch] = useState("");
 
-  // Flatten all items para JSON-LD e busca global
-  const allItems = useMemo(
+  // Hybrid source: DB first, fallback to i18n
+  const allItems = useMemo(() => {
+    if (dbFaq && dbFaq.items.length > 0) {
+      return dbFaq.items.map((it: any) => {
+        const cat = dbFaq.categories.find((c: any) => c.id === it.category_id);
+        return {
+          q: it.question,
+          a: it.answer,
+          categoryId: cat?.slug || "geral",
+          categoryLabel: cat?.name || "Geral",
+        };
+      });
+    }
+    return data.categories.flatMap((cat) =>
+      cat.items.map((it) => ({ ...it, categoryId: cat.id, categoryLabel: cat.label }))
+    );
+  }, [dbFaq, data.categories]);
+
+  const dbCategories = useMemo(
     () =>
-      data.categories.flatMap((cat) =>
-        cat.items.map((it) => ({ ...it, categoryId: cat.id, categoryLabel: cat.label }))
-      ),
-    [data.categories]
+      dbFaq && dbFaq.categories.length > 0
+        ? dbFaq.categories.map((c: any) => ({ id: c.slug, label: c.name, icon: "•" }))
+        : data.categories,
+    [dbFaq, data.categories]
   );
 
   // Items filtrados (categoria + busca)
@@ -179,7 +198,7 @@ const FAQSection = () => {
           >
             {data.allLabel} ({allItems.length})
           </button>
-          {data.categories.map((cat) => (
+          {dbCategories.map((cat: any) => (
             <button
               key={cat.id}
               type="button"
@@ -192,7 +211,7 @@ const FAQSection = () => {
                   : "border-foreground/15 text-muted-foreground hover:border-primary/40 hover:text-foreground"
               }`}
             >
-              <span aria-hidden="true">{cat.icon}</span>
+              {cat.icon && <span aria-hidden="true">{cat.icon}</span>}
               {cat.label}
             </button>
           ))}

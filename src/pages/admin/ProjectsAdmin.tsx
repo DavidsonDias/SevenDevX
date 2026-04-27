@@ -445,6 +445,15 @@ const ProjectsAdmin = () => {
                           <Button
                             size="icon"
                             variant="ghost"
+                            className="h-8 w-8 text-primary"
+                            onClick={() => navigate(`/admin/projects/${p.id}`)}
+                            title="Abrir Process Engine"
+                          >
+                            <Sparkles className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
                             className="h-8 w-8"
                             onClick={() => openEdit(p)}
                             title="Editar"
