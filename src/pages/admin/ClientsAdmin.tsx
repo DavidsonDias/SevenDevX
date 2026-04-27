@@ -76,8 +76,12 @@ export default function ClientsAdmin() {
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((c: any) => (
-            <motion.div key={c.id} whileHover={{ y: -2 }}>
-              <GlassCard className="p-5 cursor-pointer h-full" onClick={() => setDrawerId(c.id)}>
+            <motion.div
+              key={c.id}
+              whileHover={{ y: -2 }}
+              onClick={() => setDrawerId(c.id)}
+              className="p-5 cursor-pointer h-full bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors"
+            >
                 <div className="flex items-start justify-between gap-3 mb-3">
                   <div className="min-w-0">
                     <h3 className="font-bold truncate">{c.name}</h3>
@@ -110,7 +114,6 @@ export default function ClientsAdmin() {
                     <Trash2 className="w-3 h-3" />
                   </button>
                 </div>
-              </GlassCard>
             </motion.div>
           ))}
         </div>

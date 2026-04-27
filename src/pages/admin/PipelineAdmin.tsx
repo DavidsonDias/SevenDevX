@@ -36,7 +36,7 @@ export default function PipelineAdmin() {
   }, [projects]);
 
   const move = async (projectId: string, newStage: string) => {
-    const { error } = await supabase.from("projects").update({ pipeline_stage: newStage }).eq("id", projectId);
+    const { error } = await supabase.from("projects").update({ pipeline_stage: newStage as any }).eq("id", projectId);
     if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
     qc.invalidateQueries({ queryKey: ["projects"] });
     toast({ title: "Etapa atualizada" });
