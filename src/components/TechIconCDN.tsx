@@ -21,6 +21,8 @@ interface TechIconCDNProps {
   color?: string;
   size?: number;
   className?: string;
+  /** Custom icon URL (uploaded SVG/PNG) — takes priority over Simple Icons. */
+  iconUrl?: string | null;
 }
 
 /** Slug aliases → Simple Icons slugs (when registry slug differs from the SI name). */
