@@ -37,9 +37,7 @@ export const TagMultiSelect = ({ value, onChange }: Props) => {
     [registry, query]
   );
 
-  const colorFor = (name: string) =>
-    registry.find((t) => t.name === name || t.slug === name)?.color || "#8B5CF6";
-
+  // colorFor removed — now resolved per-chip from registry entry directly
   const toggle = (t: TagEntry) => {
     if (selected.has(t.name)) onChange(value.filter((v) => v !== t.name));
     else onChange([...value, t.name]);
