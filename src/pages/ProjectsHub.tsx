@@ -25,6 +25,7 @@ import ProjectCard3D from "@/components/ProjectCard3D";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import AppLoaderOrbital from "@/components/ui/AppLoaderOrbital";
 import { TechIconCDN } from "@/components/TechIconCDN";
+import { TagIcon } from "@/components/TagIcon";
 
 // ─── Project Modal with layoutId ───
 const ProjectModal = memo(({ project, onClose, isPrimary, isFeatured }: {
@@ -132,7 +133,9 @@ const ProjectModal = memo(({ project, onClose, isPrimary, isFeatured }: {
               {project.tags && project.tags.length > 0 && (
                 <div className="flex flex-wrap gap-1.5">
                   {project.tags.map((tag) => (
-                    <Badge key={tag} variant="secondary" className="text-[10px] px-2 py-0.5">{tag}</Badge>
+                    <Badge key={tag} variant="secondary" className="inline-flex items-center gap-1 text-[10px] px-2 py-0.5">
+                      <TagIcon name={tag} size={11} /> {tag}
+                    </Badge>
                   ))}
                 </div>
               )}
@@ -208,7 +211,7 @@ const ProjectCard = memo(({ project, index, isFeatured, isHero, onOpenModal }: {
                   <div className="absolute top-4 right-4 flex gap-1.5 z-10">
                     {project.tags.map((tag) => (
                       <span key={tag} className="px-2.5 py-1 bg-black/60 backdrop-blur-sm rounded-full text-[11px] font-medium text-foreground/90 border border-border/30">
-                        {tag}
+                        <TagIcon name={tag} size={11} className="mr-1" />{tag}
                       </span>
                     ))}
                   </div>
@@ -299,7 +302,7 @@ const ProjectCard = memo(({ project, index, isFeatured, isHero, onOpenModal }: {
               <div className="absolute top-3 right-3 flex gap-1.5 z-10">
                 {project.tags.slice(0, 2).map((tag) => (
                   <span key={tag} className="px-2 py-0.5 bg-black/60 backdrop-blur-sm rounded-full text-[10px] font-medium text-foreground/80 border border-border/30">
-                    {tag}
+                    <TagIcon name={tag} size={10} className="mr-1" />{tag}
                   </span>
                 ))}
               </div>
