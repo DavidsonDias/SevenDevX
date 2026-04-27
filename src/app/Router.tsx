@@ -101,6 +101,21 @@ function AnimatedRoutes() {
                 <TagsAdmin />
               </ProtectedRoute>
             } />
+            <Route path="/admin/clients" element={
+              <ProtectedRoute requiredRole="admin"><ClientsAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/pipeline" element={
+              <ProtectedRoute requiredRole="admin"><PipelineAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/process" element={
+              <ProtectedRoute requiredRole="admin"><ProcessAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/faq" element={
+              <ProtectedRoute requiredRole="admin"><FaqAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/services" element={
+              <ProtectedRoute requiredRole="admin"><ServicesAdmin /></ProtectedRoute>
+            } />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
