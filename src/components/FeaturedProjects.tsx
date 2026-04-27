@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { isValidLiveUrl, type Project } from "@/data/projects";
 import { usePrimaryProject, useSecondaryFeaturedProjects } from "@/hooks/useProjects";
 import ProjectCard3D from "@/components/ProjectCard3D";
+import { TechIconCDN } from "@/components/TechIconCDN";
 import { Button } from "@/components/ui/button";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { useLanguage } from "@/i18n/LanguageContext";
