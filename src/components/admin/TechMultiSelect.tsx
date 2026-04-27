@@ -17,6 +17,7 @@ export interface SelectedTech {
   slug?: string;
   name: string;
   color: string;
+  iconUrl?: string | null;
 }
 
 interface Props {
