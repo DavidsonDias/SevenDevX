@@ -26,7 +26,7 @@ const ProcessSection = () => {
     if (dbStages.length > 0) {
       return dbStages.map((s: any, i: number) => {
         // Try to merge with same-index i18n step for labels we don't have in DB
-        const fallback = data.steps[i] || data.steps[0] || {};
+        const fallback: any = data.steps[i] || data.steps[0] || {};
         const deliverables = (s.default_deliverables as any[]) || [];
         return {
           n: String(i + 1).padStart(2, "0"),
