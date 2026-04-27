@@ -36,7 +36,7 @@
  * @type {string}
  * @constant
  */
-const CACHE_VERSION = 'sevendevx-v3.1.1';
+const CACHE_VERSION = 'sevendevx-v3.1.2';
 
 /**
  * Nomes dos caches segmentados por tipo de recurso

@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { isValidLiveUrl, type Project } from "@/data/projects";
 import { usePrimaryProject, useSecondaryFeaturedProjects } from "@/hooks/useProjects";
 import ProjectCard3D from "@/components/ProjectCard3D";
+import { TechIconCDN } from "@/components/TechIconCDN";
 import { Button } from "@/components/ui/button";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { useLanguage } from "@/i18n/LanguageContext";
@@ -63,11 +64,19 @@ const FeaturedModal = ({ project, onClose }: { project: Project | null; onClose:
                 {project.longDescription || project.description}
               </p>
               <div className="flex flex-wrap gap-2">
-                {project.techs.map(tech => (
-                  <span key={tech.name} className="px-3 py-1 bg-muted/30 rounded-full text-xs font-medium border border-border">
-                    {tech.name}
-                  </span>
-                ))}
+                {project.techs.map(tech => {
+                  const Icon = (tech as any).icon;
+                  return (
+                    <span key={tech.name} className="inline-flex items-center gap-2 px-3 py-1 bg-muted/30 rounded-full text-xs font-medium border border-border">
+                      {tech.slug ? (
+                        <TechIconCDN slug={tech.slug} name={tech.name} color={tech.color} size={14} />
+                      ) : Icon ? (
+                        <Icon className="text-base" style={{ color: tech.color }} />
+                      ) : null}
+                      <span>{tech.name}</span>
+                    </span>
+                  );
+                })}
               </div>
               <div className="flex gap-3 pt-4">
                 {isValidLiveUrl(project.liveUrl) && (
@@ -116,7 +125,8 @@ const ProjectCard = memo(({ project, index, onOpen }: { project: Project; index:
       <div className="absolute inset-0 flex flex-col justify-end p-5 sm:p-6">
         <div className="flex flex-wrap gap-1.5 mb-2">
           {project.techs.slice(0, 3).map(tech => (
-            <span key={tech.name} className="text-[10px] uppercase tracking-wider text-muted-foreground border border-border px-2 py-0.5 rounded-sm">
+            <span key={tech.name} className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider text-muted-foreground border border-border px-2 py-0.5 rounded-sm">
+              {tech.slug && <TechIconCDN slug={tech.slug} name={tech.name} color={tech.color} size={10} />}
               {tech.name}
             </span>
           ))}
@@ -208,7 +218,8 @@ const FeaturedProjects = () => {
                 </p>
                 <div className="flex flex-wrap gap-2 mb-6">
                   {heroProject.techs.map(tech => (
-                    <span key={tech.name} className="text-[10px] uppercase tracking-wider text-muted-foreground border border-border px-2 py-1 rounded-sm">
+                    <span key={tech.name} className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-muted-foreground border border-border px-2 py-1 rounded-sm">
+                      {tech.slug && <TechIconCDN slug={tech.slug} name={tech.name} color={tech.color} size={12} />}
                       {tech.name}
                     </span>
                   ))}
