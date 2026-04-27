@@ -86,6 +86,16 @@ function AnimatedRoutes() {
                 <ProjectsDebug />
               </ProtectedRoute>
             } />
+            <Route path="/admin/technologies" element={
+              <ProtectedRoute requiredRole="admin">
+                <TechnologiesAdmin />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/tags" element={
+              <ProtectedRoute requiredRole="admin">
+                <TagsAdmin />
+              </ProtectedRoute>
+            } />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
