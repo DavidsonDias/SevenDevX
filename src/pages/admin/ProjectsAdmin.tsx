@@ -37,6 +37,7 @@ import { resolveProjectImage } from "@/data/projectImages";
 import type { DbProject } from "@/hooks/useProjects";
 import { TechMultiSelect, type SelectedTech } from "@/components/admin/TechMultiSelect";
 import { TagMultiSelect } from "@/components/admin/TagMultiSelect";
+import { TagIcon } from "@/components/TagIcon";
 
 interface FormState {
   id?: string;
@@ -401,7 +402,9 @@ const ProjectsAdmin = () => {
 
                       <div className="flex flex-wrap gap-1">
                         {p.tags?.slice(0, 3).map((t) => (
-                          <Badge key={t} variant="secondary" className="text-[10px]">{t}</Badge>
+                          <Badge key={t} variant="secondary" className="inline-flex items-center gap-1 text-[10px]">
+                            <TagIcon name={t} size={10} /> {t}
+                          </Badge>
                         ))}
                       </div>
 
