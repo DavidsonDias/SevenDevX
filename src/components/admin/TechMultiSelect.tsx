@@ -102,9 +102,11 @@ export const TechMultiSelect = ({ value, onChange }: Props) => {
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-[min(360px,calc(100vw-2rem))] p-0 bg-popover border-border shadow-xl"
+          className="w-[min(390px,calc(100vw-2rem))] max-h-[min(72vh,520px)] overflow-hidden p-0 bg-popover border-border shadow-xl"
           align="start"
+          side="bottom"
           sideOffset={6}
+          collisionPadding={16}
         >
           <div className="flex flex-col">
             {/* Search input */}
@@ -132,8 +134,10 @@ export const TechMultiSelect = ({ value, onChange }: Props) => {
 
             {/* Scrollable list — mobile optimized */}
             <div
-              className="max-h-[280px] overflow-y-auto overscroll-contain"
+              className="max-h-[min(54vh,380px)] overflow-y-auto overscroll-y-contain touch-pan-y"
               style={{ WebkitOverflowScrolling: "touch" }}
+              onWheel={(e) => e.stopPropagation()}
+              onTouchMove={(e) => e.stopPropagation()}
             >
               {isLoading && (
                 <div className="flex items-center justify-center py-8">
