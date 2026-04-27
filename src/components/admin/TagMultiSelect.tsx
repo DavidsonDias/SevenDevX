@@ -181,7 +181,8 @@ export const TagMultiSelect = ({ value, onChange }: Props) => {
       {value.length > 0 && (
         <div className="flex flex-wrap gap-1.5 pt-1">
           {value.map((name) => {
-            const color = colorFor(name);
+            const entry = registry.find((t) => t.name === name || t.slug === name);
+            const color = entry?.color || "#8B5CF6";
             return (
               <span
                 key={name}
@@ -192,7 +193,7 @@ export const TagMultiSelect = ({ value, onChange }: Props) => {
                   color,
                 }}
               >
-                <TagIcon name={name} color={color} size={13} />
+                <TagIcon name={name} slug={entry?.slug} color={color} size={13} iconUrl={entry?.icon_url} />
                 {name}
                 <button
                   type="button"
