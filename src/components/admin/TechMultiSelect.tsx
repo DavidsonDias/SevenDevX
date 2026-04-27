@@ -164,7 +164,7 @@ export const TechMultiSelect = ({ value, onChange }: Props) => {
                         checked ? "bg-accent/40" : ""
                       }`}
                     >
-                      <TechIconCDN slug={t.slug} name={t.name} color={t.color} size={20} />
+                      <TechIconCDN slug={t.slug} name={t.name} color={t.color} size={20} iconUrl={t.icon_url} />
                       <span className="flex-1 truncate">{highlight(t.name)}</span>
                       {t.category && (
                         <span className="text-[10px] uppercase tracking-wide text-muted-foreground/70">
