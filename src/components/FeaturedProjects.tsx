@@ -125,7 +125,8 @@ const ProjectCard = memo(({ project, index, onOpen }: { project: Project; index:
       <div className="absolute inset-0 flex flex-col justify-end p-5 sm:p-6">
         <div className="flex flex-wrap gap-1.5 mb-2">
           {project.techs.slice(0, 3).map(tech => (
-            <span key={tech.name} className="text-[10px] uppercase tracking-wider text-muted-foreground border border-border px-2 py-0.5 rounded-sm">
+            <span key={tech.name} className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider text-muted-foreground border border-border px-2 py-0.5 rounded-sm">
+              {tech.slug && <TechIconCDN slug={tech.slug} name={tech.name} color={tech.color} size={10} />}
               {tech.name}
             </span>
           ))}
