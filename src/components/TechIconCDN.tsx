@@ -21,6 +21,8 @@ interface TechIconCDNProps {
   color?: string;
   size?: number;
   className?: string;
+  /** Custom icon URL (uploaded SVG/PNG) — takes priority over Simple Icons. */
+  iconUrl?: string | null;
 }
 
 /** Slug aliases → Simple Icons slugs (when registry slug differs from the SI name). */
@@ -102,7 +104,21 @@ const slugToComponentName = (slug: string): string => {
   return "Si" + cased;
 };
 
-export const TechIconCDN = ({ slug, name, color, size = 20, className = "" }: TechIconCDNProps) => {
+export const TechIconCDN = ({ slug, name, color, size = 20, className = "", iconUrl }: TechIconCDNProps) => {
+  // 1) Custom uploaded icon takes priority
+  if (iconUrl) {
+    return (
+      <img
+        src={iconUrl}
+        alt={name}
+        title={name}
+        loading="lazy"
+        className={`inline-block shrink-0 object-contain ${className}`}
+        style={{ width: size, height: size }}
+      />
+    );
+  }
+
   const compName = slug ? slugToComponentName(slug) : "";
   const IconComp = (SiIcons as unknown as Record<string, IconType>)[compName];
 

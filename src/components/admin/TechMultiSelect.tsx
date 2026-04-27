@@ -17,6 +17,7 @@ export interface SelectedTech {
   slug?: string;
   name: string;
   color: string;
+  iconUrl?: string | null;
 }
 
 interface Props {
@@ -53,7 +54,7 @@ export const TechMultiSelect = ({ value, onChange }: Props) => {
     if (selectedSlugs.has(t.slug)) {
       onChange(value.filter((v) => (v.slug || v.name.toLowerCase()) !== t.slug));
     } else {
-      onChange([...value, { slug: t.slug, name: t.name, color: t.color }]);
+      onChange([...value, { slug: t.slug, name: t.name, color: t.color, iconUrl: t.icon_url }]);
     }
   };
 
@@ -163,7 +164,7 @@ export const TechMultiSelect = ({ value, onChange }: Props) => {
                         checked ? "bg-accent/40" : ""
                       }`}
                     >
-                      <TechIconCDN slug={t.slug} name={t.name} color={t.color} size={20} />
+                      <TechIconCDN slug={t.slug} name={t.name} color={t.color} size={20} iconUrl={t.icon_url} />
                       <span className="flex-1 truncate">{highlight(t.name)}</span>
                       {t.category && (
                         <span className="text-[10px] uppercase tracking-wide text-muted-foreground/70">
@@ -214,7 +215,7 @@ export const TechMultiSelect = ({ value, onChange }: Props) => {
                   color: t.color,
                 }}
               >
-                <TechIconCDN slug={t.slug || ""} name={t.name} color={t.color} size={14} />
+                <TechIconCDN slug={t.slug || ""} name={t.name} color={t.color} size={14} iconUrl={t.iconUrl} />
                 <span className="font-medium">{t.name}</span>
                 <button
                   type="button"

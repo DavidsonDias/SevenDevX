@@ -37,9 +37,7 @@ export const TagMultiSelect = ({ value, onChange }: Props) => {
     [registry, query]
   );
 
-  const colorFor = (name: string) =>
-    registry.find((t) => t.name === name || t.slug === name)?.color || "#8B5CF6";
-
+  // colorFor removed — now resolved per-chip from registry entry directly
   const toggle = (t: TagEntry) => {
     if (selected.has(t.name)) onChange(value.filter((v) => v !== t.name));
     else onChange([...value, t.name]);
@@ -147,7 +145,7 @@ export const TagMultiSelect = ({ value, onChange }: Props) => {
                         checked ? "bg-accent/40" : ""
                       }`}
                     >
-                      <TagIcon name={t.name} slug={t.slug} color={t.color} size={18} />
+                      <TagIcon name={t.name} slug={t.slug} color={t.color} size={18} iconUrl={t.icon_url} />
                       <span className="flex-1 truncate">{highlight(t.name)}</span>
                       {checked && <Check className="w-4 h-4 text-primary shrink-0" />}
                     </button>
@@ -181,7 +179,8 @@ export const TagMultiSelect = ({ value, onChange }: Props) => {
       {value.length > 0 && (
         <div className="flex flex-wrap gap-1.5 pt-1">
           {value.map((name) => {
-            const color = colorFor(name);
+            const entry = registry.find((t) => t.name === name || t.slug === name);
+            const color = entry?.color || "#8B5CF6";
             return (
               <span
                 key={name}
@@ -192,7 +191,7 @@ export const TagMultiSelect = ({ value, onChange }: Props) => {
                   color,
                 }}
               >
-                <TagIcon name={name} color={color} size={13} />
+                <TagIcon name={name} slug={entry?.slug} color={color} size={13} iconUrl={entry?.icon_url} />
                 {name}
                 <button
                   type="button"
