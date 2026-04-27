@@ -10,6 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Button } from "@/components/ui/button";
 import { useTagRegistry, useCreateTag, type TagEntry } from "@/hooks/useRegistry";
 import { useToast } from "@/hooks/use-toast";
+import { TagIcon } from "@/components/TagIcon";
 
 interface Props {
   value: string[];
@@ -87,9 +88,11 @@ export const TagMultiSelect = ({ value, onChange }: Props) => {
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-[min(320px,calc(100vw-2rem))] p-0 bg-popover border-border shadow-xl"
+          className="w-[min(360px,calc(100vw-2rem))] max-h-[min(72vh,520px)] overflow-hidden p-0 bg-popover border-border shadow-xl"
           align="start"
+          side="bottom"
           sideOffset={6}
+          collisionPadding={16}
         >
           <div className="flex flex-col">
             <div className="flex items-center gap-2 border-b border-border px-3 py-2.5">
@@ -115,8 +118,10 @@ export const TagMultiSelect = ({ value, onChange }: Props) => {
             </div>
 
             <div
-              className="max-h-[280px] overflow-y-auto overscroll-contain"
+              className="max-h-[min(54vh,380px)] overflow-y-auto overscroll-y-contain touch-pan-y"
               style={{ WebkitOverflowScrolling: "touch" }}
+              onWheel={(e) => e.stopPropagation()}
+              onTouchMove={(e) => e.stopPropagation()}
             >
               {isLoading && (
                 <div className="flex items-center justify-center py-8">
@@ -142,10 +147,7 @@ export const TagMultiSelect = ({ value, onChange }: Props) => {
                         checked ? "bg-accent/40" : ""
                       }`}
                     >
-                      <span
-                        className="w-2.5 h-2.5 rounded-full shrink-0"
-                        style={{ background: t.color }}
-                      />
+                      <TagIcon name={t.name} slug={t.slug} color={t.color} size={18} />
                       <span className="flex-1 truncate">{highlight(t.name)}</span>
                       {checked && <Check className="w-4 h-4 text-primary shrink-0" />}
                     </button>
@@ -190,6 +192,7 @@ export const TagMultiSelect = ({ value, onChange }: Props) => {
                   color,
                 }}
               >
+                <TagIcon name={name} color={color} size={13} />
                 {name}
                 <button
                   type="button"

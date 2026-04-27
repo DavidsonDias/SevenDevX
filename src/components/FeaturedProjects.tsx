@@ -12,6 +12,7 @@ import { isValidLiveUrl, type Project } from "@/data/projects";
 import { usePrimaryProject, useSecondaryFeaturedProjects } from "@/hooks/useProjects";
 import ProjectCard3D from "@/components/ProjectCard3D";
 import { TechIconCDN } from "@/components/TechIconCDN";
+import { TagIcon } from "@/components/TagIcon";
 import { Button } from "@/components/ui/button";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { useLanguage } from "@/i18n/LanguageContext";
@@ -224,8 +225,8 @@ const FeaturedProjects = () => {
                     </span>
                   ))}
                   {heroProject.tags?.map(tag => (
-                    <span key={tag} className="text-[10px] uppercase tracking-wider text-primary/80 border border-primary/20 bg-primary/5 px-2 py-1 rounded-sm">
-                      {tag}
+                    <span key={tag} className="inline-flex items-center gap-1 text-[10px] uppercase tracking-wider text-primary/80 border border-primary/20 bg-primary/5 px-2 py-1 rounded-sm">
+                      <TagIcon name={tag} size={10} /> {tag}
                     </span>
                   ))}
                 </div>

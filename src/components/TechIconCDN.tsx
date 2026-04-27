@@ -13,6 +13,7 @@
  */
 import * as SiIcons from "react-icons/si";
 import type { IconType } from "react-icons";
+import { Code2 } from "lucide-react";
 
 interface TechIconCDNProps {
   slug: string;
@@ -24,6 +25,19 @@ interface TechIconCDNProps {
 
 /** Slug aliases → Simple Icons slugs (when registry slug differs from the SI name). */
 const SLUG_ALIASES: Record<string, string> = {
+  html: "html5",
+  css: "css3",
+  js: "javascript",
+  ts: "typescript",
+  java: "openjdk",
+  openjdk: "openjdk",
+  csharp: "sharp",
+  "c-sharp": "sharp",
+  "c#": "sharp",
+  cpp: "cplusplus",
+  "c++": "cplusplus",
+  dotnet: "dotnet",
+  ".net": "dotnet",
   nodejs: "nodedotjs",
   "node.js": "nodedotjs",
   node: "nodedotjs",
@@ -35,13 +49,26 @@ const SLUG_ALIASES: Record<string, string> = {
   expressjs: "express",
   jest: "jest",
   tailwind: "tailwindcss",
+  "tailwind-css": "tailwindcss",
   postgres: "postgresql",
   gcp: "googlecloud",
   "google-cloud": "googlecloud",
+  aws: "amazonwebservices",
+  amazonaws: "amazonwebservices",
+  "amazon-web-services": "amazonwebservices",
   vscode: "vscodium",
   "vs-code": "vscodium",
   shadcn: "shadcnui",
   "shadcn-ui": "shadcnui",
+  materialui: "mui",
+  "material-ui": "mui",
+  socketio: "socketdotio",
+  "socket.io": "socketdotio",
+  githubactions: "githubactions",
+  "github-actions": "githubactions",
+  kafka: "apachekafka",
+  scikit: "scikitlearn",
+  "scikit-learn": "scikitlearn",
 };
 
 /**
@@ -66,7 +93,7 @@ export const TechIconCDN = ({ slug, name, color, size = 20, className = "" }: Te
     const fallbackColor = color || "#8B5CF6";
     return (
       <span
-        className={`inline-flex items-center justify-center rounded-md font-bold text-[10px] uppercase ${className}`}
+        className={`inline-flex items-center justify-center rounded-md ${className}`}
         style={{
           width: size,
           height: size,
@@ -76,7 +103,7 @@ export const TechIconCDN = ({ slug, name, color, size = 20, className = "" }: Te
         }}
         aria-label={name}
       >
-        {name?.[0] || "?"}
+        <Code2 style={{ width: Math.max(12, size * 0.62), height: Math.max(12, size * 0.62) }} />
       </span>
     );
   }
