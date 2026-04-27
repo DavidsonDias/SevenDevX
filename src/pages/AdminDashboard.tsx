@@ -15,6 +15,7 @@ import { Link } from "react-router-dom";
 import { useAuthContext as useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import SEOHead from "@/components/SEOHead";
+import AiInsightsBlock from "@/components/admin/AiInsightsBlock";
 import GlassCard from "@/components/GlassCard";
 import { StatsCardSkeleton } from "@/components/SkeletonLoader";
 import { useToast } from "@/hooks/use-toast";
