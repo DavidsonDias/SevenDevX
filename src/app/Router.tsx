@@ -19,6 +19,8 @@ const Profile = lazy(() => import("@/pages/Profile"));
 const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
 const ProjectsAdmin = lazy(() => import("@/pages/admin/ProjectsAdmin"));
 const ProjectsDebug = lazy(() => import("@/pages/admin/ProjectsDebug"));
+const TechnologiesAdmin = lazy(() => import("@/pages/admin/TechnologiesAdmin"));
+const TagsAdmin = lazy(() => import("@/pages/admin/TagsAdmin"));
 const ProjectsHub = lazy(() => import("@/pages/ProjectsHub"));
 const ProjectDetail = lazy(() => import("@/pages/ProjectDetail"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
