@@ -93,11 +93,6 @@ function AnimatedRoutes() {
             <Route path="/admin/projects/:id" element={
               <ProtectedRoute requiredRole="admin"><ProjectDetailAdmin /></ProtectedRoute>
             } />
-            <Route path="/admin/projects/debug-old" element={
-              <ProtectedRoute requiredRole="admin">
-                <ProjectsDebug />
-              </ProtectedRoute>
-            } />
             <Route path="/admin/technologies" element={
               <ProtectedRoute requiredRole="admin">
                 <TechnologiesAdmin />
