@@ -198,7 +198,7 @@ const FAQSection = () => {
           >
             {data.allLabel} ({allItems.length})
           </button>
-          {data.categories.map((cat) => (
+          {dbCategories.map((cat: any) => (
             <button
               key={cat.id}
               type="button"
@@ -211,7 +211,7 @@ const FAQSection = () => {
                   : "border-foreground/15 text-muted-foreground hover:border-primary/40 hover:text-foreground"
               }`}
             >
-              <span aria-hidden="true">{cat.icon}</span>
+              {cat.icon && <span aria-hidden="true">{cat.icon}</span>}
               {cat.label}
             </button>
           ))}
