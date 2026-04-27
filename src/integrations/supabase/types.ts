@@ -428,6 +428,7 @@ export type Database = {
           color: string
           created_at: string
           description: string | null
+          icon_url: string | null
           id: string
           is_active: boolean
           name: string
@@ -439,6 +440,7 @@ export type Database = {
           color?: string
           created_at?: string
           description?: string | null
+          icon_url?: string | null
           id?: string
           is_active?: boolean
           name: string
@@ -450,6 +452,7 @@ export type Database = {
           color?: string
           created_at?: string
           description?: string | null
+          icon_url?: string | null
           id?: string
           is_active?: boolean
           name?: string
@@ -464,6 +467,7 @@ export type Database = {
           category: string | null
           color: string
           created_at: string
+          description: string | null
           icon_url: string | null
           id: string
           is_active: boolean
@@ -476,6 +480,7 @@ export type Database = {
           category?: string | null
           color?: string
           created_at?: string
+          description?: string | null
           icon_url?: string | null
           id?: string
           is_active?: boolean
@@ -488,6 +493,7 @@ export type Database = {
           category?: string | null
           color?: string
           created_at?: string
+          description?: string | null
           icon_url?: string | null
           id?: string
           is_active?: boolean
