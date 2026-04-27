@@ -1,14 +1,18 @@
 /**
- * 🎨 TechIconCDN — Renders OFFICIAL brand-colored tech icons via Simple Icons CDN
+ * 🎨 TechIconCDN — Renders OFFICIAL brand-colored tech icons
  *
- * IMPORTANT: We intentionally do NOT pass a color to the CDN, so each icon is
- * rendered in its true brand color (React = #61DAFB, TypeScript = #3178C6,
- * Node.js = #5FA04E, PostgreSQL = #4169E1, Tailwind = #06B6D4, etc.).
+ * Uses `react-icons/si` (Simple Icons) bundled locally — no CDN dependency,
+ * no Service Worker interference, no CORS or 404 fallbacks. Each icon is a
+ * real SVG React component painted with its true brand color.
  *
- * The optional `color` prop is only used as the fallback badge tint when the
- * icon fails to load (e.g. unknown slug).
+ * The slug (e.g. "react", "typescriptreact", "tailwindcss", "nodedotjs")
+ * maps to the `Si*` component name (PascalCase, prefixed with "Si").
+ *
+ * If the slug doesn't resolve to a known icon, we render a colored letter
+ * badge as a graceful fallback (using the `color` prop or a default tint).
  */
-import { useState } from "react";
+import * as SiIcons from "react-icons/si";
+import type { IconType } from "react-icons";
 
 interface TechIconCDNProps {
   slug: string;
@@ -18,13 +22,40 @@ interface TechIconCDNProps {
   className?: string;
 }
 
+/** Slug aliases → Simple Icons slugs (when registry slug differs from the SI name). */
+const SLUG_ALIASES: Record<string, string> = {
+  nodejs: "nodedotjs",
+  "node.js": "nodedotjs",
+  node: "nodedotjs",
+  vuejs: "vuedotjs",
+  "vue.js": "vuedotjs",
+  nextjs: "nextdotjs",
+  "next.js": "nextdotjs",
+  nuxtjs: "nuxtdotjs",
+  expressjs: "express",
+  jest: "jest",
+  tailwind: "tailwindcss",
+  postgres: "postgresql",
+  gcp: "googlecloud",
+  "google-cloud": "googlecloud",
+  vscode: "vscodium",
+  "vs-code": "vscodium",
+  shadcn: "shadcnui",
+  "shadcn-ui": "shadcnui",
+};
+
+/** Convert a slug like "tailwindcss" → "SiTailwindcss". */
+const slugToComponentName = (slug: string): string => {
+  const normalized = (SLUG_ALIASES[slug.toLowerCase()] || slug.toLowerCase())
+    .replace(/[^a-z0-9]/g, "");
+  return "Si" + normalized.charAt(0).toUpperCase() + normalized.slice(1);
+};
+
 export const TechIconCDN = ({ slug, name, color, size = 20, className = "" }: TechIconCDNProps) => {
-  const [failed, setFailed] = useState(false);
+  const compName = slug ? slugToComponentName(slug) : "";
+  const IconComp = (SiIcons as unknown as Record<string, IconType>)[compName];
 
-  // Official brand color from Simple Icons (no color override)
-  const url = slug ? `https://cdn.simpleicons.org/${encodeURIComponent(slug)}` : "";
-
-  if (failed || !slug) {
+  if (!IconComp) {
     const fallbackColor = color || "#8B5CF6";
     return (
       <span
@@ -44,15 +75,11 @@ export const TechIconCDN = ({ slug, name, color, size = 20, className = "" }: Te
   }
 
   return (
-    <img
-      src={url}
-      alt={name}
-      width={size}
-      height={size}
-      loading="lazy"
-      onError={() => setFailed(true)}
-      className={`inline-block ${className}`}
-      style={{ width: size, height: size, objectFit: "contain" }}
+    <IconComp
+      title={name}
+      aria-label={name}
+      className={`inline-block shrink-0 ${className}`}
+      style={{ width: size, height: size, color: color || undefined }}
     />
   );
 };
