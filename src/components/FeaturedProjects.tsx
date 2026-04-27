@@ -64,11 +64,19 @@ const FeaturedModal = ({ project, onClose }: { project: Project | null; onClose:
                 {project.longDescription || project.description}
               </p>
               <div className="flex flex-wrap gap-2">
-                {project.techs.map(tech => (
-                  <span key={tech.name} className="px-3 py-1 bg-muted/30 rounded-full text-xs font-medium border border-border">
-                    {tech.name}
-                  </span>
-                ))}
+                {project.techs.map(tech => {
+                  const Icon = (tech as any).icon;
+                  return (
+                    <span key={tech.name} className="inline-flex items-center gap-2 px-3 py-1 bg-muted/30 rounded-full text-xs font-medium border border-border">
+                      {tech.slug ? (
+                        <TechIconCDN slug={tech.slug} name={tech.name} color={tech.color} size={14} />
+                      ) : Icon ? (
+                        <Icon className="text-base" style={{ color: tech.color }} />
+                      ) : null}
+                      <span>{tech.name}</span>
+                    </span>
+                  );
+                })}
               </div>
               <div className="flex gap-3 pt-4">
                 {isValidLiveUrl(project.liveUrl) && (
