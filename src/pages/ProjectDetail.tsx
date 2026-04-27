@@ -18,6 +18,7 @@ import { useProjectBySlug } from "@/hooks/useProjects";
 import { isValidLiveUrl } from "@/data/projects";
 import AppLoaderOrbital from "@/components/ui/AppLoaderOrbital";
 import { TechIconCDN } from "@/components/TechIconCDN";
+import { TagIcon } from "@/components/TagIcon";
 
 const ProjectDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -121,7 +122,9 @@ const ProjectDetail = () => {
 
                     <div className="flex flex-wrap gap-2 pt-2">
                       {project.tags?.map((t) => (
-                        <Badge key={t} variant="secondary" className="text-[11px]">{t}</Badge>
+                        <Badge key={t} variant="secondary" className="inline-flex items-center gap-1 text-[11px]">
+                          <TagIcon name={t} size={12} /> {t}
+                        </Badge>
                       ))}
                     </div>
 
