@@ -24,6 +24,8 @@ interface TagIconProps {
   color?: string;
   size?: number;
   className?: string;
+  /** Custom icon URL (uploaded SVG/PNG) — takes priority. */
+  iconUrl?: string | null;
 }
 
 /** Brand/product logos (Simple Icons). */
