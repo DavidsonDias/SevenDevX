@@ -80,7 +80,7 @@ const SLUG_ALIASES: Record<string, string> = {
   phoenix: "phoenixframework",
   cockroachdb: "cockroachlabs",
   cassandra: "apachecassandra",
-  kafka: "apachekafka",
+  apachekafka: "apachekafka",
   "fly.io": "fly",
   flyio: "fly",
   gemini: "googlegemini",
