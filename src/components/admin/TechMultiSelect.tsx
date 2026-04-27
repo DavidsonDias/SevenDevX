@@ -215,7 +215,7 @@ export const TechMultiSelect = ({ value, onChange }: Props) => {
                   color: t.color,
                 }}
               >
-                <TechIconCDN slug={t.slug || ""} name={t.name} color={t.color} size={14} />
+                <TechIconCDN slug={t.slug || ""} name={t.name} color={t.color} size={14} iconUrl={t.iconUrl} />
                 <span className="font-medium">{t.name}</span>
                 <button
                   type="button"
