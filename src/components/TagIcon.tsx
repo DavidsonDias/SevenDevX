@@ -99,7 +99,20 @@ const CONCEPT_TAG_ICONS: Record<string, ElementType> = {
 const normalize = (s: string) =>
   s.toLowerCase().trim().replace(/\s+/g, "-");
 
-export const TagIcon = ({ name, slug, color, size = 14, className = "" }: TagIconProps) => {
+export const TagIcon = ({ name, slug, color, size = 14, className = "", iconUrl }: TagIconProps) => {
+  if (iconUrl) {
+    return (
+      <img
+        src={iconUrl}
+        alt={name}
+        title={name}
+        loading="lazy"
+        className={`inline-block shrink-0 object-contain ${className}`}
+        style={{ width: size, height: size }}
+      />
+    );
+  }
+
   const key = normalize(slug || name);
   const Icon =
     BRAND_TAG_ICONS[key] ||
