@@ -241,6 +241,18 @@ const AdminDashboard = () => {
               >
                 Projetos
               </button>
+              <button
+                onClick={() => navigate("/admin/technologies")}
+                className="hidden sm:inline-flex px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-xs uppercase tracking-wider"
+              >
+                Tech
+              </button>
+              <button
+                onClick={() => navigate("/admin/tags")}
+                className="hidden sm:inline-flex px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-xs uppercase tracking-wider"
+              >
+                Tags
+              </button>
               <span className="text-sm text-white/60 hidden md:inline">{user?.email}</span>
               <button
                 onClick={handleSignOut}
