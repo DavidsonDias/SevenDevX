@@ -218,7 +218,8 @@ const FeaturedProjects = () => {
                 </p>
                 <div className="flex flex-wrap gap-2 mb-6">
                   {heroProject.techs.map(tech => (
-                    <span key={tech.name} className="text-[10px] uppercase tracking-wider text-muted-foreground border border-border px-2 py-1 rounded-sm">
+                    <span key={tech.name} className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-muted-foreground border border-border px-2 py-1 rounded-sm">
+                      {tech.slug && <TechIconCDN slug={tech.slug} name={tech.name} color={tech.color} size={12} />}
                       {tech.name}
                     </span>
                   ))}
