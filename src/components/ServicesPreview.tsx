@@ -15,9 +15,10 @@
  */
 
 import { motion } from "framer-motion";
-import { ArrowRight, Code, Settings, Wrench, FileText, Lightbulb } from "lucide-react";
+import { ArrowRight, Code, Settings, Wrench, FileText, Lightbulb, Sparkles, Briefcase, Layers, Rocket, Palette, Database } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { usePublishedServices } from "@/hooks/useEcosystem";
 import ServiceCard3D from "./ServiceCard3D";
 import serviceDev from "@/assets/images/service-web-dev.webp";
 import serviceSoftware from "@/assets/images/service-software.webp";
@@ -25,29 +26,42 @@ import serviceMaintenance from "@/assets/images/service-maintenance.webp";
 import serviceLanding from "@/assets/images/service-landing.webp";
 import serviceConsulting from "@/assets/images/service-consulting.webp";
 
+// Map icon name string -> Lucide component (used by CMS records)
+const ICON_MAP: Record<string, any> = {
+  code: Code, settings: Settings, wrench: Wrench, "file-text": FileText,
+  lightbulb: Lightbulb, sparkles: Sparkles, briefcase: Briefcase, layers: Layers,
+  rocket: Rocket, palette: Palette, database: Database,
+};
+
+// Map service slug -> default cover (fallback if CMS has no cover_image)
+const COVER_BY_SLUG: Record<string, string> = {
+  "web-development": serviceDev,
+  "software-development": serviceSoftware,
+  "maintenance": serviceMaintenance,
+  "landing-pages": serviceLanding,
+  "consulting": serviceConsulting,
+};
+
 const ServicesPreview = () => {
   const { t } = useLanguage();
-  
-  const services = [
-    {
-      title: t.services.webDev.title,
-      description: t.services.webDev.description,
-      image: serviceDev,
-      icon: Code,
-    },
-    {
-      title: t.services.landingPages.title,
-      description: t.services.landingPages.description,
-      image: serviceLanding,
-      icon: FileText,
-    },
-    {
-      title: t.services.consulting.title,
-      description: t.services.consulting.description,
-      image: serviceConsulting,
-      icon: Lightbulb,
-    },
+  const { data: cmsServices } = usePublishedServices();
+
+  // Fallback list (current i18n) — preserves visual identity if CMS empty
+  const fallbackServices = [
+    { title: t.services.webDev.title, description: t.services.webDev.description, image: serviceDev, icon: Code },
+    { title: t.services.landingPages.title, description: t.services.landingPages.description, image: serviceLanding, icon: FileText },
+    { title: t.services.consulting.title, description: t.services.consulting.description, image: serviceConsulting, icon: Lightbulb },
   ];
+
+  // DB-first hybrid: prefer published CMS records, else fallback
+  const services = (cmsServices && cmsServices.length > 0)
+    ? cmsServices.slice(0, 5).map((s: any) => ({
+        title: s.title,
+        description: s.subtitle || s.description,
+        image: s.cover_image || COVER_BY_SLUG[s.slug] || serviceDev,
+        icon: ICON_MAP[(s.icon || "").toLowerCase()] || Code,
+      }))
+    : fallbackServices;
 
   return (
     <div id="services" className="bg-black">
