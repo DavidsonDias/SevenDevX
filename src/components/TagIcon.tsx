@@ -24,7 +24,7 @@ const TAG_ICON_MAP: Record<string, ElementType> = {
   crypto: SiIcons.SiBitcoin,
   ecommerce: SiIcons.SiShopify,
   "e-commerce": SiIcons.SiShopify,
-  gamedev: SiIcons.SiUnity,
+  gamedev: Gamepad2,
   iot: SiIcons.SiInternetcomputer,
   pwa: SiIcons.SiPwa,
   saas: Rocket,
