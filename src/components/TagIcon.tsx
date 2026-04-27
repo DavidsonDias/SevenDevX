@@ -1,9 +1,19 @@
+/**
+ * 🏷️ TagIcon — Renders the same icon for a given tag everywhere
+ * (admin select, project cards, hub, modal, detail page).
+ *
+ * Resolution order:
+ *  1. Brand/product icons via `react-icons/si` (PWA, SaaS, AI, Shopify…)
+ *  2. Conceptual lucide icons (dashboard, mobile, security…)
+ *  3. Default `Tags` lucide icon
+ */
 import {
-  Activity, Bot, BriefcaseBusiness, Building2, CalendarCheck, ChartNoAxesCombined,
-  Code2, FileText, Gamepad2, Globe2, HeartPulse, LayoutDashboard,
-  Megaphone, MonitorSmartphone, Network, PackageOpen, PanelsTopLeft,
-  Rocket, Smartphone, Sparkles, Store, Tags, Video,
-  Workflow, Zap,
+  Activity, Accessibility, Bot, BriefcaseBusiness, Building2, CalendarCheck,
+  ChartNoAxesCombined, Code2, CreditCard, FileText, Gamepad2, Globe2, GraduationCap,
+  HeartPulse, LayoutDashboard, Lightbulb, Lock, Megaphone, MonitorSmartphone,
+  Moon, Network, Newspaper, PackageOpen, PanelsTopLeft, Repeat, Rocket,
+  Search, Server, ShoppingBag, Smartphone, Sparkles, Store, Tags, Users,
+  Video, Wand2, Workflow, Zap,
 } from "lucide-react";
 import * as SiIcons from "react-icons/si";
 import type { ElementType } from "react";
@@ -16,23 +26,30 @@ interface TagIconProps {
   className?: string;
 }
 
-const TAG_ICON_MAP: Record<string, ElementType> = {
+/** Brand/product logos (Simple Icons). */
+const BRAND_TAG_ICONS: Record<string, ElementType> = {
   "3d": SiIcons.SiThreedotjs,
   ai: SiIcons.SiOpenai,
   analytics: SiIcons.SiGoogleanalytics,
   api: SiIcons.SiGraphql,
   crypto: SiIcons.SiBitcoin,
   ecommerce: SiIcons.SiShopify,
-  "e-commerce": SiIcons.SiShopify,
-  gamedev: Gamepad2,
   iot: SiIcons.SiInternetcomputer,
+  jamstack: SiIcons.SiJamstack,
   pwa: SiIcons.SiPwa,
-  saas: Rocket,
+  ssr: SiIcons.SiNextdotjs,
+  serverless: SiIcons.SiAwslambda,
   social: SiIcons.SiWhatsapp,
-  streaming: Video,
+  streaming: SiIcons.SiYoutube,
+  // Optional brand-aligned visuals for tech-flavoured tags:
+  "open-source": SiIcons.SiOpensourceinitiative,
 };
 
-const FALLBACK_TAGS: Record<string, ElementType> = {
+/** Conceptual / lucide-based icons for non-brand tags. */
+const CONCEPT_TAG_ICONS: Record<string, ElementType> = {
+  accessibility: Accessibility,
+  agency: BriefcaseBusiness,
+  animation: Wand2,
   automation: Workflow,
   b2b: Building2,
   b2c: Store,
@@ -40,29 +57,55 @@ const FALLBACK_TAGS: Record<string, ElementType> = {
   booking: CalendarCheck,
   chatbot: Bot,
   cms: PanelsTopLeft,
+  community: Users,
   crm: BriefcaseBusiness,
   dashboard: LayoutDashboard,
+  "dark-mode": Moon,
   "design-system": Sparkles,
-  edtech: MonitorSmartphone,
+  edtech: GraduationCap,
+  education: GraduationCap,
   enterprise: BriefcaseBusiness,
   fintech: ChartNoAxesCombined,
   game: Gamepad2,
+  gamedev: Gamepad2,
+  headless: Server,
   healthtech: HeartPulse,
   landing: Megaphone,
-  "landing-page": Megaphone,
+  lowcode: Lightbulb,
   marketplace: Store,
+  microservices: Network,
   mobile: Smartphone,
-  "open-source": Code2,
+  multitenant: Users,
+  mvp: Rocket,
+  news: Newspaper,
+  nocode: Lightbulb,
+  payments: CreditCard,
+  performance: Zap,
   portfolio: PackageOpen,
   productivity: Activity,
   realtime: Zap,
+  responsive: MonitorSmartphone,
+  saas: Rocket,
+  security: Lock,
+  seo: Search,
+  startup: Rocket,
+  subscription: Repeat,
   web: Globe2,
-  "web-app": Network,
+  webapp: Network,
 };
 
+const normalize = (s: string) =>
+  s.toLowerCase().trim().replace(/\s+/g, "-");
+
 export const TagIcon = ({ name, slug, color, size = 14, className = "" }: TagIconProps) => {
-  const key = (slug || name).toLowerCase().trim().replace(/\s+/g, "-");
-  const Icon = TAG_ICON_MAP[key] || FALLBACK_TAGS[key] || Tags;
+  const key = normalize(slug || name);
+  const Icon =
+    BRAND_TAG_ICONS[key] ||
+    CONCEPT_TAG_ICONS[key] ||
+    // common aliases (legacy data)
+    BRAND_TAG_ICONS[key.replace("-", "")] ||
+    CONCEPT_TAG_ICONS[key.replace("-", "")] ||
+    Tags;
 
   return (
     <Icon
