@@ -6,18 +6,44 @@
  * - Tracking: process_expand, process_step_focus, process_cta_click
  * - 100% i18n + a11y (button real, aria-expanded)
  */
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ChevronDown, Clock, Package, Wrench, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useAnalytics } from "@/hooks/useAnalytics";
+import { useDefaultProcessTemplate } from "@/hooks/useEcosystem";
 
 const ProcessSection = () => {
   const { t } = useLanguage();
   const { trackEvent } = useAnalytics();
   const reduce = useReducedMotion();
   const data = t.servicesPage.process;
-  const steps = data.steps;
+  const { data: tpl } = useDefaultProcessTemplate();
+
+  // DB-first hybrid: build steps from process_template_stages, fallback to i18n
+  const steps = useMemo(() => {
+    const dbStages = (tpl?.stages || []).filter((s: any) => s.is_visible_on_site !== false);
+    if (dbStages.length > 0) {
+      return dbStages.map((s: any, i: number) => {
+        // Try to merge with same-index i18n step for labels we don't have in DB
+        const fallback: any = data.steps[i] || data.steps[0] || {};
+        const deliverables = (s.default_deliverables as any[]) || [];
+        return {
+          n: String(i + 1).padStart(2, "0"),
+          t: s.name,
+          d: s.description || fallback.d || "",
+          duration: fallback.duration || "",
+          deliverables: deliverables.length > 0
+            ? deliverables.map((d: any) => (typeof d === "string" ? d : d.title || d.name || ""))
+            : (fallback.deliverables || []),
+          tools: fallback.tools || [],
+          cta: fallback.cta || data.deliverablesLabel,
+        };
+      });
+    }
+    return data.steps;
+  }, [tpl, data]);
+
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const handleToggle = useCallback(
