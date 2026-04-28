@@ -1,11 +1,13 @@
 /**
- * 👥 ClientsAdmin — CRM de clientes (perfil + timeline + IA)
+ * 👥 ClientsAdmin — CRM de clientes (perfil + timeline + IA + projetos + contrato + anexos)
  */
 import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import {
   Plus, Search, Building2, Mail, Phone, Sparkles, X, Edit2, Trash2,
-  MessageCircle, FileText, Calendar, Loader2, Save,
+  MessageCircle, FileText, Calendar, Loader2, Save, FolderKanban,
 } from "lucide-react";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import GlassCard from "@/components/GlassCard";
@@ -13,6 +15,9 @@ import {
   useClients, useUpsertClient, useDeleteClient, useClient,
   useClientInteractions, useAddInteraction, useAiGenerate,
 } from "@/hooks/useEcosystem";
+import ContractCard from "@/components/admin/ContractCard";
+import AttachmentManager from "@/components/admin/AttachmentManager";
+import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from "react-markdown";
 
