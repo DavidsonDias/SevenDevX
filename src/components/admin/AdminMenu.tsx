@@ -152,9 +152,11 @@ export default function AdminMenu() {
                 </div>
               </div>
             </motion.nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </>
   );
 }
