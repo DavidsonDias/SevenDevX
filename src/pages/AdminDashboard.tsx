@@ -16,6 +16,7 @@ import { useAuthContext as useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import SEOHead from "@/components/SEOHead";
 import AiInsightsBlock from "@/components/admin/AiInsightsBlock";
+import AdminMenu from "@/components/admin/AdminMenu";
 import GlassCard from "@/components/GlassCard";
 import { StatsCardSkeleton } from "@/components/SkeletonLoader";
 import { useToast } from "@/hooks/use-toast";
@@ -217,7 +218,8 @@ const AdminDashboard = () => {
         {/* Header */}
         <header className="border-b border-white/10 sticky top-0 bg-black/95 backdrop-blur-lg z-50">
           <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
+              <AdminMenu />
               <Link to="/" aria-label="Ir para o site SevenDevX" className="hover:opacity-80 transition-opacity">
                 <h1 className="text-xl font-bold font-orbitron">
                   SEVEN<span className="text-white/60">DEVX</span>
