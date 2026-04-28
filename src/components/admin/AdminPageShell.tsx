@@ -4,6 +4,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Home as HomeIcon, LogOut } from "lucide-react";
 import { useAuthContext as useAuth } from "@/contexts/AuthContext";
+import AdminMenu from "@/components/admin/AdminMenu";
 
 interface Props {
   title: string;
