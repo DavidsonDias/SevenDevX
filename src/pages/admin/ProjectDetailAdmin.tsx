@@ -11,7 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Sparkles, Loader2, CheckCircle2, Circle, Clock, Upload, X,
   Save, FileText, Calendar, User as UserIcon, ExternalLink, Copy, RefreshCw,
-  ChevronRight, ListChecks, Package, MessageSquare, Plus, Trash2,
+  ChevronRight, ListChecks, Package, MessageSquare, Plus, Trash2, FileSignature,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
@@ -25,6 +25,10 @@ import {
   useToggleChecklistItem, useDefaultProcessTemplate, useAiGenerate,
   useClient, useClientInteractions, useAddInteraction, useUpsertClient,
 } from "@/hooks/useEcosystem";
+import ClientPicker from "@/components/admin/ClientPicker";
+import ContractCard from "@/components/admin/ContractCard";
+import AttachmentManager from "@/components/admin/AttachmentManager";
+import StageDocuments from "@/components/admin/StageDocuments";
 
 const STAGE_STATUS: Record<string, { label: string; color: string }> = {
   pending:     { label: "Pendente",    color: "#6B7280" },
