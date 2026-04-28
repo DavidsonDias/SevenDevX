@@ -61,15 +61,16 @@ export default function AdminMenu() {
         <Menu className="w-4 h-4" />
       </button>
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-[200] bg-black/95 backdrop-blur-xl overflow-y-auto"
-          >
+      {createPortal(
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="fixed inset-0 z-[9999] bg-black/98 backdrop-blur-xl overflow-y-auto"
+            >
             <div className="container mx-auto px-4 sm:px-6 py-5 flex items-center justify-between border-b border-white/10">
               <div className="flex items-center gap-3 min-w-0">
                 <h1 className="text-lg font-bold font-orbitron">
