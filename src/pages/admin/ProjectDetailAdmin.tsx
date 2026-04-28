@@ -96,7 +96,7 @@ export default function ProjectDetailAdmin() {
     return Math.round((done / stages.length) * 100);
   }, [stages]);
 
-  /* ── pipeline change ── */
+  /* ── pipeline + client link change ── */
   const movePipeline = useMutation({
     mutationFn: async (stage: string) => {
       const { error } = await supabase.from("projects").update({ pipeline_stage: stage as any }).eq("id", id!);
@@ -106,6 +106,18 @@ export default function ProjectDetailAdmin() {
       qc.invalidateQueries({ queryKey: ["project", id] });
       qc.invalidateQueries({ queryKey: ["projects"] });
       toast({ title: "Pipeline atualizado" });
+    },
+  });
+
+  const linkClient = useMutation({
+    mutationFn: async (clientId: string | null) => {
+      const { error } = await supabase.from("projects").update({ client_id: clientId }).eq("id", id!);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["project", id] });
+      qc.invalidateQueries({ queryKey: ["projects"] });
+      toast({ title: "Cliente vinculado" });
     },
   });
 
