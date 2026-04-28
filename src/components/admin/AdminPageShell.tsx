@@ -26,7 +26,8 @@ export const AdminPageShell = ({ title, subtitle, actions, children }: Props) =>
     <div className="min-h-screen bg-black text-white">
       <header className="border-b border-white/10 sticky top-0 bg-black/95 backdrop-blur-lg z-50">
         <div className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3 min-w-0">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <AdminMenu />
             <button
               onClick={() => navigate("/admin")}
               className="p-2 rounded-lg border border-white/10 hover:bg-white/5 transition-colors shrink-0"
