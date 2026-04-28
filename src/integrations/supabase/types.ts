@@ -50,6 +50,51 @@ export type Database = {
         }
         Relationships: []
       }
+      attachments: {
+        Row: {
+          client_id: string | null
+          created_at: string
+          file_url: string
+          id: string
+          metadata: Json
+          mime_type: string | null
+          name: string
+          project_id: string | null
+          size_bytes: number | null
+          stage_id: string | null
+          type: Database["public"]["Enums"]["attachment_type"]
+          uploaded_by: string | null
+        }
+        Insert: {
+          client_id?: string | null
+          created_at?: string
+          file_url: string
+          id?: string
+          metadata?: Json
+          mime_type?: string | null
+          name: string
+          project_id?: string | null
+          size_bytes?: number | null
+          stage_id?: string | null
+          type?: Database["public"]["Enums"]["attachment_type"]
+          uploaded_by?: string | null
+        }
+        Update: {
+          client_id?: string | null
+          created_at?: string
+          file_url?: string
+          id?: string
+          metadata?: Json
+          mime_type?: string | null
+          name?: string
+          project_id?: string | null
+          size_bytes?: number | null
+          stage_id?: string | null
+          type?: Database["public"]["Enums"]["attachment_type"]
+          uploaded_by?: string | null
+        }
+        Relationships: []
+      }
       blog_categories: {
         Row: {
           color: string | null
@@ -252,6 +297,10 @@ export type Database = {
           avatar_url: string | null
           company: string | null
           contact_id: string | null
+          contract_status: Database["public"]["Enums"]["contract_status"]
+          contract_text: string | null
+          contract_updated_at: string | null
+          contract_url: string | null
           created_at: string
           created_by: string | null
           email: string | null
@@ -271,6 +320,10 @@ export type Database = {
           avatar_url?: string | null
           company?: string | null
           contact_id?: string | null
+          contract_status?: Database["public"]["Enums"]["contract_status"]
+          contract_text?: string | null
+          contract_updated_at?: string | null
+          contract_url?: string | null
           created_at?: string
           created_by?: string | null
           email?: string | null
@@ -290,6 +343,10 @@ export type Database = {
           avatar_url?: string | null
           company?: string | null
           contact_id?: string | null
+          contract_status?: Database["public"]["Enums"]["contract_status"]
+          contract_text?: string | null
+          contract_updated_at?: string | null
+          contract_url?: string | null
           created_at?: string
           created_by?: string | null
           email?: string | null
@@ -687,6 +744,10 @@ export type Database = {
           client_id: string | null
           client_name: string | null
           client_segment: string | null
+          contract_status: Database["public"]["Enums"]["contract_status"]
+          contract_text: string | null
+          contract_updated_at: string | null
+          contract_url: string | null
           cover_image: string | null
           created_at: string
           created_by: string | null
@@ -720,6 +781,10 @@ export type Database = {
           client_id?: string | null
           client_name?: string | null
           client_segment?: string | null
+          contract_status?: Database["public"]["Enums"]["contract_status"]
+          contract_text?: string | null
+          contract_updated_at?: string | null
+          contract_url?: string | null
           cover_image?: string | null
           created_at?: string
           created_by?: string | null
@@ -753,6 +818,10 @@ export type Database = {
           client_id?: string | null
           client_name?: string | null
           client_segment?: string | null
+          contract_status?: Database["public"]["Enums"]["contract_status"]
+          contract_text?: string | null
+          contract_updated_at?: string | null
+          contract_url?: string | null
           cover_image?: string | null
           created_at?: string
           created_by?: string | null
@@ -900,6 +969,54 @@ export type Database = {
           },
         ]
       }
+      stage_documents: {
+        Row: {
+          ai_model: string | null
+          content: string
+          created_at: string
+          created_by: string | null
+          generated_by_ai: boolean
+          id: string
+          metadata: Json
+          project_id: string
+          stage_id: string
+          title: string
+          type: Database["public"]["Enums"]["document_type"]
+          updated_at: string
+          version: number
+        }
+        Insert: {
+          ai_model?: string | null
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          generated_by_ai?: boolean
+          id?: string
+          metadata?: Json
+          project_id: string
+          stage_id: string
+          title: string
+          type?: Database["public"]["Enums"]["document_type"]
+          updated_at?: string
+          version?: number
+        }
+        Update: {
+          ai_model?: string | null
+          content?: string
+          created_at?: string
+          created_by?: string | null
+          generated_by_ai?: boolean
+          id?: string
+          metadata?: Json
+          project_id?: string
+          stage_id?: string
+          title?: string
+          type?: Database["public"]["Enums"]["document_type"]
+          updated_at?: string
+          version?: number
+        }
+        Relationships: []
+      }
       tag_registry: {
         Row: {
           color: string
@@ -1017,6 +1134,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      attachment_type: "logo" | "file" | "idea" | "document" | "contract"
       blog_status: "draft" | "published" | "archived"
       client_status: "lead" | "qualified" | "active" | "finished" | "lost"
       contact_status:
@@ -1026,6 +1144,28 @@ export type Database = {
         | "proposal"
         | "closed"
         | "lost"
+      contract_status: "pending" | "sent" | "approved" | "rejected"
+      document_type:
+        | "briefing"
+        | "competitor_analysis"
+        | "kpis"
+        | "user_journey"
+        | "scope_macro"
+        | "roadmap"
+        | "technical_scope"
+        | "timeline"
+        | "investment"
+        | "wireframes"
+        | "prototype"
+        | "design_system"
+        | "setup"
+        | "sprints"
+        | "qa"
+        | "deploy"
+        | "monitoring"
+        | "training"
+        | "evolution_plan"
+        | "custom"
       featured_level: "none" | "secondary" | "primary"
       interaction_type:
         | "meeting"
@@ -1172,6 +1312,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      attachment_type: ["logo", "file", "idea", "document", "contract"],
       blog_status: ["draft", "published", "archived"],
       client_status: ["lead", "qualified", "active", "finished", "lost"],
       contact_status: [
@@ -1181,6 +1322,29 @@ export const Constants = {
         "proposal",
         "closed",
         "lost",
+      ],
+      contract_status: ["pending", "sent", "approved", "rejected"],
+      document_type: [
+        "briefing",
+        "competitor_analysis",
+        "kpis",
+        "user_journey",
+        "scope_macro",
+        "roadmap",
+        "technical_scope",
+        "timeline",
+        "investment",
+        "wireframes",
+        "prototype",
+        "design_system",
+        "setup",
+        "sprints",
+        "qa",
+        "deploy",
+        "monitoring",
+        "training",
+        "evolution_plan",
+        "custom",
       ],
       featured_level: ["none", "secondary", "primary"],
       interaction_type: [
