@@ -482,7 +482,13 @@ function StageDetail({
 }
 
 /* ─────────────────── CLIENT PANEL ─────────────────── */
-function ClientPanel({ projectId, clientId }: { projectId: string; clientId?: string | null }) {
+function ClientPanel({
+  project, clientId, onLinkClient,
+}: {
+  project: any;
+  clientId?: string | null;
+  onLinkClient: (clientId: string | null) => void;
+}) {
   const { data: client } = useClient(clientId || undefined);
   const { data: interactions = [] } = useClientInteractions(clientId || undefined);
   const addInter = useAddInteraction();
@@ -491,21 +497,8 @@ function ClientPanel({ projectId, clientId }: { projectId: string; clientId?: st
   const { toast } = useToast();
   const [interForm, setInterForm] = useState({ type: "note", title: "", description: "" });
 
-  if (!clientId || !client) {
-    return (
-      <GlassCard className="p-5">
-        <h4 className="font-bold mb-2 flex items-center gap-2">
-          <UserIcon className="w-4 h-4" /> Cliente
-        </h4>
-        <p className="text-sm text-white/50">Nenhum cliente vinculado a este projeto.</p>
-        <Link to="/admin/clients" className="text-xs text-blue-400 hover:underline mt-2 inline-block">
-          Gerenciar clientes →
-        </Link>
-      </GlassCard>
-    );
-  }
-
   const generateSummary = async () => {
+    if (!client) return;
     const summary = await ai.mutateAsync({
       task: "client_summary",
       context: { client, interactions },
@@ -518,105 +511,110 @@ function ClientPanel({ projectId, clientId }: { projectId: string; clientId?: st
 
   return (
     <>
-      <GlassCard className="p-5">
+      <GlassCard className="p-4">
         <div className="flex items-center justify-between mb-3">
-          <h4 className="font-bold flex items-center gap-2">
-            <UserIcon className="w-4 h-4" /> {client.name}
+          <h4 className="font-bold flex items-center gap-2 text-sm">
+            <UserIcon className="w-4 h-4" /> Cliente
           </h4>
-          <Link to="/admin/clients" className="text-xs text-white/50 hover:text-white/80">Abrir →</Link>
-        </div>
-        {client.company && <p className="text-sm text-white/60">{client.company}</p>}
-        {client.email && <p className="text-xs text-white/50 mt-1 truncate">{client.email}</p>}
-      </GlassCard>
-
-      <GlassCard className="p-5 border-purple-500/20 bg-purple-500/[0.02]">
-        <div className="flex items-center justify-between mb-3">
-          <h4 className="font-bold flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-purple-400" /> Resumo IA
-          </h4>
-          <button
-            onClick={generateSummary}
-            disabled={ai.isPending}
-            className="text-xs px-2.5 py-1 bg-purple-500/20 border border-purple-500/30 rounded inline-flex items-center gap-1 hover:bg-purple-500/30 disabled:opacity-50"
-          >
-            {ai.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-            {client.ai_summary ? "Regenerar" : "Gerar"}
-          </button>
-        </div>
-        {client.ai_summary ? (
-          <div className="prose prose-sm prose-invert max-w-none text-white/80 text-xs">
-            <ReactMarkdown>{client.ai_summary}</ReactMarkdown>
-          </div>
-        ) : (
-          <p className="text-xs text-white/50">Sem resumo ainda.</p>
-        )}
-      </GlassCard>
-
-      <GlassCard className="p-5">
-        <h4 className="font-bold mb-3 flex items-center gap-2">
-          <Calendar className="w-4 h-4" /> Timeline
-          <span className="text-xs text-white/40 font-normal">({interactions.length})</span>
-        </h4>
-
-        <div className="space-y-2 mb-3">
-          <div className="grid grid-cols-2 gap-2">
-            <select
-              className="bg-white/5 border border-white/10 rounded px-2 py-1.5 text-xs outline-none"
-              value={interForm.type}
-              onChange={(e) => setInterForm({ ...interForm, type: e.target.value })}
-            >
-              <option value="note">Nota</option>
-              <option value="meeting">Reunião</option>
-              <option value="call">Ligação</option>
-              <option value="proposal">Proposta</option>
-              <option value="message">Mensagem</option>
-              <option value="email">Email</option>
-            </select>
-            <input
-              className="bg-white/5 border border-white/10 rounded px-2 py-1.5 text-xs outline-none"
-              placeholder="Título"
-              value={interForm.title}
-              onChange={(e) => setInterForm({ ...interForm, title: e.target.value })}
-            />
-          </div>
-          <textarea
-            rows={2}
-            className="w-full bg-white/5 border border-white/10 rounded px-2 py-1.5 text-xs outline-none"
-            placeholder="Descrição (opcional)"
-            value={interForm.description}
-            onChange={(e) => setInterForm({ ...interForm, description: e.target.value })}
-          />
-          <button
-            onClick={async () => {
-              if (!interForm.title) return;
-              await addInter.mutateAsync({ ...interForm, client_id: clientId });
-              setInterForm({ type: "note", title: "", description: "" });
-            }}
-            className="w-full px-3 py-1.5 bg-white text-black rounded text-xs font-bold"
-          >
-            Registrar interação
-          </button>
-        </div>
-
-        <div className="space-y-2 max-h-[400px] overflow-y-auto">
-          {interactions.length === 0 ? (
-            <p className="text-xs text-white/50">Nenhuma interação ainda.</p>
-          ) : (
-            interactions.map((it: any) => (
-              <div key={it.id} className="border border-white/10 rounded p-2.5">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] uppercase tracking-wider text-white/50">{it.type}</span>
-                  <span className="text-[10px] text-white/40">
-                    {new Date(it.occurred_at).toLocaleDateString("pt-BR")}
-                  </span>
-                </div>
-                <p className="text-xs font-medium">{it.title}</p>
-                {it.description && <p className="text-[11px] text-white/60 mt-1">{it.description}</p>}
-              </div>
-            ))
+          {client && (
+            <Link to="/admin/clients" className="text-[10px] text-white/50 hover:text-white/80">Abrir →</Link>
           )}
         </div>
+        <ClientPicker value={clientId} onChange={onLinkClient} />
       </GlassCard>
+
+      {client && (
+        <>
+          <GlassCard className="p-4 border-purple-500/20 bg-purple-500/[0.02]">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-bold flex items-center gap-2 text-sm">
+                <Sparkles className="w-4 h-4 text-purple-400" /> Resumo IA
+              </h4>
+              <button
+                onClick={generateSummary}
+                disabled={ai.isPending}
+                className="text-xs px-2.5 py-1 bg-purple-500/20 border border-purple-500/30 rounded inline-flex items-center gap-1 hover:bg-purple-500/30 disabled:opacity-50"
+              >
+                {ai.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+                {client.ai_summary ? "Regenerar" : "Gerar"}
+              </button>
+            </div>
+            {client.ai_summary ? (
+              <div className="prose prose-sm prose-invert max-w-none text-white/80 text-xs">
+                <ReactMarkdown>{client.ai_summary}</ReactMarkdown>
+              </div>
+            ) : (
+              <p className="text-xs text-white/50">Sem resumo ainda.</p>
+            )}
+          </GlassCard>
+
+          <GlassCard className="p-4">
+            <h4 className="font-bold mb-3 flex items-center gap-2 text-sm">
+              <Calendar className="w-4 h-4" /> Timeline
+              <span className="text-xs text-white/40 font-normal">({interactions.length})</span>
+            </h4>
+
+            <div className="space-y-2 mb-3">
+              <div className="grid grid-cols-2 gap-2">
+                <select
+                  className="bg-white/5 border border-white/10 rounded px-2 py-1.5 text-xs outline-none"
+                  value={interForm.type}
+                  onChange={(e) => setInterForm({ ...interForm, type: e.target.value })}
+                >
+                  <option value="note">Nota</option>
+                  <option value="meeting">Reunião</option>
+                  <option value="call">Ligação</option>
+                  <option value="proposal">Proposta</option>
+                  <option value="message">Mensagem</option>
+                  <option value="email">Email</option>
+                </select>
+                <input
+                  className="bg-white/5 border border-white/10 rounded px-2 py-1.5 text-xs outline-none"
+                  placeholder="Título"
+                  value={interForm.title}
+                  onChange={(e) => setInterForm({ ...interForm, title: e.target.value })}
+                />
+              </div>
+              <textarea
+                rows={2}
+                className="w-full bg-white/5 border border-white/10 rounded px-2 py-1.5 text-xs outline-none"
+                placeholder="Descrição (opcional)"
+                value={interForm.description}
+                onChange={(e) => setInterForm({ ...interForm, description: e.target.value })}
+              />
+              <button
+                onClick={async () => {
+                  if (!interForm.title || !clientId) return;
+                  await addInter.mutateAsync({ ...interForm, client_id: clientId });
+                  setInterForm({ type: "note", title: "", description: "" });
+                }}
+                className="w-full px-3 py-1.5 bg-white text-black rounded text-xs font-bold"
+              >
+                Registrar interação
+              </button>
+            </div>
+
+            <div className="space-y-2 max-h-[300px] overflow-y-auto">
+              {interactions.length === 0 ? (
+                <p className="text-xs text-white/50">Nenhuma interação ainda.</p>
+              ) : (
+                interactions.map((it: any) => (
+                  <div key={it.id} className="border border-white/10 rounded p-2.5">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[10px] uppercase tracking-wider text-white/50">{it.type}</span>
+                      <span className="text-[10px] text-white/40">
+                        {new Date(it.occurred_at).toLocaleDateString("pt-BR")}
+                      </span>
+                    </div>
+                    <p className="text-xs font-medium">{it.title}</p>
+                    {it.description && <p className="text-[11px] text-white/60 mt-1">{it.description}</p>}
+                  </div>
+                ))
+              )}
+            </div>
+          </GlassCard>
+        </>
+      )}
     </>
   );
 }
