@@ -293,28 +293,22 @@ export default function ProjectDetailAdmin() {
 
 /* ─────────────────── STAGE DETAIL ─────────────────── */
 function StageDetail({
-  stage, projectId, projectTitle, onUpdate, onToggleItem, onAi, aiPending,
+  stage, project, clientId, onUpdate, onToggleItem,
 }: any) {
   const { toast } = useToast();
+  const projectId = project.id;
   const [notes, setNotes] = useState(stage.notes || "");
-  const [aiOutput, setAiOutput] = useState(stage.ai_output || "");
   const [newItem, setNewItem] = useState("");
-  const [uploading, setUploading] = useState(false);
   const qc = useQueryClient();
 
-  useEffect(() => {
-    setNotes(stage.notes || "");
-    setAiOutput(stage.ai_output || "");
-  }, [stage.id]); // eslint-disable-line
+  const { data: client } = useClient(clientId || undefined);
+  const { data: interactions = [] } = useClientInteractions(clientId || undefined);
+
+  useEffect(() => { setNotes(stage.notes || ""); }, [stage.id]); // eslint-disable-line
 
   const saveNotes = async () => {
     await onUpdate({ notes });
     toast({ title: "Notas salvas" });
-  };
-
-  const saveAi = async () => {
-    await onUpdate({ ai_output: aiOutput, ai_output_updated_at: new Date().toISOString() });
-    toast({ title: "Conteúdo IA atualizado" });
   };
 
   const setStatus = async (status: string) => {
@@ -339,33 +333,8 @@ function StageDetail({
     qc.invalidateQueries({ queryKey: ["project_stages", projectId] });
   };
 
-  const handleFileUpload = async (file: File) => {
-    if (!file) return;
-    setUploading(true);
-    try {
-      const ext = file.name.split(".").pop();
-      const path = `stages/${stage.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const { error } = await supabase.storage.from("project-images").upload(path, file, { upsert: false });
-      if (error) throw error;
-      const { data } = supabase.storage.from("project-images").getPublicUrl(path);
-      const newFiles = [...((stage.files as any[]) || []), { name: file.name, url: data.publicUrl, uploaded_at: new Date().toISOString() }];
-      await onUpdate({ files: newFiles });
-      toast({ title: "Arquivo enviado" });
-    } catch (e: any) {
-      toast({ title: "Falha no upload", description: e.message, variant: "destructive" });
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const removeFile = async (idx: number) => {
-    const newFiles = ((stage.files as any[]) || []).filter((_, i) => i !== idx);
-    await onUpdate({ files: newFiles });
-  };
-
   const checklist = stage.checklist || [];
   const checklistDone = checklist.filter((c: any) => c.is_done).length;
-
   const meta = STAGE_STATUS[stage.status] || STAGE_STATUS.pending;
 
   return (
@@ -400,63 +369,15 @@ function StageDetail({
         </div>
       </GlassCard>
 
-      {/* AI OUTPUT */}
+      {/* DOCUMENT ENGINE */}
       <GlassCard className="p-5 border-purple-500/20 bg-purple-500/[0.02]">
-        <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
-          <h4 className="font-bold flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-purple-400" /> Conteúdo IA
-          </h4>
-          <div className="flex gap-2">
-            <button
-              onClick={onAi}
-              disabled={aiPending}
-              className="text-xs px-3 py-1.5 bg-purple-500/20 border border-purple-500/30 rounded inline-flex items-center gap-1.5 hover:bg-purple-500/30 disabled:opacity-50"
-            >
-              {aiPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
-              {stage.ai_output ? "Regenerar" : "Gerar"}
-            </button>
-            {aiOutput && (
-              <button
-                onClick={() => { navigator.clipboard.writeText(aiOutput); toast({ title: "Copiado" }); }}
-                className="text-xs px-3 py-1.5 border border-white/15 rounded inline-flex items-center gap-1.5 hover:bg-white/5"
-              >
-                <Copy className="w-3 h-3" /> Copiar
-              </button>
-            )}
-          </div>
-        </div>
-
-        {aiOutput ? (
-          <>
-            <textarea
-              value={aiOutput}
-              onChange={(e) => setAiOutput(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-sm font-mono outline-none focus:border-white/30 min-h-[200px]"
-            />
-            <div className="flex justify-between items-center mt-2">
-              <p className="text-[10px] text-white/40">
-                {stage.ai_output_updated_at && `Atualizado em ${new Date(stage.ai_output_updated_at).toLocaleString("pt-BR")}`}
-              </p>
-              <button
-                onClick={saveAi}
-                className="text-xs px-3 py-1.5 bg-white text-black rounded inline-flex items-center gap-1.5 font-bold"
-              >
-                <Save className="w-3 h-3" /> Salvar
-              </button>
-            </div>
-
-            <details className="mt-3">
-              <summary className="text-xs text-white/50 cursor-pointer hover:text-white/80">Pré-visualizar markdown</summary>
-              <div className="prose prose-sm prose-invert max-w-none mt-2 border border-white/5 rounded-lg p-3 bg-white/[0.02]">
-                <ReactMarkdown>{aiOutput}</ReactMarkdown>
-              </div>
-            </details>
-          </>
-        ) : (
-          <p className="text-sm text-white/50">
-            Clique em <strong>Gerar</strong> para a IA criar um documento profissional para esta etapa baseado no contexto do projeto <em>{projectTitle}</em>.
-          </p>
-        )}
+        <StageDocuments
+          projectId={projectId}
+          stage={stage}
+          project={project}
+          client={client}
+          interactions={interactions}
+        />
       </GlassCard>
 
       {/* CHECKLIST */}
@@ -506,44 +427,15 @@ function StageDetail({
         </div>
       </GlassCard>
 
-      {/* FILES */}
+      {/* STAGE ATTACHMENTS */}
       <GlassCard className="p-5">
-        <div className="flex items-center justify-between mb-3">
-          <h4 className="font-bold flex items-center gap-2">
-            <Package className="w-4 h-4" /> Arquivos
-            <span className="text-xs text-white/40 font-normal">({(stage.files as any[])?.length || 0})</span>
-          </h4>
-        </div>
-        <label className="block border-2 border-dashed border-white/15 rounded-lg p-4 text-center cursor-pointer hover:border-white/30 transition-colors mb-3">
-          <input
-            type="file"
-            className="hidden"
-            onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileUpload(f); }}
-          />
-          {uploading ? (
-            <div className="flex items-center justify-center gap-2 text-sm text-white/60">
-              <Loader2 className="w-4 h-4 animate-spin" /> Enviando…
-            </div>
-          ) : (
-            <div className="text-sm text-white/60">
-              <Upload className="w-5 h-5 mx-auto mb-1.5" />
-              Arraste ou clique para enviar
-            </div>
-          )}
-        </label>
-        <div className="space-y-1.5">
-          {((stage.files as any[]) || []).map((f: any, i: number) => (
-            <div key={i} className="flex items-center gap-2 p-2 bg-white/5 rounded-lg group">
-              <FileText className="w-4 h-4 text-white/60 shrink-0" />
-              <a href={f.url} target="_blank" rel="noopener noreferrer" className="text-sm flex-1 truncate hover:underline">
-                {f.name}
-              </a>
-              <button onClick={() => removeFile(i)} className="opacity-0 group-hover:opacity-100 text-white/40 hover:text-red-400">
-                <X className="w-3 h-3" />
-              </button>
-            </div>
-          ))}
-        </div>
+        <AttachmentManager
+          title="Arquivos da etapa"
+          projectId={projectId}
+          stageId={stage.id}
+          defaultType="file"
+          allowedTypes={["file", "document", "idea"]}
+        />
       </GlassCard>
 
       {/* NOTES + DATES */}
