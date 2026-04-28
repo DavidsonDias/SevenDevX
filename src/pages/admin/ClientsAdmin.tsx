@@ -244,6 +244,23 @@ function ClientDrawer({ id, onClose }: { id: string; onClose: () => void }) {
             )}
           </div>
 
+          {/* Projects vinculados */}
+          <ClientProjects clientId={id} />
+
+          {/* Contract + Files */}
+          <div className="grid sm:grid-cols-2 gap-4">
+            <ContractCard entity="clients" id={id} data={client} />
+            <div className="border border-white/10 rounded-xl p-4">
+              <AttachmentManager
+                title="Logo & Arquivos"
+                clientId={id}
+                defaultType="logo"
+                allowedTypes={["logo", "file", "idea", "document"]}
+                compact
+              />
+            </div>
+          </div>
+
           {/* Add interaction */}
           <div className="border border-white/10 rounded-xl p-4">
             <h4 className="font-bold mb-3">Registrar Interação</h4>
