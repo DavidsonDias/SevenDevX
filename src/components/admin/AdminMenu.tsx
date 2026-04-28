@@ -3,6 +3,7 @@
  * Estilo igual ao site: overlay com animações suaves, lista de rotas, perfil + logout.
  */
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
