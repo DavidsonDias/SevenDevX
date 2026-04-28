@@ -11,7 +11,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Sparkles, Loader2, CheckCircle2, Circle, Clock, Upload, X,
   Save, FileText, Calendar, User as UserIcon, ExternalLink, Copy, RefreshCw,
-  ChevronRight, ListChecks, Package, MessageSquare, Plus, Trash2,
+  ChevronRight, ListChecks, Package, MessageSquare, Plus, Trash2, FileSignature,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
@@ -25,6 +25,10 @@ import {
   useToggleChecklistItem, useDefaultProcessTemplate, useAiGenerate,
   useClient, useClientInteractions, useAddInteraction, useUpsertClient,
 } from "@/hooks/useEcosystem";
+import ClientPicker from "@/components/admin/ClientPicker";
+import ContractCard from "@/components/admin/ContractCard";
+import AttachmentManager from "@/components/admin/AttachmentManager";
+import StageDocuments from "@/components/admin/StageDocuments";
 
 const STAGE_STATUS: Record<string, { label: string; color: string }> = {
   pending:     { label: "Pendente",    color: "#6B7280" },
@@ -92,7 +96,7 @@ export default function ProjectDetailAdmin() {
     return Math.round((done / stages.length) * 100);
   }, [stages]);
 
-  /* ── pipeline change ── */
+  /* ── pipeline + client link change ── */
   const movePipeline = useMutation({
     mutationFn: async (stage: string) => {
       const { error } = await supabase.from("projects").update({ pipeline_stage: stage as any }).eq("id", id!);
@@ -102,6 +106,18 @@ export default function ProjectDetailAdmin() {
       qc.invalidateQueries({ queryKey: ["project", id] });
       qc.invalidateQueries({ queryKey: ["projects"] });
       toast({ title: "Pipeline atualizado" });
+    },
+  });
+
+  const linkClient = useMutation({
+    mutationFn: async (clientId: string | null) => {
+      const { error } = await supabase.from("projects").update({ client_id: clientId }).eq("id", id!);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["project", id] });
+      qc.invalidateQueries({ queryKey: ["projects"] });
+      toast({ title: "Cliente vinculado" });
     },
   });
 
@@ -234,38 +250,39 @@ export default function ProjectDetailAdmin() {
                 <StageDetail
                   key={selectedStage.id}
                   stage={selectedStage}
-                  projectId={project.id}
-                  projectTitle={project.title}
+                  project={project}
+                  clientId={(project as any).client_id}
                   onUpdate={(payload) => updateStage.mutateAsync({ id: selectedStage.id, ...payload })}
                   onToggleItem={(itemId, value) =>
                     toggleItem.mutateAsync({ id: itemId, is_done: value, projectId: project.id })
                   }
-                  onAi={async () => {
-                    const content = await ai.mutateAsync({
-                      task: "stage_output",
-                      context: {
-                        project: { title: project.title, description: project.description, client: project.client_name },
-                        stage: { name: selectedStage.name, slug: selectedStage.slug, notes: selectedStage.notes },
-                        prompt: (selectedStage as any).template_stage_id ? "Use o contexto acima" : null,
-                      },
-                    });
-                    if (content) {
-                      await updateStage.mutateAsync({
-                        id: selectedStage.id,
-                        ai_output: content,
-                        ai_output_updated_at: new Date().toISOString(),
-                      });
-                      toast({ title: "Conteúdo gerado pela IA" });
-                    }
-                  }}
-                  aiPending={ai.isPending}
                 />
               )}
             </div>
 
-            {/* SIDEBAR: client timeline */}
+            {/* SIDEBAR: client + contract + project files */}
             <div className="space-y-4">
-              <ClientPanel projectId={project.id} clientId={(project as any).client_id} />
+              <ClientPanel
+                project={project}
+                clientId={(project as any).client_id}
+                onLinkClient={(cid) => linkClient.mutate(cid)}
+              />
+              <GlassCard className="p-4">
+                <ContractCard
+                  entity="projects"
+                  id={project.id}
+                  data={project as any}
+                  onChange={() => qc.invalidateQueries({ queryKey: ["project", id] })}
+                />
+              </GlassCard>
+              <GlassCard className="p-5">
+                <AttachmentManager
+                  title="Arquivos do projeto"
+                  projectId={project.id}
+                  defaultType="file"
+                  allowedTypes={["file", "logo", "idea", "document"]}
+                />
+              </GlassCard>
             </div>
           </div>
         </>
@@ -276,28 +293,22 @@ export default function ProjectDetailAdmin() {
 
 /* ─────────────────── STAGE DETAIL ─────────────────── */
 function StageDetail({
-  stage, projectId, projectTitle, onUpdate, onToggleItem, onAi, aiPending,
+  stage, project, clientId, onUpdate, onToggleItem,
 }: any) {
   const { toast } = useToast();
+  const projectId = project.id;
   const [notes, setNotes] = useState(stage.notes || "");
-  const [aiOutput, setAiOutput] = useState(stage.ai_output || "");
   const [newItem, setNewItem] = useState("");
-  const [uploading, setUploading] = useState(false);
   const qc = useQueryClient();
 
-  useEffect(() => {
-    setNotes(stage.notes || "");
-    setAiOutput(stage.ai_output || "");
-  }, [stage.id]); // eslint-disable-line
+  const { data: client } = useClient(clientId || undefined);
+  const { data: interactions = [] } = useClientInteractions(clientId || undefined);
+
+  useEffect(() => { setNotes(stage.notes || ""); }, [stage.id]); // eslint-disable-line
 
   const saveNotes = async () => {
     await onUpdate({ notes });
     toast({ title: "Notas salvas" });
-  };
-
-  const saveAi = async () => {
-    await onUpdate({ ai_output: aiOutput, ai_output_updated_at: new Date().toISOString() });
-    toast({ title: "Conteúdo IA atualizado" });
   };
 
   const setStatus = async (status: string) => {
@@ -322,33 +333,8 @@ function StageDetail({
     qc.invalidateQueries({ queryKey: ["project_stages", projectId] });
   };
 
-  const handleFileUpload = async (file: File) => {
-    if (!file) return;
-    setUploading(true);
-    try {
-      const ext = file.name.split(".").pop();
-      const path = `stages/${stage.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const { error } = await supabase.storage.from("project-images").upload(path, file, { upsert: false });
-      if (error) throw error;
-      const { data } = supabase.storage.from("project-images").getPublicUrl(path);
-      const newFiles = [...((stage.files as any[]) || []), { name: file.name, url: data.publicUrl, uploaded_at: new Date().toISOString() }];
-      await onUpdate({ files: newFiles });
-      toast({ title: "Arquivo enviado" });
-    } catch (e: any) {
-      toast({ title: "Falha no upload", description: e.message, variant: "destructive" });
-    } finally {
-      setUploading(false);
-    }
-  };
-
-  const removeFile = async (idx: number) => {
-    const newFiles = ((stage.files as any[]) || []).filter((_, i) => i !== idx);
-    await onUpdate({ files: newFiles });
-  };
-
   const checklist = stage.checklist || [];
   const checklistDone = checklist.filter((c: any) => c.is_done).length;
-
   const meta = STAGE_STATUS[stage.status] || STAGE_STATUS.pending;
 
   return (
@@ -383,63 +369,15 @@ function StageDetail({
         </div>
       </GlassCard>
 
-      {/* AI OUTPUT */}
+      {/* DOCUMENT ENGINE */}
       <GlassCard className="p-5 border-purple-500/20 bg-purple-500/[0.02]">
-        <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
-          <h4 className="font-bold flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-purple-400" /> Conteúdo IA
-          </h4>
-          <div className="flex gap-2">
-            <button
-              onClick={onAi}
-              disabled={aiPending}
-              className="text-xs px-3 py-1.5 bg-purple-500/20 border border-purple-500/30 rounded inline-flex items-center gap-1.5 hover:bg-purple-500/30 disabled:opacity-50"
-            >
-              {aiPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
-              {stage.ai_output ? "Regenerar" : "Gerar"}
-            </button>
-            {aiOutput && (
-              <button
-                onClick={() => { navigator.clipboard.writeText(aiOutput); toast({ title: "Copiado" }); }}
-                className="text-xs px-3 py-1.5 border border-white/15 rounded inline-flex items-center gap-1.5 hover:bg-white/5"
-              >
-                <Copy className="w-3 h-3" /> Copiar
-              </button>
-            )}
-          </div>
-        </div>
-
-        {aiOutput ? (
-          <>
-            <textarea
-              value={aiOutput}
-              onChange={(e) => setAiOutput(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-sm font-mono outline-none focus:border-white/30 min-h-[200px]"
-            />
-            <div className="flex justify-between items-center mt-2">
-              <p className="text-[10px] text-white/40">
-                {stage.ai_output_updated_at && `Atualizado em ${new Date(stage.ai_output_updated_at).toLocaleString("pt-BR")}`}
-              </p>
-              <button
-                onClick={saveAi}
-                className="text-xs px-3 py-1.5 bg-white text-black rounded inline-flex items-center gap-1.5 font-bold"
-              >
-                <Save className="w-3 h-3" /> Salvar
-              </button>
-            </div>
-
-            <details className="mt-3">
-              <summary className="text-xs text-white/50 cursor-pointer hover:text-white/80">Pré-visualizar markdown</summary>
-              <div className="prose prose-sm prose-invert max-w-none mt-2 border border-white/5 rounded-lg p-3 bg-white/[0.02]">
-                <ReactMarkdown>{aiOutput}</ReactMarkdown>
-              </div>
-            </details>
-          </>
-        ) : (
-          <p className="text-sm text-white/50">
-            Clique em <strong>Gerar</strong> para a IA criar um documento profissional para esta etapa baseado no contexto do projeto <em>{projectTitle}</em>.
-          </p>
-        )}
+        <StageDocuments
+          projectId={projectId}
+          stage={stage}
+          project={project}
+          client={client}
+          interactions={interactions}
+        />
       </GlassCard>
 
       {/* CHECKLIST */}
@@ -489,44 +427,15 @@ function StageDetail({
         </div>
       </GlassCard>
 
-      {/* FILES */}
+      {/* STAGE ATTACHMENTS */}
       <GlassCard className="p-5">
-        <div className="flex items-center justify-between mb-3">
-          <h4 className="font-bold flex items-center gap-2">
-            <Package className="w-4 h-4" /> Arquivos
-            <span className="text-xs text-white/40 font-normal">({(stage.files as any[])?.length || 0})</span>
-          </h4>
-        </div>
-        <label className="block border-2 border-dashed border-white/15 rounded-lg p-4 text-center cursor-pointer hover:border-white/30 transition-colors mb-3">
-          <input
-            type="file"
-            className="hidden"
-            onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileUpload(f); }}
-          />
-          {uploading ? (
-            <div className="flex items-center justify-center gap-2 text-sm text-white/60">
-              <Loader2 className="w-4 h-4 animate-spin" /> Enviando…
-            </div>
-          ) : (
-            <div className="text-sm text-white/60">
-              <Upload className="w-5 h-5 mx-auto mb-1.5" />
-              Arraste ou clique para enviar
-            </div>
-          )}
-        </label>
-        <div className="space-y-1.5">
-          {((stage.files as any[]) || []).map((f: any, i: number) => (
-            <div key={i} className="flex items-center gap-2 p-2 bg-white/5 rounded-lg group">
-              <FileText className="w-4 h-4 text-white/60 shrink-0" />
-              <a href={f.url} target="_blank" rel="noopener noreferrer" className="text-sm flex-1 truncate hover:underline">
-                {f.name}
-              </a>
-              <button onClick={() => removeFile(i)} className="opacity-0 group-hover:opacity-100 text-white/40 hover:text-red-400">
-                <X className="w-3 h-3" />
-              </button>
-            </div>
-          ))}
-        </div>
+        <AttachmentManager
+          title="Arquivos da etapa"
+          projectId={projectId}
+          stageId={stage.id}
+          defaultType="file"
+          allowedTypes={["file", "document", "idea"]}
+        />
       </GlassCard>
 
       {/* NOTES + DATES */}
@@ -573,7 +482,13 @@ function StageDetail({
 }
 
 /* ─────────────────── CLIENT PANEL ─────────────────── */
-function ClientPanel({ projectId, clientId }: { projectId: string; clientId?: string | null }) {
+function ClientPanel({
+  project, clientId, onLinkClient,
+}: {
+  project: any;
+  clientId?: string | null;
+  onLinkClient: (clientId: string | null) => void;
+}) {
   const { data: client } = useClient(clientId || undefined);
   const { data: interactions = [] } = useClientInteractions(clientId || undefined);
   const addInter = useAddInteraction();
@@ -582,21 +497,8 @@ function ClientPanel({ projectId, clientId }: { projectId: string; clientId?: st
   const { toast } = useToast();
   const [interForm, setInterForm] = useState({ type: "note", title: "", description: "" });
 
-  if (!clientId || !client) {
-    return (
-      <GlassCard className="p-5">
-        <h4 className="font-bold mb-2 flex items-center gap-2">
-          <UserIcon className="w-4 h-4" /> Cliente
-        </h4>
-        <p className="text-sm text-white/50">Nenhum cliente vinculado a este projeto.</p>
-        <Link to="/admin/clients" className="text-xs text-blue-400 hover:underline mt-2 inline-block">
-          Gerenciar clientes →
-        </Link>
-      </GlassCard>
-    );
-  }
-
   const generateSummary = async () => {
+    if (!client) return;
     const summary = await ai.mutateAsync({
       task: "client_summary",
       context: { client, interactions },
@@ -609,105 +511,110 @@ function ClientPanel({ projectId, clientId }: { projectId: string; clientId?: st
 
   return (
     <>
-      <GlassCard className="p-5">
+      <GlassCard className="p-4">
         <div className="flex items-center justify-between mb-3">
-          <h4 className="font-bold flex items-center gap-2">
-            <UserIcon className="w-4 h-4" /> {client.name}
+          <h4 className="font-bold flex items-center gap-2 text-sm">
+            <UserIcon className="w-4 h-4" /> Cliente
           </h4>
-          <Link to="/admin/clients" className="text-xs text-white/50 hover:text-white/80">Abrir →</Link>
-        </div>
-        {client.company && <p className="text-sm text-white/60">{client.company}</p>}
-        {client.email && <p className="text-xs text-white/50 mt-1 truncate">{client.email}</p>}
-      </GlassCard>
-
-      <GlassCard className="p-5 border-purple-500/20 bg-purple-500/[0.02]">
-        <div className="flex items-center justify-between mb-3">
-          <h4 className="font-bold flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-purple-400" /> Resumo IA
-          </h4>
-          <button
-            onClick={generateSummary}
-            disabled={ai.isPending}
-            className="text-xs px-2.5 py-1 bg-purple-500/20 border border-purple-500/30 rounded inline-flex items-center gap-1 hover:bg-purple-500/30 disabled:opacity-50"
-          >
-            {ai.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-            {client.ai_summary ? "Regenerar" : "Gerar"}
-          </button>
-        </div>
-        {client.ai_summary ? (
-          <div className="prose prose-sm prose-invert max-w-none text-white/80 text-xs">
-            <ReactMarkdown>{client.ai_summary}</ReactMarkdown>
-          </div>
-        ) : (
-          <p className="text-xs text-white/50">Sem resumo ainda.</p>
-        )}
-      </GlassCard>
-
-      <GlassCard className="p-5">
-        <h4 className="font-bold mb-3 flex items-center gap-2">
-          <Calendar className="w-4 h-4" /> Timeline
-          <span className="text-xs text-white/40 font-normal">({interactions.length})</span>
-        </h4>
-
-        <div className="space-y-2 mb-3">
-          <div className="grid grid-cols-2 gap-2">
-            <select
-              className="bg-white/5 border border-white/10 rounded px-2 py-1.5 text-xs outline-none"
-              value={interForm.type}
-              onChange={(e) => setInterForm({ ...interForm, type: e.target.value })}
-            >
-              <option value="note">Nota</option>
-              <option value="meeting">Reunião</option>
-              <option value="call">Ligação</option>
-              <option value="proposal">Proposta</option>
-              <option value="message">Mensagem</option>
-              <option value="email">Email</option>
-            </select>
-            <input
-              className="bg-white/5 border border-white/10 rounded px-2 py-1.5 text-xs outline-none"
-              placeholder="Título"
-              value={interForm.title}
-              onChange={(e) => setInterForm({ ...interForm, title: e.target.value })}
-            />
-          </div>
-          <textarea
-            rows={2}
-            className="w-full bg-white/5 border border-white/10 rounded px-2 py-1.5 text-xs outline-none"
-            placeholder="Descrição (opcional)"
-            value={interForm.description}
-            onChange={(e) => setInterForm({ ...interForm, description: e.target.value })}
-          />
-          <button
-            onClick={async () => {
-              if (!interForm.title) return;
-              await addInter.mutateAsync({ ...interForm, client_id: clientId });
-              setInterForm({ type: "note", title: "", description: "" });
-            }}
-            className="w-full px-3 py-1.5 bg-white text-black rounded text-xs font-bold"
-          >
-            Registrar interação
-          </button>
-        </div>
-
-        <div className="space-y-2 max-h-[400px] overflow-y-auto">
-          {interactions.length === 0 ? (
-            <p className="text-xs text-white/50">Nenhuma interação ainda.</p>
-          ) : (
-            interactions.map((it: any) => (
-              <div key={it.id} className="border border-white/10 rounded p-2.5">
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-[10px] uppercase tracking-wider text-white/50">{it.type}</span>
-                  <span className="text-[10px] text-white/40">
-                    {new Date(it.occurred_at).toLocaleDateString("pt-BR")}
-                  </span>
-                </div>
-                <p className="text-xs font-medium">{it.title}</p>
-                {it.description && <p className="text-[11px] text-white/60 mt-1">{it.description}</p>}
-              </div>
-            ))
+          {client && (
+            <Link to="/admin/clients" className="text-[10px] text-white/50 hover:text-white/80">Abrir →</Link>
           )}
         </div>
+        <ClientPicker value={clientId} onChange={onLinkClient} />
       </GlassCard>
+
+      {client && (
+        <>
+          <GlassCard className="p-4 border-purple-500/20 bg-purple-500/[0.02]">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="font-bold flex items-center gap-2 text-sm">
+                <Sparkles className="w-4 h-4 text-purple-400" /> Resumo IA
+              </h4>
+              <button
+                onClick={generateSummary}
+                disabled={ai.isPending}
+                className="text-xs px-2.5 py-1 bg-purple-500/20 border border-purple-500/30 rounded inline-flex items-center gap-1 hover:bg-purple-500/30 disabled:opacity-50"
+              >
+                {ai.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+                {client.ai_summary ? "Regenerar" : "Gerar"}
+              </button>
+            </div>
+            {client.ai_summary ? (
+              <div className="prose prose-sm prose-invert max-w-none text-white/80 text-xs">
+                <ReactMarkdown>{client.ai_summary}</ReactMarkdown>
+              </div>
+            ) : (
+              <p className="text-xs text-white/50">Sem resumo ainda.</p>
+            )}
+          </GlassCard>
+
+          <GlassCard className="p-4">
+            <h4 className="font-bold mb-3 flex items-center gap-2 text-sm">
+              <Calendar className="w-4 h-4" /> Timeline
+              <span className="text-xs text-white/40 font-normal">({interactions.length})</span>
+            </h4>
+
+            <div className="space-y-2 mb-3">
+              <div className="grid grid-cols-2 gap-2">
+                <select
+                  className="bg-white/5 border border-white/10 rounded px-2 py-1.5 text-xs outline-none"
+                  value={interForm.type}
+                  onChange={(e) => setInterForm({ ...interForm, type: e.target.value })}
+                >
+                  <option value="note">Nota</option>
+                  <option value="meeting">Reunião</option>
+                  <option value="call">Ligação</option>
+                  <option value="proposal">Proposta</option>
+                  <option value="message">Mensagem</option>
+                  <option value="email">Email</option>
+                </select>
+                <input
+                  className="bg-white/5 border border-white/10 rounded px-2 py-1.5 text-xs outline-none"
+                  placeholder="Título"
+                  value={interForm.title}
+                  onChange={(e) => setInterForm({ ...interForm, title: e.target.value })}
+                />
+              </div>
+              <textarea
+                rows={2}
+                className="w-full bg-white/5 border border-white/10 rounded px-2 py-1.5 text-xs outline-none"
+                placeholder="Descrição (opcional)"
+                value={interForm.description}
+                onChange={(e) => setInterForm({ ...interForm, description: e.target.value })}
+              />
+              <button
+                onClick={async () => {
+                  if (!interForm.title || !clientId) return;
+                  await addInter.mutateAsync({ ...interForm, client_id: clientId });
+                  setInterForm({ type: "note", title: "", description: "" });
+                }}
+                className="w-full px-3 py-1.5 bg-white text-black rounded text-xs font-bold"
+              >
+                Registrar interação
+              </button>
+            </div>
+
+            <div className="space-y-2 max-h-[300px] overflow-y-auto">
+              {interactions.length === 0 ? (
+                <p className="text-xs text-white/50">Nenhuma interação ainda.</p>
+              ) : (
+                interactions.map((it: any) => (
+                  <div key={it.id} className="border border-white/10 rounded p-2.5">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[10px] uppercase tracking-wider text-white/50">{it.type}</span>
+                      <span className="text-[10px] text-white/40">
+                        {new Date(it.occurred_at).toLocaleDateString("pt-BR")}
+                      </span>
+                    </div>
+                    <p className="text-xs font-medium">{it.title}</p>
+                    {it.description && <p className="text-[11px] text-white/60 mt-1">{it.description}</p>}
+                  </div>
+                ))
+              )}
+            </div>
+          </GlassCard>
+        </>
+      )}
     </>
   );
 }
