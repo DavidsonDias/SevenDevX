@@ -3,6 +3,7 @@
  * Estilo igual ao site: overlay com animações suaves, lista de rotas, perfil + logout.
  */
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -60,15 +61,16 @@ export default function AdminMenu() {
         <Menu className="w-4 h-4" />
       </button>
 
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-[200] bg-black/95 backdrop-blur-xl overflow-y-auto"
-          >
+      {createPortal(
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="fixed inset-0 z-[9999] bg-black/98 backdrop-blur-xl overflow-y-auto"
+            >
             <div className="container mx-auto px-4 sm:px-6 py-5 flex items-center justify-between border-b border-white/10">
               <div className="flex items-center gap-3 min-w-0">
                 <h1 className="text-lg font-bold font-orbitron">
@@ -150,9 +152,11 @@ export default function AdminMenu() {
                 </div>
               </div>
             </motion.nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </>
   );
 }
