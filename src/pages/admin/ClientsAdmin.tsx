@@ -321,3 +321,56 @@ const Field = ({ label, children }: any) => (
     {children}
   </div>
 );
+
+/* ─────────── projetos vinculados ao cliente ─────────── */
+function ClientProjects({ clientId }: { clientId: string }) {
+  const { data: projects = [], isLoading } = useQuery({
+    queryKey: ["client_projects", clientId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("projects")
+        .select("id, title, slug, status, pipeline_stage, cover_image, updated_at")
+        .eq("client_id", clientId)
+        .order("updated_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  return (
+    <div className="border border-white/10 rounded-xl p-4">
+      <div className="flex items-center justify-between mb-3">
+        <h4 className="font-bold flex items-center gap-2 text-sm">
+          <FolderKanban className="w-4 h-4" /> Projetos
+          <span className="text-xs text-white/40 font-normal">({projects.length})</span>
+        </h4>
+        <Link to="/admin/projects" className="text-[10px] text-white/50 hover:text-white/80">Todos →</Link>
+      </div>
+      {isLoading ? (
+        <p className="text-xs text-white/50">Carregando…</p>
+      ) : projects.length === 0 ? (
+        <p className="text-xs text-white/50">Nenhum projeto vinculado.</p>
+      ) : (
+        <div className="space-y-2">
+          {projects.map((p: any) => (
+            <Link
+              key={p.id}
+              to={`/admin/projects/${p.id}`}
+              className="flex items-center gap-3 p-2.5 border border-white/10 rounded-lg hover:bg-white/5 transition-colors group"
+            >
+              {p.cover_image && (
+                <img src={p.cover_image} alt="" className="w-10 h-10 rounded object-cover shrink-0" />
+              )}
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium truncate group-hover:underline">{p.title}</p>
+                <p className="text-[10px] text-white/50 uppercase tracking-wider">
+                  /{p.slug} · {p.pipeline_stage} · {p.status}
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
