@@ -250,38 +250,39 @@ export default function ProjectDetailAdmin() {
                 <StageDetail
                   key={selectedStage.id}
                   stage={selectedStage}
-                  projectId={project.id}
-                  projectTitle={project.title}
+                  project={project}
+                  clientId={(project as any).client_id}
                   onUpdate={(payload) => updateStage.mutateAsync({ id: selectedStage.id, ...payload })}
                   onToggleItem={(itemId, value) =>
                     toggleItem.mutateAsync({ id: itemId, is_done: value, projectId: project.id })
                   }
-                  onAi={async () => {
-                    const content = await ai.mutateAsync({
-                      task: "stage_output",
-                      context: {
-                        project: { title: project.title, description: project.description, client: project.client_name },
-                        stage: { name: selectedStage.name, slug: selectedStage.slug, notes: selectedStage.notes },
-                        prompt: (selectedStage as any).template_stage_id ? "Use o contexto acima" : null,
-                      },
-                    });
-                    if (content) {
-                      await updateStage.mutateAsync({
-                        id: selectedStage.id,
-                        ai_output: content,
-                        ai_output_updated_at: new Date().toISOString(),
-                      });
-                      toast({ title: "Conteúdo gerado pela IA" });
-                    }
-                  }}
-                  aiPending={ai.isPending}
                 />
               )}
             </div>
 
-            {/* SIDEBAR: client timeline */}
+            {/* SIDEBAR: client + contract + project files */}
             <div className="space-y-4">
-              <ClientPanel projectId={project.id} clientId={(project as any).client_id} />
+              <ClientPanel
+                project={project}
+                clientId={(project as any).client_id}
+                onLinkClient={(cid) => linkClient.mutate(cid)}
+              />
+              <GlassCard className="p-4">
+                <ContractCard
+                  entity="projects"
+                  id={project.id}
+                  data={project as any}
+                  onChange={() => qc.invalidateQueries({ queryKey: ["project", id] })}
+                />
+              </GlassCard>
+              <GlassCard className="p-5">
+                <AttachmentManager
+                  title="Arquivos do projeto"
+                  projectId={project.id}
+                  defaultType="file"
+                  allowedTypes={["file", "logo", "idea", "document"]}
+                />
+              </GlassCard>
             </div>
           </div>
         </>
