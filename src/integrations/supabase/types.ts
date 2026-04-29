@@ -877,6 +877,8 @@ export type Database = {
           price_label: string | null
           seo_description: string | null
           seo_title: string | null
+          show_on_home: boolean
+          show_on_services_page: boolean
           slug: string
           subtitle: string | null
           technologies: Json
@@ -900,6 +902,8 @@ export type Database = {
           price_label?: string | null
           seo_description?: string | null
           seo_title?: string | null
+          show_on_home?: boolean
+          show_on_services_page?: boolean
           slug: string
           subtitle?: string | null
           technologies?: Json
@@ -923,6 +927,8 @@ export type Database = {
           price_label?: string | null
           seo_description?: string | null
           seo_title?: string | null
+          show_on_home?: boolean
+          show_on_services_page?: boolean
           slug?: string
           subtitle?: string | null
           technologies?: Json

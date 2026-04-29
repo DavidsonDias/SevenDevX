@@ -274,6 +274,40 @@ export const usePublishedServices = () =>
     },
   });
 
+/** Serviços para exibição na HOME — máx 3, ordenados por destaque. */
+export const useHomeServices = () =>
+  useQuery({
+    queryKey: ["services_cms", "home"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("services_cms")
+        .select("*")
+        .eq("is_published", true)
+        .eq("show_on_home", true)
+        .order("is_featured", { ascending: false })
+        .order("display_order", { ascending: true })
+        .limit(3);
+      if (error) throw error;
+      return data;
+    },
+  });
+
+/** Serviços para a página /services — catálogo completo. */
+export const useServicesPageServices = () =>
+  useQuery({
+    queryKey: ["services_cms", "services_page"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("services_cms")
+        .select("*")
+        .eq("is_published", true)
+        .eq("show_on_services_page", true)
+        .order("display_order", { ascending: true });
+      if (error) throw error;
+      return data;
+    },
+  });
+
 export const useAllServices = () =>
   useQuery({
     queryKey: ["services_cms", "all"],
