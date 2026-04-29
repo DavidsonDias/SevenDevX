@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { getOrCreateSafeId } from "@/utils/safeStorage";
 
 interface Message {
   id: string;
@@ -29,22 +30,12 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-chat`;
 
 // Generate unique visitor ID
 const getVisitorId = (): string => {
-  let id = localStorage.getItem("sevendevx_visitor_id");
-  if (!id) {
-    id = `visitor_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-    localStorage.setItem("sevendevx_visitor_id", id);
-  }
-  return id;
+  return getOrCreateSafeId("sevendevx_visitor_id", "visitor", "local");
 };
 
 // Generate session ID
 const getSessionId = (): string => {
-  let id = sessionStorage.getItem("sevendevx_session_id");
-  if (!id) {
-    id = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-    sessionStorage.setItem("sevendevx_session_id", id);
-  }
-  return id;
+  return getOrCreateSafeId("sevendevx_session_id", "session", "session");
 };
 
 export const AIChatbot = () => {
