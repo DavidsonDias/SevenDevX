@@ -18,7 +18,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, Code, Settings, Wrench, FileText, Lightbulb, Sparkles, Briefcase, Layers, Rocket, Palette, Database } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/i18n/LanguageContext";
-import { usePublishedServices } from "@/hooks/useEcosystem";
+import { useHomeServices } from "@/hooks/useEcosystem";
 import ServiceCard3D from "./ServiceCard3D";
 import serviceDev from "@/assets/images/service-web-dev.webp";
 import serviceSoftware from "@/assets/images/service-software.webp";
@@ -35,27 +35,30 @@ const ICON_MAP: Record<string, any> = {
 
 // Map service slug -> default cover (fallback if CMS has no cover_image)
 const COVER_BY_SLUG: Record<string, string> = {
+  "desenvolvimento-web-personalizado": serviceDev,
   "web-development": serviceDev,
   "software-development": serviceSoftware,
   "maintenance": serviceMaintenance,
   "landing-pages": serviceLanding,
   "consulting": serviceConsulting,
+  "consultoria-tecnologica": serviceConsulting,
 };
 
 const ServicesPreview = () => {
   const { t } = useLanguage();
-  const { data: cmsServices } = usePublishedServices();
+  // Apenas serviços marcados explicitamente para a HOME (máx 3, ordenados por destaque)
+  const { data: cmsServices } = useHomeServices();
 
-  // Fallback list (current i18n) — preserves visual identity if CMS empty
+  // Fallback fixo (3 serviços estratégicos) caso o CMS não tenha nada marcado
   const fallbackServices = [
     { title: t.services.webDev.title, description: t.services.webDev.description, image: serviceDev, icon: Code },
     { title: t.services.landingPages.title, description: t.services.landingPages.description, image: serviceLanding, icon: FileText },
     { title: t.services.consulting.title, description: t.services.consulting.description, image: serviceConsulting, icon: Lightbulb },
   ];
 
-  // DB-first hybrid: prefer published CMS records, else fallback
+  // CMS-first com hard limit de 3 — se vazio, usa fallback institucional
   const services = (cmsServices && cmsServices.length > 0)
-    ? cmsServices.slice(0, 5).map((s: any) => ({
+    ? cmsServices.slice(0, 3).map((s: any) => ({
         title: s.title,
         description: s.subtitle || s.description,
         image: s.cover_image || COVER_BY_SLUG[s.slug] || serviceDev,
