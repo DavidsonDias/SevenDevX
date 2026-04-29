@@ -5,27 +5,18 @@
 
 import { useEffect, useCallback, useRef } from "react";
 import { useLocation } from "react-router-dom";
+import { getOrCreateSafeId } from "@/utils/safeStorage";
 
 const ANALYTICS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/track-analytics`;
 
 // Get or create visitor ID
 const getVisitorId = (): string => {
-  let id = localStorage.getItem("sevendevx_visitor_id");
-  if (!id) {
-    id = `visitor_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-    localStorage.setItem("sevendevx_visitor_id", id);
-  }
-  return id;
+  return getOrCreateSafeId("sevendevx_visitor_id", "visitor", "local");
 };
 
 // Get or create session ID
 const getSessionId = (): string => {
-  let id = sessionStorage.getItem("sevendevx_session_id");
-  if (!id) {
-    id = `session_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-    sessionStorage.setItem("sevendevx_session_id", id);
-  }
-  return id;
+  return getOrCreateSafeId("sevendevx_session_id", "session", "session");
 };
 
 interface TrackEventOptions {

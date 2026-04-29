@@ -5,6 +5,7 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { Language, translations, Translations } from "./translations";
+import { safeStorage } from "@/utils/safeStorage";
 
 interface LanguageContextType {
   language: Language;
@@ -27,11 +28,9 @@ const detectBrowserLanguage = (): Language => {
 
 // Carregar idioma salvo ou detectar
 const getInitialLanguage = (): Language => {
-  if (typeof localStorage !== "undefined") {
-    const saved = localStorage.getItem("sevendevx-language") as Language | null;
-    if (saved && ["pt", "en", "es"].includes(saved)) {
-      return saved;
-    }
+  const saved = safeStorage.get("sevendevx-language") as Language | null;
+  if (saved && ["pt", "en", "es"].includes(saved)) {
+    return saved;
   }
   return detectBrowserLanguage();
 };
@@ -45,7 +44,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
 
   const setLanguage = useCallback((lang: Language) => {
     setLanguageState(lang);
-    localStorage.setItem("sevendevx-language", lang);
+    safeStorage.set("sevendevx-language", lang);
     document.documentElement.lang = lang === "pt" ? "pt-BR" : lang;
   }, []);
 
