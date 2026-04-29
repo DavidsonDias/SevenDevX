@@ -626,7 +626,7 @@ import SEOHead from "@/components/SEOHead";
 import ProcessSection from "@/components/services/ProcessSection";
 import FAQSection from "@/components/services/FAQSection";
 import ServiceCard3D from "@/components/ServiceCard3D";
-import { ArrowRight, Code, Settings, Wrench, FileText, Lightbulb } from "lucide-react";
+import { ArrowRight, Code, Settings, Wrench, FileText, Lightbulb, Sparkles, Briefcase, Layers, Rocket, Palette, Database } from "lucide-react";
 import serviceDev from "@/assets/images/service-web-dev.webp";
 import serviceSoftware from "@/assets/images/service-software.webp";
 import serviceMaintenance from "@/assets/images/service-maintenance.webp";
@@ -634,60 +634,78 @@ import serviceLanding from "@/assets/images/service-landing.webp";
 import serviceConsulting from "@/assets/images/service-consulting.webp";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useAnalytics } from "@/hooks/useAnalytics";
+import { useServicesPageServices } from "@/hooks/useEcosystem";
 
-const serviceImages = [serviceDev, serviceSoftware, serviceMaintenance];
-const serviceIcons = [Code, Settings, Wrench];
-  
+// Map icon name string -> Lucide component
+const ICON_MAP: Record<string, any> = {
+  code: Code, settings: Settings, wrench: Wrench, "file-text": FileText,
+  lightbulb: Lightbulb, sparkles: Sparkles, briefcase: Briefcase, layers: Layers,
+  rocket: Rocket, palette: Palette, database: Database,
+};
+
+// Map slug -> default cover (fallback de imagem)
+const COVER_BY_SLUG: Record<string, string> = {
+  "desenvolvimento-web-personalizado": serviceDev,
+  "web-development": serviceDev,
+  "web-apps": serviceDev,
+  "software-development": serviceSoftware,
+  "software": serviceSoftware,
+  "maintenance": serviceMaintenance,
+  "landing-pages": serviceLanding,
+  "consulting": serviceConsulting,
+  "consultoria-tecnologica": serviceConsulting,
+  "saas": serviceDev,
+  "ia": serviceConsulting,
+  "mobile": serviceDev,
+};
 
 const Services = () => {
   const { t, language } = useLanguage();
-  
+
   // 📊 Track page view
   useAnalytics();
 
-  // Configuração dos serviços com i18n
-  const services = [
-    {
-      key: "webDev",
-      title: t.servicesPage.webDev.title,
-      description: t.servicesPage.webDev.description,
-      features: t.servicesPage.webDev.features,
-      image: serviceDev,
-      icon: Code,
-    },
-    {
-      key: "landingPages",
-      title: t.servicesPage.landingPages.title,
-      description: t.servicesPage.landingPages.description,
-      features: t.servicesPage.landingPages.features,
-      image: serviceLanding,
-      icon: FileText,
-    },
-    {
-      key: "consulting",
-      title: t.servicesPage.consulting.title,
-      description: t.servicesPage.consulting.description,
-      features: t.servicesPage.consulting.features,
-      image: serviceConsulting,
-      icon: Lightbulb,
-    },
-    {
-      key: "software",
-      title: t.servicesPage.software.title,
-      description: t.servicesPage.software.description,
-      features: t.servicesPage.software.features,
-      image: serviceSoftware,
-      icon: Settings,
-    },
-    {
-      key: "maintenance",
-      title: t.servicesPage.maintenance.title,
-      description: t.servicesPage.maintenance.description,
-      features: t.servicesPage.maintenance.features,
-      image: serviceMaintenance,
-      icon: Wrench,
-    },
+  // CMS-first: catálogo completo da página /serviços
+  const { data: cmsServices } = useServicesPageServices();
+
+  // Fallback institucional (i18n) — usado se CMS estiver vazio
+  const fallbackServices = [
+    { key: "webDev", title: t.servicesPage.webDev.title, description: t.servicesPage.webDev.description, features: t.servicesPage.webDev.features, image: serviceDev, icon: Code },
+    { key: "landingPages", title: t.servicesPage.landingPages.title, description: t.servicesPage.landingPages.description, features: t.servicesPage.landingPages.features, image: serviceLanding, icon: FileText },
+    { key: "consulting", title: t.servicesPage.consulting.title, description: t.servicesPage.consulting.description, features: t.servicesPage.consulting.features, image: serviceConsulting, icon: Lightbulb },
+    { key: "software", title: t.servicesPage.software.title, description: t.servicesPage.software.description, features: t.servicesPage.software.features, image: serviceSoftware, icon: Settings },
+    { key: "maintenance", title: t.servicesPage.maintenance.title, description: t.servicesPage.maintenance.description, features: t.servicesPage.maintenance.features, image: serviceMaintenance, icon: Wrench },
   ];
+
+  // Mapa slug -> chave de tradução para herdar features quando CMS não tem
+  const SLUG_TO_I18N: Record<string, string> = {
+    "desenvolvimento-web-personalizado": "webDev",
+    "web-apps": "webDev",
+    "landing-pages": "landingPages",
+    "consultoria-tecnologica": "consulting",
+    "software": "software",
+    "maintenance": "maintenance",
+  };
+
+  const services = (cmsServices && cmsServices.length > 0)
+    ? cmsServices.map((s: any) => {
+        const cmsFeatures: string[] = Array.isArray(s.features)
+          ? s.features.map((f: any) => (typeof f === "string" ? f : f?.title)).filter(Boolean)
+          : [];
+        const i18nKey = SLUG_TO_I18N[s.slug];
+        const i18nFeatures: string[] | undefined = i18nKey
+          ? ((t.servicesPage as any)[i18nKey]?.features as string[])
+          : undefined;
+        return {
+          key: s.id,
+          title: s.title,
+          description: s.subtitle || s.description,
+          features: cmsFeatures.length > 0 ? cmsFeatures : (i18nFeatures || []),
+          image: s.cover_image || COVER_BY_SLUG[s.slug] || serviceDev,
+          icon: ICON_MAP[(s.icon || "").toLowerCase()] || Code,
+        };
+      })
+    : fallbackServices;
 
   // SEO meta tags por idioma
   const seoData = {
