@@ -150,9 +150,11 @@ function ServiceModal({ initial, onClose, onSave }: any) {
             <Field label="Preço a partir de"><input type="number" className={inp} value={form.price_from || ""} onChange={(e) => ch("price_from", parseFloat(e.target.value) || null)} /></Field>
             <Field label="Label de preço"><input className={inp} placeholder="Sob consulta" value={form.price_label || ""} onChange={(e) => ch("price_label", e.target.value)} /></Field>
           </div>
-          <div className="flex gap-4">
-            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.is_published} onChange={(e) => ch("is_published", e.target.checked)} /> Publicado</label>
-            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.is_featured} onChange={(e) => ch("is_featured", e.target.checked)} /> Destaque</label>
+          <div className="flex flex-wrap gap-4">
+            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!!form.is_published} onChange={(e) => ch("is_published", e.target.checked)} /> Publicado</label>
+            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!!form.is_featured} onChange={(e) => ch("is_featured", e.target.checked)} /> Destaque</label>
+            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={!!form.show_on_home} onChange={(e) => ch("show_on_home", e.target.checked)} /> Exibir na Home</label>
+            <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.show_on_services_page !== false} onChange={(e) => ch("show_on_services_page", e.target.checked)} /> Exibir em /serviços</label>
           </div>
         </div>
         <div className="flex justify-end gap-2 p-5 border-t border-white/10">
