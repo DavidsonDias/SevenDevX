@@ -163,7 +163,7 @@ export default defineConfig(({ mode }) => ({
      ⚙️ BUILD ULTRA OTIMIZADO
      ================================================================== */
   build: {
-    target: "esnext",
+    target: ["es2020", "safari14"],
     minify: "esbuild",
     cssMinify: "esbuild",
     assetsDir: "assets",
