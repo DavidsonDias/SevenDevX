@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { X, Gift, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/i18n/LanguageContext';
+import { safeStorage } from '@/utils/safeStorage';
 
 /**
  * 💎 Exit Intent Popup - Captura visitantes antes de saírem
@@ -14,7 +15,7 @@ const ExitIntentPopup = () => {
 
   useEffect(() => {
     // Só mostra uma vez por sessão
-    const shown = sessionStorage.getItem('exit-popup-shown');
+    const shown = safeStorage.get('exit-popup-shown', 'session');
     if (shown) {
       setHasShown(true);
       return;
@@ -25,7 +26,7 @@ const ExitIntentPopup = () => {
       if (e.clientY <= 10 && !hasShown) {
         setIsVisible(true);
         setHasShown(true);
-        sessionStorage.setItem('exit-popup-shown', 'true');
+        safeStorage.set('exit-popup-shown', 'true', 'session');
       }
     };
 
