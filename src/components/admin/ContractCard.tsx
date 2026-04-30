@@ -94,6 +94,45 @@ export default function ContractCard({ entity, id, data, aiContext, entityName, 
     }
   };
 
+  const handleGenerateAi = async () => {
+    setGenerating(true);
+    try {
+      const content: string = await ai.mutateAsync({
+        task: "contract_generate",
+        context: aiContext || {},
+      });
+      if (content) {
+        setText(content);
+        await persist({ contract_text: content, contract_status: status === "pending" ? "sent" : status });
+        if (status === "pending") setStatus("sent");
+        toast({ title: "Contrato gerado pela IA" });
+      }
+    } catch (e: any) {
+      toast({ title: "Erro ao gerar contrato", description: e.message, variant: "destructive" });
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const handleExportPdf = async () => {
+    if (!text.trim()) {
+      toast({ title: "Sem conteúdo", description: "Gere ou digite o contrato antes de exportar.", variant: "destructive" });
+      return;
+    }
+    setExporting(true);
+    try {
+      await exportMarkdownToPdf({
+        title: `Contrato — ${entityName || aiContext?.client?.name || aiContext?.project?.title || "SevenDevX"}`,
+        markdown: text,
+        filename: `contrato-${entityName || aiContext?.client?.name || "sevendevx"}`,
+      });
+    } catch (e: any) {
+      toast({ title: "Erro ao gerar PDF", description: e.message, variant: "destructive" });
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const meta = STATUS[status] || STATUS.pending;
 
   return (
@@ -157,6 +196,25 @@ export default function ContractCard({ entity, id, data, aiContext, entityName, 
         >
           {saving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />} Salvar contrato
         </button>
+
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={handleGenerateAi}
+            disabled={generating}
+            className="text-xs px-3 py-2 bg-purple-500/15 border border-purple-500/30 text-purple-200 rounded font-bold inline-flex items-center justify-center gap-1.5 hover:bg-purple-500/25 disabled:opacity-50"
+          >
+            {generating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+            {text ? "Regerar com IA" : "Gerar com IA"}
+          </button>
+          <button
+            onClick={handleExportPdf}
+            disabled={exporting || !text.trim()}
+            className="text-xs px-3 py-2 bg-blue-500/15 border border-blue-500/30 text-blue-200 rounded font-bold inline-flex items-center justify-center gap-1.5 hover:bg-blue-500/25 disabled:opacity-50"
+          >
+            {exporting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Download className="w-3 h-3" />}
+            Baixar PDF
+          </button>
+        </div>
 
         {data.contract_updated_at && (
           <p className="text-[10px] text-white/40 text-center">
