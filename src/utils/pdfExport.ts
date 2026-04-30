@@ -55,6 +55,7 @@ export async function exportMarkdownToPdf(opts: {
         image: { type: "jpeg", quality: 0.95 },
         html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        // @ts-expect-error - pagebreak option exists at runtime but is missing in type defs
         pagebreak: { mode: ["avoid-all", "css", "legacy"] },
       })
       .from(wrapper)
