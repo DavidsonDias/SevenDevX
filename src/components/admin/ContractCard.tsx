@@ -3,9 +3,11 @@
  * Suporta upload de PDF + texto livre + status (pendente/enviado/aprovado/rejeitado).
  */
 import { useState, useEffect } from "react";
-import { FileSignature, Upload, Loader2, ExternalLink, Save, FileText } from "lucide-react";
+import { FileSignature, Upload, Loader2, ExternalLink, Save, FileText, Sparkles, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAiGenerate } from "@/hooks/useEcosystem";
+import { exportMarkdownToPdf } from "@/utils/pdfExport";
 
 type Entity = "clients" | "projects";
 
