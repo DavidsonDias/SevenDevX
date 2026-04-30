@@ -4,7 +4,8 @@
  * Botão "Gerar com IA" cria + persiste; "Editar" abre modal; "Copiar" copia conteúdo.
  */
 import { useMemo, useState } from "react";
-import { Sparkles, Loader2, FileText, Edit2, Copy, Trash2, Save, X, Plus, RefreshCw, Eye } from "lucide-react";
+import { Sparkles, Loader2, FileText, Edit2, Copy, Trash2, Save, X, Plus, RefreshCw, Eye, Download } from "lucide-react";
+import { exportMarkdownToPdf } from "@/utils/pdfExport";
 import ReactMarkdown from "react-markdown";
 import {
   useStageDocuments, useUpsertDocument, useDeleteDocument, STAGE_DOC_CATALOG, DocumentType,
@@ -248,7 +249,22 @@ function DocEditorModal({ doc, onClose, onSave }: any) {
                 className={`text-[10px] px-2 py-1 ${tab === "preview" ? "bg-white text-black" : "text-white/60 hover:bg-white/5"}`}
               >Preview</button>
             </div>
-            <button onClick={() => { navigator.clipboard.writeText(content); toast({ title: "Copiado" }); }} className="text-xs p-1.5 hover:bg-white/5 rounded"><Copy className="w-4 h-4" /></button>
+            <button
+              onClick={() => { navigator.clipboard.writeText(content); toast({ title: "Copiado" }); }}
+              className="text-xs p-1.5 hover:bg-white/5 rounded"
+              title="Copiar"
+            ><Copy className="w-4 h-4" /></button>
+            <button
+              onClick={async () => {
+                try {
+                  await exportMarkdownToPdf({ title: title || "Documento", markdown: content, filename: title });
+                } catch (e: any) {
+                  toast({ title: "Erro ao gerar PDF", description: e.message, variant: "destructive" });
+                }
+              }}
+              className="text-xs p-1.5 hover:bg-white/5 rounded"
+              title="Baixar PDF"
+            ><Download className="w-4 h-4" /></button>
             <button onClick={onClose}><X className="w-5 h-5" /></button>
           </div>
         </div>

@@ -272,6 +272,15 @@ export default function ProjectDetailAdmin() {
                   entity="projects"
                   id={project.id}
                   data={project as any}
+                  entityName={(project as any)?.title || (project as any)?.slug}
+                  aiContext={{
+                    project: {
+                      title: (project as any)?.title,
+                      description: (project as any)?.description,
+                      category: (project as any)?.category,
+                      budget: (project as any)?.budget,
+                    },
+                  }}
                   onChange={() => qc.invalidateQueries({ queryKey: ["project", id] })}
                 />
               </GlassCard>

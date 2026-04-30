@@ -249,7 +249,21 @@ function ClientDrawer({ id, onClose }: { id: string; onClose: () => void }) {
 
           {/* Contract + Files */}
           <div className="grid sm:grid-cols-2 gap-4">
-            <ContractCard entity="clients" id={id} data={client} />
+            <ContractCard
+              entity="clients"
+              id={id}
+              data={client}
+              entityName={client?.name || client?.company}
+              aiContext={{
+                client: {
+                  name: client?.name,
+                  company: client?.company,
+                  email: client?.email,
+                  segment: client?.segment,
+                  document: (client as any)?.document,
+                },
+              }}
+            />
             <div className="border border-white/10 rounded-xl p-4">
               <AttachmentManager
                 title="Logo & Arquivos"

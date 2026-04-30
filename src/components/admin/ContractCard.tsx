@@ -3,9 +3,11 @@
  * Suporta upload de PDF + texto livre + status (pendente/enviado/aprovado/rejeitado).
  */
 import { useState, useEffect } from "react";
-import { FileSignature, Upload, Loader2, ExternalLink, Save, FileText } from "lucide-react";
+import { FileSignature, Upload, Loader2, ExternalLink, Save, FileText, Sparkles, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAiGenerate } from "@/hooks/useEcosystem";
+import { exportMarkdownToPdf } from "@/utils/pdfExport";
 
 type Entity = "clients" | "projects";
 
@@ -18,6 +20,16 @@ interface Props {
     contract_url?: string | null;
     contract_updated_at?: string | null;
   };
+  /** Contexto opcional para alimentar a IA ao gerar o contrato. */
+  aiContext?: {
+    client?: { name?: string; company?: string; email?: string; segment?: string; document?: string };
+    project?: { title?: string; description?: string; category?: string; budget?: string | number };
+    services?: string[];
+    deadline?: string;
+    value?: string | number;
+  };
+  /** Usado para nomear o arquivo PDF (slug). */
+  entityName?: string;
   onChange?: () => void;
 }
 
@@ -28,13 +40,16 @@ const STATUS: Record<string, { label: string; cls: string }> = {
   rejected: { label: "Rejeitado",cls: "bg-red-500/10 text-red-300 border-red-500/30" },
 };
 
-export default function ContractCard({ entity, id, data, onChange }: Props) {
+export default function ContractCard({ entity, id, data, aiContext, entityName, onChange }: Props) {
   const { toast } = useToast();
+  const ai = useAiGenerate();
   const [status, setStatus] = useState(data.contract_status || "pending");
   const [text, setText] = useState(data.contract_text || "");
   const [url, setUrl] = useState(data.contract_url || "");
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     setStatus(data.contract_status || "pending");
@@ -76,6 +91,45 @@ export default function ContractCard({ entity, id, data, onChange }: Props) {
       toast({ title: "Falha no upload", description: e.message, variant: "destructive" });
     } finally {
       setUploading(false);
+    }
+  };
+
+  const handleGenerateAi = async () => {
+    setGenerating(true);
+    try {
+      const content: string = await ai.mutateAsync({
+        task: "contract_generate",
+        context: aiContext || {},
+      });
+      if (content) {
+        setText(content);
+        await persist({ contract_text: content, contract_status: status === "pending" ? "sent" : status });
+        if (status === "pending") setStatus("sent");
+        toast({ title: "Contrato gerado pela IA" });
+      }
+    } catch (e: any) {
+      toast({ title: "Erro ao gerar contrato", description: e.message, variant: "destructive" });
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const handleExportPdf = async () => {
+    if (!text.trim()) {
+      toast({ title: "Sem conteúdo", description: "Gere ou digite o contrato antes de exportar.", variant: "destructive" });
+      return;
+    }
+    setExporting(true);
+    try {
+      await exportMarkdownToPdf({
+        title: `Contrato — ${entityName || aiContext?.client?.name || aiContext?.project?.title || "SevenDevX"}`,
+        markdown: text,
+        filename: `contrato-${entityName || aiContext?.client?.name || "sevendevx"}`,
+      });
+    } catch (e: any) {
+      toast({ title: "Erro ao gerar PDF", description: e.message, variant: "destructive" });
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -142,6 +196,25 @@ export default function ContractCard({ entity, id, data, onChange }: Props) {
         >
           {saving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Save className="w-3 h-3" />} Salvar contrato
         </button>
+
+        <div className="grid grid-cols-2 gap-2">
+          <button
+            onClick={handleGenerateAi}
+            disabled={generating}
+            className="text-xs px-3 py-2 bg-purple-500/15 border border-purple-500/30 text-purple-200 rounded font-bold inline-flex items-center justify-center gap-1.5 hover:bg-purple-500/25 disabled:opacity-50"
+          >
+            {generating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+            {text ? "Regerar com IA" : "Gerar com IA"}
+          </button>
+          <button
+            onClick={handleExportPdf}
+            disabled={exporting || !text.trim()}
+            className="text-xs px-3 py-2 bg-blue-500/15 border border-blue-500/30 text-blue-200 rounded font-bold inline-flex items-center justify-center gap-1.5 hover:bg-blue-500/25 disabled:opacity-50"
+          >
+            {exporting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Download className="w-3 h-3" />}
+            Baixar PDF
+          </button>
+        </div>
 
         {data.contract_updated_at && (
           <p className="text-[10px] text-white/40 text-center">
