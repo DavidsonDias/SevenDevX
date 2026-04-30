@@ -20,6 +20,16 @@ interface Props {
     contract_url?: string | null;
     contract_updated_at?: string | null;
   };
+  /** Contexto opcional para alimentar a IA ao gerar o contrato. */
+  aiContext?: {
+    client?: { name?: string; company?: string; email?: string; segment?: string; document?: string };
+    project?: { title?: string; description?: string; category?: string; budget?: string | number };
+    services?: string[];
+    deadline?: string;
+    value?: string | number;
+  };
+  /** Usado para nomear o arquivo PDF (slug). */
+  entityName?: string;
   onChange?: () => void;
 }
 
@@ -30,13 +40,16 @@ const STATUS: Record<string, { label: string; cls: string }> = {
   rejected: { label: "Rejeitado",cls: "bg-red-500/10 text-red-300 border-red-500/30" },
 };
 
-export default function ContractCard({ entity, id, data, onChange }: Props) {
+export default function ContractCard({ entity, id, data, aiContext, entityName, onChange }: Props) {
   const { toast } = useToast();
+  const ai = useAiGenerate();
   const [status, setStatus] = useState(data.contract_status || "pending");
   const [text, setText] = useState(data.contract_text || "");
   const [url, setUrl] = useState(data.contract_url || "");
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   useEffect(() => {
     setStatus(data.contract_status || "pending");
