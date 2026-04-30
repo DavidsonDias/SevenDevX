@@ -279,24 +279,11 @@
       
       PRODUÇÃO: Remover 'unsafe-eval' e usar nonce para scripts
     -->
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="
-        default-src 'self';
-        script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com https://*.vercel-insights.com;
-        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-        img-src 'self' data: blob: https:;
-        font-src 'self' data: https://fonts.gstatic.com;
-        connect-src 'self' https://wa.me https://api.whatsapp.com https://*.supabase.co wss://*.supabase.co https://*.vercel-insights.com https://va.vercel-scripts.com;
-        media-src 'self' blob: data: https:;
-        worker-src 'self' blob:;
-        frame-src 'self';
-        object-src 'none';
-        base-uri 'self';
-        form-action 'self';
-        upgrade-insecure-requests;
-      "
-    />
+    <!--
+      CSP é definido via header HTTP no vercel.json (fonte única de verdade).
+      Mantemos este comentário para histórico — NÃO declarar CSP por <meta>
+      aqui para evitar interseção restritiva em iOS Safari/Firefox.
+    -->
     
     <!-- ═════════════════════════════════════════════════════════
          🧩 12. BUILD INFO & GENERATOR
