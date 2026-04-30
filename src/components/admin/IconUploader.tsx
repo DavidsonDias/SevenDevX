@@ -17,8 +17,8 @@ interface IconUploaderProps {
   size?: number;
 }
 
-const MAX_BYTES = 512 * 1024; // 512KB
-const ALLOWED = ["image/svg+xml", "image/png", "image/webp"];
+const MAX_BYTES = 1024 * 1024; // 1MB
+const ALLOWED = ["image/svg+xml", "image/png", "image/jpeg", "image/jpg", "image/webp"];
 
 export const IconUploader = ({
   value,
@@ -37,7 +37,7 @@ export const IconUploader = ({
       if (!ALLOWED.includes(file.type)) {
         toast({
           title: "Formato inválido",
-          description: "Use SVG, PNG ou WebP.",
+          description: "Use SVG, PNG, JPG, JPEG ou WebP.",
           variant: "destructive",
         });
         return;
@@ -45,7 +45,7 @@ export const IconUploader = ({
       if (file.size > MAX_BYTES) {
         toast({
           title: "Arquivo muito grande",
-          description: "O ícone deve ter no máximo 512KB.",
+          description: "O ícone deve ter no máximo 1MB.",
           variant: "destructive",
         });
         return;
@@ -129,13 +129,13 @@ export const IconUploader = ({
         ) : (
           <div className="flex flex-col items-center gap-1.5 text-muted-foreground text-xs">
             <Upload className="w-5 h-5" />
-            <span>Clique ou arraste SVG/PNG (≤512KB)</span>
+            <span>Clique ou arraste SVG/PNG/JPG/WEBP (≤1MB)</span>
           </div>
         )}
         <input
           ref={inputRef}
           type="file"
-          accept=".svg,.png,.webp,image/svg+xml,image/png,image/webp"
+          accept=".svg,.png,.jpg,.jpeg,.webp,image/svg+xml,image/png,image/jpeg,image/webp"
           className="hidden"
           onChange={(e) => {
             const file = e.target.files?.[0];
