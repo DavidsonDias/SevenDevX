@@ -1,21 +1,27 @@
 /**
  * 🎛️ AdminPageShell — consistent header + container for all admin pages
+ * Voltar inteligente + breadcrumb dinâmico.
  */
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Home as HomeIcon, LogOut } from "lucide-react";
 import { useAuthContext as useAuth } from "@/contexts/AuthContext";
 import AdminMenu from "@/components/admin/AdminMenu";
+import Breadcrumb from "@/components/admin/Breadcrumb";
+import { useSmartBack } from "@/hooks/useSmartBack";
 
 interface Props {
   title: string;
   subtitle?: string;
   actions?: React.ReactNode;
   children: React.ReactNode;
+  /** Para onde voltar quando não houver histórico interno. Default: /admin */
+  backFallback?: string;
 }
 
-export const AdminPageShell = ({ title, subtitle, actions, children }: Props) => {
+export const AdminPageShell = ({ title, subtitle, actions, children, backFallback = "/admin" }: Props) => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
+  const goBack = useSmartBack();
 
   const handleSignOut = async () => {
     await signOut();
@@ -29,9 +35,10 @@ export const AdminPageShell = ({ title, subtitle, actions, children }: Props) =>
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <AdminMenu />
             <button
-              onClick={() => navigate("/admin")}
+              onClick={() => goBack(backFallback)}
               className="p-2 rounded-lg border border-white/10 hover:bg-white/5 transition-colors shrink-0"
-              aria-label="Voltar ao painel"
+              aria-label="Voltar"
+              title="Voltar"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
@@ -67,6 +74,7 @@ export const AdminPageShell = ({ title, subtitle, actions, children }: Props) =>
       </header>
 
       <main className="container mx-auto px-4 sm:px-6 py-6 sm:py-10">
+        <Breadcrumb />
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6 sm:mb-8">
           <div>
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{title}</h2>
@@ -81,3 +89,4 @@ export const AdminPageShell = ({ title, subtitle, actions, children }: Props) =>
 };
 
 export default AdminPageShell;
+

@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import ScrollToTop from "@/components/ScrollToTop";
 import AppLoaderOrbital from "@/components/ui/AppLoaderOrbital";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import { useNavHistoryTracker } from "@/hooks/useSmartBack";
 
 const Index = lazy(() => import("@/pages/Index"));
 const About = lazy(() => import("@/pages/About"));
@@ -45,6 +46,7 @@ const pageTransition = {
 
 function AnimatedRoutes() {
   const location = useLocation();
+  useNavHistoryTracker();
 
   return (
     <AnimatePresence mode="wait">

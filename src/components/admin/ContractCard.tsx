@@ -1,9 +1,18 @@
 /**
- * 📜 ContractCard — gestão de Termo/Contrato (TC) para cliente OU projeto.
- * Suporta upload de PDF + texto livre + status (pendente/enviado/aprovado/rejeitado).
+ * 📜 ContractCard — Gestão de Termo/Contrato (TC) para cliente OU projeto.
+ * Recursos:
+ * - Status (pendente/enviado/aprovado/rejeitado)
+ * - Upload de PDF/DOC/imagem
+ * - Texto livre (editor)
+ * - Geração com IA (contrato jurídico nível software house)
+ * - Export PDF (html2pdf)
+ * - Campos de contexto jurídico (parcelas, foro, prazo) que alimentam a IA
  */
 import { useState, useEffect } from "react";
-import { FileSignature, Upload, Loader2, ExternalLink, Save, FileText, Sparkles, Download } from "lucide-react";
+import {
+  FileSignature, Upload, Loader2, ExternalLink, Save,
+  FileText, Sparkles, Download, ChevronDown, ChevronUp,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAiGenerate } from "@/hooks/useEcosystem";
@@ -20,13 +29,11 @@ interface Props {
     contract_url?: string | null;
     contract_updated_at?: string | null;
   };
-  /** Contexto opcional para alimentar a IA ao gerar o contrato. */
+  /** Contexto opcional que será mesclado com os dados do formulário e enviado à IA. */
   aiContext?: {
     client?: { name?: string; company?: string; email?: string; segment?: string; document?: string };
     project?: { title?: string; description?: string; category?: string; budget?: string | number };
     services?: string[];
-    deadline?: string;
-    value?: string | number;
   };
   /** Usado para nomear o arquivo PDF (slug). */
   entityName?: string;
@@ -40,6 +47,28 @@ const STATUS: Record<string, { label: string; cls: string }> = {
   rejected: { label: "Rejeitado",cls: "bg-red-500/10 text-red-300 border-red-500/30" },
 };
 
+interface JuridicalForm {
+  value: string;
+  installments: string;
+  deadline: string;
+  pages: string;
+  revisions: string;
+  foro: string;
+  sla_days: string;
+  extras: string;
+}
+
+const DEFAULT_FORM: JuridicalForm = {
+  value: "",
+  installments: "50% no ato e 50% na entrega",
+  deadline: "",
+  pages: "",
+  revisions: "2",
+  foro: "São Paulo/SP",
+  sla_days: "15",
+  extras: "",
+};
+
 export default function ContractCard({ entity, id, data, aiContext, entityName, onChange }: Props) {
   const { toast } = useToast();
   const ai = useAiGenerate();
@@ -50,6 +79,8 @@ export default function ContractCard({ entity, id, data, aiContext, entityName, 
   const [saving, setSaving] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [exporting, setExporting] = useState(false);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [form, setForm] = useState<JuridicalForm>(DEFAULT_FORM);
 
   useEffect(() => {
     setStatus(data.contract_status || "pending");
@@ -97,9 +128,20 @@ export default function ContractCard({ entity, id, data, aiContext, entityName, 
   const handleGenerateAi = async () => {
     setGenerating(true);
     try {
+      const fullContext = {
+        ...(aiContext || {}),
+        value: form.value || undefined,
+        installments: form.installments || undefined,
+        deadline: form.deadline || undefined,
+        pages: form.pages || undefined,
+        revisions: form.revisions || undefined,
+        foro: form.foro || undefined,
+        sla_days: form.sla_days || undefined,
+        extras: form.extras || undefined,
+      };
       const content: string = await ai.mutateAsync({
         task: "contract_generate",
-        context: aiContext || {},
+        context: fullContext,
       });
       if (content) {
         setText(content);
@@ -134,6 +176,7 @@ export default function ContractCard({ entity, id, data, aiContext, entityName, 
   };
 
   const meta = STATUS[status] || STATUS.pending;
+  const inputCls = "w-full bg-white/5 border border-white/10 rounded px-2 py-1.5 text-xs outline-none focus:border-white/30";
 
   return (
     <div className="border border-white/10 rounded-xl p-4 bg-white/[0.02]">
@@ -181,12 +224,59 @@ export default function ContractCard({ entity, id, data, aiContext, entityName, 
           </a>
         )}
 
+        {/* Parâmetros jurídicos para alimentar a IA */}
+        <button
+          type="button"
+          onClick={() => setShowAdvanced((v) => !v)}
+          className="w-full text-[11px] text-white/60 hover:text-white/90 flex items-center justify-center gap-1 py-1.5"
+        >
+          {showAdvanced ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+          Parâmetros do contrato (IA)
+        </button>
+
+        {showAdvanced && (
+          <div className="grid grid-cols-2 gap-2 p-3 bg-white/[0.03] border border-white/10 rounded-lg">
+            <label className="col-span-2 text-[10px] uppercase tracking-wider text-white/50">Valor total
+              <input value={form.value} onChange={(e) => setForm(f => ({ ...f, value: e.target.value }))}
+                placeholder="Ex: R$ 4.500,00" className={inputCls + " mt-1"} />
+            </label>
+            <label className="col-span-2 text-[10px] uppercase tracking-wider text-white/50">Parcelamento
+              <input value={form.installments} onChange={(e) => setForm(f => ({ ...f, installments: e.target.value }))}
+                placeholder="Ex: 50/50" className={inputCls + " mt-1"} />
+            </label>
+            <label className="text-[10px] uppercase tracking-wider text-white/50">Prazo
+              <input value={form.deadline} onChange={(e) => setForm(f => ({ ...f, deadline: e.target.value }))}
+                placeholder="30 dias" className={inputCls + " mt-1"} />
+            </label>
+            <label className="text-[10px] uppercase tracking-wider text-white/50">Páginas/telas
+              <input value={form.pages} onChange={(e) => setForm(f => ({ ...f, pages: e.target.value }))}
+                placeholder="5" className={inputCls + " mt-1"} />
+            </label>
+            <label className="text-[10px] uppercase tracking-wider text-white/50">Revisões
+              <input value={form.revisions} onChange={(e) => setForm(f => ({ ...f, revisions: e.target.value }))}
+                className={inputCls + " mt-1"} />
+            </label>
+            <label className="text-[10px] uppercase tracking-wider text-white/50">SLA (dias)
+              <input value={form.sla_days} onChange={(e) => setForm(f => ({ ...f, sla_days: e.target.value }))}
+                className={inputCls + " mt-1"} />
+            </label>
+            <label className="col-span-2 text-[10px] uppercase tracking-wider text-white/50">Foro
+              <input value={form.foro} onChange={(e) => setForm(f => ({ ...f, foro: e.target.value }))}
+                placeholder="São Paulo/SP" className={inputCls + " mt-1"} />
+            </label>
+            <label className="col-span-2 text-[10px] uppercase tracking-wider text-white/50">Observações extras
+              <textarea value={form.extras} onChange={(e) => setForm(f => ({ ...f, extras: e.target.value }))}
+                rows={2} placeholder="Ex: integrações específicas, exclusões…" className={inputCls + " mt-1"} />
+            </label>
+          </div>
+        )}
+
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
-          rows={3}
-          placeholder="Texto do termo, observações ou cláusulas (opcional)…"
-          className="w-full bg-white/5 border border-white/10 rounded px-2 py-2 text-xs outline-none focus:border-white/30"
+          rows={4}
+          placeholder="Texto do contrato (gere com IA ou edite manualmente)…"
+          className="w-full bg-white/5 border border-white/10 rounded px-2 py-2 text-xs outline-none focus:border-white/30 font-mono"
         />
 
         <button
