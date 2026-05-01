@@ -38,13 +38,22 @@ const STAGE_STATUS: Record<string, { label: string; color: string }> = {
 };
 
 const PIPELINE_STAGES = [
-  { id: "lead", label: "Lead" },
-  { id: "discovery", label: "Diagnóstico" },
-  { id: "proposal", label: "Proposta" },
-  { id: "execution", label: "Execução" },
-  { id: "launch", label: "Lançamento" },
-  { id: "done", label: "Concluído" },
+  { id: "lead",        label: "Lead" },
+  { id: "diagnostico", label: "Diagnóstico" },
+  { id: "proposta",    label: "Proposta" },
+  { id: "contrato",    label: "Contrato" },
+  { id: "execucao",    label: "Execução" },
+  { id: "entrega",     label: "Entrega" },
 ];
+
+const LEGACY_PIPELINE: Record<string, string> = {
+  discovery: "diagnostico",
+  proposal: "proposta",
+  execution: "execucao",
+  launch: "entrega",
+  done: "entrega",
+};
+const normalizePipeline = (s: any) => LEGACY_PIPELINE[s as string] || s || "lead";
 
 export default function ProjectDetailAdmin() {
   const { id } = useParams<{ id: string }>();
@@ -99,8 +108,17 @@ export default function ProjectDetailAdmin() {
   /* ── pipeline + client link change ── */
   const movePipeline = useMutation({
     mutationFn: async (stage: string) => {
+      const previous = normalizePipeline((project as any)?.pipeline_stage);
       const { error } = await supabase.from("projects").update({ pipeline_stage: stage as any }).eq("id", id!);
       if (error) throw error;
+      // log de auditoria (best-effort)
+      const { data: { user } } = await supabase.auth.getUser();
+      await supabase.from("pipeline_stage_log").insert({
+        project_id: id!,
+        from_stage: previous as any,
+        to_stage: stage as any,
+        changed_by: user?.id || null,
+      });
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["project", id] });
@@ -187,7 +205,7 @@ export default function ProjectDetailAdmin() {
           <div className="flex items-center gap-2 shrink-0">
             <span className="text-xs uppercase tracking-wider text-white/50">Pipeline</span>
             <select
-              value={(project as any).pipeline_stage || "lead"}
+              value={normalizePipeline((project as any).pipeline_stage)}
               onChange={(e) => movePipeline.mutate(e.target.value)}
               className="text-xs uppercase tracking-wider bg-white/5 border border-white/10 rounded px-2 py-1.5 outline-none focus:border-white/30"
             >
