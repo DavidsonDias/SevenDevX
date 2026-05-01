@@ -543,6 +543,42 @@ export type Database = {
         }
         Relationships: []
       }
+      pipeline_stage_log: {
+        Row: {
+          changed_by: string | null
+          created_at: string
+          from_stage:
+            | Database["public"]["Enums"]["project_pipeline_stage"]
+            | null
+          id: string
+          note: string | null
+          project_id: string
+          to_stage: Database["public"]["Enums"]["project_pipeline_stage"]
+        }
+        Insert: {
+          changed_by?: string | null
+          created_at?: string
+          from_stage?:
+            | Database["public"]["Enums"]["project_pipeline_stage"]
+            | null
+          id?: string
+          note?: string | null
+          project_id: string
+          to_stage: Database["public"]["Enums"]["project_pipeline_stage"]
+        }
+        Update: {
+          changed_by?: string | null
+          created_at?: string
+          from_stage?:
+            | Database["public"]["Enums"]["project_pipeline_stage"]
+            | null
+          id?: string
+          note?: string | null
+          project_id?: string
+          to_stage?: Database["public"]["Enums"]["project_pipeline_stage"]
+        }
+        Relationships: []
+      }
       process_template_stages: {
         Row: {
           ai_prompt: string | null
@@ -1188,6 +1224,9 @@ export type Database = {
         | "execution"
         | "launch"
         | "done"
+        | "diagnostico"
+        | "contrato"
+        | "entrega"
       project_status: "draft" | "published" | "archived"
       stage_status: "pending" | "in_progress" | "completed" | "blocked"
     }
@@ -1369,6 +1408,9 @@ export const Constants = {
         "execution",
         "launch",
         "done",
+        "diagnostico",
+        "contrato",
+        "entrega",
       ],
       project_status: ["draft", "published", "archived"],
       stage_status: ["pending", "in_progress", "completed", "blocked"],
