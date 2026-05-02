@@ -728,6 +728,12 @@ const ProjectsAdmin = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <AiProjectGeneratorModal
+        open={aiGenOpen}
+        onClose={() => setAiGenOpen(false)}
+        onGenerated={() => qc.invalidateQueries({ queryKey: ["projects"] })}
+      />
     </>
   );
 };
