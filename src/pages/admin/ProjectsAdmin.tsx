@@ -38,6 +38,7 @@ import type { DbProject } from "@/hooks/useProjects";
 import { TechMultiSelect, type SelectedTech } from "@/components/admin/TechMultiSelect";
 import { TagMultiSelect } from "@/components/admin/TagMultiSelect";
 import { TagIcon } from "@/components/TagIcon";
+import AiProjectGeneratorModal from "@/components/admin/AiProjectGeneratorModal";
 
 interface FormState {
   id?: string;
@@ -98,6 +99,7 @@ const ProjectsAdmin = () => {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   // tech/tag inputs are handled by Multi-select components
   const [uploading, setUploading] = useState(false);
+  const [aiGenOpen, setAiGenOpen] = useState(false);
 
   // Auth guard
   if (!authLoading && !isAdmin) {
@@ -297,6 +299,11 @@ const ProjectsAdmin = () => {
                   <HomeIcon className="w-4 h-4 mr-2" />
                   Ver site
                 </a>
+              </Button>
+              <Button onClick={() => setAiGenOpen(true)} variant="outline" size="sm" className="shrink-0 border-purple-500/40 hover:bg-purple-500/10" title="Gerar projeto completo com IA">
+                <Sparkles className="w-4 h-4 mr-2 text-purple-400" />
+                <span className="hidden sm:inline">Gerar com IA</span>
+                <span className="sm:hidden">IA</span>
               </Button>
               <Button onClick={openCreate} className="shrink-0">
                 <Plus className="w-4 h-4 mr-2" />
@@ -721,6 +728,12 @@ const ProjectsAdmin = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <AiProjectGeneratorModal
+        open={aiGenOpen}
+        onClose={() => setAiGenOpen(false)}
+        onGenerated={() => qc.invalidateQueries({ queryKey: ["projects"] })}
+      />
     </>
   );
 };

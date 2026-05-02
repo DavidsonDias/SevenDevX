@@ -17,6 +17,8 @@ import { supabase } from "@/integrations/supabase/client";
 import SEOHead from "@/components/SEOHead";
 import AiInsightsBlock from "@/components/admin/AiInsightsBlock";
 import AdminMenu from "@/components/admin/AdminMenu";
+import GlobalSearch from "@/components/admin/GlobalSearch";
+import KpiCards from "@/components/admin/KpiCards";
 import GlassCard from "@/components/GlassCard";
 import { StatsCardSkeleton } from "@/components/SkeletonLoader";
 import { useToast } from "@/hooks/use-toast";
@@ -230,6 +232,7 @@ const AdminDashboard = () => {
               </span>
             </div>
             <div className="flex items-center gap-2 sm:gap-3">
+              <GlobalSearch />
               <Link
                 to="/"
                 className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-xs uppercase tracking-wider"
@@ -269,6 +272,9 @@ const AdminDashboard = () => {
         </header>
 
         <main className="container mx-auto px-6 py-8">
+          {/* KPIs avançados (#6) */}
+          <KpiCards />
+
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {isLoading ? (
