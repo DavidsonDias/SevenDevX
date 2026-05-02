@@ -25,7 +25,7 @@ export default function KpiCards() {
           supabase.from("contacts").select("id", { count: "exact", head: true }),
           supabase.from("clients").select("id", { count: "exact", head: true }).eq("status", "active"),
           supabase.from("clients").select("id", { count: "exact", head: true }).eq("contract_status", "pending"),
-          supabase.from("clients").select("id", { count: "exact", head: true }).eq("contract_status", "signed"),
+          supabase.from("clients").select("id", { count: "exact", head: true }).eq("contract_status", "approved"),
         ]);
 
         const conv = (contactsTotal.count || 0) > 0
