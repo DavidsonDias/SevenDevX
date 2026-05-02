@@ -298,6 +298,11 @@ const ProjectsAdmin = () => {
                   Ver site
                 </a>
               </Button>
+              <Button onClick={() => setAiGenOpen(true)} variant="outline" size="sm" className="shrink-0 border-purple-500/40 hover:bg-purple-500/10" title="Gerar projeto completo com IA">
+                <Sparkles className="w-4 h-4 mr-2 text-purple-400" />
+                <span className="hidden sm:inline">Gerar com IA</span>
+                <span className="sm:hidden">IA</span>
+              </Button>
               <Button onClick={openCreate} className="shrink-0">
                 <Plus className="w-4 h-4 mr-2" />
                 <span className="hidden sm:inline">Novo projeto</span>
