@@ -38,6 +38,7 @@ import type { DbProject } from "@/hooks/useProjects";
 import { TechMultiSelect, type SelectedTech } from "@/components/admin/TechMultiSelect";
 import { TagMultiSelect } from "@/components/admin/TagMultiSelect";
 import { TagIcon } from "@/components/TagIcon";
+import AiProjectGeneratorModal from "@/components/admin/AiProjectGeneratorModal";
 
 interface FormState {
   id?: string;
@@ -98,6 +99,7 @@ const ProjectsAdmin = () => {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   // tech/tag inputs are handled by Multi-select components
   const [uploading, setUploading] = useState(false);
+  const [aiGenOpen, setAiGenOpen] = useState(false);
 
   // Auth guard
   if (!authLoading && !isAdmin) {
