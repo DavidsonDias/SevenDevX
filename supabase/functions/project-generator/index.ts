@@ -1,6 +1,16 @@
 // 🤖 project-generator — gera projeto completo a partir de um briefing (cliente + projeto + estágios + documentos + estimativa)
+// Validação rigorosa de input com Zod, rate-limit por usuário, auditoria.
 // deno-lint-ignore-file no-explicit-any
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { z } from "https://esm.sh/zod@3.23.8";
+
+const InputSchema = z.object({
+  briefing: z.string().trim().min(20, "Briefing muito curto (mín. 20 chars)").max(8000, "Briefing muito longo (máx. 8000 chars)"),
+  client_id: z.string().uuid().nullable().optional(),
+  client_name: z.string().trim().max(120).optional().nullable(),
+  client_email: z.string().trim().email().max(160).optional().nullable().or(z.literal("")),
+  client_company: z.string().trim().max(160).optional().nullable(),
+});
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -68,13 +78,15 @@ Deno.serve(async (req) => {
     const { data: isAdmin } = await userClient.rpc("has_role", { _user_id: user.id, _role: "admin" });
     if (!isAdmin) throw new Error("Forbidden: admin role required");
 
-    const { briefing, client_id, client_name, client_email, client_company } = await req.json();
-    if (!briefing || typeof briefing !== "string" || briefing.trim().length < 20) {
-      return new Response(JSON.stringify({ error: "Briefing muito curto (min. 20 caracteres)" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+    const rawBody = await req.json().catch(() => ({}));
+    const parsed = InputSchema.safeParse(rawBody);
+    if (!parsed.success) {
+      return new Response(
+        JSON.stringify({ error: "Validação falhou", details: parsed.error.flatten().fieldErrors }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
     }
+    const { briefing, client_id, client_name, client_email, client_company } = parsed.data;
 
     // Service-role client for DB writes
     const admin = createClient(SUPABASE_URL, SERVICE_KEY);
