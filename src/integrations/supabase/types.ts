@@ -95,6 +95,42 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_log: {
+        Row: {
+          action: string
+          actor_email: string | null
+          actor_id: string | null
+          diff: Json
+          id: string
+          occurred_at: string
+          record_id: string | null
+          summary: string | null
+          table_name: string
+        }
+        Insert: {
+          action: string
+          actor_email?: string | null
+          actor_id?: string | null
+          diff?: Json
+          id?: string
+          occurred_at?: string
+          record_id?: string | null
+          summary?: string | null
+          table_name: string
+        }
+        Update: {
+          action?: string
+          actor_email?: string | null
+          actor_id?: string | null
+          diff?: Json
+          id?: string
+          occurred_at?: string
+          record_id?: string | null
+          summary?: string | null
+          table_name?: string
+        }
+        Relationships: []
+      }
       blog_categories: {
         Row: {
           color: string | null
