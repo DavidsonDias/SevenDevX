@@ -87,6 +87,7 @@ const ProjectsDebug = () => {
         </header>
 
         <main className="max-w-[1200px] mx-auto px-4 sm:px-6 py-8 space-y-8">
+          <Breadcrumb />
           {isLoading || !stats ? (
             <div className="flex justify-center py-20">
               <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
