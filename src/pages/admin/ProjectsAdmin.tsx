@@ -318,6 +318,7 @@ const ProjectsAdmin = () => {
         </header>
 
         <main className="max-w-[1400px] mx-auto px-4 sm:px-6 py-6 sm:py-10">
+          <Breadcrumb />
           {/* Filters */}
           <div className="flex flex-col sm:flex-row gap-3 mb-6">
             <div className="relative flex-1">
