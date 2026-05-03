@@ -1,5 +1,6 @@
 /**
- * 📎 useAttachments — sistema unificado de anexos (logo, file, idea, document, contract)
+ * 📎 useAttachments — sistema unificado de anexos com URLs ASSINADAS (bucket privado).
+ * Segurança enterprise: URLs expiram em 1h, geradas sob demanda via React Query.
  */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,10 +15,13 @@ interface ListFilter {
   type?: AttachmentType;
 }
 
+const SIGN_TTL = 60 * 60; // 1h
+
 export const useAttachments = (filter: ListFilter) => {
   return useQuery({
     queryKey: ["attachments", filter],
     enabled: !!(filter.clientId || filter.projectId || filter.stageId),
+    staleTime: 30_000,
     queryFn: async () => {
       let q = supabase.from("attachments").select("*").order("created_at", { ascending: false });
       if (filter.clientId) q = q.eq("client_id", filter.clientId);
@@ -26,7 +30,24 @@ export const useAttachments = (filter: ListFilter) => {
       if (filter.type) q = q.eq("type", filter.type);
       const { data, error } = await q;
       if (error) throw error;
-      return data;
+
+      // Resolve signed URLs (private bucket)
+      const paths = (data || [])
+        .map((a: any) => a?.metadata?.storage_path)
+        .filter(Boolean) as string[];
+      const urlMap = new Map<string, string>();
+      if (paths.length) {
+        const { data: signed } = await supabase.storage
+          .from("attachments")
+          .createSignedUrls(paths, SIGN_TTL);
+        signed?.forEach((s: any) => {
+          if (s?.path && s?.signedUrl) urlMap.set(s.path, s.signedUrl);
+        });
+      }
+      return (data || []).map((a: any) => {
+        const path = a?.metadata?.storage_path;
+        return path && urlMap.has(path) ? { ...a, file_url: urlMap.get(path) } : a;
+      });
     },
   });
 };
@@ -49,15 +70,21 @@ export const useUploadAttachment = () => {
         params.clientId ? `clients/${params.clientId}` :
         "misc";
       const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-      const { error: upErr } = await supabase.storage.from("attachments").upload(path, params.file, { upsert: false });
+      const { error: upErr } = await supabase.storage
+        .from("attachments")
+        .upload(path, params.file, { upsert: false, contentType: params.file.type });
       if (upErr) throw upErr;
-      const { data: pub } = supabase.storage.from("attachments").getPublicUrl(path);
+
+      // Signed URL for immediate display
+      const { data: signed } = await supabase.storage
+        .from("attachments")
+        .createSignedUrl(path, SIGN_TTL);
 
       const { data, error } = await supabase
         .from("attachments")
         .insert({
           name: params.file.name,
-          file_url: pub.publicUrl,
+          file_url: signed?.signedUrl || "",
           mime_type: params.file.type,
           size_bytes: params.file.size,
           type: params.type,
