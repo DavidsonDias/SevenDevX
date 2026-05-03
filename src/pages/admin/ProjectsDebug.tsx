@@ -18,6 +18,7 @@ import { useSmartBack } from "@/hooks/useSmartBack";
 
 const ProjectsDebug = () => {
   const navigate = useNavigate();
+  const goBack = useSmartBack();
   const { isAdmin, isLoading: authLoading } = useAuthContext();
 
   if (!authLoading && !isAdmin) {
