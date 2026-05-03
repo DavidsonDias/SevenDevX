@@ -20,6 +20,7 @@ import AdminMenu from "@/components/admin/AdminMenu";
 import GlobalSearch from "@/components/admin/GlobalSearch";
 import KpiCards from "@/components/admin/KpiCards";
 import GlassCard from "@/components/GlassCard";
+import ActivityFeed from "@/components/admin/ActivityFeed";
 import { StatsCardSkeleton } from "@/components/SkeletonLoader";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -408,8 +409,11 @@ const AdminDashboard = () => {
             </GlassCard>
           </div>
 
-          {/* AI Insights */}
-          <AiInsightsBlock stats={stats} contactsCount={contacts.length} />
+          {/* Activity Feed (audit log em tempo real) + AI Insights */}
+          <div className="grid lg:grid-cols-2 gap-6 mb-8">
+            <ActivityFeed />
+            <AiInsightsBlock stats={stats} contactsCount={contacts.length} />
+          </div>
 
           {/* Quick Access — Sistema Operacional */}
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-8">
