@@ -39,6 +39,8 @@ import { TechMultiSelect, type SelectedTech } from "@/components/admin/TechMulti
 import { TagMultiSelect } from "@/components/admin/TagMultiSelect";
 import { TagIcon } from "@/components/TagIcon";
 import AiProjectGeneratorModal from "@/components/admin/AiProjectGeneratorModal";
+import Breadcrumb from "@/components/admin/Breadcrumb";
+import { useSmartBack } from "@/hooks/useSmartBack";
 
 interface FormState {
   id?: string;
