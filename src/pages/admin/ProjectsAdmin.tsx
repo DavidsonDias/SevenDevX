@@ -39,6 +39,8 @@ import { TechMultiSelect, type SelectedTech } from "@/components/admin/TechMulti
 import { TagMultiSelect } from "@/components/admin/TagMultiSelect";
 import { TagIcon } from "@/components/TagIcon";
 import AiProjectGeneratorModal from "@/components/admin/AiProjectGeneratorModal";
+import Breadcrumb from "@/components/admin/Breadcrumb";
+import { useSmartBack } from "@/hooks/useSmartBack";
 
 interface FormState {
   id?: string;
@@ -89,6 +91,7 @@ const slugify = (s: string) =>
 
 const ProjectsAdmin = () => {
   const navigate = useNavigate();
+  const goBack = useSmartBack();
   const { isAdmin, isLoading: authLoading } = useAuthContext();
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -279,8 +282,8 @@ const ProjectsAdmin = () => {
         <header className="border-b border-border sticky top-0 z-40 bg-background/95 backdrop-blur-lg">
           <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm" onClick={() => navigate("/admin")}>
-                <ArrowLeft className="w-4 h-4 mr-2" /> Dashboard
+              <Button variant="ghost" size="sm" onClick={() => goBack("/admin")}>
+                <ArrowLeft className="w-4 h-4 mr-2" /> Voltar
               </Button>
               <Link to="/" aria-label="Ir para o site SevenDevX" className="hidden md:block hover:opacity-80 transition-opacity">
                 <h1 className="text-lg font-orbitron font-bold tracking-tight">
@@ -315,6 +318,7 @@ const ProjectsAdmin = () => {
         </header>
 
         <main className="max-w-[1400px] mx-auto px-4 sm:px-6 py-6 sm:py-10">
+          <Breadcrumb />
           {/* Filters */}
           <div className="flex flex-col sm:flex-row gap-3 mb-6">
             <div className="relative flex-1">
