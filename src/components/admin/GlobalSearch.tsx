@@ -1,10 +1,13 @@
 /**
- * 🔎 GlobalSearch — Spotlight (Cmd/Ctrl+K) cross-entidade
- * Busca clients, projects, contacts, services, blog posts em uma única chamada (RPC search_global)
+ * 🔎 Command Palette (⌘K) — busca cross-entidade + ações rápidas
+ * Enterprise-grade: navegação, criação, atalhos, busca de clientes/projetos/leads.
  */
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, Loader2, Users, FolderKanban, Mail, Wrench, FileText, X } from "lucide-react";
+import {
+  Search, Loader2, Users, FolderKanban, Mail, Wrench, FileText, X,
+  Plus, LayoutDashboard, Workflow, Tag as TagIcon, Cpu, HelpCircle, BookOpen, Home, LogOut, Sparkles
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -17,20 +20,21 @@ interface Result {
   rank: number;
 }
 
-const ICONS: Record<Result["entity"], any> = {
-  client: Users,
-  project: FolderKanban,
-  contact: Mail,
-  service: Wrench,
-  post: FileText,
-};
+interface Action {
+  id: string;
+  label: string;
+  hint?: string;
+  icon: any;
+  group: "Navegar" | "Criar" | "Sistema";
+  run: () => void;
+  keywords?: string;
+}
 
-const LABELS: Record<Result["entity"], string> = {
-  client: "Cliente",
-  project: "Projeto",
-  contact: "Lead",
-  service: "Serviço",
-  post: "Post",
+const ENTITY_ICONS: Record<Result["entity"], any> = {
+  client: Users, project: FolderKanban, contact: Mail, service: Wrench, post: FileText,
+};
+const ENTITY_LABELS: Record<Result["entity"], string> = {
+  client: "Cliente", project: "Projeto", contact: "Lead", service: "Serviço", post: "Post",
 };
 
 export default function GlobalSearch() {
@@ -43,7 +47,7 @@ export default function GlobalSearch() {
   const inputRef = useRef<HTMLInputElement>(null);
   const debounceRef = useRef<number | null>(null);
 
-  // Cmd/Ctrl + K toggle
+  // ⌘K toggle
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -61,6 +65,41 @@ export default function GlobalSearch() {
     else { setQ(""); setResults([]); setActiveIdx(0); }
   }, [open]);
 
+  const close = useCallback(() => setOpen(false), []);
+
+  const actions: Action[] = useMemo(() => [
+    // Navegar
+    { id: "nav-dash", label: "Dashboard", icon: LayoutDashboard, group: "Navegar", run: () => { navigate("/admin"); close(); }, keywords: "home painel" },
+    { id: "nav-clients", label: "Clientes (CRM)", icon: Users, group: "Navegar", run: () => { navigate("/admin/clients"); close(); }, keywords: "crm clientes" },
+    { id: "nav-pipeline", label: "Pipeline", icon: Workflow, group: "Navegar", run: () => { navigate("/admin/pipeline"); close(); }, keywords: "kanban funil" },
+    { id: "nav-projects", label: "Projetos", icon: FolderKanban, group: "Navegar", run: () => { navigate("/admin/projects"); close(); }, keywords: "portfolio cases" },
+    { id: "nav-process", label: "Processo (Etapas)", icon: Workflow, group: "Navegar", run: () => { navigate("/admin/process"); close(); }, keywords: "templates" },
+    { id: "nav-services", label: "Serviços", icon: Wrench, group: "Navegar", run: () => { navigate("/admin/services"); close(); } },
+    { id: "nav-faq", label: "FAQ", icon: HelpCircle, group: "Navegar", run: () => { navigate("/admin/faq"); close(); } },
+    { id: "nav-tech", label: "Tecnologias", icon: Cpu, group: "Navegar", run: () => { navigate("/admin/technologies"); close(); } },
+    { id: "nav-tags", label: "Tags", icon: TagIcon, group: "Navegar", run: () => { navigate("/admin/tags"); close(); } },
+    { id: "nav-blog", label: "Blog", icon: BookOpen, group: "Navegar", run: () => { navigate("/blog"); close(); } },
+    { id: "nav-site", label: "Abrir site público", icon: Home, group: "Navegar", run: () => { navigate("/"); close(); } },
+
+    // Criar
+    { id: "new-client", label: "Novo cliente", icon: Plus, group: "Criar", run: () => { navigate("/admin/clients?new=1"); close(); } },
+    { id: "new-project", label: "Novo projeto", icon: Plus, group: "Criar", run: () => { navigate("/admin/projects?new=1"); close(); } },
+    { id: "new-ai", label: "Gerar projeto com IA", icon: Sparkles, group: "Criar", run: () => { navigate("/admin/projects?ai=1"); close(); }, keywords: "ia gerador" },
+
+    // Sistema
+    { id: "sys-logout", label: "Sair", icon: LogOut, group: "Sistema", run: async () => { await supabase.auth.signOut(); navigate("/"); close(); } },
+  ], [navigate, close]);
+
+  const filteredActions = useMemo(() => {
+    if (!q.trim()) return actions;
+    const term = q.toLowerCase();
+    return actions.filter(a =>
+      a.label.toLowerCase().includes(term) ||
+      (a.keywords || "").toLowerCase().includes(term) ||
+      a.group.toLowerCase().includes(term)
+    );
+  }, [q, actions]);
+
   const search = useCallback(async (term: string) => {
     if (term.trim().length < 2) { setResults([]); return; }
     setLoading(true);
@@ -70,7 +109,7 @@ export default function GlobalSearch() {
       setResults((data || []) as Result[]);
       setActiveIdx(0);
     } catch (e) {
-      console.error("[GlobalSearch]", e);
+      console.error("[CommandPalette]", e);
       setResults([]);
     } finally {
       setLoading(false);
@@ -79,31 +118,47 @@ export default function GlobalSearch() {
 
   useEffect(() => {
     if (debounceRef.current) window.clearTimeout(debounceRef.current);
-    debounceRef.current = window.setTimeout(() => search(q), 250);
+    debounceRef.current = window.setTimeout(() => search(q), 220);
     return () => { if (debounceRef.current) window.clearTimeout(debounceRef.current); };
   }, [q, search]);
 
-  const go = (r: Result) => {
-    setOpen(false);
-    navigate(r.url);
+  // Flat list for keyboard nav: actions first, then results
+  const flatItems = useMemo(() => {
+    const items: Array<{ kind: "action"; data: Action } | { kind: "result"; data: Result }> = [];
+    filteredActions.forEach(a => items.push({ kind: "action", data: a }));
+    results.forEach(r => items.push({ kind: "result", data: r }));
+    return items;
+  }, [filteredActions, results]);
+
+  const runItem = (item: typeof flatItems[number]) => {
+    if (item.kind === "action") item.data.run();
+    else { navigate(item.data.url); close(); }
   };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "ArrowDown") { e.preventDefault(); setActiveIdx((i) => Math.min(i + 1, results.length - 1)); }
+    if (e.key === "ArrowDown") { e.preventDefault(); setActiveIdx((i) => Math.min(i + 1, flatItems.length - 1)); }
     if (e.key === "ArrowUp") { e.preventDefault(); setActiveIdx((i) => Math.max(i - 1, 0)); }
-    if (e.key === "Enter" && results[activeIdx]) { e.preventDefault(); go(results[activeIdx]); }
+    if (e.key === "Enter" && flatItems[activeIdx]) { e.preventDefault(); runItem(flatItems[activeIdx]); }
   };
+
+  // Group actions for display
+  const groupedActions = useMemo(() => {
+    const map: Record<string, Action[]> = {};
+    filteredActions.forEach(a => { (map[a.group] ||= []).push(a); });
+    return map;
+  }, [filteredActions]);
+
+  let runningIndex = 0;
 
   return (
     <>
-      {/* Trigger */}
       <button
         onClick={() => setOpen(true)}
         className="hidden md:inline-flex items-center gap-2 px-3 py-2 border border-white/15 rounded-lg hover:bg-white/5 text-xs text-white/60"
         title="Buscar (Ctrl+K)"
       >
         <Search className="w-3.5 h-3.5" />
-        <span>Buscar...</span>
+        <span>Buscar ou executar...</span>
         <kbd className="ml-2 px-1.5 py-0.5 text-[10px] border border-white/20 rounded">⌘K</kbd>
       </button>
 
@@ -111,8 +166,8 @@ export default function GlobalSearch() {
         {open && (
           <motion.div
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] bg-black/70 backdrop-blur-sm flex items-start justify-center pt-[12vh] px-4"
-            onClick={() => setOpen(false)}
+            className="fixed inset-0 z-[200] bg-black/70 backdrop-blur-sm flex items-start justify-center pt-[10vh] px-4"
+            onClick={close}
           >
             <motion.div
               initial={{ opacity: 0, y: -20, scale: 0.97 }}
@@ -120,7 +175,7 @@ export default function GlobalSearch() {
               exit={{ opacity: 0, y: -20, scale: 0.97 }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-xl bg-zinc-950 border border-white/15 rounded-2xl shadow-2xl overflow-hidden"
+              className="w-full max-w-2xl bg-zinc-950 border border-white/15 rounded-2xl shadow-2xl overflow-hidden"
             >
               <div className="flex items-center gap-2 p-3 border-b border-white/10">
                 <Search className="w-4 h-4 text-white/40" />
@@ -129,49 +184,79 @@ export default function GlobalSearch() {
                   value={q}
                   onChange={(e) => setQ(e.target.value)}
                   onKeyDown={onKeyDown}
-                  placeholder="Buscar clientes, projetos, leads, serviços..."
+                  placeholder="O que você quer fazer? (clientes, projetos, novo, gerar IA…)"
                   className="flex-1 bg-transparent outline-none text-sm placeholder:text-white/30"
                 />
                 {loading && <Loader2 className="w-4 h-4 animate-spin text-white/40" />}
-                <button onClick={() => setOpen(false)} className="p-1 rounded hover:bg-white/10">
+                <button onClick={close} className="p-1 rounded hover:bg-white/10">
                   <X className="w-4 h-4 text-white/40" />
                 </button>
               </div>
 
-              <div className="max-h-[50vh] overflow-y-auto">
-                {q.length < 2 && (
-                  <div className="p-6 text-center text-sm text-white/40">
-                    Digite pelo menos 2 caracteres para buscar.
+              <div className="max-h-[60vh] overflow-y-auto">
+                {/* Actions (grouped) */}
+                {Object.entries(groupedActions).map(([group, items]) => (
+                  <div key={group}>
+                    <div className="px-4 pt-3 pb-1 text-[10px] uppercase tracking-wider text-white/40">{group}</div>
+                    {items.map((a) => {
+                      const idx = runningIndex++;
+                      const Icon = a.icon;
+                      const active = idx === activeIdx;
+                      return (
+                        <button
+                          key={a.id}
+                          onClick={() => a.run()}
+                          onMouseEnter={() => setActiveIdx(idx)}
+                          className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${active ? "bg-white/10" : "hover:bg-white/5"}`}
+                        >
+                          <Icon className="w-4 h-4 text-white/60 shrink-0" />
+                          <span className="flex-1 text-sm">{a.label}</span>
+                          {a.hint && <span className="text-[10px] text-white/40">{a.hint}</span>}
+                        </button>
+                      );
+                    })}
                   </div>
+                ))}
+
+                {/* Search results */}
+                {results.length > 0 && (
+                  <>
+                    <div className="px-4 pt-3 pb-1 text-[10px] uppercase tracking-wider text-white/40 border-t border-white/5 mt-1">
+                      Resultados
+                    </div>
+                    {results.map((r) => {
+                      const idx = runningIndex++;
+                      const Icon = ENTITY_ICONS[r.entity];
+                      const active = idx === activeIdx;
+                      return (
+                        <button
+                          key={`${r.entity}-${r.id}`}
+                          onClick={() => { navigate(r.url); close(); }}
+                          onMouseEnter={() => setActiveIdx(idx)}
+                          className={`w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors ${active ? "bg-white/10" : "hover:bg-white/5"}`}
+                        >
+                          <Icon className="w-4 h-4 text-white/50 shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <div className="text-sm text-white truncate">{r.title}</div>
+                            {r.subtitle && <div className="text-xs text-white/50 truncate">{r.subtitle}</div>}
+                          </div>
+                          <span className="text-[10px] uppercase tracking-wider text-white/40 px-2 py-0.5 border border-white/10 rounded">
+                            {ENTITY_LABELS[r.entity]}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </>
                 )}
-                {q.length >= 2 && !loading && results.length === 0 && (
-                  <div className="p-6 text-center text-sm text-white/40">Nada encontrado.</div>
+
+                {q.length >= 2 && !loading && results.length === 0 && filteredActions.length === 0 && (
+                  <div className="p-8 text-center text-sm text-white/40">Nada encontrado para "{q}"</div>
                 )}
-                {results.map((r, i) => {
-                  const Icon = ICONS[r.entity];
-                  return (
-                    <button
-                      key={`${r.entity}-${r.id}`}
-                      onClick={() => go(r)}
-                      onMouseEnter={() => setActiveIdx(i)}
-                      className={`w-full flex items-center gap-3 px-4 py-3 text-left border-b border-white/5 last:border-0 transition-colors ${i === activeIdx ? "bg-white/10" : "hover:bg-white/5"}`}
-                    >
-                      <Icon className="w-4 h-4 text-white/50 shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <div className="text-sm text-white truncate">{r.title}</div>
-                        {r.subtitle && <div className="text-xs text-white/50 truncate">{r.subtitle}</div>}
-                      </div>
-                      <span className="text-[10px] uppercase tracking-wider text-white/40 px-2 py-0.5 border border-white/10 rounded">
-                        {LABELS[r.entity]}
-                      </span>
-                    </button>
-                  );
-                })}
               </div>
 
               <div className="px-4 py-2 border-t border-white/10 flex items-center justify-between text-[11px] text-white/40">
-                <span>↑↓ navegar · ↵ abrir · esc fechar</span>
-                <span>Ctrl+K</span>
+                <span>↑↓ navegar · ↵ executar · esc fechar</span>
+                <span>SevenDevX Command</span>
               </div>
             </motion.div>
           </motion.div>
