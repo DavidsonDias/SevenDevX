@@ -91,6 +91,7 @@ const slugify = (s: string) =>
 
 const ProjectsAdmin = () => {
   const navigate = useNavigate();
+  const goBack = useSmartBack();
   const { isAdmin, isLoading: authLoading } = useAuthContext();
   const { toast } = useToast();
   const qc = useQueryClient();
