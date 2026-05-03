@@ -73,8 +73,8 @@ const ProjectsDebug = () => {
         <header className="border-b border-border sticky top-0 z-40 bg-background/95 backdrop-blur-lg">
           <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm" onClick={() => navigate("/admin/projects")}>
-                <ArrowLeft className="w-4 h-4 mr-2" /> CMS
+              <Button variant="ghost" size="sm" onClick={() => goBack("/admin/projects")}>
+                <ArrowLeft className="w-4 h-4 mr-2" /> Voltar
               </Button>
               <div>
                 <h1 className="text-lg sm:text-xl font-orbitron font-bold tracking-tight">Debug · Projetos</h1>
