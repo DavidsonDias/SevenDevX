@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import SEOHead from "@/components/SEOHead";
 import type { DbProject } from "@/hooks/useProjects";
+import Breadcrumb from "@/components/admin/Breadcrumb";
+import { useSmartBack } from "@/hooks/useSmartBack";
 
 const ProjectsDebug = () => {
   const navigate = useNavigate();
