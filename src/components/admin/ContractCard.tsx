@@ -17,6 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAiGenerate } from "@/hooks/useEcosystem";
 import { exportMarkdownToPdf } from "@/utils/pdfExport";
+import ContractVersionHistory from "@/components/admin/ContractVersionHistory";
 
 type Entity = "clients" | "projects";
 
@@ -113,9 +114,11 @@ export default function ContractCard({ entity, id, data, aiContext, entityName, 
       const path = `contracts/${entity}/${id}/${Date.now()}.${ext}`;
       const { error } = await supabase.storage.from("attachments").upload(path, file, { upsert: false });
       if (error) throw error;
-      const { data: pub } = supabase.storage.from("attachments").getPublicUrl(path);
-      setUrl(pub.publicUrl);
-      await persist({ contract_url: pub.publicUrl, contract_status: status === "pending" ? "sent" : status });
+      // bucket privado: armazenamos o path lógico; a URL é assinada sob demanda
+      const { data: signed } = await supabase.storage.from("attachments").createSignedUrl(path, 60 * 60 * 24 * 7);
+      const finalUrl = signed?.signedUrl || path;
+      setUrl(finalUrl);
+      await persist({ contract_url: finalUrl, contract_status: status === "pending" ? "sent" : status });
       if (status === "pending") setStatus("sent");
       toast({ title: "Contrato enviado" });
     } catch (e: any) {
@@ -311,6 +314,8 @@ export default function ContractCard({ entity, id, data, aiContext, entityName, 
             Atualizado em {new Date(data.contract_updated_at).toLocaleString("pt-BR")}
           </p>
         )}
+
+        <ContractVersionHistory entityType={entity === "clients" ? "client" : "project"} entityId={id} />
       </div>
     </div>
   );
