@@ -78,6 +78,16 @@ Deno.serve(async (req) => {
     const { data: isAdmin } = await userClient.rpc("has_role", { _user_id: user.id, _role: "admin" });
     if (!isAdmin) throw new Error("Forbidden: admin role required");
 
+    // Rate-limit / quota de IA por usuário (24h)
+    const { data: quota } = await userClient.rpc("fn_ai_usage_check_quota" as any, { _user_id: user.id });
+    const q = Array.isArray(quota) ? quota[0] : quota;
+    if (q && q.allowed === false) {
+      return new Response(
+        JSON.stringify({ error: `Quota de IA excedida (${q.used}/${q.limit} nas últimas 24h)`, quota: q }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const rawBody = await req.json().catch(() => ({}));
     const parsed = InputSchema.safeParse(rawBody);
     if (!parsed.success) {
