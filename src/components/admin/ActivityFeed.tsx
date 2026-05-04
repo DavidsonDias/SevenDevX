@@ -1,9 +1,11 @@
 /**
- * 📡 ActivityFeed — timeline em tempo real do audit_log
+ * 📡 ActivityFeed — timeline em tempo real do audit_log (clicável → diff modal)
  */
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Activity, Plus, Pencil, Trash2, User as UserIcon } from "lucide-react";
-import { useAuditLog } from "@/hooks/useAuditLog";
+import { useAuditLog, type AuditEntry } from "@/hooks/useAuditLog";
+import AuditDiffModal from "@/components/admin/AuditDiffModal";
 
 const ICONS = { INSERT: Plus, UPDATE: Pencil, DELETE: Trash2 } as const;
 const COLORS = {
