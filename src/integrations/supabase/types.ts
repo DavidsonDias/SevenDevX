@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_usage: {
+        Row: {
+          created_at: string
+          error: string | null
+          estimated_cost_usd: number | null
+          function_name: string
+          id: string
+          metadata: Json
+          model: string | null
+          output_chars: number | null
+          prompt_chars: number | null
+          success: boolean
+          user_email: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          estimated_cost_usd?: number | null
+          function_name: string
+          id?: string
+          metadata?: Json
+          model?: string | null
+          output_chars?: number | null
+          prompt_chars?: number | null
+          success?: boolean
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          estimated_cost_usd?: number | null
+          function_name?: string
+          id?: string
+          metadata?: Json
+          model?: string | null
+          output_chars?: number | null
+          prompt_chars?: number | null
+          success?: boolean
+          user_email?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       analytics_events: {
         Row: {
           created_at: string
@@ -454,6 +499,51 @@ export type Database = {
           source?: string | null
           status?: Database["public"]["Enums"]["contact_status"]
           updated_at?: string
+        }
+        Relationships: []
+      }
+      contract_versions: {
+        Row: {
+          content_hash: string | null
+          contract_status: string | null
+          contract_text: string | null
+          contract_url: string | null
+          created_at: string
+          created_by: string | null
+          created_by_email: string | null
+          entity_id: string
+          entity_type: string
+          id: string
+          label: string | null
+          version: number
+        }
+        Insert: {
+          content_hash?: string | null
+          contract_status?: string | null
+          contract_text?: string | null
+          contract_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          created_by_email?: string | null
+          entity_id: string
+          entity_type: string
+          id?: string
+          label?: string | null
+          version: number
+        }
+        Update: {
+          content_hash?: string | null
+          contract_status?: string | null
+          contract_text?: string | null
+          contract_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          created_by_email?: string | null
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          label?: string | null
+          version?: number
         }
         Relationships: []
       }
@@ -1202,6 +1292,35 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      fn_ai_usage_check_quota: {
+        Args: { _user_id: string }
+        Returns: {
+          allowed: boolean
+          limit: number
+          used: number
+        }[]
+      }
+      fn_pipeline_forecast: {
+        Args: never
+        Returns: {
+          pipeline_stage: string
+          project_count: number
+          raw_revenue: number
+          weighted_revenue: number
+        }[]
+      }
+      fn_stale_leads: {
+        Args: { _days?: number }
+        Returns: {
+          client_name: string
+          days_idle: number
+          id: string
+          kind: string
+          pipeline_stage: string
+          title: string
+          url: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

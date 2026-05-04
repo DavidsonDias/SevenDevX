@@ -1,9 +1,11 @@
 /**
- * 📡 ActivityFeed — timeline em tempo real do audit_log
+ * 📡 ActivityFeed — timeline em tempo real do audit_log (clicável → diff modal)
  */
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Activity, Plus, Pencil, Trash2, User as UserIcon } from "lucide-react";
-import { useAuditLog } from "@/hooks/useAuditLog";
+import { useAuditLog, type AuditEntry } from "@/hooks/useAuditLog";
+import AuditDiffModal from "@/components/admin/AuditDiffModal";
 
 const ICONS = { INSERT: Plus, UPDATE: Pencil, DELETE: Trash2 } as const;
 const COLORS = {
@@ -35,9 +37,11 @@ const formatTime = (iso: string) => {
 
 export default function ActivityFeed() {
   const { data: entries = [], isLoading } = useAuditLog(20);
+  const [selected, setSelected] = useState<AuditEntry | null>(null);
 
   return (
     <div className="border border-white/10 rounded-2xl bg-white/[0.02] p-5 sm:p-6">
+      <AuditDiffModal entry={selected} onClose={() => setSelected(null)} />
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-base sm:text-lg font-bold flex items-center gap-2">
           <Activity className="w-4 h-4 text-emerald-400" />
@@ -66,13 +70,14 @@ export default function ActivityFeed() {
               const label = TABLE_LABELS[e.table_name] || e.table_name;
               const fields = Object.keys(e.diff || {}).filter((k) => k !== "new" && k !== "old");
               return (
-                <motion.div
+                <motion.button
                   key={e.id}
                   layout
                   initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors"
+                  onClick={() => setSelected(e)}
+                  className="w-full text-left flex items-start gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors"
                 >
                   <div className={`shrink-0 w-7 h-7 rounded-lg border flex items-center justify-center ${cls}`}>
                     <Icon className="w-3.5 h-3.5" />
@@ -97,7 +102,7 @@ export default function ActivityFeed() {
                       )}
                     </div>
                   </div>
-                </motion.div>
+                </motion.button>
               );
             })}
           </AnimatePresence>

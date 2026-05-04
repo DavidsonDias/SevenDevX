@@ -78,6 +78,16 @@ Deno.serve(async (req) => {
     const { data: isAdmin } = await userClient.rpc("has_role", { _user_id: user.id, _role: "admin" });
     if (!isAdmin) throw new Error("Forbidden: admin role required");
 
+    // Rate-limit / quota de IA por usuário (24h)
+    const { data: quota } = await userClient.rpc("fn_ai_usage_check_quota" as any, { _user_id: user.id });
+    const q = Array.isArray(quota) ? quota[0] : quota;
+    if (q && q.allowed === false) {
+      return new Response(
+        JSON.stringify({ error: `Quota de IA excedida (${q.used}/${q.limit} nas últimas 24h)`, quota: q }),
+        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const rawBody = await req.json().catch(() => ({}));
     const parsed = InputSchema.safeParse(rawBody);
     if (!parsed.success) {
@@ -267,6 +277,22 @@ Deno.serve(async (req) => {
       });
     }
 
+    // 7) Log AI usage (success)
+    try {
+      await admin.from("ai_usage" as any).insert({
+        user_id: user.id,
+        user_email: user.email,
+        function_name: "project-generator",
+        model: "google/gemini-2.5-flash",
+        prompt_chars: briefing.length,
+        output_chars: JSON.stringify(estimate).length,
+        success: true,
+        metadata: { project_id: project.id, documents_created: docsCreated },
+      });
+    } catch (logErr) {
+      console.error("ai_usage log failed", logErr);
+    }
+
     return new Response(
       JSON.stringify({
         success: true,
@@ -282,7 +308,25 @@ Deno.serve(async (req) => {
   } catch (e) {
     console.error("project-generator error", e);
     const msg = e instanceof Error ? e.message : "Unknown error";
-    const status = msg.includes("Unauthorized") ? 401 : msg.includes("Forbidden") ? 403 : 500;
+    const status = msg.includes("Unauthorized") ? 401 : msg.includes("Forbidden") ? 403 : msg.includes("Quota") ? 429 : 500;
+    // Log failure (best-effort, silent)
+    try {
+      const adminLog = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+      const auth = req.headers.get("Authorization") || "";
+      const userClient = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, {
+        global: { headers: { Authorization: auth } },
+      });
+      const { data: { user: u } } = await userClient.auth.getUser();
+      if (u) {
+        await adminLog.from("ai_usage" as any).insert({
+          user_id: u.id,
+          user_email: u.email,
+          function_name: "project-generator",
+          success: false,
+          error: msg.slice(0, 500),
+        });
+      }
+    } catch {}
     return new Response(JSON.stringify({ error: msg }), {
       status,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
