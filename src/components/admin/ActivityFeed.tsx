@@ -37,9 +37,11 @@ const formatTime = (iso: string) => {
 
 export default function ActivityFeed() {
   const { data: entries = [], isLoading } = useAuditLog(20);
+  const [selected, setSelected] = useState<AuditEntry | null>(null);
 
   return (
     <div className="border border-white/10 rounded-2xl bg-white/[0.02] p-5 sm:p-6">
+      <AuditDiffModal entry={selected} onClose={() => setSelected(null)} />
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-base sm:text-lg font-bold flex items-center gap-2">
           <Activity className="w-4 h-4 text-emerald-400" />
