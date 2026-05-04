@@ -68,13 +68,14 @@ export default function ActivityFeed() {
               const label = TABLE_LABELS[e.table_name] || e.table_name;
               const fields = Object.keys(e.diff || {}).filter((k) => k !== "new" && k !== "old");
               return (
-                <motion.div
+                <motion.button
                   key={e.id}
                   layout
                   initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors"
+                  onClick={() => setSelected(e)}
+                  className="w-full text-left flex items-start gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors"
                 >
                   <div className={`shrink-0 w-7 h-7 rounded-lg border flex items-center justify-center ${cls}`}>
                     <Icon className="w-3.5 h-3.5" />
@@ -99,7 +100,7 @@ export default function ActivityFeed() {
                       )}
                     </div>
                   </div>
-                </motion.div>
+                </motion.button>
               );
             })}
           </AnimatePresence>

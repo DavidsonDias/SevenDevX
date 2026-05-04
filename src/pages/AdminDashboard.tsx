@@ -21,6 +21,7 @@ import GlobalSearch from "@/components/admin/GlobalSearch";
 import KpiCards from "@/components/admin/KpiCards";
 import GlassCard from "@/components/GlassCard";
 import ActivityFeed from "@/components/admin/ActivityFeed";
+import SmartInsights from "@/components/admin/SmartInsights";
 import { StatsCardSkeleton } from "@/components/SkeletonLoader";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -275,6 +276,9 @@ const AdminDashboard = () => {
         <main className="container mx-auto px-6 py-8">
           {/* KPIs avançados (#6) */}
           <KpiCards />
+
+          {/* 🧠 Smart Insights — leads parados + previsão ponderada */}
+          <SmartInsights />
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
