@@ -4,8 +4,9 @@
  * Drag & drop, preview de imagens, download e delete.
  */
 import { useState, useRef } from "react";
-import { Upload, Loader2, X, FileText, Image as ImageIcon, Lightbulb, FileBadge, Download, ExternalLink } from "lucide-react";
+import { Upload, Loader2, X, FileText, Image as ImageIcon, Lightbulb, FileBadge } from "lucide-react";
 import { useAttachments, useUploadAttachment, useDeleteAttachment, AttachmentType } from "@/hooks/useAttachments";
+import FilePreview from "./FilePreview";
 
 const TYPE_META: Record<AttachmentType, { label: string; icon: any; cls: string }> = {
   logo:      { label: "Logo",       icon: ImageIcon,  cls: "bg-purple-500/10 text-purple-300 border-purple-500/30" },
