@@ -16,8 +16,6 @@ interface ListFilter {
   type?: AttachmentType;
 }
 
-const SIGN_TTL = 60 * 60; // 1h
-
 export const useAttachments = (filter: ListFilter) => {
   return useQuery({
     queryKey: ["attachments", filter],
