@@ -48,7 +48,7 @@ export default function FilePreview({ attachment, variant = "card", className = 
     return (
       <div className={`flex items-center gap-2 ${className}`}>
         {state === "loading" && <Loader2 className="w-4 h-4 animate-spin text-white/40" />}
-        {state === "error" && <AlertCircle className="w-4 h-4 text-red-400" title="Arquivo indisponível" />}
+        {state === "error" && <span title="Arquivo indisponível"><AlertCircle className="w-4 h-4 text-red-400" /></span>}
         {state === "ready" && url && (
           <a href={url} target="_blank" rel="noopener noreferrer" className="text-xs hover:underline truncate">
             {name}
