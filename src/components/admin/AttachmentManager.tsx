@@ -26,7 +26,7 @@ interface Props {
   compact?: boolean;
 }
 
-const isImage = (mime?: string | null) => !!mime && mime.startsWith("image/");
+
 
 export default function AttachmentManager({
   title = "Anexos",
