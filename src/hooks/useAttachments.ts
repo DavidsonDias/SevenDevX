@@ -32,19 +32,11 @@ export const useAttachments = (filter: ListFilter) => {
       const { data, error } = await q;
       if (error) throw error;
 
-      // Resolve signed URLs (private bucket)
+      // Resolve signed URLs (private bucket) via central cache
       const paths = (data || [])
         .map((a: any) => a?.metadata?.storage_path)
         .filter(Boolean) as string[];
-      const urlMap = new Map<string, string>();
-      if (paths.length) {
-        const { data: signed } = await supabase.storage
-          .from("attachments")
-          .createSignedUrls(paths, SIGN_TTL);
-        signed?.forEach((s: any) => {
-          if (s?.path && s?.signedUrl) urlMap.set(s.path, s.signedUrl);
-        });
-      }
+      const urlMap = paths.length ? await signMany(paths) : new Map<string, string>();
       return (data || []).map((a: any) => {
         const path = a?.metadata?.storage_path;
         return path && urlMap.has(path) ? { ...a, file_url: urlMap.get(path) } : a;
