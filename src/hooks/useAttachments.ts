@@ -5,7 +5,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { signMany, ATTACHMENTS_BUCKET, invalidateUrl, getFileUrl } from "@/lib/storage";
+import { signMany, ATTACHMENTS_BUCKET, invalidateUrl, resolveStoragePath, toStorageRef } from "@/lib/storage";
 
 export type AttachmentType = "logo" | "file" | "idea" | "document" | "contract";
 
@@ -34,11 +34,11 @@ export const useAttachments = (filter: ListFilter) => {
 
       // Resolve signed URLs (private bucket) via central cache
       const paths = (data || [])
-        .map((a: any) => a?.metadata?.storage_path)
+        .map((a: any) => resolveStoragePath(a))
         .filter(Boolean) as string[];
       const urlMap = paths.length ? await signMany(paths) : new Map<string, string>();
       return (data || []).map((a: any) => {
-        const path = a?.metadata?.storage_path;
+        const path = resolveStoragePath(a);
         return path && urlMap.has(path) ? { ...a, file_url: urlMap.get(path) } : a;
       });
     },
@@ -68,16 +68,11 @@ export const useUploadAttachment = () => {
         .upload(path, params.file, { upsert: false, contentType: params.file.type });
       if (upErr) throw upErr;
 
-      // Signed URL for immediate display
-      const { data: signed } = await supabase.storage
-        .from("attachments")
-        .createSignedUrl(path, SIGN_TTL);
-
       const { data, error } = await supabase
         .from("attachments")
         .insert({
           name: params.file.name,
-          file_url: signed?.signedUrl || "",
+          file_url: toStorageRef(path),
           mime_type: params.file.type,
           size_bytes: params.file.size,
           type: params.type,
