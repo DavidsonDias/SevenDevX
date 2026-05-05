@@ -105,7 +105,10 @@ export const useDeleteAttachment = () => {
   return useMutation({
     mutationFn: async (att: any) => {
       const path = att?.metadata?.storage_path;
-      if (path) await supabase.storage.from("attachments").remove([path]);
+      if (path) {
+        await supabase.storage.from(ATTACHMENTS_BUCKET).remove([path]);
+        invalidateUrl(path);
+      }
       const { error } = await supabase.from("attachments").delete().eq("id", att.id);
       if (error) throw error;
     },
