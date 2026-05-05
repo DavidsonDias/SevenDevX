@@ -5,7 +5,7 @@
  * - Suporta imagem, PDF (embed), e ícone genérico.
  */
 import { useEffect, useState } from "react";
-import { Loader2, FileText, AlertCircle, Download } from "lucide-react";
+import { Loader2, FileText, AlertCircle, ExternalLink, Download } from "lucide-react";
 import { getFileUrl, resolveStoragePath } from "@/lib/storage";
 
 interface Props {
@@ -31,15 +31,13 @@ export default function FilePreview({ attachment, variant = "card", className = 
       setState("error");
       return;
     }
-    getFileUrl(path)
-      .then((u) => {
-        if (!alive) return;
-        if (!u) setState("error");
-        else { setUrl(u); setState("ready"); }
-      })
-      .catch(() => alive && setState("error"));
+    getFileUrl(path).then((u) => {
+      if (!alive) return;
+      if (!u) setState("error");
+      else { setUrl(u); setState("ready"); }
+    });
     return () => { alive = false; };
-  }, [attachment?.id, attachment?.file_url, attachment?.metadata?.storage_path]);
+  }, [attachment?.id, attachment?.metadata?.storage_path]);
 
   const mime = attachment?.mime_type;
   const name = attachment?.name;

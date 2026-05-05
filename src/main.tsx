@@ -23,17 +23,8 @@ const isPreviewHost =
   window.location.hostname.includes("lovable.app");
 
 if (isPreviewHost || isInIframe) {
-  const cacheResetKey = "sevendevx-preview-cache-reset-v2";
-  Promise.all([
-    navigator.serviceWorker?.getRegistrations().then((registrations) =>
-      Promise.all(registrations.map((r) => r.unregister()))
-    ),
-    "caches" in window ? caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k)))) : Promise.resolve(),
-  ]).then(() => {
-    if (navigator.serviceWorker?.controller && sessionStorage.getItem(cacheResetKey) !== "1") {
-      sessionStorage.setItem(cacheResetKey, "1");
-      window.location.reload();
-    }
+  navigator.serviceWorker?.getRegistrations().then((registrations) => {
+    registrations.forEach((r) => r.unregister());
   });
 }
 

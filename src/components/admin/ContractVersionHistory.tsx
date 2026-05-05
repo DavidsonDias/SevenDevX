@@ -3,8 +3,6 @@
  */
 import { FileText, ExternalLink, Hash, User as UserIcon } from "lucide-react";
 import { useContractVersions } from "@/hooks/useContractVersions";
-import { useEffect, useState } from "react";
-import { getFileUrl, resolveStoragePath } from "@/lib/storage";
 
 interface Props {
   entityType: "client" | "project";
@@ -13,34 +11,6 @@ interface Props {
 
 const fmtDate = (iso: string) =>
   new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
-
-function VersionContractLink({ rawUrl }: { rawUrl: string }) {
-  const [href, setHref] = useState("");
-
-  useEffect(() => {
-    let alive = true;
-    const path = resolveStoragePath({ file_url: rawUrl });
-    if (!path) {
-      setHref(/^https?:\/\//i.test(rawUrl) ? rawUrl : "");
-      return;
-    }
-    getFileUrl(path).then((signedUrl) => alive && setHref(signedUrl || ""));
-    return () => { alive = false; };
-  }, [rawUrl]);
-
-  if (!href) return null;
-
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="inline-flex items-center gap-1 text-blue-300 hover:text-blue-200"
-    >
-      <ExternalLink className="w-3 h-3" /> abrir
-    </a>
-  );
-}
 
 export default function ContractVersionHistory({ entityType, entityId }: Props) {
   const { data: versions = [], isLoading } = useContractVersions(entityType, entityId);
@@ -96,7 +66,16 @@ export default function ContractVersionHistory({ entityType, entityId }: Props) 
                       {v.content_hash.slice(0, 10)}
                     </span>
                   )}
-                  {v.contract_url && <VersionContractLink rawUrl={v.contract_url} />}
+                  {v.contract_url && (
+                    <a
+                      href={v.contract_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-blue-300 hover:text-blue-200"
+                    >
+                      <ExternalLink className="w-3 h-3" /> abrir
+                    </a>
+                  )}
                 </div>
               </div>
             </li>

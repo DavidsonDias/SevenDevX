@@ -18,7 +18,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useAiGenerate } from "@/hooks/useEcosystem";
 import { exportMarkdownToPdf } from "@/utils/pdfExport";
 import ContractVersionHistory from "@/components/admin/ContractVersionHistory";
-import { getFileUrl, resolveStoragePath, toStorageRef } from "@/lib/storage";
 
 type Entity = "clients" | "projects";
 
@@ -82,7 +81,6 @@ export default function ContractCard({ entity, id, data, aiContext, entityName, 
   const [generating, setGenerating] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [contractHref, setContractHref] = useState("");
   const [form, setForm] = useState<JuridicalForm>(DEFAULT_FORM);
 
   useEffect(() => {
@@ -90,24 +88,6 @@ export default function ContractCard({ entity, id, data, aiContext, entityName, 
     setText(data.contract_text || "");
     setUrl(data.contract_url || "");
   }, [id]);
-
-  useEffect(() => {
-    let alive = true;
-    const raw = url?.trim();
-    if (!raw) {
-      setContractHref("");
-      return;
-    }
-    const path = resolveStoragePath({ file_url: raw });
-    if (!path) {
-      setContractHref(/^https?:\/\//i.test(raw) ? raw : "");
-      return;
-    }
-    getFileUrl(path).then((signedUrl) => {
-      if (alive) setContractHref(signedUrl || "");
-    });
-    return () => { alive = false; };
-  }, [url]);
 
   const persist = async (patch: any) => {
     setSaving(true);
@@ -134,8 +114,9 @@ export default function ContractCard({ entity, id, data, aiContext, entityName, 
       const path = `contracts/${entity}/${id}/${Date.now()}.${ext}`;
       const { error } = await supabase.storage.from("attachments").upload(path, file, { upsert: false });
       if (error) throw error;
-      // bucket privado: armazenamos referência lógica estável; a URL é assinada só na abertura
-      const finalUrl = toStorageRef(path);
+      // bucket privado: armazenamos o path lógico; a URL é assinada sob demanda
+      const { data: signed } = await supabase.storage.from("attachments").createSignedUrl(path, 60 * 60 * 24 * 7);
+      const finalUrl = signed?.signedUrl || path;
       setUrl(finalUrl);
       await persist({ contract_url: finalUrl, contract_status: status === "pending" ? "sent" : status });
       if (status === "pending") setStatus("sent");
@@ -233,9 +214,9 @@ export default function ContractCard({ entity, id, data, aiContext, entityName, 
           </label>
         </div>
 
-        {url && contractHref && (
+        {url && (
           <a
-            href={contractHref}
+            href={url}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 text-xs px-3 py-2 bg-blue-500/10 border border-blue-500/30 rounded hover:bg-blue-500/20 text-blue-300"
