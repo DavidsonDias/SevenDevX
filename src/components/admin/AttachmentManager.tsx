@@ -4,8 +4,9 @@
  * Drag & drop, preview de imagens, download e delete.
  */
 import { useState, useRef } from "react";
-import { Upload, Loader2, X, FileText, Image as ImageIcon, Lightbulb, FileBadge, Download, ExternalLink } from "lucide-react";
+import { Upload, Loader2, X, FileText, Image as ImageIcon, Lightbulb, FileBadge } from "lucide-react";
 import { useAttachments, useUploadAttachment, useDeleteAttachment, AttachmentType } from "@/hooks/useAttachments";
+import FilePreview from "./FilePreview";
 
 const TYPE_META: Record<AttachmentType, { label: string; icon: any; cls: string }> = {
   logo:      { label: "Logo",       icon: ImageIcon,  cls: "bg-purple-500/10 text-purple-300 border-purple-500/30" },
@@ -25,7 +26,7 @@ interface Props {
   compact?: boolean;
 }
 
-const isImage = (mime?: string | null) => !!mime && mime.startsWith("image/");
+
 
 export default function AttachmentManager({
   title = "Anexos",
@@ -109,13 +110,12 @@ export default function AttachmentManager({
           {items.map((att: any) => {
             const meta = TYPE_META[att.type as AttachmentType] || TYPE_META.file;
             const Icon = meta.icon;
-            const img = isImage(att.mime_type);
             return compact ? (
               <div key={att.id} className="flex items-center gap-2 p-2 bg-white/5 rounded-lg group border border-white/5">
                 <Icon className="w-4 h-4 text-white/60 shrink-0" />
-                <a href={att.file_url} target="_blank" rel="noopener noreferrer" className="text-xs flex-1 truncate hover:underline">
-                  {att.name}
-                </a>
+                <div className="flex-1 min-w-0">
+                  <FilePreview attachment={att} variant="row" />
+                </div>
                 <span className={`text-[9px] px-1.5 py-0.5 rounded border ${meta.cls}`}>{meta.label}</span>
                 <button onClick={() => remove.mutate(att)} className="opacity-0 group-hover:opacity-100 text-white/40 hover:text-red-400">
                   <X className="w-3 h-3" />
@@ -123,30 +123,12 @@ export default function AttachmentManager({
               </div>
             ) : (
               <div key={att.id} className="border border-white/10 rounded-lg overflow-hidden bg-white/[0.02] group relative">
-                {img ? (
-                  <a href={att.file_url} target="_blank" rel="noopener noreferrer" className="block aspect-video bg-black/40">
-                    <img src={att.file_url} alt={att.name} className="w-full h-full object-cover" loading="lazy" />
-                  </a>
-                ) : (
-                  <a
-                    href={att.file_url} target="_blank" rel="noopener noreferrer"
-                    className="block aspect-video bg-white/5 flex items-center justify-center"
-                  >
-                    <Icon className="w-8 h-8 text-white/40" />
-                  </a>
-                )}
+                <FilePreview attachment={att} />
                 <div className="p-2 flex items-center gap-1.5">
                   <span className={`text-[9px] px-1.5 py-0.5 rounded border shrink-0 ${meta.cls}`}>{meta.label}</span>
                   <p className="text-[11px] text-white/70 truncate flex-1" title={att.name}>{att.name}</p>
                 </div>
                 <div className="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <a
-                    href={att.file_url} target="_blank" rel="noopener noreferrer"
-                    className="p-1 rounded bg-black/60 hover:bg-black/80"
-                    title="Abrir"
-                  >
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
                   <button
                     onClick={() => remove.mutate(att)}
                     className="p-1 rounded bg-black/60 hover:bg-red-500/40"
