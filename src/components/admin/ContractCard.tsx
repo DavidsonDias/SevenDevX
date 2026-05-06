@@ -8,16 +8,22 @@
  * - Export PDF (html2pdf)
  * - Campos de contexto jurídico (parcelas, foro, prazo) que alimentam a IA
  */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   FileSignature, Upload, Loader2, ExternalLink, Save,
   FileText, Sparkles, Download, ChevronDown, ChevronUp,
+  Calculator, AlertTriangle,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAiGenerate } from "@/hooks/useEcosystem";
 import { exportMarkdownToPdf } from "@/utils/pdfExport";
 import ContractVersionHistory from "@/components/admin/ContractVersionHistory";
+import PricingEngineModal from "@/components/admin/PricingEngineModal";
+import {
+  ContractConfig, DEFAULT_CONTRACT_CONFIG, recalcInstallments,
+  maskBRL, parseBRL, maskDocument, validateContract,
+} from "@/lib/contractBuilder";
 
 type Entity = "clients" | "projects";
 
