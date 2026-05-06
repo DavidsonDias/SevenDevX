@@ -8,16 +8,22 @@
  * - Export PDF (html2pdf)
  * - Campos de contexto jurídico (parcelas, foro, prazo) que alimentam a IA
  */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   FileSignature, Upload, Loader2, ExternalLink, Save,
   FileText, Sparkles, Download, ChevronDown, ChevronUp,
+  Calculator, AlertTriangle,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAiGenerate } from "@/hooks/useEcosystem";
 import { exportMarkdownToPdf } from "@/utils/pdfExport";
 import ContractVersionHistory from "@/components/admin/ContractVersionHistory";
+import PricingEngineModal from "@/components/admin/PricingEngineModal";
+import {
+  ContractConfig, DEFAULT_CONTRACT_CONFIG, recalcInstallments,
+  maskBRL, parseBRL, maskDocument, validateContract,
+} from "@/lib/contractBuilder";
 
 type Entity = "clients" | "projects";
 
@@ -48,27 +54,7 @@ const STATUS: Record<string, { label: string; cls: string }> = {
   rejected: { label: "Rejeitado",cls: "bg-red-500/10 text-red-300 border-red-500/30" },
 };
 
-interface JuridicalForm {
-  value: string;
-  installments: string;
-  deadline: string;
-  pages: string;
-  revisions: string;
-  foro: string;
-  sla_days: string;
-  extras: string;
-}
 
-const DEFAULT_FORM: JuridicalForm = {
-  value: "",
-  installments: "50% no ato e 50% na entrega",
-  deadline: "",
-  pages: "",
-  revisions: "2",
-  foro: "São Paulo/SP",
-  sla_days: "15",
-  extras: "",
-};
 
 export default function ContractCard({ entity, id, data, aiContext, entityName, onChange }: Props) {
   const { toast } = useToast();
@@ -80,14 +66,39 @@ export default function ContractCard({ entity, id, data, aiContext, entityName, 
   const [saving, setSaving] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [exporting, setExporting] = useState(false);
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [form, setForm] = useState<JuridicalForm>(DEFAULT_FORM);
+  const [showBuilder, setShowBuilder] = useState(true);
+  const [pricingOpen, setPricingOpen] = useState(false);
+
+  // Auto-fill com dados do cliente/projeto
+  const initialCfg = useMemo<ContractConfig>(() => {
+    const c = aiContext?.client;
+    const p = aiContext?.project;
+    return {
+      ...DEFAULT_CONTRACT_CONFIG,
+      project_name: p?.title || entityName || "",
+      project_scope: p?.description || "",
+      client_name: c?.name || c?.company || "",
+      client_document: c?.document || "",
+      client_address: "",
+      client_email: c?.email || "",
+      price_total: typeof p?.budget === "number" ? p.budget : parseBRL(String(p?.budget || "")),
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  const [cfg, setCfg] = useState<ContractConfig>(() => recalcInstallments(initialCfg));
 
   useEffect(() => {
     setStatus(data.contract_status || "pending");
     setText(data.contract_text || "");
     setUrl(data.contract_url || "");
-  }, [id]);
+    setCfg(recalcInstallments(initialCfg));
+  }, [id, initialCfg, data.contract_status, data.contract_text, data.contract_url]);
+
+  const update = <K extends keyof ContractConfig>(k: K, v: ContractConfig[K]) =>
+    setCfg((prev) => recalcInstallments({ ...prev, [k]: v }));
+
+  const validationErrors = useMemo(() => validateContract(cfg), [cfg]);
 
   const persist = async (patch: any) => {
     setSaving(true);
@@ -114,7 +125,6 @@ export default function ContractCard({ entity, id, data, aiContext, entityName, 
       const path = `contracts/${entity}/${id}/${Date.now()}.${ext}`;
       const { error } = await supabase.storage.from("attachments").upload(path, file, { upsert: false });
       if (error) throw error;
-      // bucket privado: armazenamos o path lógico; a URL é assinada sob demanda
       const { data: signed } = await supabase.storage.from("attachments").createSignedUrl(path, 60 * 60 * 24 * 7);
       const finalUrl = signed?.signedUrl || path;
       setUrl(finalUrl);
@@ -129,18 +139,25 @@ export default function ContractCard({ entity, id, data, aiContext, entityName, 
   };
 
   const handleGenerateAi = async () => {
+    if (validationErrors.length) {
+      toast({
+        title: "Preencha os campos obrigatórios",
+        description: validationErrors.join(", "),
+        variant: "destructive",
+      });
+      return;
+    }
     setGenerating(true);
     try {
+      // Envia config ESTRUTURADA + valores formatados (BRL) para a IA
       const fullContext = {
         ...(aiContext || {}),
-        value: form.value || undefined,
-        installments: form.installments || undefined,
-        deadline: form.deadline || undefined,
-        pages: form.pages || undefined,
-        revisions: form.revisions || undefined,
-        foro: form.foro || undefined,
-        sla_days: form.sla_days || undefined,
-        extras: form.extras || undefined,
+        contract_config: {
+          ...cfg,
+          price_total_formatted: maskBRL(cfg.price_total),
+          price_entry_formatted: maskBRL(cfg.price_entry),
+          price_remaining_formatted: maskBRL(cfg.price_remaining),
+        },
       };
       const content: string = await ai.mutateAsync({
         task: "contract_generate",
@@ -227,50 +244,127 @@ export default function ContractCard({ entity, id, data, aiContext, entityName, 
           </a>
         )}
 
-        {/* Parâmetros jurídicos para alimentar a IA */}
+        {/* 🧱 Contract Builder estruturado */}
         <button
           type="button"
-          onClick={() => setShowAdvanced((v) => !v)}
+          onClick={() => setShowBuilder((v) => !v)}
           className="w-full text-[11px] text-white/60 hover:text-white/90 flex items-center justify-center gap-1 py-1.5"
         >
-          {showAdvanced ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-          Parâmetros do contrato (IA)
+          {showBuilder ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+          Parâmetros do contrato (Builder + IA)
         </button>
 
-        {showAdvanced && (
-          <div className="grid grid-cols-2 gap-2 p-3 bg-white/[0.03] border border-white/10 rounded-lg">
-            <label className="col-span-2 text-[10px] uppercase tracking-wider text-white/50">Valor total
-              <input value={form.value} onChange={(e) => setForm(f => ({ ...f, value: e.target.value }))}
-                placeholder="Ex: R$ 4.500,00" className={inputCls + " mt-1"} />
-            </label>
-            <label className="col-span-2 text-[10px] uppercase tracking-wider text-white/50">Parcelamento
-              <input value={form.installments} onChange={(e) => setForm(f => ({ ...f, installments: e.target.value }))}
-                placeholder="Ex: 50/50" className={inputCls + " mt-1"} />
-            </label>
-            <label className="text-[10px] uppercase tracking-wider text-white/50">Prazo
-              <input value={form.deadline} onChange={(e) => setForm(f => ({ ...f, deadline: e.target.value }))}
-                placeholder="30 dias" className={inputCls + " mt-1"} />
-            </label>
-            <label className="text-[10px] uppercase tracking-wider text-white/50">Páginas/telas
-              <input value={form.pages} onChange={(e) => setForm(f => ({ ...f, pages: e.target.value }))}
-                placeholder="5" className={inputCls + " mt-1"} />
-            </label>
-            <label className="text-[10px] uppercase tracking-wider text-white/50">Revisões
-              <input value={form.revisions} onChange={(e) => setForm(f => ({ ...f, revisions: e.target.value }))}
-                className={inputCls + " mt-1"} />
-            </label>
-            <label className="text-[10px] uppercase tracking-wider text-white/50">SLA (dias)
-              <input value={form.sla_days} onChange={(e) => setForm(f => ({ ...f, sla_days: e.target.value }))}
-                className={inputCls + " mt-1"} />
-            </label>
-            <label className="col-span-2 text-[10px] uppercase tracking-wider text-white/50">Foro
-              <input value={form.foro} onChange={(e) => setForm(f => ({ ...f, foro: e.target.value }))}
-                placeholder="São Paulo/SP" className={inputCls + " mt-1"} />
-            </label>
-            <label className="col-span-2 text-[10px] uppercase tracking-wider text-white/50">Observações extras
-              <textarea value={form.extras} onChange={(e) => setForm(f => ({ ...f, extras: e.target.value }))}
-                rows={2} placeholder="Ex: integrações específicas, exclusões…" className={inputCls + " mt-1"} />
-            </label>
+        {showBuilder && (
+          <div className="space-y-3 p-3 bg-white/[0.03] border border-white/10 rounded-lg">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] uppercase tracking-wider text-white/50">Identificação</span>
+              <button
+                type="button"
+                onClick={() => setPricingOpen(true)}
+                className="text-[10px] uppercase tracking-wider px-2 py-1 rounded border border-emerald-500/30 bg-emerald-500/10 text-emerald-200 hover:bg-emerald-500/20 inline-flex items-center gap-1"
+                title="Calcular orçamento sugerido"
+              >
+                <Calculator className="w-3 h-3" /> AI Pricing
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <label className="col-span-2 text-[10px] uppercase tracking-wider text-white/50">Projeto *
+                <input value={cfg.project_name} onChange={(e) => update("project_name", e.target.value)}
+                  className={inputCls + " mt-1"} placeholder="Ex: Landing Page Curso XPTO" />
+              </label>
+              <label className="col-span-2 text-[10px] uppercase tracking-wider text-white/50">Escopo detalhado *
+                <textarea value={cfg.project_scope} onChange={(e) => update("project_scope", e.target.value)}
+                  rows={3} className={inputCls + " mt-1 font-sans"} placeholder="Descreva o que será entregue, tecnologias, integrações…" />
+              </label>
+
+              <label className="col-span-2 text-[10px] uppercase tracking-wider text-white/50 pt-1">Cliente</label>
+              <label className="text-[10px] uppercase tracking-wider text-white/50">Nome / Razão Social *
+                <input value={cfg.client_name} onChange={(e) => update("client_name", e.target.value)} className={inputCls + " mt-1"} />
+              </label>
+              <label className="text-[10px] uppercase tracking-wider text-white/50">CPF / CNPJ
+                <input value={cfg.client_document} onChange={(e) => update("client_document", maskDocument(e.target.value))}
+                  className={inputCls + " mt-1"} placeholder="000.000.000-00" />
+              </label>
+              <label className="col-span-2 text-[10px] uppercase tracking-wider text-white/50">Endereço
+                <input value={cfg.client_address} onChange={(e) => update("client_address", e.target.value)}
+                  className={inputCls + " mt-1"} placeholder="Rua, nº, cidade/UF" />
+              </label>
+              <label className="col-span-2 text-[10px] uppercase tracking-wider text-white/50">Email
+                <input value={cfg.client_email} onChange={(e) => update("client_email", e.target.value)}
+                  className={inputCls + " mt-1"} placeholder="cliente@email.com" />
+              </label>
+
+              <label className="col-span-2 text-[10px] uppercase tracking-wider text-white/50 pt-1">Financeiro</label>
+              <label className="text-[10px] uppercase tracking-wider text-white/50">Valor total *
+                <input value={cfg.price_total ? maskBRL(cfg.price_total) : ""}
+                  onChange={(e) => update("price_total", parseBRL(e.target.value))}
+                  className={inputCls + " mt-1"} placeholder="R$ 0,00" />
+              </label>
+              <label className="text-[10px] uppercase tracking-wider text-white/50">Forma de pagamento
+                <select value={cfg.payment_method} onChange={(e) => update("payment_method", e.target.value as any)}
+                  className={inputCls + " mt-1"}>
+                  <option value="pix">PIX</option>
+                  <option value="boleto">Boleto</option>
+                  <option value="transferencia">Transferência</option>
+                  <option value="cartao">Cartão</option>
+                </select>
+              </label>
+              <label className="text-[10px] uppercase tracking-wider text-white/50">Entrada (50%)
+                <input readOnly value={maskBRL(cfg.price_entry)}
+                  className={inputCls + " mt-1 opacity-70"} />
+              </label>
+              <label className="text-[10px] uppercase tracking-wider text-white/50">Restante
+                <input readOnly value={maskBRL(cfg.price_remaining)}
+                  className={inputCls + " mt-1 opacity-70"} />
+              </label>
+              {cfg.payment_method === "pix" && (
+                <label className="col-span-2 text-[10px] uppercase tracking-wider text-white/50">Chave PIX
+                  <input value={cfg.pix_key} onChange={(e) => update("pix_key", e.target.value)}
+                    className={inputCls + " mt-1"} />
+                </label>
+              )}
+
+              <label className="col-span-2 text-[10px] uppercase tracking-wider text-white/50 pt-1">Prazo & SLA</label>
+              <label className="text-[10px] uppercase tracking-wider text-white/50">Prazo (dias) *
+                <input type="number" min={1} value={cfg.deadline_days}
+                  onChange={(e) => update("deadline_days", Number(e.target.value))}
+                  className={inputCls + " mt-1"} />
+              </label>
+              <label className="text-[10px] uppercase tracking-wider text-white/50">Tipo de entrega
+                <select value={cfg.delivery_type} onChange={(e) => update("delivery_type", e.target.value as any)}
+                  className={inputCls + " mt-1"}>
+                  <option value="remoto">Remoto</option>
+                  <option value="presencial">Presencial</option>
+                  <option value="hibrido">Híbrido</option>
+                </select>
+              </label>
+              <label className="text-[10px] uppercase tracking-wider text-white/50">Revisões inclusas
+                <input type="number" min={0} value={cfg.revisions_limit}
+                  onChange={(e) => update("revisions_limit", Number(e.target.value))}
+                  className={inputCls + " mt-1"} />
+              </label>
+              <label className="text-[10px] uppercase tracking-wider text-white/50">Suporte (dias)
+                <input type="number" min={0} value={cfg.support_days}
+                  onChange={(e) => update("support_days", Number(e.target.value))}
+                  className={inputCls + " mt-1"} />
+              </label>
+              <label className="col-span-2 text-[10px] uppercase tracking-wider text-white/50">Foro
+                <input value={cfg.foro} onChange={(e) => update("foro", e.target.value)}
+                  className={inputCls + " mt-1"} />
+              </label>
+              <label className="col-span-2 text-[10px] uppercase tracking-wider text-white/50">Observações extras
+                <textarea value={cfg.extras} onChange={(e) => update("extras", e.target.value)}
+                  rows={2} className={inputCls + " mt-1"} placeholder="Integrações específicas, exclusões, premissas…" />
+              </label>
+            </div>
+
+            {validationErrors.length > 0 && (
+              <div className="flex items-start gap-2 text-[11px] text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded p-2">
+                <AlertTriangle className="w-3.5 h-3.5 mt-0.5 shrink-0" />
+                <span>Faltando: {validationErrors.join(" · ")}</span>
+              </div>
+            )}
           </div>
         )}
 
@@ -317,6 +411,22 @@ export default function ContractCard({ entity, id, data, aiContext, entityName, 
 
         <ContractVersionHistory entityType={entity === "clients" ? "client" : "project"} entityId={id} />
       </div>
+
+      <PricingEngineModal
+        open={pricingOpen}
+        onClose={() => setPricingOpen(false)}
+        onApply={(price, weeks, breakdown) => {
+          setCfg((prev) => recalcInstallments({
+            ...prev,
+            price_total: price,
+            deadline_days: Math.max(prev.deadline_days, weeks * 7),
+            extras: prev.extras
+              ? prev.extras + "\n\nOrçamento estimado:\n" + breakdown
+              : "Orçamento estimado:\n" + breakdown,
+          }));
+          toast({ title: `Valor aplicado: ${maskBRL(price)}` });
+        }}
+      />
     </div>
   );
 }

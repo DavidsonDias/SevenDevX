@@ -8,7 +8,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Search, X } from "lucide-react";
+import { Search, X, GripVertical } from "lucide-react";
+import {
+  DndContext, DragEndEvent, DragOverlay, DragStartEvent,
+  PointerSensor, useSensor, useSensors, useDroppable,
+} from "@dnd-kit/core";
+import { useDraggable } from "@dnd-kit/core";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import { useAllProjects } from "@/hooks/useProjects";
 import { supabase } from "@/integrations/supabase/client";
@@ -180,42 +185,142 @@ export default function PipelineAdmin() {
       {isLoading ? (
         <p className="text-white/50">Carregando…</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
-          {COLUMNS.map((col) => (
-            <div key={col.id} className="bg-white/5 border border-white/10 rounded-xl p-3 min-h-[300px]">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full" style={{ background: col.color }} />
-                  <h3 className="font-bold text-sm uppercase tracking-wider">{col.label}</h3>
-                </div>
-                <span className="text-xs text-white/40">{grouped[col.id]?.length || 0}</span>
-              </div>
-              <div className="space-y-2">
-                {grouped[col.id]?.map((p: any) => (
-                  <motion.div
-                    key={p.id}
-                    layout
-                    className="bg-zinc-950 border border-white/10 rounded-lg p-3 hover:border-white/30 transition-colors group"
-                  >
-                    <Link to={`/admin/projects/${p.id}`} className="block">
-                      <h4 className="font-medium text-sm truncate group-hover:text-blue-400 transition-colors">{p.title}</h4>
-                      {p.client_name && <p className="text-xs text-white/50 truncate mt-0.5">{p.client_name}</p>}
-                    </Link>
-                    <select
-                      value={normalizeStage(p.pipeline_stage)}
-                      onChange={(e) => move(p, e.target.value as Stage)}
-                      className="mt-2 w-full text-[10px] uppercase tracking-wider bg-white/5 border border-white/10 rounded px-2 py-1 outline-none"
-                    >
-                      {COLUMNS.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
-                    </select>
-                  </motion.div>
-                ))}
-                {grouped[col.id]?.length === 0 && <p className="text-xs text-white/30 text-center py-6">Vazio</p>}
-              </div>
-            </div>
-          ))}
-        </div>
+        <KanbanBoard grouped={grouped} onMove={move} />
       )}
     </AdminPageShell>
+  );
+}
+
+/* ───────── Kanban com Drag & Drop ───────── */
+function KanbanBoard({
+  grouped,
+  onMove,
+}: {
+  grouped: Record<Stage, any[]>;
+  onMove: (project: any, stage: Stage) => void;
+}) {
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }));
+
+  const allProjects = useMemo(() => Object.values(grouped).flat(), [grouped]);
+  const activeProject = activeId ? allProjects.find((p: any) => p.id === activeId) : null;
+
+  const handleDragEnd = (e: DragEndEvent) => {
+    setActiveId(null);
+    const overId = e.over?.id as string | undefined;
+    const draggedId = e.active.id as string;
+    if (!overId) return;
+    const project = allProjects.find((p: any) => p.id === draggedId);
+    if (!project) return;
+    const targetStage = overId as Stage;
+    if (!COLUMNS.find((c) => c.id === targetStage)) return;
+    if (normalizeStage(project.pipeline_stage) === targetStage) return;
+    onMove(project, targetStage);
+  };
+
+  return (
+    <DndContext
+      sensors={sensors}
+      onDragStart={(e: DragStartEvent) => setActiveId(e.active.id as string)}
+      onDragEnd={handleDragEnd}
+      onDragCancel={() => setActiveId(null)}
+    >
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3">
+        {COLUMNS.map((col) => (
+          <KanbanColumn key={col.id} col={col} items={grouped[col.id] || []} onMove={onMove} />
+        ))}
+      </div>
+
+      <DragOverlay>
+        {activeProject && (
+          <div className="bg-zinc-900 border border-white/30 rounded-lg p-3 shadow-2xl rotate-2 cursor-grabbing">
+            <h4 className="font-medium text-sm truncate">{activeProject.title}</h4>
+            {activeProject.client_name && (
+              <p className="text-xs text-white/50 truncate mt-0.5">{activeProject.client_name}</p>
+            )}
+          </div>
+        )}
+      </DragOverlay>
+    </DndContext>
+  );
+}
+
+function KanbanColumn({
+  col,
+  items,
+  onMove,
+}: {
+  col: { id: Stage; label: string; color: string };
+  items: any[];
+  onMove: (p: any, s: Stage) => void;
+}) {
+  const { setNodeRef, isOver } = useDroppable({ id: col.id });
+  return (
+    <div
+      ref={setNodeRef}
+      className={`bg-white/5 border rounded-xl p-3 min-h-[300px] transition-colors ${
+        isOver ? "border-white/40 bg-white/10" : "border-white/10"
+      }`}
+    >
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full" style={{ background: col.color }} />
+          <h3 className="font-bold text-sm uppercase tracking-wider">{col.label}</h3>
+        </div>
+        <span className="text-xs text-white/40">{items.length}</span>
+      </div>
+      <div className="space-y-2">
+        {items.map((p) => (
+          <KanbanCard key={p.id} project={p} onMove={onMove} />
+        ))}
+        {items.length === 0 && (
+          <p className="text-xs text-white/30 text-center py-6 border border-dashed border-white/10 rounded">
+            Solte aqui
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function KanbanCard({ project, onMove }: { project: any; onMove: (p: any, s: Stage) => void }) {
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: project.id });
+  return (
+    <motion.div
+      ref={setNodeRef}
+      layout
+      style={{ opacity: isDragging ? 0.4 : 1 }}
+      className="bg-zinc-950 border border-white/10 rounded-lg p-3 hover:border-white/30 transition-colors group"
+    >
+      <div className="flex items-start gap-2">
+        <button
+          {...attributes}
+          {...listeners}
+          className="p-1 -ml-1 cursor-grab active:cursor-grabbing text-white/30 hover:text-white/70 shrink-0"
+          aria-label="Arrastar"
+        >
+          <GripVertical className="w-3.5 h-3.5" />
+        </button>
+        <Link to={`/admin/projects/${project.id}`} className="block flex-1 min-w-0">
+          <h4 className="font-medium text-sm truncate group-hover:text-blue-400 transition-colors">
+            {project.title}
+          </h4>
+          {project.client_name && (
+            <p className="text-xs text-white/50 truncate mt-0.5">{project.client_name}</p>
+          )}
+        </Link>
+      </div>
+      <select
+        value={normalizeStage(project.pipeline_stage)}
+        onChange={(e) => onMove(project, e.target.value as Stage)}
+        className="mt-2 w-full text-[10px] uppercase tracking-wider bg-white/5 border border-white/10 rounded px-2 py-1 outline-none"
+      >
+        {COLUMNS.map((c) => (
+          <option key={c.id} value={c.id}>
+            {c.label}
+          </option>
+        ))}
+      </select>
+    </motion.div>
   );
 }
