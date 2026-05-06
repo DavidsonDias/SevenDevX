@@ -54,27 +54,7 @@ const STATUS: Record<string, { label: string; cls: string }> = {
   rejected: { label: "Rejeitado",cls: "bg-red-500/10 text-red-300 border-red-500/30" },
 };
 
-interface JuridicalForm {
-  value: string;
-  installments: string;
-  deadline: string;
-  pages: string;
-  revisions: string;
-  foro: string;
-  sla_days: string;
-  extras: string;
-}
 
-const DEFAULT_FORM: JuridicalForm = {
-  value: "",
-  installments: "50% no ato e 50% na entrega",
-  deadline: "",
-  pages: "",
-  revisions: "2",
-  foro: "São Paulo/SP",
-  sla_days: "15",
-  extras: "",
-};
 
 export default function ContractCard({ entity, id, data, aiContext, entityName, onChange }: Props) {
   const { toast } = useToast();
