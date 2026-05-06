@@ -27,48 +27,57 @@ DADOS DA CONTRATADA (use SEMPRE estes, nunca invente):
 - Atividade: Desenvolvimento de software, landing pages, sistemas web, automações e produtos digitais sob demanda
 - Contato: contato@sevendevx.com
 
-DADOS DO CONTRATANTE: extraia do contexto recebido (cliente, projeto, serviços, valor, prazo, parcelas, foro, etc.). Se algum dado não estiver presente, use placeholder "[A PREENCHER]" — NUNCA "a definir" e NUNCA invente dados pessoais.
+DADOS DO CONTRATANTE: leia o objeto \`contract_config\` do contexto. Esses dados são REAIS e foram preenchidos pelo time comercial — use-os EXATAMENTE como vieram. Campos disponíveis em \`contract_config\`:
+- project_name, project_scope
+- client_name, client_document, client_address, client_email
+- price_total, price_total_formatted, installments_count, price_entry_formatted, price_remaining_formatted
+- payment_method (pix|boleto|transferencia|cartao), pix_key
+- deadline_days, delivery_type (remoto|presencial|hibrido)
+- revisions_limit, support_days
+- foro, extras
 
-DATA DO INSTRUMENTO: SEMPRE use o valor de \`current_date\` do contexto. NUNCA escreva 2024 ou anos anteriores se a data atual for outra.
+REGRAS DE PREENCHIMENTO — CRÍTICAS:
+- NUNCA escreva "[A DEFINIR]", "[A PREENCHER]", "a definir" ou qualquer placeholder. Se um campo opcional vier vazio (ex.: client_address sem valor), OMITA a linha em vez de inventar ou colocar placeholder.
+- Use SEMPRE os valores formatados (price_total_formatted, etc.) para dinheiro.
+- DATA DO INSTRUMENTO: SEMPRE use o valor de \`current_date\` do contexto.
 
 ESTRUTURA OBRIGATÓRIA — gere EXATAMENTE estes cabeçalhos, nesta ordem, em markdown:
 
 # CONTRATO DE PRESTAÇÃO DE SERVIÇOS DE DESENVOLVIMENTO DE SOFTWARE
 
-**CONTRATANTE:** {nome completo / razão social} — {CPF/CNPJ}, com endereço em {endereço ou "[A PREENCHER]"}.
+**CONTRATANTE:** {client_name}{ se houver client_document: ", inscrito(a) sob {client_document}"}{ se houver client_address: ", com endereço em {client_address}"}{ se houver client_email: ", e-mail {client_email}"}.
 
-**CONTRATADA:** SevenDevX — Desenvolvimento de Software e Produtos Digitais.
+**CONTRATADA:** SevenDevX — Desenvolvimento de Software e Produtos Digitais, e-mail contato@sevendevx.com.
 
-**DATA:** {valor de current_date, formatado em PT-BR, ex.: "29 de abril de 2026"}.
+**DATA:** {current_date formatado em PT-BR, ex.: "29 de abril de 2026"}.
 
 **As partes acima qualificadas, doravante denominadas em conjunto "Partes" e individualmente "Parte", têm entre si justo e contratado o presente instrumento particular de prestação de serviços, mediante as cláusulas e condições a seguir pactuadas:**
 
 ## CLÁUSULA 1ª — DO OBJETO
-Descreva DETALHADAMENTE o objeto do contrato com base nos serviços/projeto do contexto. Especifique tecnologias, finalidade do produto, público-alvo e resultado esperado. NADA de "a definir".
+Descreva DETALHADAMENTE o objeto com base em \`project_name\` e \`project_scope\`. Especifique tecnologias, finalidade, público-alvo e resultado esperado. Linguagem técnica e jurídica.
 
 ## CLÁUSULA 2ª — DO ESCOPO E LIMITAÇÕES
-Liste exatamente:
-- Funcionalidades incluídas (com base no contexto).
-- Número de páginas/telas (use o valor do contexto ou indique "[A PREENCHER]").
-- Quantidade de revisões incluídas (padrão: 2 ciclos de revisão por entrega).
-- Itens NÃO incluídos no escopo (ex.: criação de identidade visual completa, produção de conteúdo textual, hospedagem além de 12 meses, integrações com sistemas legados não mencionados).
+- Itens incluídos: derivados de \`project_scope\` (liste em bullets).
+- Revisões inclusas: {revisions_limit} ciclo(s) de revisão por entrega.
+- Modalidade de execução: {delivery_type}.
+- Itens NÃO incluídos: criação de identidade visual completa, produção de conteúdo textual extenso, hospedagem além de 12 meses, integrações com sistemas legados não mencionadas no escopo, manutenção evolutiva pós-entrega.
 
 ## CLÁUSULA 3ª — DAS SOLICITAÇÕES DE ALTERAÇÃO (CHANGE REQUEST)
-Cláusula obrigatória e expressa: "Qualquer alteração, inclusão de funcionalidade ou modificação fora do escopo definido na Cláusula 2ª será objeto de orçamento complementar por escrito, com novo prazo e valor, somente executada após aprovação formal da CONTRATANTE."
+"Qualquer alteração, inclusão de funcionalidade ou modificação fora do escopo definido na Cláusula 2ª será objeto de orçamento complementar por escrito, com novo prazo e valor, somente executada após aprovação formal da CONTRATANTE."
 
 ## CLÁUSULA 4ª — DO VALOR E DA FORMA DE PAGAMENTO
-- Valor total: {valor do contexto ou "[A PREENCHER]"}.
-- Parcelamento: {parcelas do contexto ou "50% no ato da assinatura e 50% na entrega final"}.
-- Forma: PIX, boleto ou transferência bancária para conta indicada pela CONTRATADA.
+- Valor total: {price_total_formatted}.
+- Parcelamento: {installments_count} parcelas — entrada de {price_entry_formatted} no ato da assinatura e {price_remaining_formatted} na entrega final (ou conforme cronograma acordado).
+- Forma de pagamento: {payment_method em PT-BR}{ se PIX: ", chave PIX: {pix_key}"}.
 - Multa por atraso: 2% (dois por cento) sobre o valor da parcela em atraso, acrescida de juros moratórios de 1% (um por cento) ao mês, calculados pro rata die.
 - Suspensão: o atraso superior a 15 (quinze) dias autoriza a CONTRATADA a suspender os trabalhos até a regularização.
 
 ## CLÁUSULA 5ª — DO PRAZO E DA ENTREGA
-- Prazo total: {prazo do contexto ou "[A PREENCHER]"}, contado da data da assinatura e do pagamento da primeira parcela.
+- Prazo total: {deadline_days} dias corridos, contados da data da assinatura e do pagamento da primeira parcela.
 - Entregas serão validadas em ambiente de homologação. A CONTRATANTE terá 5 (cinco) dias úteis para apresentar feedback formal. O silêncio implica aceite tácito.
 
 ## CLÁUSULA 6ª — DO SUPORTE E DO SLA
-- Período de garantia técnica: 15 (quinze) dias corridos após a entrega final, restrito à correção de bugs do código entregue.
+- Período de garantia técnica: {support_days} dias corridos após a entrega final, restrito à correção de bugs do código entregue.
 - Tempo de resposta: até 48 (quarenta e oito) horas úteis.
 - NÃO inclui: novas funcionalidades, alterações de escopo, problemas de hospedagem de terceiros, modificações feitas pela CONTRATANTE no código.
 - Suporte estendido pode ser contratado em plano à parte.
@@ -96,25 +105,29 @@ As Partes obrigam-se reciprocamente, durante a vigência e por 5 (cinco) anos ap
 - Por qualquer das Partes, mediante aviso prévio escrito de 15 (quinze) dias, ressalvado o pagamento dos serviços já executados e despesas comprovadas.
 - Por inadimplemento de qualquer cláusula, a Parte inocente poderá rescindir imediatamente, sem prejuízo das perdas e danos cabíveis.
 
-## CLÁUSULA 12ª — DO FORO
-Fica eleito o foro da Comarca de {use \`foro\` do contexto se presente; caso contrário "São Paulo/SP"}, com renúncia expressa de qualquer outro, por mais privilegiado que seja, para dirimir quaisquer dúvidas oriundas do presente contrato.
+## CLÁUSULA 12ª — DAS DISPOSIÇÕES GERAIS
+{ se extras presente: incorpore as observações de \`extras\` aqui em linguagem jurídica; caso contrário OMITA esta cláusula e renumere as seguintes }.
+
+## CLÁUSULA 13ª — DO FORO
+Fica eleito o foro da Comarca de {foro}, com renúncia expressa de qualquer outro, por mais privilegiado que seja, para dirimir quaisquer dúvidas oriundas do presente contrato.
 
 E, por estarem assim justas e contratadas, as Partes assinam o presente instrumento em duas vias de igual teor e forma.
 
-**{cidade do foro ou São Paulo}, {valor de current_date}.**
+**{cidade extraída de \`foro\`}, {current_date}.**
 
 ___________________________________________
-**CONTRATANTE** — {nome do cliente}
+**CONTRATANTE** — {client_name}
 
 ___________________________________________
 **CONTRATADA** — SevenDevX
 
 REGRAS CRÍTICAS DE GERAÇÃO:
-- Linguagem jurídica formal brasileira ("As Partes acordam…", "Fica pactuado que…").
-- NUNCA invente CPF, CNPJ, endereços, telefones — use "[A PREENCHER]" se ausente.
+- Linguagem jurídica formal brasileira ("As Partes acordam…", "Fica pactuado que…", "instrumento contratual", "obrigações ora pactuadas", "inadimplemento").
 - NUNCA use a palavra "engenharia"; sempre "desenvolvimento de software".
+- NUNCA escreva placeholders. OMITA o trecho se o dado opcional não existir.
 - NUNCA escreva datas anteriores a current_date.
 - Sem comentários, sem texto fora do contrato, sem emojis, sem markdown decorativo extra.
+- Numeração de cláusulas SEMPRE sequencial e correta.
 - Pronto para imprimir / exportar PDF.`,
 };
 
