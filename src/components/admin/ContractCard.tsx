@@ -411,6 +411,22 @@ export default function ContractCard({ entity, id, data, aiContext, entityName, 
 
         <ContractVersionHistory entityType={entity === "clients" ? "client" : "project"} entityId={id} />
       </div>
+
+      <PricingEngineModal
+        open={pricingOpen}
+        onClose={() => setPricingOpen(false)}
+        onApply={(price, weeks, breakdown) => {
+          setCfg((prev) => recalcInstallments({
+            ...prev,
+            price_total: price,
+            deadline_days: Math.max(prev.deadline_days, weeks * 7),
+            extras: prev.extras
+              ? prev.extras + "\n\nOrçamento estimado:\n" + breakdown
+              : "Orçamento estimado:\n" + breakdown,
+          }));
+          toast({ title: `Valor aplicado: ${maskBRL(price)}` });
+        }}
+      />
     </div>
   );
 }
