@@ -8,7 +8,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Search, X } from "lucide-react";
+import { Search, X, GripVertical } from "lucide-react";
+import {
+  DndContext, DragEndEvent, DragOverlay, DragStartEvent,
+  PointerSensor, useSensor, useSensors, useDroppable,
+} from "@dnd-kit/core";
+import { useDraggable } from "@dnd-kit/core";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import { useAllProjects } from "@/hooks/useProjects";
 import { supabase } from "@/integrations/supabase/client";
