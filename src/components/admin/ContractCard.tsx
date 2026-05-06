@@ -86,14 +86,39 @@ export default function ContractCard({ entity, id, data, aiContext, entityName, 
   const [saving, setSaving] = useState(false);
   const [generating, setGenerating] = useState(false);
   const [exporting, setExporting] = useState(false);
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [form, setForm] = useState<JuridicalForm>(DEFAULT_FORM);
+  const [showBuilder, setShowBuilder] = useState(true);
+  const [pricingOpen, setPricingOpen] = useState(false);
+
+  // Auto-fill com dados do cliente/projeto
+  const initialCfg = useMemo<ContractConfig>(() => {
+    const c = aiContext?.client;
+    const p = aiContext?.project;
+    return {
+      ...DEFAULT_CONTRACT_CONFIG,
+      project_name: p?.title || entityName || "",
+      project_scope: p?.description || "",
+      client_name: c?.name || c?.company || "",
+      client_document: c?.document || "",
+      client_address: "",
+      client_email: c?.email || "",
+      price_total: typeof p?.budget === "number" ? p.budget : parseBRL(String(p?.budget || "")),
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  const [cfg, setCfg] = useState<ContractConfig>(() => recalcInstallments(initialCfg));
 
   useEffect(() => {
     setStatus(data.contract_status || "pending");
     setText(data.contract_text || "");
     setUrl(data.contract_url || "");
-  }, [id]);
+    setCfg(recalcInstallments(initialCfg));
+  }, [id, initialCfg, data.contract_status, data.contract_text, data.contract_url]);
+
+  const update = <K extends keyof ContractConfig>(k: K, v: ContractConfig[K]) =>
+    setCfg((prev) => recalcInstallments({ ...prev, [k]: v }));
+
+  const validationErrors = useMemo(() => validateContract(cfg), [cfg]);
 
   const persist = async (patch: any) => {
     setSaving(true);
@@ -120,7 +145,6 @@ export default function ContractCard({ entity, id, data, aiContext, entityName, 
       const path = `contracts/${entity}/${id}/${Date.now()}.${ext}`;
       const { error } = await supabase.storage.from("attachments").upload(path, file, { upsert: false });
       if (error) throw error;
-      // bucket privado: armazenamos o path lógico; a URL é assinada sob demanda
       const { data: signed } = await supabase.storage.from("attachments").createSignedUrl(path, 60 * 60 * 24 * 7);
       const finalUrl = signed?.signedUrl || path;
       setUrl(finalUrl);
@@ -135,18 +159,25 @@ export default function ContractCard({ entity, id, data, aiContext, entityName, 
   };
 
   const handleGenerateAi = async () => {
+    if (validationErrors.length) {
+      toast({
+        title: "Preencha os campos obrigatórios",
+        description: validationErrors.join(", "),
+        variant: "destructive",
+      });
+      return;
+    }
     setGenerating(true);
     try {
+      // Envia config ESTRUTURADA + valores formatados (BRL) para a IA
       const fullContext = {
         ...(aiContext || {}),
-        value: form.value || undefined,
-        installments: form.installments || undefined,
-        deadline: form.deadline || undefined,
-        pages: form.pages || undefined,
-        revisions: form.revisions || undefined,
-        foro: form.foro || undefined,
-        sla_days: form.sla_days || undefined,
-        extras: form.extras || undefined,
+        contract_config: {
+          ...cfg,
+          price_total_formatted: maskBRL(cfg.price_total),
+          price_entry_formatted: maskBRL(cfg.price_entry),
+          price_remaining_formatted: maskBRL(cfg.price_remaining),
+        },
       };
       const content: string = await ai.mutateAsync({
         task: "contract_generate",
