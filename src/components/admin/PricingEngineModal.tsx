@@ -73,7 +73,7 @@ export default function PricingEngineModal({ open, onClose, onApply }: Props) {
       {open && (
         <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[210] bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center sm:p-4"
+          className="fixed inset-0 z-[210] bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4"
           onClick={onClose}
           role="dialog"
           aria-modal="true"
@@ -88,9 +88,9 @@ export default function PricingEngineModal({ open, onClose, onApply }: Props) {
             className="
               w-full sm:max-w-2xl
               bg-zinc-950 border border-white/15
-              sm:rounded-2xl rounded-t-2xl shadow-2xl
+              rounded-2xl shadow-2xl
               flex flex-col
-              max-h-[92vh] sm:max-h-[88vh]
+              max-h-[90vh]
               overflow-hidden
             "
             style={{ paddingBottom: "env(safe-area-inset-bottom)" }}

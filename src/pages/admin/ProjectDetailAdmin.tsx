@@ -288,7 +288,7 @@ export default function ProjectDetailAdmin() {
 
               {/* SIDEBAR — sticky em desktop */}
               <aside className="lg:col-span-4 xl:col-span-4 min-w-0">
-                <div className="lg:sticky lg:top-24 space-y-4 min-w-0">
+                <div className="lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto lg:pr-1 space-y-4 min-w-0 scrollbar-thin">
                   <ClientPanel
                     project={project}
                     clientId={(project as any).client_id}
