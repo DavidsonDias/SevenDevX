@@ -186,134 +186,145 @@ export default function ProjectDetailAdmin() {
       }
     >
       {/* TOP BAR: progresso + pipeline */}
-      <GlassCard className="p-4 sm:p-5 mb-6">
-        <div className="flex flex-col lg:flex-row lg:items-center gap-4 justify-between">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-3 mb-2">
-              <span className="text-xs uppercase tracking-wider text-white/50">Progresso</span>
-              <span className="text-xs font-bold">{progress}%</span>
+      <div className="min-w-0">
+        <GlassCard className="p-4 sm:p-5 mb-6">
+          <div className="flex flex-col lg:flex-row lg:items-center gap-4 justify-between min-w-0">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-xs uppercase tracking-wider text-white/50">Progresso</span>
+                <span className="text-xs font-bold">{progress}%</span>
+              </div>
+              <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+                <motion.div
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progress}%` }}
+                  transition={{ duration: 0.6 }}
+                  className="h-full bg-gradient-to-r from-emerald-500 to-blue-500"
+                />
+              </div>
             </div>
-            <div className="h-2 bg-white/5 rounded-full overflow-hidden">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${progress}%` }}
-                transition={{ duration: 0.6 }}
-                className="h-full bg-gradient-to-r from-emerald-500 to-blue-500"
-              />
+            <div className="flex items-center gap-2 shrink-0">
+              <span className="text-xs uppercase tracking-wider text-white/50">Pipeline</span>
+              <select
+                value={normalizePipeline((project as any).pipeline_stage)}
+                onChange={(e) => movePipeline.mutate(e.target.value)}
+                className="text-xs uppercase tracking-wider bg-white/5 border border-white/10 rounded px-2 py-1.5 outline-none focus:border-white/30"
+              >
+                {PIPELINE_STAGES.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}
+              </select>
             </div>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="text-xs uppercase tracking-wider text-white/50">Pipeline</span>
-            <select
-              value={normalizePipeline((project as any).pipeline_stage)}
-              onChange={(e) => movePipeline.mutate(e.target.value)}
-              className="text-xs uppercase tracking-wider bg-white/5 border border-white/10 rounded px-2 py-1.5 outline-none focus:border-white/30"
-            >
-              {PIPELINE_STAGES.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}
-            </select>
-          </div>
-        </div>
-      </GlassCard>
+        </GlassCard>
 
-      {/* STAGES TIMELINE (horizontal flow) */}
-      {stagesLoading || (stages.length === 0 && instantiate.isPending) ? (
-        <div className="flex items-center gap-2 text-white/50 text-sm py-8 justify-center">
-          <Loader2 className="w-4 h-4 animate-spin" /> Inicializando etapas do projeto…
-        </div>
-      ) : (
-        <>
-          <div className="overflow-x-auto pb-4 mb-6">
-            <div className="flex items-center gap-2 min-w-max">
-              {stages.map((s: any, idx: number) => {
-                const meta = STAGE_STATUS[s.status] || STAGE_STATUS.pending;
-                const isActive = s.id === selectedStage?.id;
-                return (
-                  <div key={s.id} className="flex items-center">
-                    <button
-                      onClick={() => setSelectedStageId(s.id)}
-                      className={`flex flex-col items-center gap-2 p-3 rounded-xl border transition-all min-w-[140px] ${
-                        isActive
-                          ? "bg-white/10 border-white/30"
-                          : "bg-white/[0.02] border-white/10 hover:bg-white/5"
-                      }`}
-                    >
-                      <div
-                        className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm"
-                        style={{
-                          background: `${meta.color}20`,
-                          color: meta.color,
-                          border: `2px solid ${meta.color}40`,
-                        }}
-                      >
-                        {s.status === "completed" ? <CheckCircle2 className="w-5 h-5" /> : idx + 1}
+        {/* STAGES TIMELINE (horizontal flow, snap em mobile) */}
+        {stagesLoading || (stages.length === 0 && instantiate.isPending) ? (
+          <div className="flex items-center gap-2 text-white/50 text-sm py-8 justify-center">
+            <Loader2 className="w-4 h-4 animate-spin" /> Inicializando etapas do projeto…
+          </div>
+        ) : (
+          <>
+            <div className="relative mb-6 -mx-4 sm:mx-0">
+              <div className="overflow-x-auto pb-3 px-4 sm:px-0 snap-x snap-mandatory scrollbar-thin">
+                <div className="flex items-center gap-2 min-w-max">
+                  {stages.map((s: any, idx: number) => {
+                    const meta = STAGE_STATUS[s.status] || STAGE_STATUS.pending;
+                    const isActive = s.id === selectedStage?.id;
+                    return (
+                      <div key={s.id} className="flex items-center snap-start">
+                        <button
+                          onClick={() => setSelectedStageId(s.id)}
+                          aria-pressed={isActive}
+                          className={`flex flex-col items-center gap-2 p-3 rounded-xl border transition-all w-[148px] ${
+                            isActive
+                              ? "bg-white/10 border-white/30 shadow-lg shadow-white/5"
+                              : "bg-white/[0.02] border-white/10 hover:bg-white/5"
+                          }`}
+                        >
+                          <div
+                            className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm"
+                            style={{
+                              background: `${meta.color}20`,
+                              color: meta.color,
+                              border: `2px solid ${meta.color}40`,
+                            }}
+                          >
+                            {s.status === "completed" ? <CheckCircle2 className="w-5 h-5" /> : idx + 1}
+                          </div>
+                          <div className="text-center min-w-0 w-full">
+                            <p className="text-xs font-bold truncate">{s.name}</p>
+                            <p className="text-[10px] uppercase tracking-wider mt-0.5" style={{ color: meta.color }}>
+                              {meta.label}
+                            </p>
+                          </div>
+                        </button>
+                        {idx < stages.length - 1 && <ChevronRight className="w-4 h-4 text-white/20 mx-1 shrink-0" />}
                       </div>
-                      <div className="text-center">
-                        <p className="text-xs font-bold truncate max-w-[120px]">{s.name}</p>
-                        <p className="text-[10px] uppercase tracking-wider mt-0.5" style={{ color: meta.color }}>
-                          {meta.label}
-                        </p>
-                      </div>
-                    </button>
-                    {idx < stages.length - 1 && <ChevronRight className="w-4 h-4 text-white/20 mx-1 shrink-0" />}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="grid lg:grid-cols-3 gap-4">
-            {/* MAIN: stage detail */}
-            <div className="lg:col-span-2 space-y-4">
-              {selectedStage && (
-                <StageDetail
-                  key={selectedStage.id}
-                  stage={selectedStage}
-                  project={project}
-                  clientId={(project as any).client_id}
-                  onUpdate={(payload) => updateStage.mutateAsync({ id: selectedStage.id, ...payload })}
-                  onToggleItem={(itemId, value) =>
-                    toggleItem.mutateAsync({ id: itemId, is_done: value, projectId: project.id })
-                  }
-                />
-              )}
+                    );
+                  })}
+                </div>
+              </div>
+              {/* fade edges */}
+              <div className="pointer-events-none absolute inset-y-0 left-0 w-6 bg-gradient-to-r from-black to-transparent sm:hidden" />
+              <div className="pointer-events-none absolute inset-y-0 right-0 w-6 bg-gradient-to-l from-black to-transparent sm:hidden" />
             </div>
 
-            {/* SIDEBAR: client + contract + project files */}
-            <div className="space-y-4">
-              <ClientPanel
-                project={project}
-                clientId={(project as any).client_id}
-                onLinkClient={(cid) => linkClient.mutate(cid)}
-              />
-              <GlassCard className="p-4">
-                <ContractCard
-                  entity="projects"
-                  id={project.id}
-                  data={project as any}
-                  entityName={(project as any)?.title || (project as any)?.slug}
-                  aiContext={{
-                    project: {
-                      title: (project as any)?.title,
-                      description: (project as any)?.description,
-                      category: (project as any)?.category,
-                      budget: (project as any)?.budget,
-                    },
-                  }}
-                  onChange={() => qc.invalidateQueries({ queryKey: ["project", id] })}
-                />
-              </GlassCard>
-              <GlassCard className="p-5">
-                <AttachmentManager
-                  title="Arquivos do projeto"
-                  projectId={project.id}
-                  defaultType="file"
-                  allowedTypes={["file", "logo", "idea", "document"]}
-                />
-              </GlassCard>
+            {/* GRID 12 COLS — main + sticky sidebar */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 min-w-0">
+              {/* MAIN */}
+              <div className="lg:col-span-8 xl:col-span-8 space-y-4 min-w-0">
+                {selectedStage && (
+                  <StageDetail
+                    key={selectedStage.id}
+                    stage={selectedStage}
+                    project={project}
+                    clientId={(project as any).client_id}
+                    onUpdate={(payload) => updateStage.mutateAsync({ id: selectedStage.id, ...payload })}
+                    onToggleItem={(itemId, value) =>
+                      toggleItem.mutateAsync({ id: itemId, is_done: value, projectId: project.id })
+                    }
+                  />
+                )}
+              </div>
+
+              {/* SIDEBAR — sticky em desktop */}
+              <aside className="lg:col-span-4 xl:col-span-4 min-w-0">
+                <div className="lg:sticky lg:top-24 space-y-4 min-w-0">
+                  <ClientPanel
+                    project={project}
+                    clientId={(project as any).client_id}
+                    onLinkClient={(cid) => linkClient.mutate(cid)}
+                  />
+                  <GlassCard className="p-4 min-w-0">
+                    <ContractCard
+                      entity="projects"
+                      id={project.id}
+                      data={project as any}
+                      entityName={(project as any)?.title || (project as any)?.slug}
+                      aiContext={{
+                        project: {
+                          title: (project as any)?.title,
+                          description: (project as any)?.description,
+                          category: (project as any)?.category,
+                          budget: (project as any)?.budget,
+                        },
+                      }}
+                      onChange={() => qc.invalidateQueries({ queryKey: ["project", id] })}
+                    />
+                  </GlassCard>
+                  <GlassCard className="p-5 min-w-0">
+                    <AttachmentManager
+                      title="Arquivos do projeto"
+                      projectId={project.id}
+                      defaultType="file"
+                      allowedTypes={["file", "logo", "idea", "document"]}
+                    />
+                  </GlassCard>
+                </div>
+              </aside>
             </div>
-          </div>
-        </>
-      )}
+          </>
+        )}
+      </div>
     </AdminPageShell>
   );
 }
