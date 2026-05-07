@@ -186,6 +186,7 @@ export default function ProjectDetailAdmin() {
       }
     >
       {/* TOP BAR: progresso + pipeline */}
+      <div className="min-w-0">
       <GlassCard className="p-4 sm:p-5 mb-6">
         <div className="flex flex-col lg:flex-row lg:items-center gap-4 justify-between">
           <div className="flex-1 min-w-0">
