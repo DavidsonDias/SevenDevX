@@ -88,9 +88,9 @@ export default function PricingEngineModal({ open, onClose, onApply }: Props) {
             className="
               w-full sm:max-w-2xl
               bg-zinc-950 border border-white/15
-              sm:rounded-2xl rounded-t-2xl shadow-2xl
+              rounded-2xl shadow-2xl
               flex flex-col
-              max-h-[92vh] sm:max-h-[88vh]
+              max-h-[90vh]
               overflow-hidden
             "
             style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
