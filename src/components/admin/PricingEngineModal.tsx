@@ -73,7 +73,7 @@ export default function PricingEngineModal({ open, onClose, onApply }: Props) {
       {open && (
         <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[210] bg-black/80 backdrop-blur-md flex items-end sm:items-center justify-center sm:p-4"
+          className="fixed inset-0 z-[210] bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4"
           onClick={onClose}
           role="dialog"
           aria-modal="true"
