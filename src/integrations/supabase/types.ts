@@ -1395,6 +1395,8 @@ export type Database = {
         | "diagnostico"
         | "contrato"
         | "entrega"
+        | "proposta"
+        | "execucao"
       project_status: "draft" | "published" | "archived"
       stage_status: "pending" | "in_progress" | "completed" | "blocked"
     }
@@ -1579,6 +1581,8 @@ export const Constants = {
         "diagnostico",
         "contrato",
         "entrega",
+        "proposta",
+        "execucao",
       ],
       project_status: ["draft", "published", "archived"],
       stage_status: ["pending", "in_progress", "completed", "blocked"],
