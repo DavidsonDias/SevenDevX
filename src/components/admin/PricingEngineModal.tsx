@@ -134,7 +134,7 @@ export default function PricingEngineModal({ open, onClose, onApply }: Props) {
               </Section>
 
               <Section label="Features inclusas">
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <div className="grid gap-2 grid-cols-1 sm:[grid-template-columns:repeat(auto-fit,minmax(180px,1fr))]">
                   {FEATURES.map((f) => (
                     <Chip key={f.id} active={features.includes(f.id)} onClick={() => toggleFeat(f.id)}>
                       {f.label}
