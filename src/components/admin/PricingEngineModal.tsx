@@ -178,7 +178,8 @@ export default function PricingEngineModal({ open, onClose, onApply }: Props) {
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }
 
