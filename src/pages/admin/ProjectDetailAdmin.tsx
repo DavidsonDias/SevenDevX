@@ -294,23 +294,6 @@ export default function ProjectDetailAdmin() {
                     clientId={(project as any).client_id}
                     onLinkClient={(cid) => linkClient.mutate(cid)}
                   />
-                  <GlassCard className="p-4 min-w-0">
-                    <ContractCard
-                      entity="projects"
-                      id={project.id}
-                      data={project as any}
-                      entityName={(project as any)?.title || (project as any)?.slug}
-                      aiContext={{
-                        project: {
-                          title: (project as any)?.title,
-                          description: (project as any)?.description,
-                          category: (project as any)?.category,
-                          budget: (project as any)?.budget,
-                        },
-                      }}
-                      onChange={() => qc.invalidateQueries({ queryKey: ["project", id] })}
-                    />
-                  </GlassCard>
                   <GlassCard className="p-5 min-w-0">
                     <AttachmentManager
                       title="Arquivos do projeto"
