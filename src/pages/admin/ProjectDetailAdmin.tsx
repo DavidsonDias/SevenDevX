@@ -568,28 +568,6 @@ function ClientPanel({
 
       {client && (
         <>
-          <GlassCard className="p-4 border-purple-500/20 bg-purple-500/[0.02]">
-            <div className="flex items-center justify-between mb-3">
-              <h4 className="font-bold flex items-center gap-2 text-sm">
-                <Sparkles className="w-4 h-4 text-purple-400" /> Resumo IA
-              </h4>
-              <button
-                onClick={generateSummary}
-                disabled={ai.isPending}
-                className="text-xs px-2.5 py-1 bg-purple-500/20 border border-purple-500/30 rounded inline-flex items-center gap-1 hover:bg-purple-500/30 disabled:opacity-50"
-              >
-                {ai.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-                {client.ai_summary ? "Regenerar" : "Gerar"}
-              </button>
-            </div>
-            {client.ai_summary ? (
-              <div className="prose prose-sm prose-invert max-w-none text-white/80 text-xs">
-                <ReactMarkdown>{client.ai_summary}</ReactMarkdown>
-              </div>
-            ) : (
-              <p className="text-xs text-white/50">Sem resumo ainda.</p>
-            )}
-          </GlassCard>
 
           <GlassCard className="p-4">
             <h4 className="font-bold mb-3 flex items-center gap-2 text-sm">
