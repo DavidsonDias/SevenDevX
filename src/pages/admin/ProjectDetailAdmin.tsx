@@ -284,6 +284,28 @@ export default function ProjectDetailAdmin() {
                     }
                   />
                 )}
+
+                {/* Termo / Contrato — abaixo dos blocos da etapa */}
+                <GlassCard className="p-5 min-w-0">
+                  <ContractCard
+                    entity="projects"
+                    id={project.id}
+                    data={project as any}
+                    entityName={(project as any)?.title || (project as any)?.slug}
+                    aiContext={{
+                      project: {
+                        title: (project as any)?.title,
+                        description: (project as any)?.description,
+                        category: (project as any)?.category,
+                        budget: (project as any)?.budget,
+                      },
+                    }}
+                    onChange={() => qc.invalidateQueries({ queryKey: ["project", id] })}
+                  />
+                </GlassCard>
+
+                {/* Resumo IA — abaixo do Termo/Contrato */}
+                <ClientAiSummaryBlock clientId={(project as any).client_id} />
               </div>
 
               {/* SIDEBAR — sticky em desktop */}
