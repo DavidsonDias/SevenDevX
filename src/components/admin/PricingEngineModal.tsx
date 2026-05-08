@@ -3,6 +3,7 @@
  * safe-area iOS, focus trap básico, ESC + click outside.
  */
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { Calculator, X, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useScrollLock } from "@/hooks/useScrollLock";
@@ -68,29 +69,32 @@ export default function PricingEngineModal({ open, onClose, onApply }: Props) {
     onClose();
   };
 
-  return (
+  if (typeof document === "undefined") return null;
+
+  return createPortal(
     <AnimatePresence>
       {open && (
         <motion.div
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[210] bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4"
+          transition={{ duration: 0.2 }}
+          className="fixed inset-0 z-[210] bg-black/75 backdrop-blur-md flex items-center justify-center p-3 sm:p-4"
           onClick={onClose}
           role="dialog"
           aria-modal="true"
           aria-labelledby="pricing-engine-title"
         >
           <motion.div
-            initial={{ y: 40, opacity: 0, scale: 0.98 }}
+            initial={{ y: 20, opacity: 0, scale: 0.96 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
-            exit={{ y: 20, opacity: 0, scale: 0.98 }}
-            transition={{ type: "spring", stiffness: 320, damping: 28 }}
+            exit={{ y: 20, opacity: 0, scale: 0.96 }}
+            transition={{ duration: 0.22 }}
             onClick={(e) => e.stopPropagation()}
             className="
-              w-full sm:max-w-2xl
+              w-full sm:w-[min(1100px,92vw)]
               bg-zinc-950 border border-white/15
               rounded-2xl shadow-2xl
               flex flex-col
-              max-h-[90vh]
+              max-h-[calc(100vh-24px)] sm:max-h-[90vh]
               overflow-hidden
             "
             style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
@@ -130,7 +134,7 @@ export default function PricingEngineModal({ open, onClose, onApply }: Props) {
               </Section>
 
               <Section label="Features inclusas">
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                <div className="grid gap-2 grid-cols-1 sm:[grid-template-columns:repeat(auto-fit,minmax(180px,1fr))]">
                   {FEATURES.map((f) => (
                     <Chip key={f.id} active={features.includes(f.id)} onClick={() => toggleFeat(f.id)}>
                       {f.label}
@@ -174,7 +178,8 @@ export default function PricingEngineModal({ open, onClose, onApply }: Props) {
           </motion.div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 }
 
