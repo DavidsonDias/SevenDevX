@@ -4,14 +4,14 @@
  * Estilo Linear/Notion. Carrega project_stages REAIS (instância do projeto),
  * com fallback para instanciar a partir do template default na primeira visita.
  */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Sparkles, Loader2, CheckCircle2, Circle, Clock, Upload, X,
   Save, FileText, Calendar, User as UserIcon, ExternalLink, Copy, RefreshCw,
-  ChevronRight, ListChecks, Package, MessageSquare, Plus, Trash2, FileSignature,
+  ChevronRight, ChevronDown, ChevronUp, ListChecks, Package, MessageSquare, Plus, Trash2, FileSignature,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
