@@ -4,14 +4,14 @@
  * Estilo Linear/Notion. Carrega project_stages REAIS (instância do projeto),
  * com fallback para instanciar a partir do template default na primeira visita.
  */
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, Sparkles, Loader2, CheckCircle2, Circle, Clock, Upload, X,
   Save, FileText, Calendar, User as UserIcon, ExternalLink, Copy, RefreshCw,
-  ChevronRight, ListChecks, Package, MessageSquare, Plus, Trash2, FileSignature,
+  ChevronRight, ChevronDown, ChevronUp, ListChecks, Package, MessageSquare, Plus, Trash2, FileSignature,
 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 
@@ -647,6 +647,22 @@ function ClientAiSummaryBlock({ clientId }: { clientId?: string | null }) {
   const upsert = useUpsertClient();
   const ai = useAiGenerate();
   const { toast } = useToast();
+  const [expanded, setExpanded] = useState(false);
+  const [isOverflowing, setIsOverflowing] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  // Collapsed height ~ 7 linhas de texto-sm (line-height ~1.25rem) = 8.75rem
+  const COLLAPSED_PX = 140;
+
+  useEffect(() => {
+    if (!contentRef.current) return;
+    const el = contentRef.current;
+    const check = () => setIsOverflowing(el.scrollHeight > COLLAPSED_PX + 8);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [client?.ai_summary]);
 
   if (!clientId || !client) return null;
 
@@ -681,9 +697,40 @@ function ClientAiSummaryBlock({ clientId }: { clientId?: string | null }) {
         </button>
       </div>
       {client.ai_summary ? (
-        <div className="prose prose-sm prose-invert max-w-none text-white/80 text-sm">
-          <ReactMarkdown>{client.ai_summary}</ReactMarkdown>
-        </div>
+        <>
+          <motion.div
+            initial={false}
+            animate={{ maxHeight: expanded ? 2000 : COLLAPSED_PX }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            className="relative overflow-hidden"
+          >
+            <div
+              ref={contentRef}
+              className="prose prose-sm prose-invert max-w-none text-white/80 text-sm"
+            >
+              <ReactMarkdown>{client.ai_summary}</ReactMarkdown>
+            </div>
+            {!expanded && isOverflowing && (
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-zinc-950 to-transparent" />
+            )}
+          </motion.div>
+          {isOverflowing && (
+            <button
+              onClick={() => setExpanded((v) => !v)}
+              className="mt-2 text-xs text-purple-300 hover:text-purple-200 inline-flex items-center gap-1 transition-colors"
+            >
+              {expanded ? (
+                <>
+                  <ChevronUp className="w-3 h-3" /> Recolher
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="w-3 h-3" /> Expandir
+                </>
+              )}
+            </button>
+          )}
+        </>
       ) : (
         <p className="text-xs text-white/50">Sem resumo ainda. Clique em "Gerar" para criar.</p>
       )}
