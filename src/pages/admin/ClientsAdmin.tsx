@@ -324,6 +324,120 @@ const Field = ({ label, children }: any) => (
   </div>
 );
 
+/* ─────────── Resumo IA com accordion + copiar ─────────── */
+function ClientAiSummary({ client, interactions, ai, upsert, toast }: any) {
+  const [expanded, setExpanded] = useState(false);
+  const [isOverflowing, setIsOverflowing] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  const COLLAPSED_PX = 140;
+
+  useEffect(() => {
+    if (!contentRef.current) return;
+    const el = contentRef.current;
+    const check = () => setIsOverflowing(el.scrollHeight > COLLAPSED_PX + 8);
+    check();
+    const ro = new ResizeObserver(check);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [client?.ai_summary]);
+
+  const generateSummary = async () => {
+    const summary = await ai.mutateAsync({
+      task: "client_summary",
+      context: { client, interactions },
+    });
+    if (summary) {
+      await upsert.mutateAsync({
+        id: client.id,
+        ai_summary: summary,
+        ai_summary_updated_at: new Date().toISOString(),
+      });
+      toast({ title: "Resumo do cliente atualizado" });
+    }
+  };
+
+  const handleCopy = async () => {
+    if (!client.ai_summary) return;
+    try {
+      await navigator.clipboard.writeText(client.ai_summary);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast({ title: "Erro ao copiar", variant: "destructive" });
+    }
+  };
+
+  return (
+    <div className="border border-purple-500/20 rounded-xl p-4 bg-purple-500/5">
+      <div className="flex items-center justify-between mb-3">
+        <h4 className="font-bold flex items-center gap-2 text-sm">
+          <Sparkles className="w-4 h-4 text-purple-400" /> Resumo IA
+        </h4>
+        <div className="flex items-center gap-2">
+          {client.ai_summary && (
+            <button
+              onClick={handleCopy}
+              className="text-xs px-2.5 py-1 bg-white/5 border border-white/10 rounded inline-flex items-center gap-1 hover:bg-white/10 transition-colors"
+              title="Copiar resumo"
+            >
+              {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+              {copied ? "Copiado" : "Copiar"}
+            </button>
+          )}
+          <button
+            onClick={generateSummary}
+            disabled={ai.isPending}
+            className="text-xs px-2.5 py-1 bg-purple-500/20 border border-purple-500/30 rounded inline-flex items-center gap-1 hover:bg-purple-500/30 disabled:opacity-50"
+          >
+            {ai.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+            {client.ai_summary ? "Regenerar" : "Gerar"}
+          </button>
+        </div>
+      </div>
+      {client.ai_summary ? (
+        <>
+          <motion.div
+            initial={false}
+            animate={{ maxHeight: expanded ? 2000 : COLLAPSED_PX }}
+            transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            className="relative overflow-hidden"
+          >
+            <div
+              ref={contentRef}
+              className="prose prose-sm prose-invert max-w-none text-white/80 text-sm"
+            >
+              <ReactMarkdown>{client.ai_summary}</ReactMarkdown>
+            </div>
+            {!expanded && isOverflowing && (
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-zinc-950 to-transparent" />
+            )}
+          </motion.div>
+          {isOverflowing && (
+            <button
+              onClick={() => setExpanded((v) => !v)}
+              className="mt-2 text-xs text-purple-300 hover:text-purple-200 inline-flex items-center gap-1 transition-colors"
+            >
+              {expanded ? (
+                <>
+                  <ChevronUp className="w-3 h-3" /> Recolher
+                </>
+              ) : (
+                <>
+                  <ChevronDown className="w-3 h-3" /> Expandir
+                </>
+              )}
+            </button>
+          )}
+        </>
+      ) : (
+        <p className="text-xs text-white/50">Clique em Gerar para criar um resumo estratégico do cliente.</p>
+      )}
+    </div>
+  );
+}
+
 /* ─────────── projetos vinculados ao cliente ─────────── */
 function ClientProjects({ clientId }: { clientId: string }) {
   const { data: projects = [], isLoading } = useQuery({
