@@ -8,6 +8,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   Plus, Search, Building2, Mail, Phone, Sparkles, X, Edit2, Trash2,
   MessageCircle, FileText, Calendar, Loader2, Save, FolderKanban,
+  ChevronDown, ChevronUp, Copy, Check,
 } from "lucide-react";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import GlassCard from "@/components/GlassCard";
