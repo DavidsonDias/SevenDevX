@@ -224,26 +224,13 @@ function ClientDrawer({ id, onClose }: { id: string; onClose: () => void }) {
 
         <div className="p-5 space-y-6">
           {/* IA Summary */}
-          <div className="border border-purple-500/20 rounded-xl p-4 bg-purple-500/5">
-            <div className="flex items-center justify-between mb-3">
-              <h4 className="font-bold flex items-center gap-2"><Sparkles className="w-4 h-4 text-purple-400" /> Resumo IA</h4>
-              <button
-                onClick={generateSummary}
-                disabled={ai.isPending}
-                className="text-xs px-3 py-1.5 bg-purple-500/20 border border-purple-500/30 rounded hover:bg-purple-500/30 inline-flex items-center gap-1.5"
-              >
-                {ai.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-                {client.ai_summary ? "Regenerar" : "Gerar"}
-              </button>
-            </div>
-            {client.ai_summary ? (
-              <div className="prose prose-sm prose-invert max-w-none text-white/80">
-                <ReactMarkdown>{client.ai_summary}</ReactMarkdown>
-              </div>
-            ) : (
-              <p className="text-sm text-white/50">Clique em Gerar para criar um resumo estratégico do cliente.</p>
-            )}
-          </div>
+          <ClientAiSummary
+            client={client}
+            interactions={interactions}
+            ai={ai}
+            upsert={upsert}
+            toast={toast}
+          />
 
           {/* Projects vinculados */}
           <ClientProjects clientId={id} />
