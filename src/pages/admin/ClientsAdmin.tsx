@@ -200,16 +200,6 @@ function ClientDrawer({ id, onClose }: { id: string; onClose: () => void }) {
   const { toast } = useToast();
   const [interForm, setInterForm] = useState({ type: "note", title: "", description: "" });
 
-  const generateSummary = async () => {
-    if (!client) return;
-    const summary = await ai.mutateAsync({
-      task: "client_summary",
-      context: { client, interactions },
-    });
-    await upsert.mutateAsync({ id, ai_summary: summary, ai_summary_updated_at: new Date().toISOString() });
-    toast({ title: "Resumo gerado pela IA" });
-  };
-
   if (!client) return null;
   return (
     <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex justify-end" onClick={onClose}>
