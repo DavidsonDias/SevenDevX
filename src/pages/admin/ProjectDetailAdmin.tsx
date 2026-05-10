@@ -649,6 +649,7 @@ function ClientAiSummaryBlock({ clientId }: { clientId?: string | null }) {
   const { toast } = useToast();
   const [expanded, setExpanded] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
+  const [copied, setCopied] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
   // Collapsed height ~ 7 linhas de texto-sm (line-height ~1.25rem) = 8.75rem
@@ -681,20 +682,43 @@ function ClientAiSummaryBlock({ clientId }: { clientId?: string | null }) {
     }
   };
 
+  const handleCopy = async () => {
+    if (!client.ai_summary) return;
+    try {
+      await navigator.clipboard.writeText(client.ai_summary);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast({ title: "Erro ao copiar", variant: "destructive" });
+    }
+  };
+
   return (
     <GlassCard className="p-5 min-w-0 border-purple-500/20 bg-purple-500/[0.02]">
       <div className="flex items-center justify-between mb-3">
         <h4 className="font-bold flex items-center gap-2 text-sm">
           <Sparkles className="w-4 h-4 text-purple-400" /> Resumo IA
         </h4>
-        <button
-          onClick={generateSummary}
-          disabled={ai.isPending}
-          className="text-xs px-2.5 py-1 bg-purple-500/20 border border-purple-500/30 rounded inline-flex items-center gap-1 hover:bg-purple-500/30 disabled:opacity-50"
-        >
-          {ai.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-          {client.ai_summary ? "Regenerar" : "Gerar"}
-        </button>
+        <div className="flex items-center gap-2">
+          {client.ai_summary && (
+            <button
+              onClick={handleCopy}
+              className="text-xs px-2.5 py-1 bg-white/5 border border-white/10 rounded inline-flex items-center gap-1 hover:bg-white/10 transition-colors"
+              title="Copiar resumo"
+            >
+              {copied ? <CheckCircle2 className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+              {copied ? "Copiado" : "Copiar"}
+            </button>
+          )}
+          <button
+            onClick={generateSummary}
+            disabled={ai.isPending}
+            className="text-xs px-2.5 py-1 bg-purple-500/20 border border-purple-500/30 rounded inline-flex items-center gap-1 hover:bg-purple-500/30 disabled:opacity-50"
+          >
+            {ai.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+            {client.ai_summary ? "Regenerar" : "Gerar"}
+          </button>
+        </div>
       </div>
       {client.ai_summary ? (
         <>
