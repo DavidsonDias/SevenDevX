@@ -624,6 +624,30 @@ export type Database = {
           },
         ]
       }
+      fx_rates: {
+        Row: {
+          currency: Database["public"]["Enums"]["currency_code"]
+          fetched_at: string
+          id: string
+          rate_to_brl: number
+          source: string | null
+        }
+        Insert: {
+          currency: Database["public"]["Enums"]["currency_code"]
+          fetched_at?: string
+          id?: string
+          rate_to_brl: number
+          source?: string | null
+        }
+        Update: {
+          currency?: Database["public"]["Enums"]["currency_code"]
+          fetched_at?: string
+          id?: string
+          rate_to_brl?: number
+          source?: string | null
+        }
+        Relationships: []
+      }
       page_views: {
         Row: {
           city: string | null
@@ -821,6 +845,48 @@ export type Database = {
           id?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      project_budgets: {
+        Row: {
+          amount_total: number
+          amount_total_brl: number
+          created_at: string
+          currency: Database["public"]["Enums"]["currency_code"]
+          default_hourly_rate_brl: number
+          estimated_hours: number
+          id: string
+          notes: string | null
+          project_id: string
+          tax_percent: number
+          updated_at: string
+        }
+        Insert: {
+          amount_total?: number
+          amount_total_brl?: number
+          created_at?: string
+          currency?: Database["public"]["Enums"]["currency_code"]
+          default_hourly_rate_brl?: number
+          estimated_hours?: number
+          id?: string
+          notes?: string | null
+          project_id: string
+          tax_percent?: number
+          updated_at?: string
+        }
+        Update: {
+          amount_total?: number
+          amount_total_brl?: number
+          created_at?: string
+          currency?: Database["public"]["Enums"]["currency_code"]
+          default_hourly_rate_brl?: number
+          estimated_hours?: number
+          id?: string
+          notes?: string | null
+          project_id?: string
+          tax_percent?: number
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1224,6 +1290,51 @@ export type Database = {
         }
         Relationships: []
       }
+      team_members: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          email: string | null
+          hourly_cost_brl: number
+          hourly_rate_brl: number
+          id: string
+          is_active: boolean
+          name: string
+          notes: string | null
+          role: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          hourly_cost_brl?: number
+          hourly_rate_brl?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          notes?: string | null
+          role?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          email?: string | null
+          hourly_cost_brl?: number
+          hourly_rate_brl?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          notes?: string | null
+          role?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       tech_registry: {
         Row: {
           category: string | null
@@ -1263,6 +1374,126 @@ export type Database = {
           slug?: string
           updated_at?: string
           usage_count?: number
+        }
+        Relationships: []
+      }
+      time_entries: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          description: string | null
+          duration_minutes: number | null
+          ended_at: string | null
+          hourly_cost_brl_snapshot: number
+          hourly_rate_brl_snapshot: number
+          id: string
+          is_billable: boolean
+          member_id: string
+          project_id: string
+          stage_id: string | null
+          started_at: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          duration_minutes?: number | null
+          ended_at?: string | null
+          hourly_cost_brl_snapshot?: number
+          hourly_rate_brl_snapshot?: number
+          id?: string
+          is_billable?: boolean
+          member_id: string
+          project_id: string
+          stage_id?: string | null
+          started_at?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          duration_minutes?: number | null
+          ended_at?: string | null
+          hourly_cost_brl_snapshot?: number
+          hourly_rate_brl_snapshot?: number
+          id?: string
+          is_billable?: boolean
+          member_id?: string
+          project_id?: string
+          stage_id?: string | null
+          started_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          amount: number
+          amount_brl: number
+          category: Database["public"]["Enums"]["transaction_category"]
+          client_id: string | null
+          created_at: string
+          created_by: string | null
+          currency: Database["public"]["Enums"]["currency_code"]
+          description: string
+          due_at: string | null
+          fx_rate_used: number | null
+          id: string
+          is_recurring: boolean
+          kind: Database["public"]["Enums"]["transaction_kind"]
+          metadata: Json
+          occurred_at: string
+          paid_at: string | null
+          project_id: string | null
+          recurring_period: string | null
+          status: Database["public"]["Enums"]["transaction_status"]
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          amount_brl: number
+          category: Database["public"]["Enums"]["transaction_category"]
+          client_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          currency?: Database["public"]["Enums"]["currency_code"]
+          description: string
+          due_at?: string | null
+          fx_rate_used?: number | null
+          id?: string
+          is_recurring?: boolean
+          kind: Database["public"]["Enums"]["transaction_kind"]
+          metadata?: Json
+          occurred_at?: string
+          paid_at?: string | null
+          project_id?: string | null
+          recurring_period?: string | null
+          status?: Database["public"]["Enums"]["transaction_status"]
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          amount_brl?: number
+          category?: Database["public"]["Enums"]["transaction_category"]
+          client_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          currency?: Database["public"]["Enums"]["currency_code"]
+          description?: string
+          due_at?: string | null
+          fx_rate_used?: number | null
+          id?: string
+          is_recurring?: boolean
+          kind?: Database["public"]["Enums"]["transaction_kind"]
+          metadata?: Json
+          occurred_at?: string
+          paid_at?: string | null
+          project_id?: string | null
+          recurring_period?: string | null
+          status?: Database["public"]["Enums"]["transaction_status"]
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1307,6 +1538,19 @@ export type Database = {
           project_count: number
           raw_revenue: number
           weighted_revenue: number
+        }[]
+      }
+      fn_project_margin: {
+        Args: { _project_id: string }
+        Returns: {
+          budget_brl: number
+          expense_brl: number
+          hours_cost_brl: number
+          hours_estimated: number
+          hours_worked: number
+          income_brl: number
+          margin_percent: number
+          net_margin_brl: number
         }[]
       }
       fn_stale_leads: {
@@ -1355,6 +1599,7 @@ export type Database = {
         | "closed"
         | "lost"
       contract_status: "pending" | "sent" | "approved" | "rejected"
+      currency_code: "BRL" | "USD" | "EUR"
       document_type:
         | "briefing"
         | "competitor_analysis"
@@ -1399,6 +1644,21 @@ export type Database = {
         | "execucao"
       project_status: "draft" | "published" | "archived"
       stage_status: "pending" | "in_progress" | "completed" | "blocked"
+      transaction_category:
+        | "contract"
+        | "maintenance"
+        | "consulting"
+        | "recurring"
+        | "other_income"
+        | "tool"
+        | "infra"
+        | "freelancer"
+        | "tax"
+        | "marketing"
+        | "salary"
+        | "other_expense"
+      transaction_kind: "income" | "expense"
+      transaction_status: "pending" | "paid" | "overdue" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1539,6 +1799,7 @@ export const Constants = {
         "lost",
       ],
       contract_status: ["pending", "sent", "approved", "rejected"],
+      currency_code: ["BRL", "USD", "EUR"],
       document_type: [
         "briefing",
         "competitor_analysis",
@@ -1586,6 +1847,22 @@ export const Constants = {
       ],
       project_status: ["draft", "published", "archived"],
       stage_status: ["pending", "in_progress", "completed", "blocked"],
+      transaction_category: [
+        "contract",
+        "maintenance",
+        "consulting",
+        "recurring",
+        "other_income",
+        "tool",
+        "infra",
+        "freelancer",
+        "tax",
+        "marketing",
+        "salary",
+        "other_expense",
+      ],
+      transaction_kind: ["income", "expense"],
+      transaction_status: ["pending", "paid", "overdue", "cancelled"],
     },
   },
 } as const
