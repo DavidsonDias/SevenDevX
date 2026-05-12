@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Menu, X, LayoutDashboard, FolderKanban, Users, Workflow, Settings2, Sparkles,
   FileQuestion, Tag, Cpu, MessageSquare, GitBranch, Home as HomeIcon, LogOut,
-  ListTodo,
+  ListTodo, Coins,
 } from "lucide-react";
 import { useAuthContext as useAuth } from "@/contexts/AuthContext";
 
@@ -17,6 +17,7 @@ const NAV: { label: string; to: string; icon: any; group: string }[] = [
   { group: "Operação", label: "Dashboard",     to: "/admin",            icon: LayoutDashboard },
   { group: "Operação", label: "Pipeline",      to: "/admin/pipeline",   icon: GitBranch },
   { group: "Operação", label: "Projetos",      to: "/admin/projects",   icon: FolderKanban },
+  { group: "Operação", label: "Financeiro",    to: "/admin/financeiro", icon: Coins },
   { group: "CRM",      label: "Clientes",      to: "/admin/clients",    icon: Users },
   { group: "CRM",      label: "Contatos",      to: "/admin/contacts",   icon: MessageSquare },
   { group: "Conteúdo", label: "Serviços",      to: "/admin/services",   icon: Sparkles },
