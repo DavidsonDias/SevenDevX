@@ -29,6 +29,8 @@ import ClientPicker from "@/components/admin/ClientPicker";
 import ContractCard from "@/components/admin/ContractCard";
 import AttachmentManager from "@/components/admin/AttachmentManager";
 import StageDocuments from "@/components/admin/StageDocuments";
+import ProjectFinanceBlock from "@/components/admin/finance/ProjectFinanceBlock";
+import TimeTrackerWidget from "@/components/admin/finance/TimeTrackerWidget";
 
 const STAGE_STATUS: Record<string, { label: string; color: string }> = {
   pending:     { label: "Pendente",    color: "#6B7280" },
@@ -306,6 +308,12 @@ export default function ProjectDetailAdmin() {
 
                 {/* Resumo IA — abaixo do Termo/Contrato */}
                 <ClientAiSummaryBlock clientId={(project as any).client_id} />
+
+                {/* Financeiro do projeto */}
+                <ProjectFinanceBlock projectId={project.id} />
+
+                {/* Time tracking */}
+                <TimeTrackerWidget projectId={project.id} />
               </div>
 
               {/* SIDEBAR — sticky em desktop */}
