@@ -31,6 +31,7 @@ import AttachmentManager from "@/components/admin/AttachmentManager";
 import StageDocuments from "@/components/admin/StageDocuments";
 import ProjectFinanceBlock from "@/components/admin/finance/ProjectFinanceBlock";
 import TimeTrackerWidget from "@/components/admin/finance/TimeTrackerWidget";
+import ProjectIntegrationsBlock from "@/components/admin/integrations/ProjectIntegrationsBlock";
 
 const STAGE_STATUS: Record<string, { label: string; color: string }> = {
   pending:     { label: "Pendente",    color: "#6B7280" },
@@ -314,6 +315,16 @@ export default function ProjectDetailAdmin() {
 
                 {/* Time tracking */}
                 <TimeTrackerWidget projectId={project.id} />
+
+                {/* Integrações: GitHub, Vercel, Figma */}
+                <ProjectIntegrationsBlock
+                  projectId={project.id}
+                  initial={{
+                    github_repo: (project as any).github_repo,
+                    vercel_project_id: (project as any).vercel_project_id,
+                    figma_url: (project as any).figma_url,
+                  }}
+                />
               </div>
 
               {/* SIDEBAR — sticky em desktop */}

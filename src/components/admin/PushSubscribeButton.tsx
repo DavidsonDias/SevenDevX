@@ -1,0 +1,19 @@
+import { Bell, BellOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { usePushSubscription } from "@/hooks/usePushSubscription";
+
+export default function PushSubscribeButton() {
+  const { supported, subscribed, loading, subscribe, unsubscribe } = usePushSubscription();
+  if (!supported) return null;
+  return (
+    <Button
+      variant="ghost"
+      size="sm"
+      onClick={() => (subscribed ? unsubscribe() : subscribe())}
+      disabled={loading}
+      title={subscribed ? "Desativar notificações" : "Ativar notificações push"}
+    >
+      {subscribed ? <Bell className="w-4 h-4 text-primary" /> : <BellOff className="w-4 h-4" />}
+    </Button>
+  );
+}

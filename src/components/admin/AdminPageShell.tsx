@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Home as HomeIcon, LogOut } from "lucide-react";
 import { useAuthContext as useAuth } from "@/contexts/AuthContext";
 import AdminMenu from "@/components/admin/AdminMenu";
+import PushSubscribeButton from "@/components/admin/PushSubscribeButton";
 import Breadcrumb from "@/components/admin/Breadcrumb";
 import GlobalSearch from "@/components/admin/GlobalSearch";
 import { useSmartBack } from "@/hooks/useSmartBack";
@@ -54,6 +55,7 @@ export const AdminPageShell = ({ title, subtitle, actions, children, backFallbac
           </div>
           <div className="flex items-center gap-2">
             <GlobalSearch />
+            <PushSubscribeButton />
             <Link
               to="/"
               className="hidden md:inline-flex items-center gap-1.5 px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-xs uppercase tracking-wider"
