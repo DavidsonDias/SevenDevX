@@ -479,4 +479,37 @@ self.addEventListener("message", (event) => {
   }
 });
 
+/* ═══════════════════════════════════════════════════════════════════
+   PUSH NOTIFICATIONS
+   ═══════════════════════════════════════════════════════════════════ */
+self.addEventListener("push", (event: any) => {
+  let data: any = {};
+  try {
+    data = event.data?.json() ?? {};
+  } catch {
+    data = { title: "SevenOS", body: event.data?.text() ?? "" };
+  }
+  const title = data.title ?? "SevenOS";
+  const options = {
+    body: data.body ?? "",
+    icon: "/logo-192.png",
+    badge: "/logo-192.png",
+    data: { url: data.url ?? "/admin" },
+  };
+  event.waitUntil((self as any).registration.showNotification(title, options));
+});
+
+self.addEventListener("notificationclick", (event: any) => {
+  event.notification.close();
+  const url = event.notification.data?.url ?? "/admin";
+  event.waitUntil(
+    (self as any).clients.matchAll({ type: "window", includeUncontrolled: true }).then((list: any[]) => {
+      for (const c of list) {
+        if (c.url.includes(url) && "focus" in c) return c.focus();
+      }
+      return (self as any).clients.openWindow(url);
+    }),
+  );
+});
+
 console.log(`${LOG_PREFIX} 🚀 CARREGADO — CacheFirst Agressivo para Imagens Externas`);
