@@ -982,7 +982,9 @@ export type Database = {
           description: string
           display_order: number
           featured_level: Database["public"]["Enums"]["featured_level"]
+          figma_url: string | null
           gallery: Json
+          github_repo: string | null
           github_url: string | null
           id: string
           is_featured: boolean
@@ -1001,6 +1003,7 @@ export type Database = {
           technologies: Json
           title: string
           updated_at: string
+          vercel_project_id: string | null
           views_count: number
         }
         Insert: {
@@ -1019,7 +1022,9 @@ export type Database = {
           description: string
           display_order?: number
           featured_level?: Database["public"]["Enums"]["featured_level"]
+          figma_url?: string | null
           gallery?: Json
+          github_repo?: string | null
           github_url?: string | null
           id?: string
           is_featured?: boolean
@@ -1038,6 +1043,7 @@ export type Database = {
           technologies?: Json
           title: string
           updated_at?: string
+          vercel_project_id?: string | null
           views_count?: number
         }
         Update: {
@@ -1056,7 +1062,9 @@ export type Database = {
           description?: string
           display_order?: number
           featured_level?: Database["public"]["Enums"]["featured_level"]
+          figma_url?: string | null
           gallery?: Json
+          github_repo?: string | null
           github_url?: string | null
           id?: string
           is_featured?: boolean
@@ -1075,6 +1083,7 @@ export type Database = {
           technologies?: Json
           title?: string
           updated_at?: string
+          vercel_project_id?: string | null
           views_count?: number
         }
         Relationships: [
@@ -1086,6 +1095,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          endpoint: string
+          id: string
+          last_used_at: string
+          p256dh: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          endpoint: string
+          id?: string
+          last_used_at?: string
+          p256dh: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+          last_used_at?: string
+          p256dh?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       services_cms: {
         Row: {
