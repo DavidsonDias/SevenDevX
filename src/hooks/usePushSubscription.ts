@@ -3,8 +3,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
 
-const VAPID_PUBLIC = "BLBz5pzD5cWi6oQg5_jHUz-2aEWbB7dQHJqJkQ8b0fMxJ8B6T2pK_VxJZhJ7KQ8m4Y7H8L9pNqDb1-T_3R5sQzM";
-// NOTE: replace with your real VAPID public key fetched from settings if needed.
+async function fetchVapidKey(): Promise<string> {
+  const { data, error } = await supabase.functions.invoke("push-public-key");
+  if (error) throw error;
+  return (data as any)?.publicKey ?? "";
+}
 
 function urlBase64ToUint8Array(base64: string) {
   const padding = "=".repeat((4 - (base64.length % 4)) % 4);
@@ -31,13 +34,15 @@ export function usePushSubscription() {
     }).catch(() => {});
   }, []);
 
-  async function subscribe(vapidPublicKey: string = VAPID_PUBLIC) {
+  async function subscribe() {
     if (!user) {
       toast({ title: "Faça login", variant: "destructive" });
       return;
     }
     setLoading(true);
     try {
+      const vapidPublicKey = await fetchVapidKey();
+      if (!vapidPublicKey) throw new Error("VAPID key indisponível");
       const perm = await Notification.requestPermission();
       if (perm !== "granted") throw new Error("Permissão negada");
       const reg = await navigator.serviceWorker.ready;
