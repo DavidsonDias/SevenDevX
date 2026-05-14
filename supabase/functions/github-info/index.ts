@@ -36,10 +36,18 @@ Deno.serve(async (req) => {
     const { data: isAdmin } = await sb.rpc("has_role", { _user_id: user.id, _role: "admin" });
     if (!isAdmin) return new Response(JSON.stringify({ error: "forbidden" }), { status: 403, headers: corsHeaders });
 
-    const { repo } = await req.json();
-    if (!repo || !/^[\w.-]+\/[\w.-]+$/.test(repo)) {
-      return new Response(JSON.stringify({ error: "invalid repo (use owner/name)" }), { status: 400, headers: corsHeaders });
+    const body = await req.json();
+    let repo: string = (body?.repo ?? "").trim();
+    // Aceita URL completa do GitHub e normaliza para owner/name
+    repo = repo
+      .replace(/^https?:\/\/(www\.)?github\.com\//i, "")
+      .replace(/\.git$/i, "")
+      .replace(/\/+$/, "");
+    const m = repo.match(/^([\w.-]+)\/([\w.-]+)/);
+    if (!m) {
+      return new Response(JSON.stringify({ error: "invalid repo (use owner/name or full GitHub URL)" }), { status: 400, headers: corsHeaders });
     }
+    repo = `${m[1]}/${m[2]}`;
 
     const [info, commits, prs] = await Promise.all([
       gh(`/repos/${repo}`),
