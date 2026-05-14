@@ -37,10 +37,15 @@ export default function ProjectIntegrationsBlock({ projectId, initial }: Props) 
 
   const save = useMutation({
     mutationFn: async () => {
+      const normalizedRepo = githubRepo
+        .trim()
+        .replace(/^https?:\/\/(www\.)?github\.com\//i, "")
+        .replace(/\.git$/i, "")
+        .replace(/\/+$/, "");
       const { error } = await supabase
         .from("projects")
         .update({
-          github_repo: githubRepo.trim() || null,
+          github_repo: normalizedRepo || null,
           vercel_project_id: vercelId.trim() || null,
           figma_url: figmaUrl.trim() || null,
         } as any)
