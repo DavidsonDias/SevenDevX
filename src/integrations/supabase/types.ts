@@ -1560,6 +1560,38 @@ export type Database = {
         }
         Relationships: []
       }
+      vercel_deploy_alerts: {
+        Row: {
+          deployment_uid: string
+          id: string
+          notified_at: string
+          project_id: string
+          state: string
+        }
+        Insert: {
+          deployment_uid: string
+          id?: string
+          notified_at?: string
+          project_id: string
+          state: string
+        }
+        Update: {
+          deployment_uid?: string
+          id?: string
+          notified_at?: string
+          project_id?: string
+          state?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vercel_deploy_alerts_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
