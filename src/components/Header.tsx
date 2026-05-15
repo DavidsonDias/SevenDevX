@@ -92,17 +92,26 @@ const Header = () => {
             </Link>
 
             <nav className="hidden lg:flex items-center gap-8 ml-auto mr-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  className={`text-xs tracking-[0.2em] font-light transition-colors ${
-                    location.pathname === link.path ? "text-white" : "text-white/70 hover:text-white"
-                  }`}
-                >
-                  {link.name}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const active = location.pathname === link.path;
+                return (
+                  <Link
+                    key={link.path}
+                    to={link.path}
+                    className={`relative group text-xs tracking-[0.2em] font-light transition-colors ${
+                      active ? "text-white" : "text-white/70 hover:text-white"
+                    }`}
+                  >
+                    {link.name}
+                    <span
+                      className={`pointer-events-none absolute left-0 -bottom-1 h-px bg-gradient-to-r from-white/0 via-white to-white/0 transition-all duration-500 ease-out ${
+                        active ? "w-full" : "w-0 group-hover:w-full"
+                      }`}
+                      style={active ? { boxShadow: "0 0 8px rgba(255,255,255,0.6)" } : undefined}
+                    />
+                  </Link>
+                );
+              })}
               <LanguageSwitcher />
               {authLinks()}
             </nav>
