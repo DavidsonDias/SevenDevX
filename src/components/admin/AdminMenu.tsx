@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Menu, X, LayoutDashboard, FolderKanban, Users, Workflow, Settings2, Sparkles,
   FileQuestion, Tag, Cpu, MessageSquare, GitBranch, Home as HomeIcon, LogOut,
-  ListTodo, Coins,
+  ListTodo, Coins, Plug, Inbox, Webhook, ScrollText, MonitorSmartphone, ShieldCheck, HeartPulse,
 } from "lucide-react";
 import { useAuthContext as useAuth } from "@/contexts/AuthContext";
 
@@ -19,6 +19,7 @@ const NAV: { label: string; to: string; icon: any; group: string }[] = [
   { group: "Operação", label: "Projetos",      to: "/admin/projects",   icon: FolderKanban },
   { group: "Operação", label: "Financeiro",    to: "/admin/financeiro", icon: Coins },
   { group: "CRM",      label: "Clientes",      to: "/admin/clients",    icon: Users },
+  { group: "CRM",      label: "Central Contatos", to: "/admin/contact-center", icon: Inbox },
   { group: "CRM",      label: "Contatos",      to: "/admin/contacts",   icon: MessageSquare },
   { group: "Conteúdo", label: "Serviços",      to: "/admin/services",   icon: Sparkles },
   { group: "Conteúdo", label: "Processo",      to: "/admin/process",    icon: Workflow },
@@ -26,6 +27,13 @@ const NAV: { label: string; to: string; icon: any; group: string }[] = [
   { group: "Conteúdo", label: "Blog",          to: "/admin/blog",       icon: ListTodo },
   { group: "Catálogo", label: "Tecnologias",   to: "/admin/technologies", icon: Cpu },
   { group: "Catálogo", label: "Tags",          to: "/admin/tags",       icon: Tag },
+  { group: "Super Admin", label: "Integrações", to: "/admin/integrations", icon: Plug },
+  { group: "Super Admin", label: "Usuários",   to: "/admin/users",      icon: Users },
+  { group: "Super Admin", label: "Webhooks",   to: "/admin/webhooks",   icon: Webhook },
+  { group: "Super Admin", label: "Logs",       to: "/admin/logs",       icon: ScrollText },
+  { group: "Super Admin", label: "Sessões",    to: "/admin/sessions",   icon: MonitorSmartphone },
+  { group: "Super Admin", label: "Segurança",  to: "/admin/security",   icon: ShieldCheck },
+  { group: "Super Admin", label: "Saúde",      to: "/admin/system-health", icon: HeartPulse },
 ];
 
 export default function AdminMenu() {
