@@ -29,6 +29,14 @@ const ProcessAdmin = lazy(() => import("@/pages/admin/ProcessAdmin"));
 const FaqAdmin = lazy(() => import("@/pages/admin/FaqAdmin"));
 const ServicesAdmin = lazy(() => import("@/pages/admin/ServicesAdmin"));
 const FinanceAdmin = lazy(() => import("@/pages/admin/FinanceAdmin"));
+const IntegrationsAdmin = lazy(() => import("@/pages/admin/IntegrationsAdmin"));
+const UsersAdmin = lazy(() => import("@/pages/admin/UsersAdmin"));
+const ContactCenterAdmin = lazy(() => import("@/pages/admin/ContactCenterAdmin"));
+const WebhooksAdmin = lazy(() => import("@/pages/admin/WebhooksAdmin"));
+const LogsAdmin = lazy(() => import("@/pages/admin/LogsAdmin"));
+const SessionsAdmin = lazy(() => import("@/pages/admin/SessionsAdmin"));
+const SecurityAdmin = lazy(() => import("@/pages/admin/SecurityAdmin"));
+const SystemHealthAdmin = lazy(() => import("@/pages/admin/SystemHealthAdmin"));
 const ProjectsHub = lazy(() => import("@/pages/ProjectsHub"));
 const ProjectDetail = lazy(() => import("@/pages/ProjectDetail"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
@@ -123,6 +131,30 @@ function AnimatedRoutes() {
             } />
             <Route path="/admin/financeiro" element={
               <ProtectedRoute requiredRole="admin"><FinanceAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/integrations" element={
+              <ProtectedRoute requiredRole="admin"><IntegrationsAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/users" element={
+              <ProtectedRoute requiredRole="admin"><UsersAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/contact-center" element={
+              <ProtectedRoute requiredRole="admin"><ContactCenterAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/webhooks" element={
+              <ProtectedRoute requiredRole="admin"><WebhooksAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/logs" element={
+              <ProtectedRoute requiredRole="admin"><LogsAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/sessions" element={
+              <ProtectedRoute requiredRole="admin"><SessionsAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/security" element={
+              <ProtectedRoute requiredRole="admin"><SecurityAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/system-health" element={
+              <ProtectedRoute requiredRole="admin"><SystemHealthAdmin /></ProtectedRoute>
             } />
 
             <Route path="*" element={<NotFound />} />

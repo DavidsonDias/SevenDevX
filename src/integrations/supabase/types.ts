@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_sessions: {
+        Row: {
+          browser: string | null
+          created_at: string
+          device: string | null
+          id: string
+          ip: string | null
+          last_seen_at: string
+          location: string | null
+          os: string | null
+          revoked_at: string | null
+          user_agent: string | null
+          user_email: string | null
+          user_id: string
+        }
+        Insert: {
+          browser?: string | null
+          created_at?: string
+          device?: string | null
+          id?: string
+          ip?: string | null
+          last_seen_at?: string
+          location?: string | null
+          os?: string | null
+          revoked_at?: string | null
+          user_agent?: string | null
+          user_email?: string | null
+          user_id: string
+        }
+        Update: {
+          browser?: string | null
+          created_at?: string
+          device?: string | null
+          id?: string
+          ip?: string | null
+          last_seen_at?: string
+          location?: string | null
+          os?: string | null
+          revoked_at?: string | null
+          user_agent?: string | null
+          user_email?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_usage: {
         Row: {
           created_at: string
@@ -451,6 +496,60 @@ export type Database = {
           },
         ]
       }
+      contact_messages: {
+        Row: {
+          assigned_to: string | null
+          company: string | null
+          created_at: string
+          email: string
+          id: string
+          internal_notes: string | null
+          message: string
+          metadata: Json
+          name: string
+          phone: string | null
+          priority: string
+          source: string | null
+          status: string
+          subject: string | null
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          company?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          internal_notes?: string | null
+          message: string
+          metadata?: Json
+          name: string
+          phone?: string | null
+          priority?: string
+          source?: string | null
+          status?: string
+          subject?: string | null
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          company?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          internal_notes?: string | null
+          message?: string
+          metadata?: Json
+          name?: string
+          phone?: string | null
+          priority?: string
+          source?: string | null
+          status?: string
+          subject?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contacts: {
         Row: {
           assigned_to: string | null
@@ -645,6 +744,116 @@ export type Database = {
           id?: string
           rate_to_brl?: number
           source?: string | null
+        }
+        Relationships: []
+      }
+      integration_logs: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          duration_ms: number | null
+          error: string | null
+          id: string
+          level: string
+          provider_id: string | null
+          request: Json | null
+          response: Json | null
+          status_code: number | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          duration_ms?: number | null
+          error?: string | null
+          id?: string
+          level?: string
+          provider_id?: string | null
+          request?: Json | null
+          response?: Json | null
+          status_code?: number | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          duration_ms?: number | null
+          error?: string | null
+          id?: string
+          level?: string
+          provider_id?: string | null
+          request?: Json | null
+          response?: Json | null
+          status_code?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "integration_logs_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "integration_providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      integration_providers: {
+        Row: {
+          category: string
+          color: string | null
+          config: Json
+          created_at: string
+          description: string | null
+          health_status: string
+          icon: string | null
+          id: string
+          is_active: boolean
+          is_connected: boolean
+          last_error: string | null
+          last_sync_at: string | null
+          last_test_at: string | null
+          name: string
+          request_count: number
+          secret_refs: string[]
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          color?: string | null
+          config?: Json
+          created_at?: string
+          description?: string | null
+          health_status?: string
+          icon?: string | null
+          id: string
+          is_active?: boolean
+          is_connected?: boolean
+          last_error?: string | null
+          last_sync_at?: string | null
+          last_test_at?: string | null
+          name: string
+          request_count?: number
+          secret_refs?: string[]
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          color?: string | null
+          config?: Json
+          created_at?: string
+          description?: string | null
+          health_status?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          is_connected?: boolean
+          last_error?: string | null
+          last_sync_at?: string | null
+          last_test_at?: string | null
+          name?: string
+          request_count?: number
+          secret_refs?: string[]
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1591,6 +1800,101 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      webhook_deliveries: {
+        Row: {
+          attempt: number
+          delivered_at: string
+          duration_ms: number | null
+          error: string | null
+          event: string
+          id: string
+          payload: Json
+          response_body: string | null
+          response_status: number | null
+          webhook_id: string
+        }
+        Insert: {
+          attempt?: number
+          delivered_at?: string
+          duration_ms?: number | null
+          error?: string | null
+          event: string
+          id?: string
+          payload?: Json
+          response_body?: string | null
+          response_status?: number | null
+          webhook_id: string
+        }
+        Update: {
+          attempt?: number
+          delivered_at?: string
+          duration_ms?: number | null
+          error?: string | null
+          event?: string
+          id?: string
+          payload?: Json
+          response_body?: string | null
+          response_status?: number | null
+          webhook_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webhook_deliveries_webhook_id_fkey"
+            columns: ["webhook_id"]
+            isOneToOne: false
+            referencedRelation: "webhooks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      webhooks: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          delivery_count: number
+          description: string | null
+          events: string[]
+          failure_count: number
+          id: string
+          is_active: boolean
+          last_delivery_at: string | null
+          name: string
+          secret: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          delivery_count?: number
+          description?: string | null
+          events?: string[]
+          failure_count?: number
+          id?: string
+          is_active?: boolean
+          last_delivery_at?: string | null
+          name: string
+          secret?: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          delivery_count?: number
+          description?: string | null
+          events?: string[]
+          failure_count?: number
+          id?: string
+          is_active?: boolean
+          last_delivery_at?: string | null
+          name?: string
+          secret?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: []
       }
     }
     Views: {
