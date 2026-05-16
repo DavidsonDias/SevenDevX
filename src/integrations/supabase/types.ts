@@ -1901,6 +1901,36 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_list_users: {
+        Args: never
+        Returns: {
+          avatar_url: string
+          created_at: string
+          email: string
+          full_name: string
+          last_sign_in_at: string
+          roles: string[]
+          user_id: string
+        }[]
+      }
+      admin_remove_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: undefined
+      }
+      admin_revoke_session: {
+        Args: { _session_id: string }
+        Returns: undefined
+      }
+      admin_set_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: undefined
+      }
       fn_ai_usage_check_quota: {
         Args: { _user_id: string }
         Returns: {
@@ -1963,9 +1993,26 @@ export type Database = {
       }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      upsert_admin_session: {
+        Args: {
+          _browser: string
+          _device: string
+          _ip?: string
+          _os: string
+          _user_agent: string
+        }
+        Returns: string
+      }
     }
     Enums: {
-      app_role: "admin" | "moderator" | "user"
+      app_role:
+        | "admin"
+        | "moderator"
+        | "user"
+        | "super_admin"
+        | "manager"
+        | "editor"
+        | "viewer"
       attachment_type: "logo" | "file" | "idea" | "document" | "contract"
       blog_status: "draft" | "published" | "archived"
       client_status: "lead" | "qualified" | "active" | "finished" | "lost"
@@ -2164,7 +2211,15 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "moderator", "user"],
+      app_role: [
+        "admin",
+        "moderator",
+        "user",
+        "super_admin",
+        "manager",
+        "editor",
+        "viewer",
+      ],
       attachment_type: ["logo", "file", "idea", "document", "contract"],
       blog_status: ["draft", "published", "archived"],
       client_status: ["lead", "qualified", "active", "finished", "lost"],

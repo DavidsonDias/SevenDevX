@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { useSessionTracker } from "@/hooks/useSessionTracker";
 
 interface AuthContextType {
   user: User | null;
@@ -26,6 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  useSessionTracker(isAdmin ? user?.id : undefined);
 
   const checkAdminRole = useCallback(async (userId: string) => {
     try {
