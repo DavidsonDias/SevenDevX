@@ -93,7 +93,7 @@ function ContactCenterInner() {
 
   const updateContact = useMutation({
     mutationFn: async (patch: Partial<Contact> & { id: string }) => {
-      const { error } = await supabase.from("contacts").update(patch).eq("id", patch.id);
+      const { error } = await supabase.from("contacts").update(patch as any).eq("id", patch.id);
       if (error) throw error;
     },
     onSuccess: () => {
