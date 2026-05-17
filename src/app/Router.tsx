@@ -160,6 +160,18 @@ function AnimatedRoutes() {
             <Route path="/admin/system-health" element={
               <ProtectedRoute requiredRole="admin"><SystemHealthAdmin /></ProtectedRoute>
             } />
+            <Route path="/admin/events" element={
+              <ProtectedRoute requiredRole="admin"><EventsAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/automations" element={
+              <ProtectedRoute requiredRole="admin"><AutomationsAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/incidents" element={
+              <ProtectedRoute requiredRole="admin"><IncidentsAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/ai-ops" element={
+              <ProtectedRoute requiredRole="admin"><AiOpsAdmin /></ProtectedRoute>
+            } />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
