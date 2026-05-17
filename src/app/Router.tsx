@@ -37,6 +37,10 @@ const LogsAdmin = lazy(() => import("@/pages/admin/LogsAdmin"));
 const SessionsAdmin = lazy(() => import("@/pages/admin/SessionsAdmin"));
 const SecurityAdmin = lazy(() => import("@/pages/admin/SecurityAdmin"));
 const SystemHealthAdmin = lazy(() => import("@/pages/admin/SystemHealthAdmin"));
+const EventsAdmin = lazy(() => import("@/pages/admin/EventsAdmin"));
+const AutomationsAdmin = lazy(() => import("@/pages/admin/AutomationsAdmin"));
+const IncidentsAdmin = lazy(() => import("@/pages/admin/IncidentsAdmin"));
+const AiOpsAdmin = lazy(() => import("@/pages/admin/AiOpsAdmin"));
 const ProjectsHub = lazy(() => import("@/pages/ProjectsHub"));
 const ProjectDetail = lazy(() => import("@/pages/ProjectDetail"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
@@ -155,6 +159,18 @@ function AnimatedRoutes() {
             } />
             <Route path="/admin/system-health" element={
               <ProtectedRoute requiredRole="admin"><SystemHealthAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/events" element={
+              <ProtectedRoute requiredRole="admin"><EventsAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/automations" element={
+              <ProtectedRoute requiredRole="admin"><AutomationsAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/incidents" element={
+              <ProtectedRoute requiredRole="admin"><IncidentsAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/ai-ops" element={
+              <ProtectedRoute requiredRole="admin"><AiOpsAdmin /></ProtectedRoute>
             } />
 
             <Route path="*" element={<NotFound />} />

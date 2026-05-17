@@ -10,6 +10,7 @@ import {
   Menu, X, LayoutDashboard, FolderKanban, Users, Workflow, Settings2, Sparkles,
   FileQuestion, Tag, Cpu, MessageSquare, GitBranch, Home as HomeIcon, LogOut,
   ListTodo, Coins, Plug, Inbox, Webhook, ScrollText, MonitorSmartphone, ShieldCheck, HeartPulse,
+  Activity, Zap, AlertTriangle, Bot,
 } from "lucide-react";
 import { useAuthContext as useAuth } from "@/contexts/AuthContext";
 
@@ -34,6 +35,10 @@ const NAV: { label: string; to: string; icon: any; group: string }[] = [
   { group: "Super Admin", label: "Sessões",    to: "/admin/sessions",   icon: MonitorSmartphone },
   { group: "Super Admin", label: "Segurança",  to: "/admin/security",   icon: ShieldCheck },
   { group: "Super Admin", label: "Saúde",      to: "/admin/system-health", icon: HeartPulse },
+  { group: "Super Admin", label: "Eventos",    to: "/admin/events",     icon: Activity },
+  { group: "Super Admin", label: "Automações", to: "/admin/automations", icon: Zap },
+  { group: "Super Admin", label: "Incidentes", to: "/admin/incidents",  icon: AlertTriangle },
+  { group: "Super Admin", label: "AI Ops",     to: "/admin/ai-ops",     icon: Bot },
 ];
 
 export default function AdminMenu() {

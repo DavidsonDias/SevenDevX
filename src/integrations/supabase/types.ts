@@ -221,6 +221,92 @@ export type Database = {
         }
         Relationships: []
       }
+      automation_runs: {
+        Row: {
+          automation_id: string
+          created_at: string
+          duration_ms: number | null
+          error: string | null
+          event_id: string | null
+          id: string
+          result: Json | null
+          status: string
+        }
+        Insert: {
+          automation_id: string
+          created_at?: string
+          duration_ms?: number | null
+          error?: string | null
+          event_id?: string | null
+          id?: string
+          result?: Json | null
+          status?: string
+        }
+        Update: {
+          automation_id?: string
+          created_at?: string
+          duration_ms?: number | null
+          error?: string | null
+          event_id?: string | null
+          id?: string
+          result?: Json | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_runs_automation_id_fkey"
+            columns: ["automation_id"]
+            isOneToOne: false
+            referencedRelation: "automations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      automations: {
+        Row: {
+          actions: Json
+          conditions: Json
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean
+          last_run_at: string | null
+          name: string
+          run_count: number
+          trigger_event: string
+          updated_at: string
+        }
+        Insert: {
+          actions?: Json
+          conditions?: Json
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          last_run_at?: string | null
+          name: string
+          run_count?: number
+          trigger_event: string
+          updated_at?: string
+        }
+        Update: {
+          actions?: Json
+          conditions?: Json
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          last_run_at?: string | null
+          name?: string
+          run_count?: number
+          trigger_event?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       blog_categories: {
         Row: {
           color: string | null
@@ -646,6 +732,42 @@ export type Database = {
         }
         Relationships: []
       }
+      events: {
+        Row: {
+          actor_email: string | null
+          actor_id: string | null
+          correlation_id: string | null
+          created_at: string
+          id: string
+          payload: Json
+          severity: string
+          source: string
+          type: string
+        }
+        Insert: {
+          actor_email?: string | null
+          actor_id?: string | null
+          correlation_id?: string | null
+          created_at?: string
+          id?: string
+          payload?: Json
+          severity?: string
+          source?: string
+          type: string
+        }
+        Update: {
+          actor_email?: string | null
+          actor_id?: string | null
+          correlation_id?: string | null
+          created_at?: string
+          id?: string
+          payload?: Json
+          severity?: string
+          source?: string
+          type?: string
+        }
+        Relationships: []
+      }
       faq_categories: {
         Row: {
           created_at: string
@@ -744,6 +866,89 @@ export type Database = {
           id?: string
           rate_to_brl?: number
           source?: string | null
+        }
+        Relationships: []
+      }
+      incident_timeline: {
+        Row: {
+          author_email: string | null
+          author_id: string | null
+          created_at: string
+          id: string
+          incident_id: string
+          message: string
+          status: string | null
+        }
+        Insert: {
+          author_email?: string | null
+          author_id?: string | null
+          created_at?: string
+          id?: string
+          incident_id: string
+          message: string
+          status?: string | null
+        }
+        Update: {
+          author_email?: string | null
+          author_id?: string | null
+          created_at?: string
+          id?: string
+          incident_id?: string
+          message?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "incident_timeline_incident_id_fkey"
+            columns: ["incident_id"]
+            isOneToOne: false
+            referencedRelation: "incidents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      incidents: {
+        Row: {
+          affected_systems: string[] | null
+          created_at: string
+          created_by: string | null
+          description: string | null
+          id: string
+          impact: string | null
+          postmortem: string | null
+          resolved_at: string | null
+          severity: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          affected_systems?: string[] | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          impact?: string | null
+          postmortem?: string | null
+          resolved_at?: string | null
+          severity?: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          affected_systems?: string[] | null
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          impact?: string | null
+          postmortem?: string | null
+          resolved_at?: string | null
+          severity?: string
+          status?: string
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -1856,11 +2061,13 @@ export type Database = {
           description: string | null
           events: string[]
           failure_count: number
+          headers: Json
           id: string
           is_active: boolean
           last_delivery_at: string | null
           name: string
           secret: string
+          success_count: number
           updated_at: string
           url: string
         }
@@ -1871,11 +2078,13 @@ export type Database = {
           description?: string | null
           events?: string[]
           failure_count?: number
+          headers?: Json
           id?: string
           is_active?: boolean
           last_delivery_at?: string | null
           name: string
           secret?: string
+          success_count?: number
           updated_at?: string
           url: string
         }
@@ -1886,11 +2095,13 @@ export type Database = {
           description?: string | null
           events?: string[]
           failure_count?: number
+          headers?: Json
           id?: string
           is_active?: boolean
           last_delivery_at?: string | null
           name?: string
           secret?: string
+          success_count?: number
           updated_at?: string
           url?: string
         }
@@ -1930,6 +2141,16 @@ export type Database = {
           _user_id: string
         }
         Returns: undefined
+      }
+      emit_event: {
+        Args: {
+          _correlation_id?: string
+          _payload?: Json
+          _severity?: string
+          _source?: string
+          _type: string
+        }
+        Returns: string
       }
       fn_ai_usage_check_quota: {
         Args: { _user_id: string }
