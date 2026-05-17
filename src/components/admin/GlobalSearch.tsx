@@ -79,6 +79,13 @@ export default function GlobalSearch() {
     { id: "nav-tech", label: "Tecnologias", icon: Cpu, group: "Navegar", run: () => { navigate("/admin/technologies"); close(); } },
     { id: "nav-tags", label: "Tags", icon: TagIcon, group: "Navegar", run: () => { navigate("/admin/tags"); close(); } },
     { id: "nav-blog", label: "Blog", icon: BookOpen, group: "Navegar", run: () => { navigate("/blog"); close(); } },
+    { id: "nav-integrations", label: "Integrações", icon: Wrench, group: "Navegar", run: () => { navigate("/admin/integrations"); close(); }, keywords: "github vercel" },
+    { id: "nav-webhooks", label: "Webhooks", icon: Workflow, group: "Navegar", run: () => { navigate("/admin/webhooks"); close(); } },
+    { id: "nav-events", label: "Eventos (Realtime)", icon: Sparkles, group: "Navegar", run: () => { navigate("/admin/events"); close(); }, keywords: "bus stream" },
+    { id: "nav-automations", label: "Automações", icon: Sparkles, group: "Navegar", run: () => { navigate("/admin/automations"); close(); }, keywords: "workflow zapier" },
+    { id: "nav-incidents", label: "Incidentes", icon: HelpCircle, group: "Navegar", run: () => { navigate("/admin/incidents"); close(); } },
+    { id: "nav-health", label: "Saúde do Sistema", icon: LayoutDashboard, group: "Navegar", run: () => { navigate("/admin/system-health"); close(); }, keywords: "uptime status" },
+    { id: "nav-aiops", label: "AI Ops Assistant", icon: Sparkles, group: "Navegar", run: () => { navigate("/admin/ai-ops"); close(); }, keywords: "ia operacional" },
     { id: "nav-site", label: "Abrir site público", icon: Home, group: "Navegar", run: () => { navigate("/"); close(); } },
 
     // Criar
