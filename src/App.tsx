@@ -5,6 +5,8 @@ import Blocker from "@/components/security/Blocker";
 import AppInstallerButton from "@/components/AppInstallerButton";
 import PWAUpdatePrompt from "@/components/PWAUpdatePrompt";
 import AIChatbot from "@/components/AIChatbot";
+import MobileBottomNav from "@/modules/layout/MobileBottomNav";
+import GlobalFAB from "@/modules/layout/GlobalFAB";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
 function ErrorFallback({ error, resetErrorBoundary }: any) {
