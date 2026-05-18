@@ -218,33 +218,26 @@ export default function IntegrationsAdmin() {
                         </p>
                       )}
 
-                      <div className="flex items-center gap-2 mt-auto">
+                      <div className="flex items-center gap-2 mt-auto" onClick={(e) => e.stopPropagation()}>
                         <button
                           onClick={() => testConnection.mutate(p)}
                           disabled={testing}
                           className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-[11px] uppercase tracking-wider rounded-lg border border-white/15 hover:bg-white/5 disabled:opacity-50"
                         >
-                          {testing ? (
-                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          ) : (
-                            <Zap className="w-3.5 h-3.5" />
-                          )}
+                          {testing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Zap className="w-3.5 h-3.5" />}
                           Testar
                         </button>
                         <button
-                          onClick={() =>
-                            toggleActive.mutate({ id: p.id, active: !p.is_active })
-                          }
+                          onClick={() => toggleActive.mutate({ id: p.id, active: !p.is_active })}
                           className={`px-3 py-2 text-[11px] uppercase tracking-wider rounded-lg border transition-colors ${
-                            p.is_active
-                              ? "bg-white/90 text-black border-white"
-                              : "border-white/15 hover:bg-white/5"
+                            p.is_active ? "bg-white/90 text-black border-white" : "border-white/15 hover:bg-white/5"
                           }`}
                         >
                           {p.is_active ? "Ativo" : "Ativar"}
                         </button>
                       </div>
                     </GlassCard>
+                    </div>
                   </motion.div>
                 );
               })}
