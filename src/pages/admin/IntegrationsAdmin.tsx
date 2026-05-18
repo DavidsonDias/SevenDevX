@@ -1,14 +1,16 @@
 /**
  * 🔗 IntegrationsAdmin — Mission Control de Integrações
  */
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
-  Activity, AlertTriangle, CheckCircle2, Circle, Loader2, Plug, Search, Webhook, Zap,
+  Activity, AlertTriangle, CheckCircle2, Circle, Loader2, Plug, Plus, Search, Webhook, Zap,
 } from "lucide-react";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import GlassCard from "@/components/GlassCard";
 import { useIntegrations, type IntegrationProvider } from "@/hooks/useIntegrations";
+import IntegrationDetailsModal from "@/modules/integrations/IntegrationDetailsModal";
+import IntegrationMarketplaceModal from "@/modules/integrations/IntegrationMarketplaceModal";
 
 const CATEGORIES: Record<string, { label: string; color: string }> = {
   comunicacao: { label: "Comunicação", color: "text-emerald-300" },
@@ -54,8 +56,21 @@ export default function IntegrationsAdmin() {
   const { list, toggleActive, testConnection } = useIntegrations();
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<string>("all");
+  const [selected, setSelected] = useState<IntegrationProvider | null>(null);
+  const [marketOpen, setMarketOpen] = useState(false);
 
   const providers = list.data ?? [];
+
+  useEffect(() => {
+    const handler = (e: any) => {
+      if (e.detail === "integrations:new") setMarketOpen(true);
+      if (e.detail === "integrations:test-all") {
+        providers.filter((p) => p.is_active).forEach((p) => testConnection.mutate(p));
+      }
+    };
+    window.addEventListener("sevenos:fab-action", handler);
+    return () => window.removeEventListener("sevenos:fab-action", handler);
+  }, [providers, testConnection]);
 
   const stats = useMemo(() => {
     const active = providers.filter((p) => p.is_active).length;
@@ -86,6 +101,12 @@ export default function IntegrationsAdmin() {
       subtitle={`Mission Control · ${stats.total} providers · última sincronização: ${
         stats.lastSync ? new Date(stats.lastSync).toLocaleString("pt-BR") : "—"
       }`}
+      actions={
+        <button onClick={() => setMarketOpen(true)}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-black text-sm font-medium hover:bg-white/90">
+          <Plus className="w-4 h-4" /> Nova integração
+        </button>
+      }
     >
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
@@ -158,7 +179,8 @@ export default function IntegrationsAdmin() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: i * 0.04 }}
                   >
-                    <GlassCard padding="md" className="h-full flex flex-col gap-4">
+                    <div onClick={() => setSelected(p)} className="cursor-pointer h-full">
+                    <GlassCard padding="md" className="h-full flex flex-col gap-4 hover:border-white/30 transition-colors">
                       <div className="flex items-start gap-3">
                         <div
                           className="w-10 h-10 rounded-lg border border-white/10 flex items-center justify-center text-base font-bold shrink-0"
@@ -196,33 +218,26 @@ export default function IntegrationsAdmin() {
                         </p>
                       )}
 
-                      <div className="flex items-center gap-2 mt-auto">
+                      <div className="flex items-center gap-2 mt-auto" onClick={(e) => e.stopPropagation()}>
                         <button
                           onClick={() => testConnection.mutate(p)}
                           disabled={testing}
                           className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-[11px] uppercase tracking-wider rounded-lg border border-white/15 hover:bg-white/5 disabled:opacity-50"
                         >
-                          {testing ? (
-                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          ) : (
-                            <Zap className="w-3.5 h-3.5" />
-                          )}
+                          {testing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Zap className="w-3.5 h-3.5" />}
                           Testar
                         </button>
                         <button
-                          onClick={() =>
-                            toggleActive.mutate({ id: p.id, active: !p.is_active })
-                          }
+                          onClick={() => toggleActive.mutate({ id: p.id, active: !p.is_active })}
                           className={`px-3 py-2 text-[11px] uppercase tracking-wider rounded-lg border transition-colors ${
-                            p.is_active
-                              ? "bg-white/90 text-black border-white"
-                              : "border-white/15 hover:bg-white/5"
+                            p.is_active ? "bg-white/90 text-black border-white" : "border-white/15 hover:bg-white/5"
                           }`}
                         >
                           {p.is_active ? "Ativo" : "Ativar"}
                         </button>
                       </div>
                     </GlassCard>
+                    </div>
                   </motion.div>
                 );
               })}
@@ -237,6 +252,9 @@ export default function IntegrationsAdmin() {
           <p className="text-sm">Nenhuma integração encontrada</p>
         </div>
       )}
+
+      {selected && <IntegrationDetailsModal provider={selected} onClose={() => setSelected(null)} />}
+      <IntegrationMarketplaceModal open={marketOpen} onClose={() => setMarketOpen(false)} />
     </AdminPageShell>
   );
 }

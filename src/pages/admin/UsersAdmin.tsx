@@ -10,6 +10,7 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { Users, Shield, Loader2, Search, Plus, X, Crown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuthContext } from "@/contexts/AuthContext";
+import UserDetailsModal from "@/modules/users/UserDetailsModal";
 
 type UserRow = {
   user_id: string;
@@ -38,6 +39,7 @@ function UsersInner() {
   const { toast } = useToast();
   const { user: me } = useAuthContext();
   const [search, setSearch] = useState("");
+  const [selected, setSelected] = useState<UserRow | null>(null);
 
   const { data: users = [], isLoading } = useQuery({
     queryKey: ["admin-users"],
@@ -113,7 +115,8 @@ function UsersInner() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.02 }}
-              className="rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-md p-4 hover:border-white/20 transition-colors"
+              onClick={() => setSelected(u)}
+              className="rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-md p-4 hover:border-white/20 transition-colors cursor-pointer"
             >
               <div className="flex items-start justify-between gap-4 flex-wrap">
                 <div className="flex items-center gap-3 min-w-0">
@@ -132,7 +135,7 @@ function UsersInner() {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-1.5 items-center">
+                <div className="flex flex-wrap gap-1.5 items-center" onClick={(e) => e.stopPropagation()}>
                   {u.roles.map((r) => (
                     <span
                       key={r}
@@ -173,6 +176,13 @@ function UsersInner() {
       <p className="text-xs text-white/40 mt-6">
         Para convidar novos usuários, peça que se cadastrem em <code className="text-white/60">/auth</code> — depois atribua os papéis aqui.
       </p>
+
+      <UserDetailsModal
+        user={selected}
+        allUsers={users}
+        onClose={() => setSelected(null)}
+        onChanged={() => qc.invalidateQueries({ queryKey: ["admin-users"] })}
+      />
     </AdminPageShell>
   );
 }
