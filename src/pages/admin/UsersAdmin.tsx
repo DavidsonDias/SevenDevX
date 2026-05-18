@@ -135,7 +135,7 @@ function UsersInner() {
                   </div>
                 </div>
 
-                <div className="flex flex-wrap gap-1.5 items-center">
+                <div className="flex flex-wrap gap-1.5 items-center" onClick={(e) => e.stopPropagation()}>
                   {u.roles.map((r) => (
                     <span
                       key={r}
