@@ -179,7 +179,8 @@ export default function IntegrationsAdmin() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: i * 0.04 }}
                   >
-                    <GlassCard padding="md" className="h-full flex flex-col gap-4">
+                    <div onClick={() => setSelected(p)} className="cursor-pointer h-full">
+                    <GlassCard padding="md" className="h-full flex flex-col gap-4 hover:border-white/30 transition-colors">
                       <div className="flex items-start gap-3">
                         <div
                           className="w-10 h-10 rounded-lg border border-white/10 flex items-center justify-center text-base font-bold shrink-0"
