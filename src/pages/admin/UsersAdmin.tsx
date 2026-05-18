@@ -115,7 +115,8 @@ function UsersInner() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.02 }}
-              className="rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-md p-4 hover:border-white/20 transition-colors"
+              onClick={() => setSelected(u)}
+              className="rounded-xl border border-white/10 bg-white/[0.02] backdrop-blur-md p-4 hover:border-white/20 transition-colors cursor-pointer"
             >
               <div className="flex items-start justify-between gap-4 flex-wrap">
                 <div className="flex items-center gap-3 min-w-0">
