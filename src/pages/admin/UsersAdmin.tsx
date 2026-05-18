@@ -39,6 +39,7 @@ function UsersInner() {
   const { toast } = useToast();
   const { user: me } = useAuthContext();
   const [search, setSearch] = useState("");
+  const [selected, setSelected] = useState<UserRow | null>(null);
 
   const { data: users = [], isLoading } = useQuery({
     queryKey: ["admin-users"],
