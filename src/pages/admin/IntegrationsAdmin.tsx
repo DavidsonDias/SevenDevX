@@ -56,8 +56,21 @@ export default function IntegrationsAdmin() {
   const { list, toggleActive, testConnection } = useIntegrations();
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<string>("all");
+  const [selected, setSelected] = useState<IntegrationProvider | null>(null);
+  const [marketOpen, setMarketOpen] = useState(false);
 
   const providers = list.data ?? [];
+
+  useEffect(() => {
+    const handler = (e: any) => {
+      if (e.detail === "integrations:new") setMarketOpen(true);
+      if (e.detail === "integrations:test-all") {
+        providers.filter((p) => p.is_active).forEach((p) => testConnection.mutate(p));
+      }
+    };
+    window.addEventListener("sevenos:fab-action", handler);
+    return () => window.removeEventListener("sevenos:fab-action", handler);
+  }, [providers, testConnection]);
 
   const stats = useMemo(() => {
     const active = providers.filter((p) => p.is_active).length;
