@@ -252,6 +252,9 @@ export default function IntegrationsAdmin() {
           <p className="text-sm">Nenhuma integração encontrada</p>
         </div>
       )}
+
+      {selected && <IntegrationDetailsModal provider={selected} onClose={() => setSelected(null)} />}
+      <IntegrationMarketplaceModal open={marketOpen} onClose={() => setMarketOpen(false)} />
     </AdminPageShell>
   );
 }
