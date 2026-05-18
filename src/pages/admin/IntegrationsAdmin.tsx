@@ -101,6 +101,12 @@ export default function IntegrationsAdmin() {
       subtitle={`Mission Control · ${stats.total} providers · última sincronização: ${
         stats.lastSync ? new Date(stats.lastSync).toLocaleString("pt-BR") : "—"
       }`}
+      actions={
+        <button onClick={() => setMarketOpen(true)}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-black text-sm font-medium hover:bg-white/90">
+          <Plus className="w-4 h-4" /> Nova integração
+        </button>
+      }
     >
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
