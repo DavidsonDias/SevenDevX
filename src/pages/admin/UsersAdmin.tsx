@@ -176,6 +176,13 @@ function UsersInner() {
       <p className="text-xs text-white/40 mt-6">
         Para convidar novos usuários, peça que se cadastrem em <code className="text-white/60">/auth</code> — depois atribua os papéis aqui.
       </p>
+
+      <UserDetailsModal
+        user={selected}
+        allUsers={users}
+        onClose={() => setSelected(null)}
+        onChanged={() => qc.invalidateQueries({ queryKey: ["admin-users"] })}
+      />
     </AdminPageShell>
   );
 }
