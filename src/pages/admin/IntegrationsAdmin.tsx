@@ -1,14 +1,16 @@
 /**
  * 🔗 IntegrationsAdmin — Mission Control de Integrações
  */
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
-  Activity, AlertTriangle, CheckCircle2, Circle, Loader2, Plug, Search, Webhook, Zap,
+  Activity, AlertTriangle, CheckCircle2, Circle, Loader2, Plug, Plus, Search, Webhook, Zap,
 } from "lucide-react";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import GlassCard from "@/components/GlassCard";
 import { useIntegrations, type IntegrationProvider } from "@/hooks/useIntegrations";
+import IntegrationDetailsModal from "@/modules/integrations/IntegrationDetailsModal";
+import IntegrationMarketplaceModal from "@/modules/integrations/IntegrationMarketplaceModal";
 
 const CATEGORIES: Record<string, { label: string; color: string }> = {
   comunicacao: { label: "Comunicação", color: "text-emerald-300" },
