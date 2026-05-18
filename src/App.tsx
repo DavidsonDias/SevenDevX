@@ -44,6 +44,8 @@ export default function App() {
         <PWAUpdatePrompt />
         <AIChatbot />
         <AppRouter />
+        <MobileBottomNav />
+        <GlobalFAB />
       </Providers>
     </ErrorBoundary>
   );
