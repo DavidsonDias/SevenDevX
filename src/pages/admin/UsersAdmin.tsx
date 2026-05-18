@@ -10,6 +10,7 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { Users, Shield, Loader2, Search, Plus, X, Crown } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useAuthContext } from "@/contexts/AuthContext";
+import UserDetailsModal from "@/modules/users/UserDetailsModal";
 
 type UserRow = {
   user_id: string;
