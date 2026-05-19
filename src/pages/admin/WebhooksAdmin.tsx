@@ -193,6 +193,12 @@ export default function WebhooksAdmin() {
           </div>
         </div>
       )}
+      <WebhookPayloadViewer delivery={viewing} open={!!viewing} onClose={() => setViewing(null)}
+        onReplayed={async () => {
+          if (!selected) return;
+          const { data } = await supabase.from("webhook_deliveries").select("*").eq("webhook_id", selected).order("delivered_at", { ascending: false }).limit(50);
+          setDeliveries(data || []);
+        }} />
     </AdminPageShell>
   );
 }
