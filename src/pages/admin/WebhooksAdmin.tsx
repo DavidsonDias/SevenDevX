@@ -7,6 +7,7 @@ import AdminPageShell from "@/components/admin/AdminPageShell";
 import { Plus, Webhook as WebhookIcon, Send, Trash2, Power, Copy, CheckCircle2, XCircle, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
+import WebhookPayloadViewer from "@/modules/webhooks/WebhookPayloadViewer";
 
 const EVENT_CATALOG = [
   "lead.created", "lead.updated", "project.created", "project.pipeline_changed",
@@ -28,6 +29,7 @@ export default function WebhooksAdmin() {
   const [testing, setTesting] = useState<string | null>(null);
   const [deliveries, setDeliveries] = useState<any[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
+  const [viewing, setViewing] = useState<any | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -174,7 +176,8 @@ export default function WebhooksAdmin() {
             <div className="text-xs uppercase tracking-wider text-white/40 px-1">Entregas {selected ? "" : "(selecione um webhook)"}</div>
             <div className="max-h-[70vh] overflow-y-auto space-y-2">
               {deliveries.map(d => (
-                <div key={d.id} className="p-3 rounded-lg border border-white/10 bg-white/[0.02] text-xs">
+                <button key={d.id} onClick={() => setViewing(d)}
+                  className="w-full text-left p-3 rounded-lg border border-white/10 bg-white/[0.02] text-xs hover:border-white/30 hover:bg-white/[0.05] transition-colors">
                   <div className="flex items-center justify-between mb-1">
                     <span className="font-mono">{d.event}</span>
                     <span className={`px-1.5 py-0.5 rounded text-[10px] ${d.response_status >= 200 && d.response_status < 300 ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"}`}>
@@ -182,14 +185,20 @@ export default function WebhooksAdmin() {
                     </span>
                   </div>
                   <div className="text-white/40 text-[10px]">{new Date(d.delivered_at).toLocaleString("pt-BR")} · {d.duration_ms}ms</div>
-                  {d.error && <div className="text-red-400/80 mt-1">{d.error}</div>}
-                </div>
+                  {d.error && <div className="text-red-400/80 mt-1 line-clamp-1">{d.error}</div>}
+                </button>
               ))}
               {selected && deliveries.length === 0 && <div className="text-white/30 text-sm text-center py-8">Sem entregas ainda.</div>}
             </div>
           </div>
         </div>
       )}
+      <WebhookPayloadViewer delivery={viewing} open={!!viewing} onClose={() => setViewing(null)}
+        onReplayed={async () => {
+          if (!selected) return;
+          const { data } = await supabase.from("webhook_deliveries").select("*").eq("webhook_id", selected).order("delivered_at", { ascending: false }).limit(50);
+          setDeliveries(data || []);
+        }} />
     </AdminPageShell>
   );
 }

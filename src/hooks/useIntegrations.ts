@@ -28,6 +28,8 @@ export interface IntegrationProvider {
 const TEST_FUNCTION: Record<string, string> = {
   github: "github-info",
   vercel: "vercel-info",
+  figma: "figma-info",
+  whatsapp: "whatsapp-test",
 };
 
 export const useIntegrations = () => {

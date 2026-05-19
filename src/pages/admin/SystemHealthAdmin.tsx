@@ -6,6 +6,9 @@ import { supabase } from "@/integrations/supabase/client";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import { HeartPulse, AlertTriangle, CheckCircle2, Activity, Zap, Database, Cloud } from "lucide-react";
 import { motion } from "framer-motion";
+import RealtimeActivityFeed from "@/modules/system-health/RealtimeActivityFeed";
+import HealthStatusGrid from "@/modules/system-health/HealthStatusGrid";
+import AIRecommendationPanel from "@/modules/system-health/AIRecommendationPanel";
 
 interface Metric { label: string; value: string | number; status: "ok" | "warn" | "down"; icon: any; }
 
@@ -89,6 +92,14 @@ export default function SystemHealthAdmin() {
           <a href="/admin/incidents" className="text-sm text-white underline">Ver incidentes →</a>
         </div>
       )}
+
+      <div className="mt-8 grid lg:grid-cols-2 gap-6">
+        <RealtimeActivityFeed />
+        <HealthStatusGrid />
+      </div>
+      <div className="mt-6">
+        <AIRecommendationPanel />
+      </div>
     </AdminPageShell>
   );
 }
