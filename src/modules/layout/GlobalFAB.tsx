@@ -62,7 +62,7 @@ export default function GlobalFAB() {
   };
 
   return (
-    <div className="fixed right-4 z-40 md:bottom-6 bottom-[88px] pb-[env(safe-area-inset-bottom)]">
+    <div className="hidden md:block fixed right-6 bottom-6 z-40">
       <AnimatePresence>
         {open && (
           <motion.ul
