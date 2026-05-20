@@ -191,6 +191,8 @@ export default function AppRouter() {
     >
       <ScrollToTop />
       <AnimatedRoutes />
+      <MobileBottomNav />
+      <GlobalFAB />
     </BrowserRouter>
   );
 }
