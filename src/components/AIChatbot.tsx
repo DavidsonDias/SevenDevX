@@ -239,7 +239,7 @@ export const AIChatbot = () => {
       <AnimatePresence>
         {!isOpen && buttonVisible && (
           <motion.div
-            className="fixed bottom-24 right-6 z-50 flex items-center gap-3"
+            className="fixed right-4 md:right-6 bottom-[120px] md:bottom-24 z-[48] flex items-center gap-3 pb-[env(safe-area-inset-bottom)]"
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
