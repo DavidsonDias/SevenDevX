@@ -5,6 +5,8 @@ import ScrollToTop from "@/components/ScrollToTop";
 import AppLoaderOrbital from "@/components/ui/AppLoaderOrbital";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { useNavHistoryTracker } from "@/hooks/useSmartBack";
+import MobileBottomNav from "@/modules/layout/MobileBottomNav";
+import GlobalFAB from "@/modules/layout/GlobalFAB";
 
 const Index = lazy(() => import("@/pages/Index"));
 const About = lazy(() => import("@/pages/About"));
@@ -189,6 +191,8 @@ export default function AppRouter() {
     >
       <ScrollToTop />
       <AnimatedRoutes />
+      <MobileBottomNav />
+      <GlobalFAB />
     </BrowserRouter>
   );
 }
