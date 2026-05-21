@@ -41,6 +41,16 @@ const getSessionId = (): string => {
 
 export const AIChatbot = () => {
   const { t } = useLanguage();
+  const { pathname } = useLocation();
+  const isAdminCtx = pathname.startsWith("/admin") || pathname.startsWith("/profile");
+  // Public: float right above WhatsApp button (WA at bottom-6 + h-14 ⇒ ~bottom-24)
+  // Admin: float above mobile bottom nav / coexist with center FAB
+  const buttonPosClass = isAdminCtx
+    ? "right-4 md:right-6 bottom-[120px] md:bottom-24"
+    : "right-6 bottom-24 md:bottom-24";
+  const chatPosClass = isAdminCtx
+    ? "bottom-[110px] right-4 md:bottom-6 md:right-6"
+    : "bottom-24 right-4 md:bottom-24 md:right-6";
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
