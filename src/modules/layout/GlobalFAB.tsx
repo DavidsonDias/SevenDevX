@@ -62,7 +62,7 @@ export default function GlobalFAB() {
   };
 
   return (
-    <div className="hidden md:block fixed right-6 bottom-6 z-40">
+    <div className="fixed left-4 bottom-[110px] md:left-auto md:right-6 md:bottom-6 z-40 pb-[env(safe-area-inset-bottom)]">
       <AnimatePresence>
         {open && (
           <motion.ul
@@ -70,7 +70,7 @@ export default function GlobalFAB() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ type: "spring", stiffness: 320, damping: 26 }}
-            className="absolute bottom-16 right-0 space-y-2 min-w-[200px]"
+            className="absolute bottom-16 left-0 md:left-auto md:right-0 space-y-2 min-w-[200px]"
           >
             {actions.map((a, i) => {
               const Icon = a.icon;

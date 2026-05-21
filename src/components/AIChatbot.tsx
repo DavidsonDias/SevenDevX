@@ -5,6 +5,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLocation } from "react-router-dom";
 import { 
   MessageCircle, 
   X, 
@@ -40,6 +41,16 @@ const getSessionId = (): string => {
 
 export const AIChatbot = () => {
   const { t } = useLanguage();
+  const { pathname } = useLocation();
+  const isAdminCtx = pathname.startsWith("/admin") || pathname.startsWith("/profile");
+  // Public: float right above WhatsApp button (WA at bottom-6 + h-14 ⇒ ~bottom-24)
+  // Admin: float above mobile bottom nav / coexist with center FAB
+  const buttonPosClass = isAdminCtx
+    ? "right-4 md:right-6 bottom-[120px] md:bottom-24"
+    : "right-6 bottom-24 md:bottom-24";
+  const chatPosClass = isAdminCtx
+    ? "bottom-[110px] right-4 md:bottom-6 md:right-6"
+    : "bottom-24 right-4 md:bottom-24 md:right-6";
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -239,7 +250,7 @@ export const AIChatbot = () => {
       <AnimatePresence>
         {!isOpen && buttonVisible && (
           <motion.div
-            className="fixed right-4 md:right-6 bottom-[120px] md:bottom-24 z-[48] flex items-center gap-3 pb-[env(safe-area-inset-bottom)]"
+            className={`fixed ${buttonPosClass} z-[48] flex items-center gap-3 pb-[env(safe-area-inset-bottom)]`}
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
@@ -302,7 +313,7 @@ export const AIChatbot = () => {
             }}
             exit={{ opacity: 0, y: 100, scale: 0.9 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed bottom-[110px] right-4 md:bottom-6 md:right-6 z-50 w-[380px] max-w-[calc(100vw-2rem)] bg-black border border-white/20 rounded-xl shadow-2xl overflow-hidden flex flex-col"
+            className={`fixed ${chatPosClass} z-50 w-[380px] max-w-[calc(100vw-2rem)] bg-black border border-white/20 rounded-xl shadow-2xl overflow-hidden flex flex-col`}
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-white/10 bg-white/5">
