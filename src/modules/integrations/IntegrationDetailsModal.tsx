@@ -93,49 +93,39 @@ export default function IntegrationDetailsModal({
 
           <div className="flex-1 overflow-y-auto p-5">
             {tab === "overview" && (
-              <div className="grid sm:grid-cols-3 gap-3">
-                {[
-                  { label: "Status", value: provider.is_active ? "Ativo" : "Inativo" },
-                  { label: "Health", value: provider.health_status },
-                  { label: "Requests", value: provider.request_count.toLocaleString("pt-BR") },
-                  { label: "Última sync", value: provider.last_sync_at ? new Date(provider.last_sync_at).toLocaleString("pt-BR") : "—" },
-                  { label: "Categoria", value: provider.category },
-                  { label: "Secrets", value: `${provider.secret_refs.length} ref(s)` },
-                ].map((s) => (
-                  <div key={s.label} className="p-4 rounded-xl border border-white/10 bg-white/[0.02]">
-                    <div className="text-[10px] uppercase tracking-[0.2em] text-white/40">{s.label}</div>
-                    <div className="text-sm font-semibold mt-1 truncate">{s.value}</div>
-                  </div>
-                ))}
-                {provider.last_error && (
-                  <div className="sm:col-span-3 p-4 rounded-xl border border-red-500/30 bg-red-500/10 text-sm text-red-300 flex items-start gap-2">
-                    <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
-                    <div><strong>Último erro:</strong> {provider.last_error}</div>
-                  </div>
-                )}
+              <div className="space-y-4">
+                {result && <TestResultPanel result={result} />}
+                <div className="grid sm:grid-cols-3 gap-3">
+                  {[
+                    { label: "Status", value: provider.is_active ? "Ativo" : "Inativo" },
+                    { label: "Health", value: provider.health_status },
+                    { label: "Requests", value: provider.request_count.toLocaleString("pt-BR") },
+                    { label: "Última sync", value: provider.last_sync_at ? new Date(provider.last_sync_at).toLocaleString("pt-BR") : "—" },
+                    { label: "Categoria", value: provider.category },
+                    { label: "Secrets", value: `${provider.secret_refs.length} ref(s)` },
+                  ].map((s) => (
+                    <div key={s.label} className="p-4 rounded-xl border border-white/10 bg-white/[0.02]">
+                      <div className="text-[10px] uppercase tracking-[0.2em] text-white/40">{s.label}</div>
+                      <div className="text-sm font-semibold mt-1 truncate">{s.value}</div>
+                    </div>
+                  ))}
+                  {provider.last_error && (
+                    <div className="sm:col-span-3 p-4 rounded-xl border border-red-500/30 bg-red-500/10 text-sm text-red-300 flex items-start gap-2">
+                      <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
+                      <div><strong>Último erro:</strong> {provider.last_error}</div>
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
             {tab === "logs" && (
-              <div className="space-y-2">
-                {loadingLogs ? (
-                  <div className="text-center py-10 text-white/40"><Loader2 className="w-5 h-5 animate-spin mx-auto" /></div>
-                ) : logs.length === 0 ? (
-                  <p className="text-white/40 text-sm text-center py-8">Nenhum log ainda. Rode um teste.</p>
-                ) : logs.map((l) => (
-                  <div key={l.id} className="p-3 rounded-lg border border-white/10 bg-white/[0.02] text-xs font-mono flex items-start gap-3">
-                    {l.level === "error" ? <AlertTriangle className="w-3.5 h-3.5 text-red-400 shrink-0 mt-0.5" /> : <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0 mt-0.5" />}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex justify-between gap-2 text-white/70">
-                        <span>{l.action}</span>
-                        <span className="text-white/40 tabular-nums">{l.duration_ms ?? "?"}ms · {new Date(l.created_at).toLocaleTimeString("pt-BR")}</span>
-                      </div>
-                      {l.error && <div className="text-red-300/80 mt-1">{l.error}</div>}
-                    </div>
-                  </div>
-                ))}
+              <div className="h-[58vh]">
+                <IntegrationLogsPanel providerId={provider.id} />
               </div>
             )}
+
+
 
             {tab === "credentials" && (
               <div className="space-y-3">
