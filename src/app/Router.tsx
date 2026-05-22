@@ -7,6 +7,7 @@ import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { useNavHistoryTracker } from "@/hooks/useSmartBack";
 import MobileBottomNav from "@/modules/layout/MobileBottomNav";
 import GlobalFAB from "@/modules/layout/GlobalFAB";
+import AIChatbot from "@/components/AIChatbot";
 
 const Index = lazy(() => import("@/pages/Index"));
 const About = lazy(() => import("@/pages/About"));
@@ -193,6 +194,7 @@ export default function AppRouter() {
       <AnimatedRoutes />
       <MobileBottomNav />
       <GlobalFAB />
+      <AIChatbot />
     </BrowserRouter>
   );
 }
