@@ -40,7 +40,6 @@ export default function App() {
         <AppInstallerButton />
         <PWAUpdatePrompt />
         <AppRouter />
-        <AppRouter />
       </Providers>
     </ErrorBoundary>
   );
