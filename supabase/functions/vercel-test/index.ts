@@ -4,7 +4,13 @@ const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+const VC = Deno.env.get("VERCEL_TOKEN") ?? "";
 type Check = { name: string; ok: boolean; detail?: string; latency_ms?: number };
+
+async function vc(path: string) {
+  return fetch(`https://api.vercel.com${path}`, { headers: { Authorization: `Bearer ${VC}` } });
+}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -24,36 +30,29 @@ Deno.serve(async (req) => {
     const { data: isAdmin } = await sb.rpc("has_role", { _user_id: user.id, _role: "admin" });
     if (!isAdmin) return new Response(JSON.stringify({ ok: false, error: "forbidden" }), { status: 403, headers: corsHeaders });
 
-    const token = Deno.env.get("WHATSAPP_TOKEN") ?? "";
-    const phoneId = Deno.env.get("WHATSAPP_PHONE_ID") ?? "";
-    const wabaId = Deno.env.get("WHATSAPP_BUSINESS_ACCOUNT_ID") ?? "";
-
-    checks.push({ name: "Secret WHATSAPP_TOKEN", ok: !!token, detail: token ? "presente" : "ausente" });
-    checks.push({ name: "Secret WHATSAPP_PHONE_ID", ok: !!phoneId, detail: phoneId ? "presente" : "ausente" });
-    if (!token || !phoneId) throw new Error("WHATSAPP_TOKEN / WHATSAPP_PHONE_ID não configurados");
+    checks.push({ name: "Secret VERCEL_TOKEN", ok: !!VC, detail: VC ? "presente" : "ausente" });
+    if (!VC) throw new Error("VERCEL_TOKEN não configurado");
 
     const s1 = Date.now();
-    const r1 = await fetch(`https://graph.facebook.com/v20.0/${phoneId}?fields=verified_name,display_phone_number,quality_rating,code_verification_status`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const r1 = await vc("/v2/user");
     const j1 = await r1.json();
-    checks.push({ name: "Phone Number ID", ok: r1.ok, detail: r1.ok ? `${j1.display_phone_number} (${j1.verified_name})` : `HTTP ${r1.status}`, latency_ms: Date.now() - s1 });
-    if (!r1.ok) throw new Error(`phone ${r1.status}: ${JSON.stringify(j1)}`);
-    payload.phone = j1;
+    checks.push({ name: "Autenticação (/v2/user)", ok: r1.ok, detail: r1.ok ? j1.user?.username ?? j1.user?.email : `HTTP ${r1.status}`, latency_ms: Date.now() - s1 });
+    if (!r1.ok) throw new Error(`/user ${r1.status}`);
+    payload.user = j1.user;
 
-    if (wabaId) {
-      const s2 = Date.now();
-      const r2 = await fetch(`https://graph.facebook.com/v20.0/${wabaId}/subscribed_apps`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const j2 = await r2.json();
-      checks.push({ name: "Webhook subscriptions", ok: r2.ok, detail: r2.ok ? `${(j2.data || []).length} apps` : `HTTP ${r2.status}`, latency_ms: Date.now() - s2 });
-      payload.subscribed_apps = j2.data;
-    } else {
-      checks.push({ name: "WHATSAPP_BUSINESS_ACCOUNT_ID", ok: false, detail: "opcional, não configurado" });
-    }
+    const s2 = Date.now();
+    const r2 = await vc("/v2/teams?limit=5");
+    const j2 = await r2.json();
+    checks.push({ name: "Acesso a teams", ok: r2.ok, detail: r2.ok ? `${(j2.teams || []).length} teams` : `HTTP ${r2.status}`, latency_ms: Date.now() - s2 });
+    payload.teams = (j2.teams || []).map((t: any) => ({ id: t.id, slug: t.slug, name: t.name }));
 
-    ok = checks.filter((c) => c.name !== "WHATSAPP_BUSINESS_ACCOUNT_ID").every((c) => c.ok);
+    const s3 = Date.now();
+    const r3 = await vc("/v9/projects?limit=5");
+    const j3 = await r3.json();
+    checks.push({ name: "Listagem de projetos", ok: r3.ok, detail: r3.ok ? `${(j3.projects || []).length} projetos` : `HTTP ${r3.status}`, latency_ms: Date.now() - s3 });
+    payload.projects = (j3.projects || []).slice(0, 5).map((p: any) => ({ id: p.id, name: p.name, framework: p.framework, updatedAt: p.updatedAt }));
+
+    ok = checks.every((c) => c.ok);
   } catch (e) {
     ok = false;
     checks.push({ name: "Exceção", ok: false, detail: String((e as Error)?.message ?? e) });
