@@ -39,7 +39,7 @@ export default function App() {
         <Blocker />
         <AppInstallerButton />
         <PWAUpdatePrompt />
-        <AIChatbot />
+        <AppRouter />
         <AppRouter />
       </Providers>
     </ErrorBoundary>
