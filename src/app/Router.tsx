@@ -194,6 +194,7 @@ export default function AppRouter() {
       <AnimatedRoutes />
       <MobileBottomNav />
       <GlobalFAB />
+      <AIChatbot />
     </BrowserRouter>
   );
 }
