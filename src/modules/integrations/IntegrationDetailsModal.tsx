@@ -3,10 +3,12 @@
  */
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { X, Zap, Power, Trash2, RefreshCw, BookOpen, Activity, Terminal, Settings2, Loader2, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { X, Zap, Power, Trash2, RefreshCw, BookOpen, Activity, Terminal, Settings2, Loader2, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useIntegrations, type IntegrationProvider } from "@/hooks/useIntegrations";
 import SetupGuideDrawer from "./SetupGuideDrawer";
+import IntegrationLogsPanel from "./IntegrationLogsPanel";
+import TestResultPanel from "./TestResultPanel";
 import { toast } from "sonner";
 
 type Tab = "overview" | "logs" | "credentials" | "webhooks";
@@ -14,24 +16,19 @@ type Tab = "overview" | "logs" | "credentials" | "webhooks";
 export default function IntegrationDetailsModal({
   provider, onClose,
 }: { provider: IntegrationProvider | null; onClose: () => void }) {
-  const { toggleActive, testConnection } = useIntegrations();
+  const { toggleActive, testConnection, lastResult } = useIntegrations();
   const [tab, setTab] = useState<Tab>("overview");
-  const [logs, setLogs] = useState<any[]>([]);
-  const [loadingLogs, setLoadingLogs] = useState(false);
   const [guideOpen, setGuideOpen] = useState(false);
 
   useEffect(() => {
     if (!provider) return;
     setTab("overview");
-    setLoadingLogs(true);
-    supabase.from("integration_logs" as any)
-      .select("*").eq("provider_id", provider.id)
-      .order("created_at", { ascending: false }).limit(30)
-      .then(({ data }) => { setLogs((data as any[]) || []); setLoadingLogs(false); });
   }, [provider?.id]);
 
   if (!provider) return null;
   const testing = testConnection.isPending && testConnection.variables?.id === provider.id;
+  const result = lastResult[provider.id];
+
   const healthColor = {
     operational: "bg-emerald-400 shadow-emerald-400/60",
     warning: "bg-amber-400 shadow-amber-400/60",
