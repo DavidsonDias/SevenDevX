@@ -31,6 +31,7 @@ export default function WebhooksAdmin() {
   const [deliveries, setDeliveries] = useState<any[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [viewing, setViewing] = useState<any | null>(null);
+  const [debugging, setDebugging] = useState<Webhook | null>(null);
 
   const load = async () => {
     setLoading(true);
