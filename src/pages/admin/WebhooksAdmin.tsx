@@ -43,9 +43,16 @@ export default function WebhooksAdmin() {
   useEffect(() => { load(); }, []);
 
   useEffect(() => {
-    if (!selected) return;
+    if (!selected) { setDeliveries([]); return; }
     supabase.from("webhook_deliveries").select("*").eq("webhook_id", selected).order("delivered_at", { ascending: false }).limit(50)
       .then(({ data }) => setDeliveries(data || []));
+    const ch = supabase
+      .channel(`wh-deliv-${selected}`)
+      .on("postgres_changes",
+        { event: "INSERT", schema: "public", table: "webhook_deliveries", filter: `webhook_id=eq.${selected}` },
+        (p) => setDeliveries((prev) => [p.new as any, ...prev].slice(0, 50)))
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
   }, [selected]);
 
   const create = async () => {
