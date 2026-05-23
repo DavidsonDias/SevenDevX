@@ -155,6 +155,10 @@ export default function WebhooksAdmin() {
                       className="p-2 rounded-lg border border-white/10 hover:bg-white/5" title="Testar">
                       {testing === h.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
                     </button>
+                    <button onClick={(e) => { e.stopPropagation(); setDebugging(h); }}
+                      className="p-2 rounded-lg border border-white/10 hover:bg-fuchsia-500/10 hover:text-fuchsia-300" title="Debugger">
+                      <Bug className="w-3.5 h-3.5" />
+                    </button>
                     <button onClick={(e) => { e.stopPropagation(); toggle(h); }}
                       className="p-2 rounded-lg border border-white/10 hover:bg-white/5" title="Ativar/Desativar">
                       <Power className="w-3.5 h-3.5" />
