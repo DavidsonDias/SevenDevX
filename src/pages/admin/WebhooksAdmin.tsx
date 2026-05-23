@@ -4,10 +4,11 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import AdminPageShell from "@/components/admin/AdminPageShell";
-import { Plus, Webhook as WebhookIcon, Send, Trash2, Power, Copy, CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { Plus, Webhook as WebhookIcon, Send, Trash2, Power, Copy, CheckCircle2, XCircle, Loader2, Bug } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import WebhookPayloadViewer from "@/modules/webhooks/WebhookPayloadViewer";
+import WebhookDebugger from "@/modules/webhooks/WebhookDebugger";
 
 const EVENT_CATALOG = [
   "lead.created", "lead.updated", "project.created", "project.pipeline_changed",
