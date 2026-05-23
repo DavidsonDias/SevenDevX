@@ -4,10 +4,11 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import AdminPageShell from "@/components/admin/AdminPageShell";
-import { Plus, Webhook as WebhookIcon, Send, Trash2, Power, Copy, CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { Plus, Webhook as WebhookIcon, Send, Trash2, Power, Copy, CheckCircle2, XCircle, Loader2, Bug } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import WebhookPayloadViewer from "@/modules/webhooks/WebhookPayloadViewer";
+import WebhookDebugger from "@/modules/webhooks/WebhookDebugger";
 
 const EVENT_CATALOG = [
   "lead.created", "lead.updated", "project.created", "project.pipeline_changed",
@@ -30,6 +31,7 @@ export default function WebhooksAdmin() {
   const [deliveries, setDeliveries] = useState<any[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [viewing, setViewing] = useState<any | null>(null);
+  const [debugging, setDebugging] = useState<Webhook | null>(null);
 
   const load = async () => {
     setLoading(true);
@@ -41,9 +43,16 @@ export default function WebhooksAdmin() {
   useEffect(() => { load(); }, []);
 
   useEffect(() => {
-    if (!selected) return;
+    if (!selected) { setDeliveries([]); return; }
     supabase.from("webhook_deliveries").select("*").eq("webhook_id", selected).order("delivered_at", { ascending: false }).limit(50)
       .then(({ data }) => setDeliveries(data || []));
+    const ch = supabase
+      .channel(`wh-deliv-${selected}`)
+      .on("postgres_changes",
+        { event: "INSERT", schema: "public", table: "webhook_deliveries", filter: `webhook_id=eq.${selected}` },
+        (p) => setDeliveries((prev) => [p.new as any, ...prev].slice(0, 50)))
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
   }, [selected]);
 
   const create = async () => {
@@ -146,6 +155,10 @@ export default function WebhooksAdmin() {
                       className="p-2 rounded-lg border border-white/10 hover:bg-white/5" title="Testar">
                       {testing === h.id ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
                     </button>
+                    <button onClick={(e) => { e.stopPropagation(); setDebugging(h); }}
+                      className="p-2 rounded-lg border border-white/10 hover:bg-fuchsia-500/10 hover:text-fuchsia-300" title="Debugger">
+                      <Bug className="w-3.5 h-3.5" />
+                    </button>
                     <button onClick={(e) => { e.stopPropagation(); toggle(h); }}
                       className="p-2 rounded-lg border border-white/10 hover:bg-white/5" title="Ativar/Desativar">
                       <Power className="w-3.5 h-3.5" />
@@ -199,6 +212,8 @@ export default function WebhooksAdmin() {
           const { data } = await supabase.from("webhook_deliveries").select("*").eq("webhook_id", selected).order("delivered_at", { ascending: false }).limit(50);
           setDeliveries(data || []);
         }} />
+      <WebhookDebugger webhook={debugging} open={!!debugging} onClose={() => setDebugging(null)}
+        onSent={() => { if (debugging) setSelected(debugging.id); }} />
     </AdminPageShell>
   );
 }
