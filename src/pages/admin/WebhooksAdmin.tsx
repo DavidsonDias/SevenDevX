@@ -212,6 +212,8 @@ export default function WebhooksAdmin() {
           const { data } = await supabase.from("webhook_deliveries").select("*").eq("webhook_id", selected).order("delivered_at", { ascending: false }).limit(50);
           setDeliveries(data || []);
         }} />
+      <WebhookDebugger webhook={debugging} open={!!debugging} onClose={() => setDebugging(null)}
+        onSent={() => { if (debugging) setSelected(debugging.id); }} />
     </AdminPageShell>
   );
 }
