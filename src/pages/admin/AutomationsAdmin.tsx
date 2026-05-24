@@ -1,15 +1,13 @@
 /**
  * ⚡ Automations — when → if → then.
+ * Editor visual via AutomationFlowBuilder (node-based).
  */
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import AdminPageShell from "@/components/admin/AdminPageShell";
-import { Plus, Zap, Power, Trash2, Loader2 } from "lucide-react";
+import { Plus, Zap, Power, Trash2, Loader2, Pencil } from "lucide-react";
 import { toast } from "sonner";
-import { motion } from "framer-motion";
-
-const EVENTS = ["lead.created", "lead.updated", "project.created", "project.pipeline_changed", "contract.signed", "deployment.failed", "deployment.ready"];
-const ACTIONS = ["push.send", "email.send", "whatsapp.send", "pipeline.move", "webhook.call", "ai.summarize", "discord.notify"];
+import AutomationFlowBuilder from "@/modules/automations/AutomationFlowBuilder";
 
 export default function AutomationsAdmin() {
   const [list, setList] = useState<any[]>([]);
