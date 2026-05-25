@@ -101,12 +101,9 @@
          🧠 3. SEO FALLBACK (substituído por SEOHead.tsx em runtime)
          ═════════════════════════════════════════════════════════ -->
     
-    <title>SevenDevX | Desenvolvimento Web & Soluções Tecnológicas de Alto Nível</title>
+    <title>SevenDevX | Desenvolvimento Web &amp; Soluções Tecnológicas de Alto Nível</title>
     
-    <meta
-      name="description"
-      content="SevenDevX oferece desenvolvimento web moderno, criação de sites, softwares personalizados, manutenção de TI e soluções digitais inovadoras em Belo Horizonte."
-    />
+    <meta name="description" content="SevenDevX oferece desenvolvimento web moderno, criação de sites, softwares personalizados, manutenção de TI e soluções digitais inovadoras em Belo Horizonte.">
     
     <meta
       name="keywords"
@@ -128,12 +125,9 @@
     <meta property="og:locale" content="pt_BR" />
     <meta property="og:site_name" content="SevenDevX" />
     <meta property="og:url" content="https://sevendevx.com/" />
-    <meta property="og:title" content="SevenDevX | Desenvolvimento Web & Tecnologia" />
-    <meta
-      property="og:description"
-      content="Soluções web modernas, rápidas e escaláveis. Desenvolvimento profissional para empresas que valorizam qualidade."
-    />
-    <meta property="og:image" content="https://sevendevx.com/assets/img/share.png" />
+    
+    
+    <meta property="og:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/4qUrKxkefyYMOMz9YqNoBaPrKuD3/social-images/social-1779676323502-SevenDevX.webp">
     <meta property="og:image:alt" content="Banner SevenDevX - Desenvolvimento Web Premium" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -145,12 +139,9 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@sevendevx" />
     <meta name="twitter:creator" content="@sevendevx" />
-    <meta name="twitter:title" content="SevenDevX | Desenvolvimento Web Premium" />
-    <meta
-      name="twitter:description"
-      content="Desenvolvimento web moderno com React, TypeScript e PWA. Soluções escaláveis e performáticas."
-    />
-    <meta name="twitter:image" content="https://sevendevx.com/assets/img/share.png" />
+    
+    
+    <meta name="twitter:image" content="https://storage.googleapis.com/gpt-engineer-file-uploads/4qUrKxkefyYMOMz9YqNoBaPrKuD3/social-images/social-1779676323502-SevenDevX.webp">
     
     <!-- ═════════════════════════════════════════════════════════
          🏢 6. SCHEMA.ORG STRUCTURED DATA (JSON-LD)
@@ -190,7 +181,7 @@
          ═════════════════════════════════════════════════════════ -->
     
     <!-- Standard favicon -->
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" href="/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     
     <!-- Apple Touch Icon (iOS home screen) -->
@@ -244,26 +235,8 @@
          🚀 10. PERFORMANCE OPTIMIZATIONS
          ═════════════════════════════════════════════════════════ -->
     
-    <!-- Preconnect (establish early connections) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://phdmdnopdlfywymptimy.supabase.co" />
-    <link rel="preconnect" href="https://images.unsplash.com" />
+   
     
-    <!-- DNS Prefetch (fallback for older browsers) -->
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
-    
-    <!-- Font Preload (critical fonts for LCP) -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" as="style" />
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" as="style" />
-    
-    <!-- hreflang (multilingual SEO) -->
-    <link rel="alternate" hreflang="pt-BR" href="https://www.sevendevx.com/" />
-    <link rel="alternate" hreflang="en" href="https://www.sevendevx.com/" />
-    <link rel="alternate" hreflang="es" href="https://www.sevendevx.com/" />
-    <link rel="alternate" hreflang="x-default" href="https://www.sevendevx.com/" />
     
     <!-- ═════════════════════════════════════════════════════════
          🔒 11. CONTENT SECURITY POLICY (CSP)
@@ -279,11 +252,22 @@
       
       PRODUÇÃO: Remover 'unsafe-eval' e usar nonce para scripts
     -->
-    <!--
-      CSP é definido via header HTTP no vercel.json (fonte única de verdade).
-      Mantemos este comentário para histórico — NÃO declarar CSP por <meta>
-      aqui para evitar interseção restritiva em iOS Safari/Firefox.
-    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+        default-src 'self';
+        script-src 'self' 'unsafe-inline' 'unsafe-eval';
+        style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+        img-src 'self'  https:;
+        font-src 'self' https://fonts.gstatic.com ;
+        connect-src 'self' https://wa.me https://api.whatsapp.com https://*.supabase.co wss://*.supabase.co;
+        frame-src 'self';
+        object-src 'none';
+        base-uri 'self';
+        form-action 'self';
+        upgrade-insecure-requests;
+      "
+    />
     
     <!-- ═════════════════════════════════════════════════════════
          🧩 12. BUILD INFO & GENERATOR
@@ -296,9 +280,13 @@
     
     <!-- Referrer Policy (privacidade) -->
     <meta name="referrer" content="strict-origin-when-cross-origin" />
-  </head>
+    <meta property="og:title" content="SevenDevX | Desenvolvimento Web &amp; Soluções Tecnológicas de Alto Nível">
+  <meta name="twitter:title" content="SevenDevX | Desenvolvimento Web &amp; Soluções Tecnológicas de Alto Nível">
+  <meta property="og:description" content="SevenDevX oferece desenvolvimento web moderno, criação de sites, softwares personalizados, manutenção de TI e soluções digitais inovadoras em Belo Horizonte.">
+  <meta name="twitter:description" content="SevenDevX oferece desenvolvimento web moderno, criação de sites, softwares personalizados, manutenção de TI e soluções digitais inovadoras em Belo Horizonte.">
+</head>
 
-  <body class="bg-black text-white antialiased overflow-x-hidden" data-theme="dark">
+  <body class="bg-black text-white antialiased" data-theme="dark">
     <!-- ═════════════════════════════════════════════════════════
          🎯 ROOT ELEMENT (React monta aqui)
          ═════════════════════════════════════════════════════════ -->
