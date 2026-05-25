@@ -115,16 +115,159 @@ const GUIDES: Record<string, Guide> = {
   },
 
   google: {
-    intro: "Conecte Google Workspace (Calendar, Drive) via OAuth 2.0.",
+    intro: "Conecte Google Workspace (Calendar, Drive, Gmail) via OAuth 2.0.",
     secretsExpected: ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"],
     steps: [
       { title: "Crie um projeto no Google Cloud", body: "console.cloud.google.com → New Project.", link: { label: "Google Cloud Console", url: "https://console.cloud.google.com" } },
-      { title: "Configure OAuth consent screen", body: "Tipo External, adicione scopes (calendar, drive.readonly) e domínios autorizados." },
+      { title: "Configure OAuth consent screen", body: "Tipo External, adicione scopes (calendar, drive.readonly, gmail.send) e domínios autorizados." },
       { title: "Crie credenciais OAuth 2.0", body: "Tipo Web Application. Adicione o redirect URL exibido pelo SevenOS." },
       { title: "Salve GOOGLE_CLIENT_ID e GOOGLE_CLIENT_SECRET", body: "Em Cloud → Secrets. O fluxo OAuth completo será habilitado em fase futura." },
     ],
     troubleshooting: [
       { problem: "redirect_uri_mismatch", solution: "O URL configurado no Google Cloud precisa bater 100% (sem barra final divergente) com o usado no app." },
+      { problem: "access_denied", solution: "App em modo Testing aceita apenas usuários listados. Adicione test users ou publique o app." },
+    ],
+  },
+
+  stripe: {
+    intro: "Pagamentos globais, subscriptions e billing via Stripe.",
+    secretsExpected: ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"],
+    steps: [
+      { title: "Pegue sua Secret Key", body: "Dashboard → Developers → API keys. Use restricted keys quando possível.", link: { label: "Stripe API Keys", url: "https://dashboard.stripe.com/apikeys" } },
+      { title: "Salve STRIPE_SECRET_KEY", body: "Cloud → Secrets. Use sk_test_... em desenvolvimento, sk_live_... em produção." },
+      { title: "Configure webhook endpoint", body: "Developers → Webhooks → Add endpoint. Aponte para sua função webhook-dispatch e copie o signing secret." },
+      { title: "Salve STRIPE_WEBHOOK_SECRET", body: "Necessário para validar assinaturas HMAC dos eventos." },
+    ],
+    curl: [
+      { label: "Listar customers", value: `curl https://api.stripe.com/v1/customers -u $STRIPE_SECRET_KEY:` },
+      { label: "Criar payment intent", value: `curl https://api.stripe.com/v1/payment_intents \\\n  -u $STRIPE_SECRET_KEY: \\\n  -d amount=2000 -d currency=brl` },
+    ],
+    troubleshooting: [
+      { problem: "Invalid signature on webhook", solution: "Verifique se está usando o signing secret correto (test vs live)." },
+      { problem: "No such customer", solution: "IDs de test mode não funcionam em live e vice-versa." },
+    ],
+  },
+
+  openai: {
+    intro: "GPT-5, embeddings, vision e assistants da OpenAI.",
+    secretsExpected: ["OPENAI_API_KEY"],
+    steps: [
+      { title: "Crie uma API key", body: "platform.openai.com → API keys. Recomendamos uma key por projeto.", link: { label: "OpenAI Platform", url: "https://platform.openai.com/api-keys" } },
+      { title: "Configure billing", body: "Você precisa de um payment method e créditos para usar a API." },
+      { title: "Salve OPENAI_API_KEY", body: "Cloud → Secrets → OPENAI_API_KEY." },
+      { title: "Defina limites de uso", body: "Settings → Limits → Hard limit mensal para evitar surpresas." },
+    ],
+    curl: [
+      { label: "Chat completion", value: `curl https://api.openai.com/v1/chat/completions \\\n  -H "Authorization: Bearer $OPENAI_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{"model":"gpt-5","messages":[{"role":"user","content":"Hi"}]}'` },
+    ],
+    troubleshooting: [
+      { problem: "429 insufficient_quota", solution: "Sem créditos disponíveis. Adicione billing em platform.openai.com/account/billing." },
+      { problem: "401 Invalid API key", solution: "Key revogada ou typo. Gere uma nova." },
+    ],
+    faq: [
+      { q: "Posso usar via Lovable AI?", a: "Sim. O Lovable AI Gateway já roteia para OpenAI sem precisar de key própria." },
+    ],
+  },
+
+  gemini: {
+    intro: "Google Gemini 2.5/3 Pro, multimodal e Live API.",
+    secretsExpected: ["GEMINI_API_KEY"],
+    steps: [
+      { title: "Gere a API key no AI Studio", body: "aistudio.google.com → Get API key → Create API key in new project.", link: { label: "Google AI Studio", url: "https://aistudio.google.com/app/apikey" } },
+      { title: "Salve GEMINI_API_KEY", body: "Cloud → Secrets → GEMINI_API_KEY." },
+      { title: "Escolha o modelo", body: "gemini-2.5-flash (rápido), gemini-2.5-pro (qualidade máxima), gemini-3.1-flash-image-preview (image gen)." },
+    ],
+    curl: [
+      { label: "Generate content", value: `curl "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=$GEMINI_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{"contents":[{"parts":[{"text":"Hello"}]}]}'` },
+    ],
+    troubleshooting: [
+      { problem: "403 PERMISSION_DENIED", solution: "Key sem acesso ao modelo solicitado. Tente outro modelo ou habilite billing." },
+    ],
+  },
+
+  supabase: {
+    intro: "Postgres, Auth, Storage e Edge Functions gerenciados.",
+    secretsExpected: ["SUPABASE_SERVICE_ROLE_KEY"],
+    steps: [
+      { title: "Pegue a service role key", body: "Project Settings → API → service_role secret. NUNCA exponha no frontend.", link: { label: "Supabase Dashboard", url: "https://supabase.com/dashboard" } },
+      { title: "Configure RLS em todas as tabelas", body: "alter table public.xxx enable row level security; — crítico para segurança." },
+      { title: "Salve SUPABASE_SERVICE_ROLE_KEY", body: "Apenas em Edge Functions/server. Frontend usa anon key (publishable)." },
+    ],
+    troubleshooting: [
+      { problem: "JWT expired", solution: "Renove a sessão do usuário ou ajuste o tempo de expiração em Auth settings." },
+      { problem: "permission denied for table", solution: "Adicione policies RLS apropriadas para o role authenticated/anon." },
+    ],
+  },
+
+  resend: {
+    intro: "Email transacional moderno com React Email integrado.",
+    secretsExpected: ["RESEND_API_KEY"],
+    steps: [
+      { title: "Crie uma API key", body: "resend.com/api-keys → Create API key. Use sending-only para frontend.", link: { label: "Resend Dashboard", url: "https://resend.com/api-keys" } },
+      { title: "Verifique seu domínio", body: "resend.com/domains → Add domain. Configure DNS records (SPF/DKIM/DMARC)." },
+      { title: "Salve RESEND_API_KEY", body: "Cloud → Secrets → RESEND_API_KEY." },
+    ],
+    curl: [
+      { label: "Enviar email", value: `curl https://api.resend.com/emails \\\n  -H "Authorization: Bearer $RESEND_API_KEY" \\\n  -H "Content-Type: application/json" \\\n  -d '{"from":"you@yourdomain.com","to":"to@example.com","subject":"Hi","html":"<p>Hello</p>"}'` },
+    ],
+    troubleshooting: [
+      { problem: "Domain not verified", solution: "Aguarde a propagação DNS (até 48h) e clique em Verify novamente." },
+    ],
+  },
+
+  slack: {
+    intro: "Mensageria de workspace, bots e slash commands.",
+    secretsExpected: ["SLACK_BOT_TOKEN", "SLACK_SIGNING_SECRET"],
+    steps: [
+      { title: "Crie um Slack App", body: "api.slack.com/apps → Create New App → From scratch.", link: { label: "Slack API", url: "https://api.slack.com/apps" } },
+      { title: "Adicione bot scopes", body: "OAuth & Permissions → Bot Token Scopes: chat:write, channels:read, users:read." },
+      { title: "Instale no workspace", body: "Install to Workspace → autorize. Copie o Bot User OAuth Token (xoxb-...)." },
+      { title: "Salve secrets", body: "SLACK_BOT_TOKEN + SLACK_SIGNING_SECRET (Basic Information → App Credentials)." },
+    ],
+    curl: [
+      { label: "Postar mensagem", value: `curl -X POST -H "Authorization: Bearer $SLACK_BOT_TOKEN" \\\n  -H "Content-Type: application/json" \\\n  -d '{"channel":"#general","text":"Hello from SevenOS"}' \\\n  https://slack.com/api/chat.postMessage` },
+    ],
+  },
+
+  discord: {
+    intro: "Bots, webhooks e events de guild.",
+    secretsExpected: ["DISCORD_BOT_TOKEN"],
+    steps: [
+      { title: "Crie uma Application", body: "discord.com/developers/applications → New Application.", link: { label: "Discord Developer Portal", url: "https://discord.com/developers/applications" } },
+      { title: "Adicione um bot", body: "Bot tab → Add Bot → Copy token." },
+      { title: "Convide para o servidor", body: "OAuth2 → URL Generator → scopes: bot + applications.commands." },
+      { title: "Salve DISCORD_BOT_TOKEN", body: "Cloud → Secrets." },
+    ],
+  },
+
+  cloudflare: {
+    intro: "DNS, CDN, Workers, R2 storage e Pages.",
+    secretsExpected: ["CLOUDFLARE_API_TOKEN", "CLOUDFLARE_ACCOUNT_ID"],
+    steps: [
+      { title: "Crie um API Token", body: "dash.cloudflare.com/profile/api-tokens → Create Token.", link: { label: "Cloudflare API Tokens", url: "https://dash.cloudflare.com/profile/api-tokens" } },
+      { title: "Pegue o Account ID", body: "Aparece na sidebar do dashboard (Overview)." },
+      { title: "Salve secrets", body: "CLOUDFLARE_API_TOKEN + CLOUDFLARE_ACCOUNT_ID." },
+    ],
+  },
+
+  sentry: {
+    intro: "Error tracking, performance monitoring e releases.",
+    secretsExpected: ["SENTRY_DSN", "SENTRY_AUTH_TOKEN"],
+    steps: [
+      { title: "Crie um projeto", body: "sentry.io → Projects → Create Project. Escolha plataforma (React).", link: { label: "Sentry", url: "https://sentry.io" } },
+      { title: "Copie o DSN", body: "Settings → Client Keys (DSN). Use no SDK do frontend." },
+      { title: "Gere Auth Token", body: "Settings → Auth Tokens → Create. Scope: project:read, project:releases." },
+      { title: "Salve secrets", body: "SENTRY_DSN + SENTRY_AUTH_TOKEN." },
+    ],
+  },
+
+  mercadopago: {
+    intro: "Pix, cartão e boleto para o mercado LATAM.",
+    secretsExpected: ["MERCADOPAGO_ACCESS_TOKEN"],
+    steps: [
+      { title: "Pegue o Access Token", body: "Mercado Pago Developers → Suas credenciais → Produção/Test.", link: { label: "MP Developers", url: "https://www.mercadopago.com.br/developers/panel/app" } },
+      { title: "Salve MERCADOPAGO_ACCESS_TOKEN", body: "Cloud → Secrets." },
+      { title: "Configure webhooks", body: "URL → sua função webhook-dispatch. Eventos: payment, merchant_order." },
     ],
   },
 };
