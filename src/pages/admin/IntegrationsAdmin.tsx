@@ -67,6 +67,8 @@ export default function IntegrationsAdmin() {
   const [cat, setCat] = useState<string>("all");
   const [selected, setSelected] = useState<IntegrationProvider | null>(null);
   const [marketOpen, setMarketOpen] = useState(false);
+  const [wizard, setWizard] = useState<IntegrationProvider | null>(null);
+  const [guideId, setGuideId] = useState<string | null>(null);
 
   const providers = list.data ?? [];
 
