@@ -4,21 +4,30 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
-  Activity, AlertTriangle, CheckCircle2, Circle, Loader2, Plug, Plus, Search, Webhook, Zap,
+  Activity, AlertTriangle, CheckCircle2, Loader2, Plug, Plus, Search, Webhook, Zap, BookOpen, Sparkles,
 } from "lucide-react";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import GlassCard from "@/components/GlassCard";
 import { useIntegrations, type IntegrationProvider } from "@/hooks/useIntegrations";
 import IntegrationDetailsModal from "@/modules/integrations/IntegrationDetailsModal";
 import IntegrationMarketplaceModal from "@/modules/integrations/IntegrationMarketplaceModal";
+import GuidedConnectionTest from "@/modules/integrations/GuidedConnectionTest";
+import SetupGuideDrawer from "@/modules/integrations/SetupGuideDrawer";
+import ProviderLogo from "@/modules/integrations/ProviderLogo";
+import { findCatalogProvider, CATEGORY_LABEL } from "@/modules/integrations/providerCatalog";
 
 const CATEGORIES: Record<string, { label: string; color: string }> = {
-  comunicacao: { label: "Comunicação", color: "text-emerald-300" },
-  desenvolvimento: { label: "Desenvolvimento", color: "text-sky-300" },
-  design: { label: "Design", color: "text-pink-300" },
-  produtividade: { label: "Produtividade", color: "text-amber-300" },
-  automacao: { label: "Automação", color: "text-violet-300" },
-  ia: { label: "Inteligência Artificial", color: "text-fuchsia-300" },
+  comunicacao: { label: CATEGORY_LABEL.comunicacao, color: "text-emerald-300" },
+  desenvolvimento: { label: CATEGORY_LABEL.desenvolvimento, color: "text-sky-300" },
+  design: { label: CATEGORY_LABEL.design, color: "text-pink-300" },
+  produtividade: { label: CATEGORY_LABEL.produtividade, color: "text-amber-300" },
+  automacao: { label: CATEGORY_LABEL.automacao, color: "text-violet-300" },
+  ia: { label: CATEGORY_LABEL.ia, color: "text-fuchsia-300" },
+  payments: { label: CATEGORY_LABEL.payments, color: "text-emerald-200" },
+  cloud: { label: CATEGORY_LABEL.cloud, color: "text-orange-300" },
+  deploy: { label: CATEGORY_LABEL.deploy, color: "text-cyan-300" },
+  banco_dados: { label: CATEGORY_LABEL.banco_dados, color: "text-lime-300" },
+  monitoring: { label: CATEGORY_LABEL.monitoring, color: "text-purple-300" },
 };
 
 const HealthDot = ({ status }: { status: IntegrationProvider["health_status"] }) => {
@@ -58,6 +67,8 @@ export default function IntegrationsAdmin() {
   const [cat, setCat] = useState<string>("all");
   const [selected, setSelected] = useState<IntegrationProvider | null>(null);
   const [marketOpen, setMarketOpen] = useState(false);
+  const [wizard, setWizard] = useState<IntegrationProvider | null>(null);
+  const [guideId, setGuideId] = useState<string | null>(null);
 
   const providers = list.data ?? [];
 
@@ -170,73 +181,98 @@ export default function IntegrationsAdmin() {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
               {items.map((p, i) => {
-                const testing =
-                  testConnection.isPending && testConnection.variables?.id === p.id;
+                const testing = testConnection.isPending && testConnection.variables?.id === p.id;
+                const catalog = findCatalogProvider(p.id);
+                const accent = p.color || catalog?.color || "#ffffff";
+                const stateLabel =
+                  testing ? "syncing" :
+                  p.health_status === "operational" ? "connected" :
+                  p.health_status === "offline" ? "error" :
+                  p.is_active ? "active" : "disconnected";
                 return (
                   <motion.div
                     key={p.id}
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.3, delay: i * 0.04 }}
+                    whileHover={{ y: -3 }}
+                    className="relative group"
                   >
-                    <div onClick={() => setSelected(p)} className="cursor-pointer h-full">
-                    <GlassCard padding="md" className="h-full flex flex-col gap-4 hover:border-white/30 transition-colors">
-                      <div className="flex items-start gap-3">
-                        <div
-                          className="w-10 h-10 rounded-lg border border-white/10 flex items-center justify-center text-base font-bold shrink-0"
-                          style={{ background: `${p.color}22`, color: p.color || undefined }}
-                        >
-                          {p.name.charAt(0)}
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center justify-between gap-2">
-                            <h4 className="font-semibold truncate">{p.name}</h4>
-                            <Circle
-                              className={`w-2 h-2 fill-current shrink-0 ${
-                                p.is_active ? "text-emerald-400" : "text-white/20"
-                              }`}
-                            />
+                    {/* Glow contextual */}
+                    <div
+                      className="absolute -inset-px rounded-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none blur-xl"
+                      style={{ background: `radial-gradient(circle at top left, ${accent}55, transparent 70%)` }}
+                    />
+                    <div onClick={() => setSelected(p)} className="cursor-pointer h-full relative">
+                      <GlassCard
+                        padding="md"
+                        hover={false}
+                        className="h-full flex flex-col gap-3.5 hover:border-white/30 transition-all overflow-hidden relative"
+                      >
+                        {/* Top border glow */}
+                        <div className="absolute inset-x-0 top-0 h-px opacity-60" style={{ background: `linear-gradient(90deg, transparent, ${accent}, transparent)` }} />
+
+                        <div className="flex items-start gap-3">
+                          <ProviderLogo slug={catalog?.slug} color={accent} name={p.name} size={44} />
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center justify-between gap-2">
+                              <h4 className="font-semibold truncate">{p.name}</h4>
+                              <span
+                                className={`text-[9px] uppercase tracking-[0.18em] px-1.5 py-0.5 rounded border ${
+                                  stateLabel === "connected" ? "border-emerald-400/40 text-emerald-300 bg-emerald-400/10" :
+                                  stateLabel === "syncing" ? "border-sky-400/40 text-sky-300 bg-sky-400/10 animate-pulse" :
+                                  stateLabel === "error" ? "border-red-400/40 text-red-300 bg-red-400/10" :
+                                  stateLabel === "active" ? "border-white/30 text-white/80 bg-white/5" :
+                                  "border-white/10 text-white/40"
+                                }`}
+                              >
+                                {stateLabel}
+                              </span>
+                            </div>
+                            <p className="text-xs text-white/50 mt-0.5 line-clamp-2">{p.description || catalog?.description || "—"}</p>
                           </div>
-                          <p className="text-xs text-white/50 mt-0.5 line-clamp-2">
-                            {p.description || "—"}
-                          </p>
                         </div>
-                      </div>
 
-                      <div className="flex items-center justify-between text-[11px] text-white/40 border-t border-white/5 pt-3">
-                        <HealthDot status={p.health_status} />
-                        <span className="tabular-nums">
-                          {p.last_test_at
-                            ? `testado ${new Date(p.last_test_at).toLocaleTimeString("pt-BR")}`
-                            : "nunca testado"}
-                        </span>
-                      </div>
+                        <div className="flex items-center justify-between text-[11px] text-white/40 border-t border-white/5 pt-3">
+                          <HealthDot status={p.health_status} />
+                          <span className="tabular-nums">
+                            {p.last_test_at ? `testado ${new Date(p.last_test_at).toLocaleTimeString("pt-BR")}` : "nunca testado"}
+                          </span>
+                        </div>
 
-                      {p.last_error && (
-                        <p className="text-[11px] text-red-300/80 border border-red-500/20 bg-red-500/5 rounded px-2 py-1.5 line-clamp-2">
-                          {p.last_error}
-                        </p>
-                      )}
+                        {p.last_error && (
+                          <p className="text-[11px] text-red-300/80 border border-red-500/20 bg-red-500/5 rounded px-2 py-1.5 line-clamp-2">
+                            {p.last_error}
+                          </p>
+                        )}
 
-                      <div className="flex items-center gap-2 mt-auto" onClick={(e) => e.stopPropagation()}>
-                        <button
-                          onClick={() => testConnection.mutate(p)}
-                          disabled={testing}
-                          className="flex-1 flex items-center justify-center gap-2 px-3 py-2 text-[11px] uppercase tracking-wider rounded-lg border border-white/15 hover:bg-white/5 disabled:opacity-50"
-                        >
-                          {testing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Zap className="w-3.5 h-3.5" />}
-                          Testar
-                        </button>
-                        <button
-                          onClick={() => toggleActive.mutate({ id: p.id, active: !p.is_active })}
-                          className={`px-3 py-2 text-[11px] uppercase tracking-wider rounded-lg border transition-colors ${
-                            p.is_active ? "bg-white/90 text-black border-white" : "border-white/15 hover:bg-white/5"
-                          }`}
-                        >
-                          {p.is_active ? "Ativo" : "Ativar"}
-                        </button>
-                      </div>
-                    </GlassCard>
+                        <div className="flex items-center gap-1.5 mt-auto" onClick={(e) => e.stopPropagation()}>
+                          <button
+                            onClick={() => setWizard(p)}
+                            disabled={testing}
+                            className="flex-1 inline-flex items-center justify-center gap-1.5 px-2.5 py-2 text-[11px] uppercase tracking-wider rounded-lg border border-white/15 hover:bg-white/5 disabled:opacity-50"
+                            title="Wizard guiado"
+                          >
+                            {testing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+                            Testar
+                          </button>
+                          <button
+                            onClick={() => setGuideId(p.id)}
+                            className="inline-flex items-center justify-center px-2.5 py-2 text-[11px] rounded-lg border border-white/15 hover:bg-white/5"
+                            title="Guia de configuração"
+                          >
+                            <BookOpen className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => toggleActive.mutate({ id: p.id, active: !p.is_active })}
+                            className={`px-2.5 py-2 text-[11px] uppercase tracking-wider rounded-lg border transition-colors ${
+                              p.is_active ? "bg-white/90 text-black border-white" : "border-white/15 hover:bg-white/5"
+                            }`}
+                          >
+                            {p.is_active ? "On" : "Off"}
+                          </button>
+                        </div>
+                      </GlassCard>
                     </div>
                   </motion.div>
                 );
@@ -255,6 +291,13 @@ export default function IntegrationsAdmin() {
 
       {selected && <IntegrationDetailsModal provider={selected} onClose={() => setSelected(null)} />}
       <IntegrationMarketplaceModal open={marketOpen} onClose={() => setMarketOpen(false)} />
+      <GuidedConnectionTest
+        provider={wizard}
+        open={!!wizard}
+        onClose={() => setWizard(null)}
+        onOpenGuide={() => { if (wizard) setGuideId(wizard.id); }}
+      />
+      <SetupGuideDrawer providerId={guideId} open={!!guideId} onClose={() => setGuideId(null)} />
     </AdminPageShell>
   );
 }

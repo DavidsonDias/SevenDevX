@@ -1,52 +1,37 @@
 /**
- * 🧠 IntegrationMarketplaceModal — Catálogo + criação custom
+ * 🧠 IntegrationMarketplaceModal — Catálogo enterprise com branding real
  */
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { X, Search, Plus, Sparkles } from "lucide-react";
+import { X, Search, Plus, Sparkles, BookOpen, Zap, Webhook, Key } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-
-type Item = { id: string; name: string; category: string; description: string; color: string };
-
-const CATALOG: Item[] = [
-  { id: "openai", name: "OpenAI", category: "ia", description: "GPT-5, embeddings, vision", color: "#10A37F" },
-  { id: "gemini", name: "Google Gemini", category: "ia", description: "Gemini 2.5 / 3 Pro", color: "#4285F4" },
-  { id: "supabase", name: "Supabase", category: "banco_dados", description: "Postgres + Auth + Storage", color: "#3ECF8E" },
-  { id: "firebase", name: "Firebase", category: "banco_dados", description: "Realtime DB + Auth", color: "#FFCA28" },
-  { id: "stripe", name: "Stripe", category: "payments", description: "Pagamentos globais", color: "#635BFF" },
-  { id: "mercadopago", name: "Mercado Pago", category: "payments", description: "Pagamentos LATAM", color: "#00B1EA" },
-  { id: "resend", name: "Resend", category: "comunicacao", description: "Email transacional", color: "#000000" },
-  { id: "sentry", name: "Sentry", category: "monitoring", description: "Error tracking & APM", color: "#362D59" },
-  { id: "datadog", name: "Datadog", category: "monitoring", description: "Observability platform", color: "#632CA6" },
-  { id: "cloudflare", name: "Cloudflare", category: "cloud", description: "CDN + Workers + R2", color: "#F38020" },
-  { id: "aws", name: "AWS", category: "cloud", description: "S3, Lambda, SES", color: "#FF9900" },
-  { id: "railway", name: "Railway", category: "deploy", description: "Container deploys", color: "#0B0D0E" },
-  { id: "docker", name: "Docker Hub", category: "devops", description: "Registry + images", color: "#2496ED" },
-  { id: "mongodb", name: "MongoDB Atlas", category: "banco_dados", description: "Document database", color: "#47A248" },
-  { id: "redis", name: "Redis", category: "banco_dados", description: "Cache & pub/sub", color: "#DC382D" },
-  { id: "clerk", name: "Clerk", category: "comunicacao", description: "Auth & user mgmt", color: "#6C47FF" },
-];
-
-const CATS = [
-  ["all", "Tudo"], ["ia", "IA"], ["banco_dados", "Banco de dados"], ["payments", "Pagamentos"],
-  ["comunicacao", "Comunicação"], ["monitoring", "Monitoring"], ["cloud", "Cloud"], ["deploy", "Deploy"], ["devops", "DevOps"],
-];
+import ProviderLogo from "./ProviderLogo";
+import { PROVIDER_CATALOG, CATEGORY_LIST, type CatalogProvider } from "./providerCatalog";
 
 export default function IntegrationMarketplaceModal({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const [q, setQ] = useState(""); const [cat, setCat] = useState("all");
+  const [q, setQ] = useState("");
+  const [cat, setCat] = useState<string>("all");
   const [tab, setTab] = useState<"catalog" | "custom">("catalog");
   const [custom, setCustom] = useState({ id: "", name: "", category: "automacao", description: "", baseUrl: "" });
+  const [adding, setAdding] = useState<string | null>(null);
 
-  const items = CATALOG.filter((i) => (cat === "all" || i.category === cat) && (!q || i.name.toLowerCase().includes(q.toLowerCase())));
+  const items = PROVIDER_CATALOG.filter(
+    (i) => (cat === "all" || i.category === cat) && (!q || (i.name + i.description + i.tagline).toLowerCase().includes(q.toLowerCase())),
+  );
 
-  const add = async (item: Item) => {
-    const { error } = await supabase.from("integration_providers" as any).insert({
+  const add = async (item: CatalogProvider) => {
+    setAdding(item.id);
+    const { error } = await supabase.from("integration_providers" as any).upsert({
       id: item.id, name: item.name, category: item.category, description: item.description,
-      color: item.color, is_connected: false, is_active: false, health_status: "unknown",
+      color: item.color, icon: item.slug,
+      is_connected: false, is_active: false, health_status: "unknown",
+      secret_refs: item.secrets, config: { docs: item.docs, slug: item.slug },
     } as any);
+    setAdding(null);
     if (error) return toast.error(error.message);
-    toast.success(`${item.name} adicionada`); onClose();
+    toast.success(`${item.name} adicionada ao seu workspace`);
+    onClose();
   };
 
   const addCustom = async () => {
@@ -58,27 +43,31 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
       config: { base_url: custom.baseUrl, custom: true },
     } as any);
     if (error) return toast.error(error.message);
-    toast.success("Integração customizada criada"); onClose();
+    toast.success("Integração customizada criada");
+    onClose();
   };
 
   return (
     <AnimatePresence>
       {open && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-stretch sm:items-center justify-center sm:p-6"
+          className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-stretch sm:items-center justify-center sm:p-6"
           onClick={onClose}>
           <motion.div initial={{ y: 30, scale: 0.97, opacity: 0 }} animate={{ y: 0, scale: 1, opacity: 1 }} exit={{ y: 30, opacity: 0 }}
             transition={{ type: "spring", stiffness: 280, damping: 28 }}
-            className="relative w-full sm:max-w-3xl sm:max-h-[85vh] h-full sm:h-auto bg-[#0a0a0a] sm:rounded-2xl border border-white/10 flex flex-col"
+            className="relative w-full sm:max-w-5xl sm:max-h-[90vh] h-full sm:h-auto bg-[#0a0a0a] sm:rounded-2xl border border-white/10 flex flex-col shadow-[0_30px_80px_rgba(0,0,0,0.7)]"
             onClick={(e) => e.stopPropagation()}
           >
             <header className="p-5 border-b border-white/10">
               <div className="flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-white/40">
-                    <Sparkles className="w-3.5 h-3.5" /> Marketplace
+                    <Sparkles className="w-3.5 h-3.5" /> Integration Marketplace
                   </div>
-                  <h2 className="text-xl font-bold mt-1">Adicionar nova integração</h2>
+                  <h2 className="text-2xl font-bold mt-1">Conecte seu ecossistema</h2>
+                  <p className="text-sm text-white/50 mt-1">
+                    {PROVIDER_CATALOG.length} providers enterprise prontos para conectar.
+                  </p>
                 </div>
                 <button onClick={onClose} className="p-2 rounded-lg hover:bg-white/5"><X className="w-4 h-4" /></button>
               </div>
@@ -86,7 +75,7 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
                 {(["catalog", "custom"] as const).map((t) => (
                   <button key={t} onClick={() => setTab(t)}
                     className={`px-3 py-1.5 text-xs uppercase tracking-wider rounded-lg border ${tab === t ? "bg-white text-black border-white" : "border-white/10 text-white/60 hover:bg-white/5"}`}>
-                    {t === "catalog" ? "Catálogo" : "Customizada"}
+                    {t === "catalog" ? "Catálogo oficial" : "Customizada"}
                   </button>
                 ))}
               </div>
@@ -97,40 +86,88 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
                 <div className="p-4 border-b border-white/5 flex flex-col gap-3">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-                    <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar..."
-                      className="w-full bg-black/40 border border-white/10 rounded-lg pl-9 pr-3 py-2 text-sm focus:outline-none focus:border-white/30" />
+                    <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar provider (ex: stripe, github)…"
+                      className="w-full bg-black/40 border border-white/10 rounded-lg pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:border-white/30" />
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {CATS.map(([k, label]) => (
-                      <button key={k} onClick={() => setCat(k)}
-                        className={`px-2.5 py-1 text-[10px] uppercase tracking-wider rounded border ${cat === k ? "bg-white text-black border-white" : "border-white/10 text-white/60 hover:bg-white/5"}`}>
+                  <div className="flex flex-wrap gap-1.5 overflow-x-auto">
+                    {CATEGORY_LIST.map(([k, label]) => (
+                      <button key={k} onClick={() => setCat(k as string)}
+                        className={`px-2.5 py-1 text-[10px] uppercase tracking-wider rounded border whitespace-nowrap ${cat === k ? "bg-white text-black border-white" : "border-white/10 text-white/60 hover:bg-white/5"}`}>
                         {label}
                       </button>
                     ))}
                   </div>
                 </div>
-                <div className="flex-1 overflow-y-auto p-4 grid sm:grid-cols-2 gap-3">
+
+                <div className="flex-1 overflow-y-auto p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   {items.map((i) => (
-                    <button key={i.id} onClick={() => add(i)} className="text-left p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/30 hover:bg-white/5 transition-all group">
-                      <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-lg border border-white/10 flex items-center justify-center font-bold shrink-0"
-                          style={{ background: `${i.color}22`, color: i.color }}>{i.name.charAt(0)}</div>
+                    <motion.div
+                      key={i.id}
+                      whileHover={{ y: -3 }}
+                      className="group relative p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/30 hover:bg-white/[0.04] transition-all flex flex-col gap-3 overflow-hidden"
+                    >
+                      {/* Glow contextual */}
+                      <div
+                        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                        style={{ background: `radial-gradient(circle at top right, ${i.color}22, transparent 60%)` }}
+                      />
+                      <div className="relative flex items-start gap-3">
+                        <ProviderLogo slug={i.slug} color={i.color} name={i.name} size={44} />
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center justify-between">
-                            <h4 className="font-semibold">{i.name}</h4>
-                            <Plus className="w-4 h-4 text-white/30 group-hover:text-white transition-colors" />
+                          <div className="flex items-center gap-2">
+                            <h4 className="font-semibold truncate">{i.name}</h4>
+                            {i.tagline && <span className="text-[9px] uppercase tracking-wider text-white/40 truncate">· {i.tagline}</span>}
                           </div>
-                          <p className="text-xs text-white/50 mt-0.5">{i.description}</p>
+                          <p className="text-xs text-white/50 mt-0.5 line-clamp-2">{i.description}</p>
                         </div>
                       </div>
-                    </button>
+
+                      <div className="relative flex flex-wrap gap-1.5">
+                        {i.hasTest && (
+                          <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                            <Zap className="w-2.5 h-2.5" /> teste real
+                          </span>
+                        )}
+                        {i.hasWebhook && (
+                          <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300 border border-sky-500/20">
+                            <Webhook className="w-2.5 h-2.5" /> webhook
+                          </span>
+                        )}
+                        {i.hasOAuth && (
+                          <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-violet-500/10 text-violet-300 border border-violet-500/20">
+                            <Key className="w-2.5 h-2.5" /> oauth
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="relative flex items-center gap-2 mt-auto">
+                        <button
+                          onClick={() => add(i)}
+                          disabled={adding === i.id}
+                          className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-white text-black text-xs font-medium hover:bg-white/90 disabled:opacity-50"
+                        >
+                          <Plus className="w-3.5 h-3.5" /> {adding === i.id ? "Adicionando…" : "Conectar"}
+                        </button>
+                        <a
+                          href={i.docs}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center justify-center px-2.5 py-2 rounded-lg border border-white/15 hover:bg-white/5 text-white/70"
+                          title="Documentação oficial"
+                        >
+                          <BookOpen className="w-3.5 h-3.5" />
+                        </a>
+                      </div>
+                    </motion.div>
                   ))}
-                  {items.length === 0 && <p className="sm:col-span-2 text-center text-white/40 text-sm py-8">Nenhum resultado.</p>}
+                  {items.length === 0 && (
+                    <p className="sm:col-span-2 lg:col-span-3 text-center text-white/40 text-sm py-12">Nenhum resultado.</p>
+                  )}
                 </div>
               </>
             ) : (
               <div className="flex-1 overflow-y-auto p-5 space-y-3">
-                <p className="text-sm text-white/60">Conecte qualquer API REST/Webhook customizado.</p>
+                <p className="text-sm text-white/60">Conecte qualquer API REST ou Webhook customizado.</p>
                 <input value={custom.id} onChange={(e) => setCustom({ ...custom, id: e.target.value })}
                   placeholder="ID único (ex: minha_api)"
                   className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-white/30" />
@@ -139,13 +176,13 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
                   className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-white/30" />
                 <select value={custom.category} onChange={(e) => setCustom({ ...custom, category: e.target.value })}
                   className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-white/30">
-                  {CATS.slice(1).map(([k, l]) => <option key={k} value={k}>{l}</option>)}
+                  {CATEGORY_LIST.slice(1).map(([k, l]) => <option key={k} value={k}>{l}</option>)}
                 </select>
                 <input value={custom.baseUrl} onChange={(e) => setCustom({ ...custom, baseUrl: e.target.value })}
-                  placeholder="Base URL da API (https://...)"
+                  placeholder="Base URL da API (https://…)"
                   className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-white/30" />
                 <textarea value={custom.description} onChange={(e) => setCustom({ ...custom, description: e.target.value })}
-                  placeholder="Descrição curta" rows={2}
+                  placeholder="Descrição curta" rows={3}
                   className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-white/30" />
                 <button onClick={addCustom} className="w-full px-4 py-2.5 rounded-lg bg-white text-black font-medium text-sm hover:bg-white/90">
                   Criar integração customizada
