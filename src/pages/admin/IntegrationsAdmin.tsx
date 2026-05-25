@@ -4,21 +4,30 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
-  Activity, AlertTriangle, CheckCircle2, Circle, Loader2, Plug, Plus, Search, Webhook, Zap,
+  Activity, AlertTriangle, CheckCircle2, Loader2, Plug, Plus, Search, Webhook, Zap, BookOpen, Sparkles,
 } from "lucide-react";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import GlassCard from "@/components/GlassCard";
 import { useIntegrations, type IntegrationProvider } from "@/hooks/useIntegrations";
 import IntegrationDetailsModal from "@/modules/integrations/IntegrationDetailsModal";
 import IntegrationMarketplaceModal from "@/modules/integrations/IntegrationMarketplaceModal";
+import GuidedConnectionTest from "@/modules/integrations/GuidedConnectionTest";
+import SetupGuideDrawer from "@/modules/integrations/SetupGuideDrawer";
+import ProviderLogo from "@/modules/integrations/ProviderLogo";
+import { findCatalogProvider, CATEGORY_LABEL } from "@/modules/integrations/providerCatalog";
 
 const CATEGORIES: Record<string, { label: string; color: string }> = {
-  comunicacao: { label: "Comunicação", color: "text-emerald-300" },
-  desenvolvimento: { label: "Desenvolvimento", color: "text-sky-300" },
-  design: { label: "Design", color: "text-pink-300" },
-  produtividade: { label: "Produtividade", color: "text-amber-300" },
-  automacao: { label: "Automação", color: "text-violet-300" },
-  ia: { label: "Inteligência Artificial", color: "text-fuchsia-300" },
+  comunicacao: { label: CATEGORY_LABEL.comunicacao, color: "text-emerald-300" },
+  desenvolvimento: { label: CATEGORY_LABEL.desenvolvimento, color: "text-sky-300" },
+  design: { label: CATEGORY_LABEL.design, color: "text-pink-300" },
+  produtividade: { label: CATEGORY_LABEL.produtividade, color: "text-amber-300" },
+  automacao: { label: CATEGORY_LABEL.automacao, color: "text-violet-300" },
+  ia: { label: CATEGORY_LABEL.ia, color: "text-fuchsia-300" },
+  payments: { label: CATEGORY_LABEL.payments, color: "text-emerald-200" },
+  cloud: { label: CATEGORY_LABEL.cloud, color: "text-orange-300" },
+  deploy: { label: CATEGORY_LABEL.deploy, color: "text-cyan-300" },
+  banco_dados: { label: CATEGORY_LABEL.banco_dados, color: "text-lime-300" },
+  monitoring: { label: CATEGORY_LABEL.monitoring, color: "text-purple-300" },
 };
 
 const HealthDot = ({ status }: { status: IntegrationProvider["health_status"] }) => {
