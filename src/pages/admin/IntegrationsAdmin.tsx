@@ -251,23 +251,24 @@ export default function IntegrationsAdmin() {
                             onClick={() => setWizard(p)}
                             disabled={testing}
                             className="flex-1 inline-flex items-center justify-center gap-1.5 px-2.5 py-2 text-[11px] uppercase tracking-wider rounded-lg border border-white/15 hover:bg-white/5 disabled:opacity-50"
-                            title="Wizard guiado"
+                            title="Wizard guiado de teste"
                           >
                             {testing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
                             Testar
                           </button>
                           <button
                             onClick={() => setGuideId(p.id)}
-                            className="inline-flex items-center justify-center px-2.5 py-2 text-[11px] rounded-lg border border-white/15 hover:bg-white/5"
+                            className="flex-1 inline-flex items-center justify-center gap-1.5 px-2.5 py-2 text-[11px] uppercase tracking-wider rounded-lg border border-white/15 hover:bg-white/5"
                             title="Guia de configuração"
                           >
-                            <BookOpen className="w-3.5 h-3.5" />
+                            <BookOpen className="w-3.5 h-3.5" /> Config
                           </button>
                           <button
                             onClick={() => toggleActive.mutate({ id: p.id, active: !p.is_active })}
                             className={`px-2.5 py-2 text-[11px] uppercase tracking-wider rounded-lg border transition-colors ${
                               p.is_active ? "bg-white/90 text-black border-white" : "border-white/15 hover:bg-white/5"
                             }`}
+                            title={p.is_active ? "Desativar" : "Ativar"}
                           >
                             {p.is_active ? "On" : "Off"}
                           </button>
