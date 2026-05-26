@@ -22,6 +22,7 @@ export default function IntegrationDetailsModal({
   const { toggleActive, testConnection, lastResult } = useIntegrations();
   const [tab, setTab] = useState<Tab>("overview");
   const [guideOpen, setGuideOpen] = useState(false);
+  const [wizardOpen, setWizardOpen] = useState(false);
 
   useEffect(() => {
     if (!provider) return;
