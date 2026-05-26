@@ -270,6 +270,200 @@ const GUIDES: Record<string, Guide> = {
       { title: "Configure webhooks", body: "URL → sua função webhook-dispatch. Eventos: payment, merchant_order." },
     ],
   },
+
+  gitlab: {
+    intro: "Repositórios, pipelines CI/CD e merge requests no GitLab.",
+    secretsExpected: ["GITLAB_TOKEN"],
+    steps: [
+      { title: "Crie um Personal Access Token", body: "GitLab → User Settings → Access Tokens. Scopes: api, read_repository.", link: { label: "GitLab Tokens", url: "https://gitlab.com/-/user_settings/personal_access_tokens" } },
+      { title: "Salve GITLAB_TOKEN", body: "Cloud → Secrets → GITLAB_TOKEN." },
+      { title: "Teste", body: "Use o wizard para validar /api/v4/user." },
+    ],
+    curl: [{ label: "Validar token", value: `curl -H "PRIVATE-TOKEN: $GITLAB_TOKEN" https://gitlab.com/api/v4/user` }],
+    troubleshooting: [{ problem: "401 Unauthorized", solution: "Token expirado ou sem scope api." }],
+  },
+
+  bitbucket: {
+    intro: "Repos e pipelines do ecossistema Atlassian.",
+    secretsExpected: ["BITBUCKET_TOKEN", "BITBUCKET_USERNAME"],
+    steps: [
+      { title: "Crie um App Password", body: "Bitbucket → Personal settings → App passwords. Permissions: Repositories (read), Pull requests (read).", link: { label: "Bitbucket App Passwords", url: "https://bitbucket.org/account/settings/app-passwords/" } },
+      { title: "Salve secrets", body: "BITBUCKET_USERNAME + BITBUCKET_TOKEN em Cloud → Secrets." },
+    ],
+    curl: [{ label: "Listar repos", value: `curl -u $BITBUCKET_USERNAME:$BITBUCKET_TOKEN https://api.bitbucket.org/2.0/repositories` }],
+  },
+
+  netlify: {
+    intro: "Sites, forms e functions Netlify.",
+    secretsExpected: ["NETLIFY_TOKEN"],
+    steps: [
+      { title: "Crie um Personal Access Token", body: "User settings → Applications → Personal access tokens → New token.", link: { label: "Netlify Tokens", url: "https://app.netlify.com/user/applications#personal-access-tokens" } },
+      { title: "Salve NETLIFY_TOKEN", body: "Cloud → Secrets." },
+    ],
+    curl: [{ label: "Listar sites", value: `curl -H "Authorization: Bearer $NETLIFY_TOKEN" https://api.netlify.com/api/v1/sites` }],
+  },
+
+  railway: {
+    intro: "Container deploys e bancos gerenciados.",
+    secretsExpected: ["RAILWAY_TOKEN"],
+    steps: [
+      { title: "Pegue o token", body: "Railway → Account Settings → Tokens → Create.", link: { label: "Railway Tokens", url: "https://railway.app/account/tokens" } },
+      { title: "Salve RAILWAY_TOKEN", body: "Cloud → Secrets." },
+    ],
+    curl: [{ label: "GraphQL me", value: `curl -X POST https://backboard.railway.app/graphql/v2 \\\n  -H "Authorization: Bearer $RAILWAY_TOKEN" \\\n  -H "Content-Type: application/json" \\\n  -d '{"query":"{ me { id email } }"}'` }],
+  },
+
+  render: {
+    intro: "Web services, workers e cron jobs no Render.",
+    secretsExpected: ["RENDER_API_KEY"],
+    steps: [
+      { title: "Crie uma API key", body: "Render Dashboard → Account Settings → API Keys.", link: { label: "Render API Keys", url: "https://dashboard.render.com/u/settings" } },
+      { title: "Salve RENDER_API_KEY", body: "Cloud → Secrets." },
+    ],
+    curl: [{ label: "Listar services", value: `curl -H "Authorization: Bearer $RENDER_API_KEY" https://api.render.com/v1/services` }],
+  },
+
+  aws: {
+    intro: "S3, Lambda, SES e CloudWatch via SDK.",
+    secretsExpected: ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_REGION"],
+    steps: [
+      { title: "Crie um IAM User", body: "IAM Console → Users → Create. Anexe políticas mínimas (princípio do menor privilégio).", link: { label: "AWS IAM", url: "https://console.aws.amazon.com/iam/" } },
+      { title: "Gere Access Keys", body: "User → Security credentials → Create access key." },
+      { title: "Salve secrets", body: "AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY e AWS_REGION (ex: us-east-1)." },
+    ],
+    troubleshooting: [
+      { problem: "SignatureDoesNotMatch", solution: "Relógio fora de sincronia (NTP) ou chave incorreta." },
+      { problem: "AccessDenied", solution: "Falta política IAM. Anexe a permissão correta ao user." },
+    ],
+  },
+
+  gcp: {
+    intro: "GCS, Cloud Run, BigQuery via Service Account.",
+    secretsExpected: ["GCP_SERVICE_ACCOUNT_JSON"],
+    steps: [
+      { title: "Crie Service Account", body: "IAM & Admin → Service Accounts → Create. Conceda roles necessárias.", link: { label: "GCP Console", url: "https://console.cloud.google.com/iam-admin/serviceaccounts" } },
+      { title: "Gere chave JSON", body: "Keys → Add Key → JSON. Cole o JSON inteiro em GCP_SERVICE_ACCOUNT_JSON." },
+    ],
+  },
+
+  docker: {
+    intro: "Container registry e imagens Docker Hub.",
+    secretsExpected: ["DOCKERHUB_USERNAME", "DOCKERHUB_TOKEN"],
+    steps: [
+      { title: "Crie um Access Token", body: "Docker Hub → Account Settings → Security → New Access Token.", link: { label: "Docker Hub Security", url: "https://hub.docker.com/settings/security" } },
+      { title: "Salve secrets", body: "DOCKERHUB_USERNAME + DOCKERHUB_TOKEN." },
+    ],
+  },
+
+  firebase: {
+    intro: "Realtime DB, Firestore, Auth e Cloud Functions.",
+    secretsExpected: ["FIREBASE_SERVICE_ACCOUNT_JSON"],
+    steps: [
+      { title: "Pegue a Service Account", body: "Firebase Console → Project Settings → Service Accounts → Generate new private key.", link: { label: "Firebase Console", url: "https://console.firebase.google.com" } },
+      { title: "Salve FIREBASE_SERVICE_ACCOUNT_JSON", body: "Cole o JSON inteiro em Cloud → Secrets." },
+    ],
+  },
+
+  neon: {
+    intro: "Postgres serverless com database branching.",
+    secretsExpected: ["NEON_API_KEY"],
+    steps: [
+      { title: "Pegue a API key", body: "Neon Console → Account Settings → API Keys → Create.", link: { label: "Neon Console", url: "https://console.neon.tech" } },
+      { title: "Salve NEON_API_KEY", body: "Cloud → Secrets." },
+    ],
+    curl: [{ label: "Listar projects", value: `curl -H "Authorization: Bearer $NEON_API_KEY" https://console.neon.tech/api/v2/projects` }],
+  },
+
+  postgresql: {
+    intro: "PostgreSQL self-hosted ou managed via connection string.",
+    secretsExpected: ["DATABASE_URL"],
+    steps: [
+      { title: "Pegue sua connection string", body: "Formato: postgresql://user:pass@host:5432/db?sslmode=require" },
+      { title: "Salve DATABASE_URL", body: "Cloud → Secrets. Sempre use sslmode=require em produção." },
+      { title: "Whitelist do IP", body: "Adicione os IPs do Lovable Cloud no firewall do banco se necessário." },
+    ],
+    troubleshooting: [
+      { problem: "connection timeout", solution: "Firewall bloqueando. Permita egress 0.0.0.0/0 ou IPs específicos." },
+      { problem: "SSL required", solution: "Anexe ?sslmode=require na connection string." },
+    ],
+  },
+
+  mongodb: {
+    intro: "MongoDB Atlas document database gerenciado.",
+    secretsExpected: ["MONGODB_URI"],
+    steps: [
+      { title: "Crie cluster", body: "Atlas → Database → Build a Database.", link: { label: "MongoDB Atlas", url: "https://cloud.mongodb.com" } },
+      { title: "Configure Network Access", body: "Allow access from anywhere (0.0.0.0/0) ou whitelist específico." },
+      { title: "Crie Database User", body: "Database Access → Add New Database User." },
+      { title: "Salve MONGODB_URI", body: "Connect → Drivers → copie a connection string." },
+    ],
+  },
+
+  redis: {
+    intro: "Cache, pub/sub e job queues.",
+    secretsExpected: ["REDIS_URL"],
+    steps: [
+      { title: "Provisione Redis", body: "Use Upstash, Redis Cloud, Railway ou self-hosted.", link: { label: "Upstash", url: "https://upstash.com" } },
+      { title: "Salve REDIS_URL", body: "Formato: redis://default:pass@host:6379 (ou rediss:// para TLS)." },
+    ],
+  },
+
+  rabbitmq: {
+    intro: "Message broker AMQP enterprise.",
+    secretsExpected: ["RABBITMQ_URL"],
+    steps: [
+      { title: "Provisione RabbitMQ", body: "Use CloudAMQP, Amazon MQ ou self-hosted.", link: { label: "CloudAMQP", url: "https://www.cloudamqp.com" } },
+      { title: "Salve RABBITMQ_URL", body: "Formato: amqps://user:pass@host:5671/vhost." },
+    ],
+  },
+
+  anthropic: {
+    intro: "Claude 4.5 Sonnet e Opus para conversas avançadas.",
+    secretsExpected: ["ANTHROPIC_API_KEY"],
+    steps: [
+      { title: "Crie uma API key", body: "console.anthropic.com → API Keys → Create Key.", link: { label: "Anthropic Console", url: "https://console.anthropic.com" } },
+      { title: "Salve ANTHROPIC_API_KEY", body: "Cloud → Secrets." },
+    ],
+    curl: [{ label: "Messages", value: `curl https://api.anthropic.com/v1/messages \\\n  -H "x-api-key: $ANTHROPIC_API_KEY" \\\n  -H "anthropic-version: 2023-06-01" \\\n  -H "content-type: application/json" \\\n  -d '{"model":"claude-sonnet-4-5","max_tokens":1024,"messages":[{"role":"user","content":"Hi"}]}'` }],
+  },
+
+  clerk: {
+    intro: "Auth, user management e organizations.",
+    secretsExpected: ["CLERK_SECRET_KEY"],
+    steps: [
+      { title: "Crie uma application", body: "Clerk Dashboard → Applications → Create.", link: { label: "Clerk Dashboard", url: "https://dashboard.clerk.com" } },
+      { title: "Pegue Secret Key", body: "API Keys → Backend → Secret Key (sk_live_... / sk_test_...)." },
+      { title: "Configure webhooks", body: "Webhooks → Add Endpoint → cole sua função webhook-dispatch URL." },
+    ],
+  },
+
+  auth0: {
+    intro: "Identity-as-a-service enterprise.",
+    secretsExpected: ["AUTH0_DOMAIN", "AUTH0_CLIENT_ID", "AUTH0_CLIENT_SECRET"],
+    steps: [
+      { title: "Crie um tenant", body: "Auth0 Dashboard → Create Tenant.", link: { label: "Auth0", url: "https://manage.auth0.com" } },
+      { title: "Crie uma Application", body: "Applications → Create → Machine to Machine (server) ou Regular Web App." },
+      { title: "Salve secrets", body: "AUTH0_DOMAIN (tenant.us.auth0.com), AUTH0_CLIENT_ID e AUTH0_CLIENT_SECRET." },
+    ],
+  },
+
+  datadog: {
+    intro: "Observability completa: logs, métricas e APM.",
+    secretsExpected: ["DATADOG_API_KEY", "DATADOG_APP_KEY"],
+    steps: [
+      { title: "Pegue as keys", body: "Organization Settings → API Keys + Application Keys.", link: { label: "Datadog", url: "https://app.datadoghq.com" } },
+      { title: "Salve secrets", body: "DATADOG_API_KEY (server) + DATADOG_APP_KEY (queries)." },
+    ],
+  },
+
+  grafana: {
+    intro: "Dashboards, alerting e Loki logs.",
+    secretsExpected: ["GRAFANA_URL", "GRAFANA_API_TOKEN"],
+    steps: [
+      { title: "Crie um Service Account", body: "Administration → Service accounts → Add. Gere token com role Editor.", link: { label: "Grafana Cloud", url: "https://grafana.com" } },
+      { title: "Salve secrets", body: "GRAFANA_URL (ex: https://myorg.grafana.net) + GRAFANA_API_TOKEN." },
+    ],
+  },
 };
 
 const STORAGE_KEY = (id: string) => `setup-guide-done:${id}`;

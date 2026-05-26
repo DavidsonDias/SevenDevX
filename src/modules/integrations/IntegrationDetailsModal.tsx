@@ -3,12 +3,15 @@
  */
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { X, Zap, Power, Trash2, RefreshCw, BookOpen, Activity, Terminal, Settings2, Loader2, AlertTriangle } from "lucide-react";
+import { X, Zap, Power, Trash2, RefreshCw, BookOpen, Activity, Terminal, Settings2, Loader2, AlertTriangle, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useIntegrations, type IntegrationProvider } from "@/hooks/useIntegrations";
 import SetupGuideDrawer from "./SetupGuideDrawer";
 import IntegrationLogsPanel from "./IntegrationLogsPanel";
 import TestResultPanel from "./TestResultPanel";
+import GuidedConnectionTest from "./GuidedConnectionTest";
+import ProviderLogo from "./ProviderLogo";
+import { findCatalogProvider } from "./providerCatalog";
 import { toast } from "sonner";
 
 type Tab = "overview" | "logs" | "credentials" | "webhooks";
@@ -19,6 +22,7 @@ export default function IntegrationDetailsModal({
   const { toggleActive, testConnection, lastResult } = useIntegrations();
   const [tab, setTab] = useState<Tab>("overview");
   const [guideOpen, setGuideOpen] = useState(false);
+  const [wizardOpen, setWizardOpen] = useState(false);
 
   useEffect(() => {
     if (!provider) return;
@@ -51,10 +55,12 @@ export default function IntegrationDetailsModal({
         >
           <header className="p-5 border-b border-white/10">
             <div className="flex items-start gap-4">
-              <div className="w-14 h-14 rounded-xl border border-white/10 flex items-center justify-center text-xl font-bold shrink-0"
-                style={{ background: `${provider.color}22`, color: provider.color || undefined }}>
-                {provider.name.charAt(0)}
-              </div>
+              <ProviderLogo
+                slug={findCatalogProvider(provider.id)?.slug}
+                color={provider.color || findCatalogProvider(provider.id)?.color}
+                name={provider.name}
+                size={56}
+              />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-3 flex-wrap">
                   <h2 className="text-2xl font-bold">{provider.name}</h2>
@@ -157,23 +163,27 @@ export default function IntegrationDetailsModal({
           </div>
 
           <footer className="p-4 border-t border-white/10 flex flex-wrap gap-2 bg-black/40">
+            <button onClick={() => setWizardOpen(true)}
+              className="flex-1 min-w-[140px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-white text-black font-medium text-sm hover:bg-white/90">
+              <Sparkles className="w-4 h-4" /> Teste guiado
+            </button>
             <button onClick={() => testConnection.mutate(provider)} disabled={testing}
-              className="flex-1 min-w-[140px] inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-white text-black font-medium text-sm hover:bg-white/90 disabled:opacity-50">
-              {testing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />} Testar conexão
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-white/15 hover:bg-white/5 text-sm disabled:opacity-50">
+              {testing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />} Teste rápido
+            </button>
+            <button onClick={() => setGuideOpen(true)}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-white/15 hover:bg-white/5 text-sm">
+              <Settings2 className="w-4 h-4" /> Configurar
             </button>
             <button onClick={() => toggleActive.mutate({ id: provider.id, active: !provider.is_active })}
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-white/15 hover:bg-white/5 text-sm">
               <Power className="w-4 h-4" /> {provider.is_active ? "Desativar" : "Ativar"}
             </button>
-            <button onClick={() => { setGuideOpen(true); }}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-white/15 hover:bg-white/5 text-sm">
-              <BookOpen className="w-4 h-4" /> Guia
-            </button>
             <button onClick={async () => {
               await supabase.from("integration_providers" as any).update({ last_sync_at: new Date().toISOString() }).eq("id", provider.id);
               toast.success("Sincronização marcada");
             }} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-white/15 hover:bg-white/5 text-sm">
-              <RefreshCw className="w-4 h-4" /> Sincronizar
+              <RefreshCw className="w-4 h-4" /> Sync
             </button>
             <button onClick={async () => {
               if (!confirm(`Remover integração ${provider.name}?`)) return;
@@ -186,6 +196,12 @@ export default function IntegrationDetailsModal({
         </motion.div>
       </motion.div>
       <SetupGuideDrawer providerId={provider.id} open={guideOpen} onClose={() => setGuideOpen(false)} />
+      <GuidedConnectionTest
+        provider={provider}
+        open={wizardOpen}
+        onClose={() => setWizardOpen(false)}
+        onOpenGuide={() => { setWizardOpen(false); setGuideOpen(true); }}
+      />
     </AnimatePresence>
   );
 }
