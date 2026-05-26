@@ -3,12 +3,15 @@
  */
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import { X, Zap, Power, Trash2, RefreshCw, BookOpen, Activity, Terminal, Settings2, Loader2, AlertTriangle } from "lucide-react";
+import { X, Zap, Power, Trash2, RefreshCw, BookOpen, Activity, Terminal, Settings2, Loader2, AlertTriangle, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useIntegrations, type IntegrationProvider } from "@/hooks/useIntegrations";
 import SetupGuideDrawer from "./SetupGuideDrawer";
 import IntegrationLogsPanel from "./IntegrationLogsPanel";
 import TestResultPanel from "./TestResultPanel";
+import GuidedConnectionTest from "./GuidedConnectionTest";
+import ProviderLogo from "./ProviderLogo";
+import { findCatalogProvider } from "./providerCatalog";
 import { toast } from "sonner";
 
 type Tab = "overview" | "logs" | "credentials" | "webhooks";
