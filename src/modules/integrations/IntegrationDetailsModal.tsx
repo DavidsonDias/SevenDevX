@@ -55,10 +55,12 @@ export default function IntegrationDetailsModal({
         >
           <header className="p-5 border-b border-white/10">
             <div className="flex items-start gap-4">
-              <div className="w-14 h-14 rounded-xl border border-white/10 flex items-center justify-center text-xl font-bold shrink-0"
-                style={{ background: `${provider.color}22`, color: provider.color || undefined }}>
-                {provider.name.charAt(0)}
-              </div>
+              <ProviderLogo
+                slug={findCatalogProvider(provider.id)?.slug}
+                color={provider.color || findCatalogProvider(provider.id)?.color}
+                name={provider.name}
+                size={56}
+              />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-3 flex-wrap">
                   <h2 className="text-2xl font-bold">{provider.name}</h2>
