@@ -24,7 +24,7 @@ import serviceDev from "@/assets/images/service-web-dev.webp";
 import serviceSoftware from "@/assets/images/service-software.webp";
 import serviceMaintenance from "@/assets/images/service-maintenance.webp";
 import serviceLanding from "@/assets/images/service-landing.webp";
-import serviceConsulting from "@/assets/images/service-consulting.webp";
+import serviceConsulting from "@/assets/images/DavidsonConsultig.webp";
 
 // Map icon name string -> Lucide component (used by CMS records)
 const ICON_MAP: Record<string, any> = {
