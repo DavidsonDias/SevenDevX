@@ -492,10 +492,41 @@ function CopyBlock({ value, label }: { value: string; label?: string }) {
   );
 }
 
+function buildGenericGuide(providerId: string): Guide {
+  const upper = providerId.toUpperCase().replace(/[^A-Z0-9]/g, "_");
+  return {
+    intro:
+      "Guia genérico de configuração. Quando adicionarmos integração nativa para este provider, instruções passo a passo aparecerão aqui automaticamente.",
+    secretsExpected: [`${upper}_API_KEY`],
+    steps: [
+      {
+        title: "Obtenha as credenciais no painel do provider",
+        body: "Acesse o painel oficial do provider, crie uma API key (ou access token) com escopo de leitura adequado e copie o valor com segurança.",
+      },
+      {
+        title: `Salve o secret ${upper}_API_KEY`,
+        body: "Abra Cloud → Secrets, clique em Adicionar secret e cole a credencial. Edge functions e testes terão acesso automaticamente.",
+      },
+      {
+        title: "Configure webhook (opcional)",
+        body: "Se o provider suportar webhooks, aponte para sua função webhook-dispatch para receber eventos em tempo real.",
+      },
+      {
+        title: "Teste a conexão",
+        body: "Volte ao SevenOS, abra o modal do provider e use o botão Testar ou o Wizard guiado para validar a credencial.",
+      },
+    ],
+    troubleshooting: [
+      { problem: "401 Unauthorized", solution: "Credencial inválida ou expirada — gere uma nova no painel do provider." },
+      { problem: "Timeout", solution: "Confira região/endpoint corretos e se sua conta está ativa no provider." },
+    ],
+  };
+}
+
 export default function SetupGuideDrawer({
   providerId, open, onClose,
 }: { providerId: string | null; open: boolean; onClose: () => void }) {
-  const guide = providerId ? GUIDES[providerId] : null;
+  const guide = providerId ? (GUIDES[providerId] ?? buildGenericGuide(providerId)) : null;
   const [done, setDone] = useState<Set<number>>(new Set());
 
   useEffect(() => {
@@ -506,6 +537,7 @@ export default function SetupGuideDrawer({
       else setDone(new Set());
     } catch { setDone(new Set()); }
   }, [providerId]);
+
 
   const toggleDone = (i: number) => {
     setDone((d) => {
