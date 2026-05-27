@@ -1,11 +1,66 @@
 /**
- * 🎨 ProviderLogo — Logo oficial com 2-tier fallback + branding contextual
- * Tier 1: cdn.simpleicons.org (SVG colorido nativo)
- * Tier 2: jsdelivr simple-icons via CSS mask (caso CDN seja bloqueado)
- * Tier 3: inicial da marca em gradiente brand-aware
+ * 🎨 ProviderLogo — Logo oficial local-first + fallback resiliente
+ * Tier 1: react-icons/simple-icons (sem rede, não quebra por CDN/CSP/SW)
+ * Tier 2: cdn.simpleicons.org
+ * Tier 3: jsdelivr simple-icons via CSS mask
+ * Tier 4: inicial da marca em gradiente brand-aware
  */
 import { useState } from "react";
+import type { IconType } from "react-icons";
+import {
+  SiAmazonwebservices, SiAnthropic, SiAuth0, SiBitbucket, SiClerk, SiCloudflare, SiDatadog,
+  SiDiscord, SiDocker, SiFigma, SiFirebase, SiGit, SiGithub, SiGitlab, SiGoogle, SiGooglecalendar,
+  SiGooglecloud, SiGooglegemini, SiGrafana, SiLinear, SiMake, SiMercadopago, SiMongodb,
+  SiN8N, SiNetlify, SiNotion, SiOpenai, SiPostgresql, SiRabbitmq, SiRailway, SiRedis,
+  SiRender, SiResend, SiSentry, SiSlack, SiStripe, SiSupabase, SiTelegram, SiTwilio,
+  SiVercel, SiWhatsapp, SiZapier,
+} from "react-icons/si";
 import { providerLogoUrl } from "./providerCatalog";
+
+const LOCAL_ICONS: Record<string, IconType> = {
+  amazonaws: SiAmazonwebservices,
+  anthropic: SiAnthropic,
+  auth0: SiAuth0,
+  bitbucket: SiBitbucket,
+  clerk: SiClerk,
+  cloudflare: SiCloudflare,
+  datadog: SiDatadog,
+  discord: SiDiscord,
+  docker: SiDocker,
+  figma: SiFigma,
+  firebase: SiFirebase,
+  git: SiGit,
+  github: SiGithub,
+  gitlab: SiGitlab,
+  google: SiGoogle,
+  googlecalendar: SiGooglecalendar,
+  googlecloud: SiGooglecloud,
+  googlegemini: SiGooglegemini,
+  grafana: SiGrafana,
+  linear: SiLinear,
+  make: SiMake,
+  mercadopago: SiMercadopago,
+  mongodb: SiMongodb,
+  n8n: SiN8N,
+  netlify: SiNetlify,
+  notion: SiNotion,
+  openai: SiOpenai,
+  postgresql: SiPostgresql,
+  rabbitmq: SiRabbitmq,
+  railway: SiRailway,
+  redis: SiRedis,
+  render: SiRender,
+  resend: SiResend,
+  sentry: SiSentry,
+  slack: SiSlack,
+  stripe: SiStripe,
+  supabase: SiSupabase,
+  telegram: SiTelegram,
+  twilio: SiTwilio,
+  vercel: SiVercel,
+  whatsapp: SiWhatsapp,
+  zapier: SiZapier,
+};
 
 export default function ProviderLogo({
   slug, color, name, size = 40, className = "",
@@ -15,6 +70,7 @@ export default function ProviderLogo({
   const isWhite = !color || /^#?f{3,6}$/i.test(color);
   const accent = color || "#ffffff";
   const accentHex = accent.replace("#", "");
+  const LocalIcon = slug ? LOCAL_ICONS[slug] : undefined;
   const primaryUrl = slug ? providerLogoUrl(slug, isWhite ? "ffffff" : accentHex) : null;
   const maskUrl = slug ? `https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/${slug}.svg` : null;
 
@@ -32,7 +88,14 @@ export default function ProviderLogo({
         color: accent,
       }}
     >
-      {tier === 0 && primaryUrl && (
+      {LocalIcon ? (
+        <LocalIcon
+          aria-label={name}
+          size={size * 0.56}
+          color={isWhite ? "#ffffff" : accent}
+          style={{ filter: isWhite ? "drop-shadow(0 0 6px rgba(255,255,255,0.35))" : `drop-shadow(0 0 7px ${accent}66)` }}
+        />
+      ) : tier === 0 && primaryUrl ? (
         <img
           src={primaryUrl}
           alt={name}
@@ -43,11 +106,9 @@ export default function ProviderLogo({
           className="object-contain"
           style={{ filter: isWhite ? "drop-shadow(0 0 6px rgba(255,255,255,0.35))" : undefined }}
         />
-      )}
-      {tier === 1 && maskUrl && (
+      ) : tier === 1 && maskUrl ? (
         <span
           aria-label={name}
-          onError={() => setTier(2)}
           style={{
             display: "block",
             width: size * 0.58,
@@ -58,8 +119,7 @@ export default function ProviderLogo({
             filter: isWhite ? "drop-shadow(0 0 6px rgba(255,255,255,0.35))" : `drop-shadow(0 0 6px ${accent}66)`,
           }}
         />
-      )}
-      {(tier === 2 || (!primaryUrl && !maskUrl)) && (
+      ) : (
         <span style={{ fontSize: size * 0.42, color: isWhite ? "#fff" : accent }}>
           {name.charAt(0).toUpperCase()}
         </span>
