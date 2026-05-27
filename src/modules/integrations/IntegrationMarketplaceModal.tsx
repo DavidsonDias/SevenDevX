@@ -55,7 +55,7 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
           onClick={onClose}>
           <motion.div initial={{ y: 30, scale: 0.97, opacity: 0 }} animate={{ y: 0, scale: 1, opacity: 1 }} exit={{ y: 30, opacity: 0 }}
             transition={{ type: "spring", stiffness: 280, damping: 28 }}
-            className="relative w-full sm:max-w-5xl sm:max-h-[90vh] h-full sm:h-auto bg-[#0a0a0a] sm:rounded-2xl border border-white/10 flex flex-col shadow-[0_30px_80px_rgba(0,0,0,0.7)]"
+            className="relative w-full sm:max-w-6xl h-full sm:h-[min(900px,90vh)] bg-[#0a0a0a] sm:rounded-2xl border border-white/10 flex flex-col shadow-[0_30px_80px_rgba(0,0,0,0.7)] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             <header className="p-5 border-b border-white/10">
@@ -99,12 +99,12 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
                   </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div className="flex-1 min-h-0 overflow-y-auto p-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 content-start">
                   {items.map((i) => (
                     <motion.div
                       key={i.id}
                       whileHover={{ y: -3 }}
-                      className="group relative p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/30 hover:bg-white/[0.04] transition-all flex flex-col gap-3 overflow-hidden"
+                      className="group relative min-h-[162px] p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/30 hover:bg-white/[0.04] transition-all flex flex-col gap-3 overflow-hidden"
                     >
                       {/* Glow contextual */}
                       <div
@@ -116,16 +116,16 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2">
                             <h4 className="font-semibold truncate">{i.name}</h4>
-                            {i.tagline && <span className="text-[9px] uppercase tracking-wider text-white/40 truncate">· {i.tagline}</span>}
+                            {i.tagline && <span className="hidden sm:inline text-[9px] uppercase tracking-wider text-white/40 truncate">· {i.tagline}</span>}
                           </div>
                           <p className="text-xs text-white/50 mt-0.5 line-clamp-2">{i.description}</p>
                         </div>
                       </div>
 
                       <div className="relative flex flex-wrap gap-1.5">
-                        {i.hasTest && (
+                        {(i.hasTest || true) && (
                           <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
-                            <Zap className="w-2.5 h-2.5" /> teste real
+                            <Zap className="w-2.5 h-2.5" /> teste guiado
                           </span>
                         )}
                         {i.hasWebhook && (
