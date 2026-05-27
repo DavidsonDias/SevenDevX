@@ -86,6 +86,8 @@ export const PROVIDER_CATALOG: CatalogProvider[] = [
   { id: "slack", name: "Slack", slug: "slack", category: "comunicacao", color: "#4A154B", description: "Workspace messaging e bots.", secrets: ["SLACK_BOT_TOKEN", "SLACK_SIGNING_SECRET"], docs: "https://api.slack.com/", hasWebhook: true, hasOAuth: true },
   { id: "discord", name: "Discord", slug: "discord", category: "comunicacao", color: "#5865F2", description: "Bots, webhooks e guild events.", secrets: ["DISCORD_BOT_TOKEN"], docs: "https://discord.com/developers/docs", hasWebhook: true, hasOAuth: true },
   { id: "whatsapp", name: "WhatsApp Business", slug: "whatsapp", category: "comunicacao", color: "#25D366", description: "Cloud API da Meta para mensagens.", secrets: ["WHATSAPP_TOKEN", "WHATSAPP_PHONE_ID"], docs: "https://developers.facebook.com/docs/whatsapp", hasTest: true, hasWebhook: true },
+  { id: "telegram", name: "Telegram", slug: "telegram", category: "comunicacao", color: "#26A5E4", description: "Bot API para mensagens, canais e grupos.", secrets: ["TELEGRAM_BOT_TOKEN"], docs: "https://core.telegram.org/bots/api", hasWebhook: true },
+  { id: "twilio", name: "Twilio", slug: "twilio", category: "comunicacao", color: "#F22F46", description: "SMS, voz e WhatsApp via API.", secrets: ["TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN"], docs: "https://www.twilio.com/docs", hasWebhook: true },
   { id: "clerk", name: "Clerk", slug: "clerk", category: "comunicacao", color: "#6C47FF", description: "Auth, user management e orgs.", secrets: ["CLERK_SECRET_KEY"], docs: "https://clerk.com/docs", hasWebhook: true },
   { id: "auth0", name: "Auth0", slug: "auth0", category: "comunicacao", color: "#EB5424", description: "Identity-as-a-service enterprise.", secrets: ["AUTH0_DOMAIN", "AUTH0_CLIENT_SECRET"], docs: "https://auth0.com/docs", hasOAuth: true },
   { id: "google", name: "Google APIs", slug: "google", category: "comunicacao", color: "#4285F4", description: "Calendar, Drive, Gmail via OAuth 2.0.", secrets: ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"], docs: "https://developers.google.com/", hasOAuth: true },
@@ -94,6 +96,16 @@ export const PROVIDER_CATALOG: CatalogProvider[] = [
   { id: "sentry", name: "Sentry", slug: "sentry", category: "monitoring", color: "#362D59", description: "Error tracking, performance e releases.", secrets: ["SENTRY_DSN", "SENTRY_AUTH_TOKEN"], docs: "https://docs.sentry.io/", hasWebhook: true },
   { id: "datadog", name: "Datadog", slug: "datadog", category: "monitoring", color: "#632CA6", description: "Observability completa: logs, metrics, APM.", secrets: ["DATADOG_API_KEY", "DATADOG_APP_KEY"], docs: "https://docs.datadoghq.com/api/" },
   { id: "grafana", name: "Grafana", slug: "grafana", category: "monitoring", color: "#F46800", description: "Dashboards, alerting e Loki.", secrets: ["GRAFANA_API_TOKEN", "GRAFANA_URL"], docs: "https://grafana.com/docs/grafana/latest/developers/http_api/" },
+
+  // 🤖 Automação
+  { id: "make", name: "Make", slug: "make", category: "automacao", color: "#6D00CC", description: "Cenários de automação visual (ex-Integromat).", secrets: ["MAKE_API_TOKEN"], docs: "https://www.make.com/en/api-documentation", hasWebhook: true },
+  { id: "n8n", name: "n8n", slug: "n8n", category: "automacao", color: "#EA4B71", description: "Workflows open-source self-hosted ou cloud.", secrets: ["N8N_API_KEY", "N8N_BASE_URL"], docs: "https://docs.n8n.io/api/", hasWebhook: true },
+  { id: "zapier", name: "Zapier", slug: "zapier", category: "automacao", color: "#FF4F00", description: "Automação no-code com 6000+ apps.", secrets: ["ZAPIER_NLA_API_KEY"], docs: "https://zapier.com/developer", hasWebhook: true },
+
+  // 📅 Produtividade
+  { id: "googlecalendar", name: "Google Calendar", slug: "googlecalendar", category: "produtividade", color: "#4285F4", description: "Agendas, eventos e convites via Google API.", secrets: ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"], docs: "https://developers.google.com/calendar", hasOAuth: true },
+  { id: "notion", name: "Notion", slug: "notion", category: "produtividade", color: "#ffffff", description: "Bases de dados, páginas e blocos via API.", secrets: ["NOTION_TOKEN"], docs: "https://developers.notion.com/", hasOAuth: true },
+  { id: "linear", name: "Linear", slug: "linear", category: "produtividade", color: "#5E6AD2", description: "Issues, projetos e cycles enterprise.", secrets: ["LINEAR_API_KEY"], docs: "https://developers.linear.app/", hasWebhook: true, hasOAuth: true },
 
   // 🎨 Design
   { id: "figma", name: "Figma", slug: "figma", category: "design", color: "#F24E1E", description: "Files, variables e dev mode.", secrets: ["FIGMA_TOKEN"], docs: "https://www.figma.com/developers/api", hasTest: true, hasOAuth: true, tagline: "Design system" },
