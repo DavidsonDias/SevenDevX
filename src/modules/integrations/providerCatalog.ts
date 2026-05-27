@@ -25,7 +25,7 @@ export interface CatalogProvider {
   color: string; // brand hex
   secrets: string[];
   docs: string;
-  hasTest?: boolean; // tem edge function *-test
+  hasTest?: boolean; // teste guiado disponível no frontend; edge real quando houver handler dedicado
   hasWebhook?: boolean;
   hasOAuth?: boolean;
   tagline?: string;
@@ -100,7 +100,7 @@ export const PROVIDER_CATALOG: CatalogProvider[] = [
   // 🤖 Automação
   { id: "make", name: "Make", slug: "make", category: "automacao", color: "#6D00CC", description: "Cenários de automação visual (ex-Integromat).", secrets: ["MAKE_API_TOKEN"], docs: "https://www.make.com/en/api-documentation", hasWebhook: true },
   { id: "n8n", name: "n8n", slug: "n8n", category: "automacao", color: "#EA4B71", description: "Workflows open-source self-hosted ou cloud.", secrets: ["N8N_API_KEY", "N8N_BASE_URL"], docs: "https://docs.n8n.io/api/", hasWebhook: true },
-  { id: "zapier", name: "Zapier", slug: "zapier", category: "automacao", color: "#FF4F00", description: "Automação no-code com 6000+ apps.", secrets: ["ZAPIER_NLA_API_KEY"], docs: "https://zapier.com/developer", hasWebhook: true },
+  { id: "zapier", name: "Zapier", slug: "zapier", category: "automacao", color: "#FF4F00", description: "Automação no-code com 6000+ apps.", secrets: ["ZAPIER_API_KEY"], docs: "https://zapier.com/developer", hasWebhook: true },
 
   // 📅 Produtividade
   { id: "googlecalendar", name: "Google Calendar", slug: "googlecalendar", category: "produtividade", color: "#4285F4", description: "Agendas, eventos e convites via Google API.", secrets: ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"], docs: "https://developers.google.com/calendar", hasOAuth: true },
@@ -118,6 +118,20 @@ export const CATEGORY_LIST: Array<[ProviderCategory | "all", string]> = [
 
 export const findCatalogProvider = (id: string) =>
   PROVIDER_CATALOG.find((p) => p.id === id);
+
+export const getCatalogProvider = (id: string) =>
+  findCatalogProvider(id) ?? {
+    id,
+    name: id.replace(/[-_]/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()),
+    slug: "git",
+    category: "automacao" as ProviderCategory,
+    color: "#ffffff",
+    description: "Integração customizada via API ou webhook.",
+    secrets: [`${id.toUpperCase().replace(/[^A-Z0-9]/g, "_")}_API_KEY`],
+    docs: "https://developer.mozilla.org/en-US/docs/Web/HTTP",
+    hasTest: true,
+    hasWebhook: true,
+  };
 
 /** Logo URL com fallback automático (cdn.simpleicons.org). */
 export const providerLogoUrl = (slug: string, color?: string) => {
