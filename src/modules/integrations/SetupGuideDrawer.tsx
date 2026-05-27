@@ -8,6 +8,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, ExternalLink, CheckCircle2, BookOpen, Copy, Check, AlertCircle, HelpCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import ProviderLogo from "./ProviderLogo";
+import { getCatalogProvider } from "./providerCatalog";
 
 type Step = {
   title: string;
@@ -496,7 +498,7 @@ function buildGenericGuide(providerId: string): Guide {
   const upper = providerId.toUpperCase().replace(/[^A-Z0-9]/g, "_");
   return {
     intro:
-      "Guia genérico de configuração. Quando adicionarmos integração nativa para este provider, instruções passo a passo aparecerão aqui automaticamente.",
+      "Guia operacional para conectar credenciais, validar secrets, registrar webhooks e executar teste guiado no SevenOS.",
     secretsExpected: [`${upper}_API_KEY`],
     steps: [
       {
@@ -527,6 +529,7 @@ export default function SetupGuideDrawer({
   providerId, open, onClose,
 }: { providerId: string | null; open: boolean; onClose: () => void }) {
   const guide = providerId ? (GUIDES[providerId] ?? buildGenericGuide(providerId)) : null;
+  const providerMeta = providerId ? getCatalogProvider(providerId) : null;
   const [done, setDone] = useState<Set<number>>(new Set());
 
   useEffect(() => {
@@ -562,21 +565,24 @@ export default function SetupGuideDrawer({
             className="fixed right-0 top-0 bottom-0 z-[60] w-full sm:w-[520px] bg-[#0a0a0a] border-l border-white/10 flex flex-col"
           >
             <header className="p-5 border-b border-white/10 flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-white/40">
-                  <BookOpen className="w-3.5 h-3.5" /> Guia de configuração
-                </div>
-                <h2 className="text-xl font-bold mt-1 capitalize">{providerId}</h2>
-                <p className="text-sm text-white/60 mt-2">{guide.intro}</p>
-                {guide.secretsExpected && (
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {guide.secretsExpected.map((s) => (
-                      <span key={s} className="text-[10px] font-mono px-2 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
-                        {s}
-                      </span>
-                    ))}
+              <div className="min-w-0 flex items-start gap-3">
+                {providerMeta && <ProviderLogo slug={providerMeta.slug} color={providerMeta.color} name={providerMeta.name} size={46} />}
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-white/40">
+                    <BookOpen className="w-3.5 h-3.5" /> Guia de configuração
                   </div>
-                )}
+                  <h2 className="text-xl font-bold mt-1">{providerMeta?.name ?? providerId}</h2>
+                  <p className="text-sm text-white/60 mt-2">{guide.intro}</p>
+                  {guide.secretsExpected && (
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {guide.secretsExpected.map((s) => (
+                        <span key={s} className="text-[10px] font-mono px-2 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
               <button onClick={onClose} className="p-2 rounded-lg hover:bg-white/5 shrink-0"><X className="w-4 h-4" /></button>
             </header>
