@@ -29,6 +29,8 @@ const STEPS_BY_PROVIDER: Record<string, string[]> = {
   whatsapp: ["Validar Phone ID", "Verificar display name", "Verificar webhook subscriptions"],
 };
 
+const DEFAULT_STEPS = ["Validar secrets", "Executar teste real", "Analisar resposta", "Persistir diagnóstico"];
+
 export default function GuidedConnectionTest({
   provider, open, onClose, onOpenGuide,
 }: {
@@ -44,7 +46,7 @@ export default function GuidedConnectionTest({
   const [result, setResult] = useState<ConnectionTestResult | null>(null);
 
   const cat = provider ? findCatalogProvider(provider.id) : null;
-  const labels = provider ? STEPS_BY_PROVIDER[provider.id] ?? ["Conectar", "Validar credenciais", "Concluir"] : [];
+  const labels = provider ? STEPS_BY_PROVIDER[provider.id] ?? DEFAULT_STEPS : [];
 
   const reset = () => {
     setStatuses(labels.map(() => "pending"));
@@ -58,18 +60,7 @@ export default function GuidedConnectionTest({
     setRunning(true);
     reset();
 
-    const fnName = FUNCTION_MAP[provider.id];
-    if (!fnName) {
-      // simula sequencial para providers ainda sem test fn
-      for (let i = 0; i < labels.length; i++) {
-        setStatuses((s) => s.map((v, j) => (j === i ? "running" : v)));
-        await new Promise((r) => setTimeout(r, 600));
-        setStatuses((s) => s.map((v, j) => (j === i ? "ok" : v)));
-      }
-      toast.info("Provider sem edge function dedicada — simulação OK");
-      setRunning(false);
-      return;
-    }
+    const fnName = FUNCTION_MAP[provider.id] ?? "provider-test";
 
     // anima os passos enquanto a edge function roda
     let i = 0;
@@ -88,7 +79,19 @@ export default function GuidedConnectionTest({
       const { data, error } = await supabase.functions.invoke(fnName, { body: { provider_id: provider.id } });
       clearInterval(interval);
 
-      if (error) throw error;
+      if (error) {
+        let detail = error.message;
+        try {
+          const response = (error as any)?.context?.response;
+          const json = response ? await response.clone().json() : null;
+          detail = json?.error || json?.checks?.at?.(-1)?.detail || detail;
+          if (json?.checks) {
+            setStatuses(labels.map((_, idx) => (json.checks[idx]?.ok ? "ok" : "fail")));
+            setDetails(labels.map((_, idx) => json.checks[idx]?.detail || ""));
+          }
+        } catch {}
+        throw new Error(detail);
+      }
       const res = data as ConnectionTestResult;
       setResult(res);
 
