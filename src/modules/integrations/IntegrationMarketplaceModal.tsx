@@ -123,11 +123,9 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
                       </div>
 
                       <div className="relative flex flex-wrap gap-1.5">
-                        {(i.hasTest || true) && (
-                          <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
-                            <Zap className="w-2.5 h-2.5" /> teste guiado
-                          </span>
-                        )}
+                        <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+                          <Zap className="w-2.5 h-2.5" /> teste guiado
+                        </span>
                         {i.hasWebhook && (
                           <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300 border border-sky-500/20">
                             <Webhook className="w-2.5 h-2.5" /> webhook
