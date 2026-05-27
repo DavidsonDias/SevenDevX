@@ -8,6 +8,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, ExternalLink, CheckCircle2, BookOpen, Copy, Check, AlertCircle, HelpCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import ProviderLogo from "./ProviderLogo";
+import { getCatalogProvider } from "./providerCatalog";
 
 type Step = {
   title: string;
@@ -464,6 +466,91 @@ const GUIDES: Record<string, Guide> = {
       { title: "Salve secrets", body: "GRAFANA_URL (ex: https://myorg.grafana.net) + GRAFANA_API_TOKEN." },
     ],
   },
+
+  make: {
+    intro: "Cenários de automação visual, webhooks instantâneos e orquestrações entre apps.",
+    secretsExpected: ["MAKE_API_TOKEN"],
+    steps: [
+      { title: "Crie um token de API", body: "Make → Profile → API → Tokens. Gere um token com acesso ao organization/scenarios necessários.", link: { label: "Make API", url: "https://www.make.com/en/api-documentation" } },
+      { title: "Salve MAKE_API_TOKEN", body: "Adicione o secret no backend. O teste valida presença do token e libera automações/Webhooks." },
+      { title: "Configure um Custom Webhook", body: "No Make, crie um módulo Webhooks → Custom webhook e use a URL gerada em fluxos SevenOS quando precisar disparar cenários." },
+      { title: "Teste no SevenOS", body: "Use Testar para validar secrets e Guia para revisar escopos; depois habilite On." },
+    ],
+    troubleshooting: [
+      { problem: "Scenario não dispara", solution: "Confirme se o webhook do Make está ativo e se o scenario foi salvo com o gatilho correto." },
+      { problem: "Token sem acesso", solution: "Gere token no mesmo organization onde os cenários estão criados." },
+    ],
+  },
+
+  n8n: {
+    intro: "Workflows self-hosted/cloud com API key, webhooks e execução programática.",
+    secretsExpected: ["N8N_BASE_URL", "N8N_API_KEY"],
+    steps: [
+      { title: "Habilite a Public API", body: "n8n → Settings → API → crie uma API key. Em self-hosted, confirme que N8N_PUBLIC_API_DISABLED não está ativo.", link: { label: "n8n API", url: "https://docs.n8n.io/api/" } },
+      { title: "Salve N8N_BASE_URL", body: "Use a URL pública do n8n sem barra final, por exemplo https://n8n.suaempresa.com." },
+      { title: "Salve N8N_API_KEY", body: "Cole a API key nos Secrets do backend. O teste lista workflows via /api/v1/workflows." },
+      { title: "Configure Webhook nodes", body: "Para eventos em tempo real, crie Webhook nodes no n8n e direcione eventos SevenOS para essas URLs." },
+    ],
+    curl: [{ label: "Listar workflows", value: `curl -H "X-N8N-API-KEY: $N8N_API_KEY" "$N8N_BASE_URL/api/v1/workflows?limit=5"` }],
+    troubleshooting: [
+      { problem: "404 na API", solution: "Confirme URL base, versão do n8n e se a Public API está habilitada." },
+      { problem: "401 Unauthorized", solution: "API key inválida ou removida; gere novamente no usuário correto." },
+    ],
+  },
+
+  zapier: {
+    intro: "Automação no-code com Webhooks by Zapier e integrações entre milhares de apps.",
+    secretsExpected: ["ZAPIER_API_KEY"],
+    steps: [
+      { title: "Escolha o modelo de integração", body: "Para webhooks, use Webhooks by Zapier → Catch Hook. Para APIs avançadas, use Zapier Platform/Interfaces conforme sua conta." , link: { label: "Zapier Developer", url: "https://zapier.com/developer" } },
+      { title: "Crie e salve ZAPIER_API_KEY", body: "Quando usar Zapier APIs/Interfaces, salve a key como ZAPIER_API_KEY. Para Catch Hook simples, guarde a webhook URL no fluxo." },
+      { title: "Mapeie payloads", body: "Padronize campos como event, provider_id, lead_id, email, phone e metadata para facilitar replay e observability." },
+      { title: "Valide no SevenOS", body: "O teste confirma credencial configurada e o guia mantém checklist operacional do setup." },
+    ],
+    troubleshooting: [
+      { problem: "Zap não recebe payload", solution: "Confirme se o Zap está publicado e se a URL do Catch Hook é a URL de produção." },
+      { problem: "Campos não aparecem", solution: "Envie um payload de teste e clique em Retest trigger dentro do Zapier." },
+    ],
+  },
+
+  telegram: {
+    intro: "Bot API para mensagens, alertas operacionais e notificações internas.",
+    secretsExpected: ["TELEGRAM_BOT_TOKEN"],
+    steps: [
+      { title: "Crie o bot no BotFather", body: "Abra @BotFather no Telegram → /newbot → copie o token gerado.", link: { label: "Telegram Bot API", url: "https://core.telegram.org/bots/api" } },
+      { title: "Salve TELEGRAM_BOT_TOKEN", body: "Adicione o token nos Secrets. O teste real chama getMe e retorna o username do bot." },
+      { title: "Configure destinos", body: "Adicione o bot em grupos/canais e capture chat_id para automações de alerta." },
+    ],
+    curl: [{ label: "Validar bot", value: `curl "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/getMe"` }],
+    troubleshooting: [{ problem: "Bot não envia em grupo", solution: "Adicione o bot ao grupo e conceda permissão para postar mensagens." }],
+  },
+
+  twilio: {
+    intro: "SMS, voz e WhatsApp via API Twilio com account validation real.",
+    secretsExpected: ["TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN"],
+    steps: [
+      { title: "Pegue Account SID e Auth Token", body: "Twilio Console → Account Info. Use subaccounts para isolar ambientes.", link: { label: "Twilio Console", url: "https://console.twilio.com" } },
+      { title: "Salve TWILIO_ACCOUNT_SID e TWILIO_AUTH_TOKEN", body: "O teste real faz lookup da conta e retorna status/friendly name." },
+      { title: "Configure números e webhooks", body: "Phone Numbers → Messaging/Voice webhook apontando para webhook-dispatch quando precisar receber eventos." },
+    ],
+    curl: [{ label: "Validar conta", value: `curl -u "$TWILIO_ACCOUNT_SID:$TWILIO_AUTH_TOKEN" "https://api.twilio.com/2010-04-01/Accounts/$TWILIO_ACCOUNT_SID.json"` }],
+    troubleshooting: [{ problem: "Authenticate", solution: "SID/Auth Token pertencem a contas diferentes ou token foi rotacionado." }],
+  },
+
+  googlecalendar: {
+    intro: "Agendas, eventos e convites via OAuth 2.0 do Google Calendar.",
+    secretsExpected: ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET"],
+    steps: [
+      { title: "Configure OAuth Consent Screen", body: "Google Cloud → APIs & Services → OAuth consent screen. Adicione escopos calendar.readonly/calendar.events conforme uso." , link: { label: "Google Cloud Console", url: "https://console.cloud.google.com/apis/credentials" } },
+      { title: "Crie OAuth Client Web", body: "Credentials → Create OAuth client ID → Web application. Cadastre o redirect URI do SevenOS." },
+      { title: "Salve GOOGLE_CLIENT_ID e GOOGLE_CLIENT_SECRET", body: "Esses secrets habilitam o wizard OAuth e testes assistidos." },
+      { title: "Habilite Calendar API", body: "APIs & Services → Library → Google Calendar API → Enable." },
+    ],
+    troubleshooting: [
+      { problem: "redirect_uri_mismatch", solution: "Copie exatamente o redirect URI mostrado pelo SevenOS para o Google Cloud." },
+      { problem: "App não verificado", solution: "Em modo Testing, adicione seu e-mail em Test users." },
+    ],
+  },
 };
 
 const STORAGE_KEY = (id: string) => `setup-guide-done:${id}`;
@@ -496,7 +583,7 @@ function buildGenericGuide(providerId: string): Guide {
   const upper = providerId.toUpperCase().replace(/[^A-Z0-9]/g, "_");
   return {
     intro:
-      "Guia genérico de configuração. Quando adicionarmos integração nativa para este provider, instruções passo a passo aparecerão aqui automaticamente.",
+      "Guia operacional para conectar credenciais, validar secrets, registrar webhooks e executar teste guiado no SevenOS.",
     secretsExpected: [`${upper}_API_KEY`],
     steps: [
       {
@@ -527,6 +614,7 @@ export default function SetupGuideDrawer({
   providerId, open, onClose,
 }: { providerId: string | null; open: boolean; onClose: () => void }) {
   const guide = providerId ? (GUIDES[providerId] ?? buildGenericGuide(providerId)) : null;
+  const providerMeta = providerId ? getCatalogProvider(providerId) : null;
   const [done, setDone] = useState<Set<number>>(new Set());
 
   useEffect(() => {
@@ -562,21 +650,24 @@ export default function SetupGuideDrawer({
             className="fixed right-0 top-0 bottom-0 z-[60] w-full sm:w-[520px] bg-[#0a0a0a] border-l border-white/10 flex flex-col"
           >
             <header className="p-5 border-b border-white/10 flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-white/40">
-                  <BookOpen className="w-3.5 h-3.5" /> Guia de configuração
-                </div>
-                <h2 className="text-xl font-bold mt-1 capitalize">{providerId}</h2>
-                <p className="text-sm text-white/60 mt-2">{guide.intro}</p>
-                {guide.secretsExpected && (
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {guide.secretsExpected.map((s) => (
-                      <span key={s} className="text-[10px] font-mono px-2 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
-                        {s}
-                      </span>
-                    ))}
+              <div className="min-w-0 flex items-start gap-3">
+                {providerMeta && <ProviderLogo slug={providerMeta.slug} color={providerMeta.color} name={providerMeta.name} size={46} />}
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-white/40">
+                    <BookOpen className="w-3.5 h-3.5" /> Guia de configuração
                   </div>
-                )}
+                  <h2 className="text-xl font-bold mt-1">{providerMeta?.name ?? providerId}</h2>
+                  <p className="text-sm text-white/60 mt-2">{guide.intro}</p>
+                  {guide.secretsExpected && (
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {guide.secretsExpected.map((s) => (
+                        <span key={s} className="text-[10px] font-mono px-2 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-300">
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
               <button onClick={onClose} className="p-2 rounded-lg hover:bg-white/5 shrink-0"><X className="w-4 h-4" /></button>
             </header>

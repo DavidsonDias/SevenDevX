@@ -93,29 +93,27 @@ export const useIntegrations = () => {
 
   const testConnection = useMutation({
     mutationFn: async (provider: IntegrationProvider): Promise<ConnectionTestResult> => {
-      const fn = TEST_FUNCTION[provider.id];
+      const fn = TEST_FUNCTION[provider.id] ?? "provider-test";
       const t0 = Date.now();
       const invoked_at = new Date().toISOString();
-
-      if (!fn) {
-        const r: ConnectionTestResult = {
-          ok: false, latency_ms: 0, checks: [{ name: "Teste implementado", ok: false, detail: "Sem handler para este provider ainda" }],
-          error: "no_test_handler", invoked_at,
-        };
-        return r;
-      }
 
       let parsed: ConnectionTestResult;
       let status_code: number | undefined;
       try {
-        const { data, error } = await supabase.functions.invoke(fn, { body: {} });
+        const { data, error } = await supabase.functions.invoke(fn, { body: { provider_id: provider.id } });
         if (error) {
           // Supabase functions error
           status_code = (error as any)?.context?.response?.status;
+          let detail = error.message;
+          try {
+            const response = (error as any)?.context?.response;
+            const json = response ? await response.clone().json() : null;
+            detail = json?.error || json?.checks?.at?.(-1)?.detail || detail;
+          } catch {}
           parsed = {
             ok: false, latency_ms: Date.now() - t0,
-            checks: [{ name: "Edge function", ok: false, detail: error.message }],
-            error: error.message, status_code, invoked_at,
+            checks: [{ name: "Teste de integração", ok: false, detail }],
+            error: detail, status_code, invoked_at,
           };
         } else {
           const d = data as Partial<ConnectionTestResult>;
@@ -147,7 +145,7 @@ export const useIntegrations = () => {
         action: "test_connection",
         duration_ms: parsed.latency_ms,
         status_code: parsed.status_code ?? null,
-        request: { fn, body: {} },
+        request: { fn, body: { provider_id: provider.id } },
         response: { checks: parsed.checks, payload: parsed.payload, rate_limit: parsed.rate_limit },
         error: parsed.error ?? null,
       });
