@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { X, Shield, Crown, Activity, Monitor, Mail, Trash2, KeyRound, Ban, AlertTriangle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 type UserRow = {
   user_id: string; email: string; full_name: string | null; avatar_url: string | null;
