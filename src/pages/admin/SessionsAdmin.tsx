@@ -63,10 +63,34 @@ function SessionsInner() {
     return diff < 120;
   }).length;
 
+  const revokeAll = useMutation({
+    mutationFn: async () => {
+      const ids = sessions.map((s) => s.id);
+      await Promise.all(ids.map((id) => supabase.rpc("admin_revoke_session" as any, { _session_id: id })));
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-sessions"] });
+      toast({ title: "Todas as sessões foram encerradas" });
+    },
+    onError: (e: any) => toast({ title: "Erro", description: e.message, variant: "destructive" }),
+  });
+
   return (
     <AdminPageShell
       title="Sessões Ativas"
       subtitle={`${sessions.length} sessões registradas · ${onlineCount} online agora`}
+      actions={
+        sessions.length > 1 ? (
+          <button
+            onClick={() => { if (confirm("Encerrar TODAS as sessões ativas?")) revokeAll.mutate(); }}
+            disabled={revokeAll.isPending}
+            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-red-500/30 text-red-300 text-xs uppercase tracking-wider hover:bg-red-500/10 disabled:opacity-50"
+          >
+            {revokeAll.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <LogOut className="w-3.5 h-3.5" />}
+            Encerrar todas
+          </button>
+        ) : undefined
+      }
     >
       {isLoading ? (
         <div className="py-20 text-center text-white/40">
