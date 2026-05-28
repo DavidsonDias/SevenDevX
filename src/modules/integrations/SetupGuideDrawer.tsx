@@ -9,6 +9,7 @@ import { X, ExternalLink, CheckCircle2, BookOpen, Copy, Check, AlertCircle, Help
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import ProviderLogo from "./ProviderLogo";
+import { useScrollLock } from "@/hooks/useScrollLock";
 import { getCatalogProvider } from "./providerCatalog";
 
 type Step = {
@@ -613,6 +614,7 @@ function buildGenericGuide(providerId: string): Guide {
 export default function SetupGuideDrawer({
   providerId, open, onClose,
 }: { providerId: string | null; open: boolean; onClose: () => void }) {
+  useScrollLock(open);
   const guide = providerId ? (GUIDES[providerId] ?? buildGenericGuide(providerId)) : null;
   const providerMeta = providerId ? getCatalogProvider(providerId) : null;
   const [done, setDone] = useState<Set<number>>(new Set());

@@ -13,12 +13,14 @@ import GuidedConnectionTest from "./GuidedConnectionTest";
 import ProviderLogo from "./ProviderLogo";
 import { findCatalogProvider } from "./providerCatalog";
 import { toast } from "sonner";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 type Tab = "overview" | "logs" | "credentials" | "webhooks";
 
 export default function IntegrationDetailsModal({
   provider, onClose,
 }: { provider: IntegrationProvider | null; onClose: () => void }) {
+  useScrollLock(!!provider);
   const { toggleActive, testConnection, lastResult } = useIntegrations();
   const [tab, setTab] = useState<Tab>("overview");
   const [guideOpen, setGuideOpen] = useState(false);
