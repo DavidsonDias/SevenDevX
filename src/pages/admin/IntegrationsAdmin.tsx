@@ -4,7 +4,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
-  Activity, AlertTriangle, CheckCircle2, Loader2, Plug, Plus, Search, Webhook, Zap, BookOpen, Sparkles,
+  Activity, AlertTriangle, CheckCircle2, Loader2, Plug, Plus, Search, Webhook, Zap, BookOpen, Sparkles, Settings,
 } from "lucide-react";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import GlassCard from "@/components/GlassCard";
@@ -13,6 +13,7 @@ import IntegrationDetailsModal from "@/modules/integrations/IntegrationDetailsMo
 import IntegrationMarketplaceModal from "@/modules/integrations/IntegrationMarketplaceModal";
 import GuidedConnectionTest from "@/modules/integrations/GuidedConnectionTest";
 import SetupGuideDrawer from "@/modules/integrations/SetupGuideDrawer";
+import ProviderConfigModal from "@/modules/integrations/ProviderConfigModal";
 import ProviderLogo from "@/modules/integrations/ProviderLogo";
 import { findCatalogProvider, CATEGORY_LABEL } from "@/modules/integrations/providerCatalog";
 
@@ -69,6 +70,7 @@ export default function IntegrationsAdmin() {
   const [marketOpen, setMarketOpen] = useState(false);
   const [wizard, setWizard] = useState<IntegrationProvider | null>(null);
   const [guideId, setGuideId] = useState<string | null>(null);
+  const [configProvider, setConfigProvider] = useState<IntegrationProvider | null>(null);
 
   const providers = list.data ?? [];
 
@@ -257,11 +259,18 @@ export default function IntegrationsAdmin() {
                             Testar
                           </button>
                           <button
-                            onClick={() => setGuideId(p.id)}
+                            onClick={() => setConfigProvider(p)}
                             className="flex-1 inline-flex items-center justify-center gap-1.5 px-2.5 py-2 text-[11px] uppercase tracking-wider rounded-lg border border-white/15 hover:bg-white/5"
-                            title="Guia de configuração"
+                            title="Configurar credenciais e parâmetros"
                           >
-                            <BookOpen className="w-3.5 h-3.5" /> Config
+                            <Settings className="w-3.5 h-3.5" /> Config
+                          </button>
+                          <button
+                            onClick={() => setGuideId(p.id)}
+                            className="inline-flex items-center justify-center px-2 py-2 text-[11px] rounded-lg border border-white/15 hover:bg-white/5"
+                            title="Guia de setup"
+                          >
+                            <BookOpen className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => toggleActive.mutate({ id: p.id, active: !p.is_active })}
@@ -299,6 +308,12 @@ export default function IntegrationsAdmin() {
         onOpenGuide={() => { if (wizard) setGuideId(wizard.id); }}
       />
       <SetupGuideDrawer providerId={guideId} open={!!guideId} onClose={() => setGuideId(null)} />
+      <ProviderConfigModal
+        provider={configProvider}
+        open={!!configProvider}
+        onClose={() => setConfigProvider(null)}
+        onOpenGuide={() => { if (configProvider) setGuideId(configProvider.id); }}
+      />
     </AdminPageShell>
   );
 }
