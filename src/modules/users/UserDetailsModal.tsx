@@ -21,6 +21,7 @@ const isProtected = (email?: string | null) =>
 export default function UserDetailsModal({
   user, allUsers, onClose, onChanged,
 }: { user: UserRow | null; allUsers: UserRow[]; onClose: () => void; onChanged: () => void }) {
+  useScrollLock(!!user);
   const [sessions, setSessions] = useState<any[]>([]);
   const [audit, setAudit] = useState<any[]>([]);
 
