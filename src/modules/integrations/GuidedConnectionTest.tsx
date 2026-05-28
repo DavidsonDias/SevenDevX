@@ -40,6 +40,7 @@ export default function GuidedConnectionTest({
   onClose: () => void;
   onOpenGuide?: () => void;
 }) {
+  useScrollLock(open && !!provider);
   const [statuses, setStatuses] = useState<StepStatus[]>([]);
   const [details, setDetails] = useState<string[]>([]);
   const [latencies, setLatencies] = useState<number[]>([]);
