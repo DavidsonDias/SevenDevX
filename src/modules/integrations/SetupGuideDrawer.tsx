@@ -614,6 +614,7 @@ function buildGenericGuide(providerId: string): Guide {
 export default function SetupGuideDrawer({
   providerId, open, onClose,
 }: { providerId: string | null; open: boolean; onClose: () => void }) {
+  useScrollLock(open);
   const guide = providerId ? (GUIDES[providerId] ?? buildGenericGuide(providerId)) : null;
   const providerMeta = providerId ? getCatalogProvider(providerId) : null;
   const [done, setDone] = useState<Set<number>>(new Set());
