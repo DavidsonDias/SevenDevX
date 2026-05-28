@@ -6,10 +6,14 @@ import { useState } from "react";
 import { X, Search, Plus, Sparkles, BookOpen, Zap, Webhook, Key } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
+import { useScrollLock } from "@/hooks/useScrollLock";
 import ProviderLogo from "./ProviderLogo";
 import { PROVIDER_CATALOG, CATEGORY_LIST, type CatalogProvider } from "./providerCatalog";
 
 export default function IntegrationMarketplaceModal({ open, onClose }: { open: boolean; onClose: () => void }) {
+  useScrollLock(open);
+  const qc = useQueryClient();
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<string>("all");
   const [tab, setTab] = useState<"catalog" | "custom">("catalog");
