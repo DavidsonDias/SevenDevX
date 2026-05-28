@@ -13,6 +13,7 @@ import GuidedConnectionTest from "./GuidedConnectionTest";
 import ProviderLogo from "./ProviderLogo";
 import { findCatalogProvider } from "./providerCatalog";
 import { toast } from "sonner";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 type Tab = "overview" | "logs" | "credentials" | "webhooks";
 
