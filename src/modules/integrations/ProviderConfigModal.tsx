@@ -13,7 +13,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { findCatalogProvider } from "./providerCatalog";
 import ProviderLogo from "./ProviderLogo";
 import type { IntegrationProvider } from "@/hooks/useIntegrations";
-import useScrollLock from "@/hooks/useScrollLock";
+import { useScrollLock } from "@/hooks/useScrollLock";
 
 interface Props {
   provider: IntegrationProvider | null;
