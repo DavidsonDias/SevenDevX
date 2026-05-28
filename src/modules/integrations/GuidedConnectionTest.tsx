@@ -10,6 +10,7 @@ import { CheckCircle2, X, Loader2, AlertTriangle, Zap, RotateCw, BookOpen } from
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import ProviderLogo from "./ProviderLogo";
+import { useScrollLock } from "@/hooks/useScrollLock";
 import { findCatalogProvider } from "./providerCatalog";
 import type { IntegrationProvider, ConnectionTestResult } from "@/hooks/useIntegrations";
 
