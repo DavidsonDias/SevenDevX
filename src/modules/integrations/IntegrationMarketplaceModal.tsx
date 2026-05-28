@@ -34,6 +34,8 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
     } as any);
     setAdding(null);
     if (error) return toast.error(error.message);
+    qc.invalidateQueries({ queryKey: ["integrations"] });
+    qc.invalidateQueries({ queryKey: ["integration_providers"] });
     toast.success(`${item.name} adicionada ao seu workspace`);
     onClose();
   };
@@ -47,6 +49,8 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
       config: { base_url: custom.baseUrl, custom: true },
     } as any);
     if (error) return toast.error(error.message);
+    qc.invalidateQueries({ queryKey: ["integrations"] });
+    qc.invalidateQueries({ queryKey: ["integration_providers"] });
     toast.success("Integração customizada criada");
     onClose();
   };
