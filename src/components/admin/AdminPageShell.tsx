@@ -31,8 +31,11 @@ export const AdminPageShell = ({ title, subtitle, actions, children, backFallbac
   };
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <header className="border-b border-white/10 sticky top-0 bg-black/95 backdrop-blur-lg z-50">
+    <div className="min-h-screen bg-black text-white w-full overflow-x-hidden">
+      <header
+        className="border-b border-white/10 sticky top-0 bg-black/95 backdrop-blur-lg z-50"
+        style={{ paddingTop: "env(safe-area-inset-top)" }}
+      >
         <div className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
             <AdminMenu />
@@ -45,7 +48,7 @@ export const AdminPageShell = ({ title, subtitle, actions, children, backFallbac
               <ArrowLeft className="w-4 h-4" />
             </button>
             <Link to="/" className="hover:opacity-80 transition-opacity shrink-0">
-              <h1 className="text-lg sm:text-xl font-bold font-orbitron">
+              <h1 className="text-base sm:text-xl font-bold font-orbitron">
                 SEVEN<span className="text-white/60">DEVX</span>
               </h1>
             </Link>
@@ -53,7 +56,7 @@ export const AdminPageShell = ({ title, subtitle, actions, children, backFallbac
               Admin
             </span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <GlobalSearch />
             <PushSubscribeButton />
             <Link
@@ -68,7 +71,8 @@ export const AdminPageShell = ({ title, subtitle, actions, children, backFallbac
             </span>
             <button
               onClick={handleSignOut}
-              className="flex items-center gap-2 px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-sm"
+              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-sm"
+              aria-label="Sair"
             >
               <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline">Sair</span>
@@ -77,14 +81,17 @@ export const AdminPageShell = ({ title, subtitle, actions, children, backFallbac
         </div>
       </header>
 
-      <main className="container mx-auto px-4 sm:px-6 py-6 sm:py-10">
+      <main
+        className="container mx-auto px-4 sm:px-6 py-6 sm:py-10"
+        style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 6rem)" }}
+      >
         <Breadcrumb />
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6 sm:mb-8">
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">{title}</h2>
-            {subtitle && <p className="text-sm text-white/60 mt-1.5">{subtitle}</p>}
+          <div className="min-w-0">
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight break-words">{title}</h2>
+            {subtitle && <p className="text-sm text-white/60 mt-1.5 break-words">{subtitle}</p>}
           </div>
-          {actions && <div className="flex items-center gap-2">{actions}</div>}
+          {actions && <div className="flex items-center gap-2 flex-wrap">{actions}</div>}
         </div>
         {children}
       </main>
