@@ -15,6 +15,7 @@ import GuidedConnectionTest from "@/modules/integrations/GuidedConnectionTest";
 import SetupGuideDrawer from "@/modules/integrations/SetupGuideDrawer";
 import ProviderConfigModal from "@/modules/integrations/ProviderConfigModal";
 import ProviderLogo from "@/modules/integrations/ProviderLogo";
+import BorderBeam from "@/components/ui/BorderBeam";
 import { findCatalogProvider, CATEGORY_LABEL } from "@/modules/integrations/providerCatalog";
 
 const CATEGORIES: Record<string, { label: string; color: string }> = {
@@ -213,6 +214,11 @@ export default function IntegrationsAdmin() {
                       >
                         {/* Top border glow */}
                         <div className="absolute inset-x-0 top-0 h-px opacity-60" style={{ background: `linear-gradient(90deg, transparent, ${accent}, transparent)` }} />
+
+                        {/* Brand-aware orbiting beam on hover */}
+                        <BorderBeam hoverOnly size={180} duration={6} colorFrom="transparent" colorTo={accent} />
+                        <BorderBeam hoverOnly size={180} duration={6} delay={3} colorFrom="transparent" colorTo={accent} />
+
 
                         <div className="flex items-start gap-3">
                           <ProviderLogo slug={catalog?.slug} color={accent} name={p.name} size={44} />

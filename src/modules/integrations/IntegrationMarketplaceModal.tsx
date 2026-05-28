@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import ProviderLogo from "./ProviderLogo";
+import BorderBeam from "@/components/ui/BorderBeam";
 import { PROVIDER_CATALOG, CATEGORY_LIST, type CatalogProvider } from "./providerCatalog";
 
 export default function IntegrationMarketplaceModal({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -119,6 +120,9 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
                         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
                         style={{ background: `radial-gradient(circle at top right, ${i.color}22, transparent 60%)` }}
                       />
+                      {/* Brand-aware orbiting beam on hover */}
+                      <BorderBeam hoverOnly size={160} duration={5.5} colorFrom="transparent" colorTo={i.color} />
+
                       <div className="relative flex items-start gap-3">
                         <ProviderLogo slug={i.slug} color={i.color} name={i.name} size={44} />
                         <div className="min-w-0 flex-1">
