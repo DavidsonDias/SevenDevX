@@ -15,6 +15,7 @@ import GuidedConnectionTest from "@/modules/integrations/GuidedConnectionTest";
 import SetupGuideDrawer from "@/modules/integrations/SetupGuideDrawer";
 import ProviderConfigModal from "@/modules/integrations/ProviderConfigModal";
 import ProviderLogo from "@/modules/integrations/ProviderLogo";
+import BorderBeam from "@/components/ui/BorderBeam";
 import { findCatalogProvider, CATEGORY_LABEL } from "@/modules/integrations/providerCatalog";
 
 const CATEGORIES: Record<string, { label: string; color: string }> = {
