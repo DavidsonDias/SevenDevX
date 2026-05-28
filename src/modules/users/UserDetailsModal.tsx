@@ -49,7 +49,17 @@ export default function UserDetailsModal({
     if (isLastAdmin) return toast.error("Não é possível remover o último admin");
     if (!confirm(`Remover definitivamente ${user.email}? Esta ação é registrada no audit log.`)) return;
     if (!confirm(`CONFIRMAR: remover ${user.email}?`)) return;
-    toast.info("Remoção de usuário requer chave service-role no backend. Audit log será preservado.");
+    const { data, error } = await supabase.functions.invoke("admin-delete-user", {
+      body: { user_id: user.user_id },
+    });
+    if (error || (data as any)?.error) {
+      const msg = (data as any)?.error ?? error?.message ?? "Falha ao remover";
+      toast.error("Erro", { description: msg });
+      return;
+    }
+    toast.success(`Usuário removido: ${(data as any).deleted_email}`);
+    onChanged();
+    onClose();
   };
 
   return (
