@@ -9,6 +9,7 @@ import { X, ExternalLink, CheckCircle2, BookOpen, Copy, Check, AlertCircle, Help
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import ProviderLogo from "./ProviderLogo";
+import { useScrollLock } from "@/hooks/useScrollLock";
 import { getCatalogProvider } from "./providerCatalog";
 
 type Step = {
