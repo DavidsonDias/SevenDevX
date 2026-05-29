@@ -10,7 +10,7 @@ import SetupGuideDrawer from "./SetupGuideDrawer";
 import IntegrationLogsPanel from "./IntegrationLogsPanel";
 import TestResultPanel from "./TestResultPanel";
 import GuidedConnectionTest from "./GuidedConnectionTest";
-import ProviderLogo from "./ProviderLogo";
+import LogoRenderer from "@/components/ui/logo/LogoRenderer";
 import { findCatalogProvider } from "./providerCatalog";
 import { toast } from "sonner";
 import { useScrollLock } from "@/hooks/useScrollLock";
@@ -57,11 +57,12 @@ export default function IntegrationDetailsModal({
         >
           <header className="p-5 border-b border-white/10">
             <div className="flex items-start gap-4">
-              <ProviderLogo
+              <LogoRenderer
                 slug={findCatalogProvider(provider.id)?.slug}
                 color={provider.color || findCatalogProvider(provider.id)?.color}
                 name={provider.name}
-                size={56}
+                variant="lg"
+                glow
               />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-3 flex-wrap">

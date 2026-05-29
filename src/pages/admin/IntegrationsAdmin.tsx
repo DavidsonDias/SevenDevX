@@ -14,7 +14,7 @@ import IntegrationMarketplaceModal from "@/modules/integrations/IntegrationMarke
 import GuidedConnectionTest from "@/modules/integrations/GuidedConnectionTest";
 import SetupGuideDrawer from "@/modules/integrations/SetupGuideDrawer";
 import ProviderConfigModal from "@/modules/integrations/ProviderConfigModal";
-import ProviderLogo from "@/modules/integrations/ProviderLogo";
+import LogoRenderer from "@/components/ui/logo/LogoRenderer";
 import BorderBeam from "@/components/ui/BorderBeam";
 import { findCatalogProvider, CATEGORY_LABEL } from "@/modules/integrations/providerCatalog";
 
@@ -221,7 +221,7 @@ export default function IntegrationsAdmin() {
 
 
                         <div className="flex items-start gap-3">
-                          <ProviderLogo slug={catalog?.slug} color={accent} name={p.name} size={44} />
+                          <LogoRenderer slug={catalog?.slug} color={accent} name={p.name} variant="card" glow />
                           <div className="min-w-0 flex-1">
                             <div className="flex items-center justify-between gap-2">
                               <h4 className="font-semibold truncate">{p.name}</h4>
