@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { useScrollLock } from "@/hooks/useScrollLock";
-import ProviderLogo from "./ProviderLogo";
+import LogoRenderer from "@/components/ui/logo/LogoRenderer";
 import BorderBeam from "@/components/ui/BorderBeam";
 import { PROVIDER_CATALOG, CATEGORY_LIST, type CatalogProvider } from "./providerCatalog";
 
@@ -124,7 +124,7 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
                       <BorderBeam hoverOnly size={160} duration={5.5} colorFrom="transparent" colorTo={i.color} />
 
                       <div className="relative flex items-start gap-3">
-                        <ProviderLogo slug={i.slug} color={i.color} name={i.name} size={44} />
+                        <LogoRenderer slug={i.slug} color={i.color} name={i.name} variant="card" glow />
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2">
                             <h4 className="font-semibold truncate">{i.name}</h4>

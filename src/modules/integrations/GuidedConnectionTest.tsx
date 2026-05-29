@@ -9,7 +9,7 @@ import { useState } from "react";
 import { CheckCircle2, X, Loader2, AlertTriangle, Zap, RotateCw, BookOpen } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import ProviderLogo from "./ProviderLogo";
+import LogoRenderer from "@/components/ui/logo/LogoRenderer";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { findCatalogProvider } from "./providerCatalog";
 import type { IntegrationProvider, ConnectionTestResult } from "@/hooks/useIntegrations";
@@ -133,7 +133,7 @@ export default function GuidedConnectionTest({
             style={{ boxShadow: `0 30px 80px ${provider.color || "#000"}44` }}
           >
             <header className="p-5 border-b border-white/10 flex items-start gap-4">
-              <ProviderLogo slug={cat?.slug} color={provider.color || cat?.color} name={provider.name} size={52} />
+              <LogoRenderer slug={cat?.slug} color={provider.color || cat?.color} name={provider.name} size={52} glow />
               <div className="flex-1 min-w-0">
                 <div className="text-[10px] uppercase tracking-[0.3em] text-white/40">Guided connection test</div>
                 <h2 className="text-xl font-bold truncate">{provider.name}</h2>

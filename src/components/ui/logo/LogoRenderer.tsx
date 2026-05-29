@@ -1,8 +1,9 @@
 /**
  * 🎨 LogoRenderer — Wrapper enterprise unificado para logos de providers/tecnologias.
- * Centraliza tamanhos, glow, skeleton e fallback. Reusa ProviderLogo (local-first via react-icons/si).
+ * Sistema oficial global. Centraliza tamanhos, glow, skeleton e fallback.
+ * Internamente reusa o pipeline local-first (react-icons/si) do ProviderLogo.
  */
-import { Suspense, lazy } from "react";
+import { Suspense } from "react";
 import ProviderLogo from "@/modules/integrations/ProviderLogo";
 
 export type LogoVariant = "xs" | "sm" | "md" | "lg" | "xl" | "card" | "marketplace" | "hero" | "inline";
@@ -17,10 +18,12 @@ interface Props {
   color?: string;
   name: string;
   variant?: LogoVariant;
+  /** Override numérico — quando passado, prevalece sobre variant */
+  size?: number;
   className?: string;
-  /** Adiciona glow pulsante sutil ao redor (premium mode) */
+  /** Glow pulsante sutil ao redor (premium) */
   glow?: boolean;
-  /** Desativa background/borda (somente o glifo) */
+  /** Renderiza somente o glifo (sem bg/borda) */
   bare?: boolean;
 }
 
@@ -35,11 +38,11 @@ export function LogoSkeleton({ size = 40 }: { size?: number }) {
 }
 
 export default function LogoRenderer({
-  slug, color, name, variant = "md", className, glow = false, bare = false,
+  slug, color, name, variant = "md", size, className, glow = false, bare = false,
 }: Props) {
-  const size = SIZE[variant];
+  const px = size ?? SIZE[variant];
   return (
-    <div className={`relative inline-flex shrink-0 ${className ?? ""}`}>
+    <div className={`relative inline-flex shrink-0 ${className ?? ""}`} style={{ width: px, height: px }}>
       {glow && (
         <span
           aria-hidden
@@ -47,12 +50,12 @@ export default function LogoRenderer({
           style={{ background: `radial-gradient(circle, ${color ?? "#ffffff"}44, transparent 70%)` }}
         />
       )}
-      <Suspense fallback={<LogoSkeleton size={size} />}>
+      <Suspense fallback={<LogoSkeleton size={px} />}>
         <ProviderLogo
           slug={slug}
           color={color}
           name={name}
-          size={size}
+          size={px}
           className={bare ? "!bg-transparent !border-0 !shadow-none" : ""}
         />
       </Suspense>

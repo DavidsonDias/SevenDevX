@@ -11,7 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { findCatalogProvider } from "./providerCatalog";
-import ProviderLogo from "./ProviderLogo";
+import LogoRenderer from "@/components/ui/logo/LogoRenderer";
 import type { IntegrationProvider } from "@/hooks/useIntegrations";
 import { useScrollLock } from "@/hooks/useScrollLock";
 
@@ -193,7 +193,7 @@ export default function ProviderConfigModal({ provider, open, onClose, onOpenGui
           {/* Header */}
           <div className="relative p-5 border-b border-white/10 flex items-start gap-4"
                style={{ background: `linear-gradient(135deg, ${accent}14, transparent 60%)` }}>
-            <ProviderLogo slug={catalog?.slug} color={accent} name={provider.name} size={52} />
+            <LogoRenderer slug={catalog?.slug} color={accent} name={provider.name} size={52} glow />
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 flex-wrap">
                 <h3 className="text-lg font-bold truncate">{provider.name}</h3>

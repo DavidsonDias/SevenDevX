@@ -82,8 +82,7 @@ export const AdminPageShell = ({ title, subtitle, actions, children, backFallbac
       </header>
 
       <main
-        className="container mx-auto px-4 sm:px-6 py-6 sm:py-10"
-        style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 6rem)" }}
+        className="container mx-auto px-4 sm:px-6 py-6 sm:py-10 pb-[calc(env(safe-area-inset-bottom)+7.5rem)] md:pb-10"
       >
         <Breadcrumb />
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6 sm:mb-8">

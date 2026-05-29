@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, ExternalLink, CheckCircle2, BookOpen, Copy, Check, AlertCircle, HelpCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import ProviderLogo from "./ProviderLogo";
+import LogoRenderer from "@/components/ui/logo/LogoRenderer";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { getCatalogProvider } from "./providerCatalog";
 
@@ -653,7 +653,7 @@ export default function SetupGuideDrawer({
           >
             <header className="p-5 border-b border-white/10 flex items-start justify-between gap-3">
               <div className="min-w-0 flex items-start gap-3">
-                {providerMeta && <ProviderLogo slug={providerMeta.slug} color={providerMeta.color} name={providerMeta.name} size={46} />}
+                {providerMeta && <LogoRenderer slug={providerMeta.slug} color={providerMeta.color} name={providerMeta.name} size={46} glow />}
                 <div className="min-w-0">
                   <div className="flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-white/40">
                     <BookOpen className="w-3.5 h-3.5" /> Guia de configuração
