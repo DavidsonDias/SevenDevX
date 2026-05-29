@@ -5,7 +5,7 @@
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, X, Zap, Webhook, UserPlus, Send, Inbox, FlaskConical, Briefcase, Palette } from "lucide-react";
+import { Plus, X, Zap, Webhook, UserPlus, Send, Inbox, FlaskConical, Briefcase, Palette, Plug } from "lucide-react";
 import { useAuthContext } from "@/contexts/AuthContext";
 
 type FabAction = { id: string; label: string; icon: any; emit?: string; href?: string };
