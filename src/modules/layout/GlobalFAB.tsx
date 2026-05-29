@@ -5,7 +5,7 @@
 import { useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, X, Zap, Webhook, UserPlus, Send, Inbox, FlaskConical, Briefcase } from "lucide-react";
+import { Plus, X, Zap, Webhook, UserPlus, Send, Inbox, FlaskConical, Briefcase, Palette } from "lucide-react";
 import { useAuthContext } from "@/contexts/AuthContext";
 
 type FabAction = { id: string; label: string; icon: any; emit?: string; href?: string };
@@ -16,6 +16,13 @@ const ROUTE_ACTIONS: { match: (p: string) => boolean; actions: FabAction[] }[] =
     actions: [
       { id: "new-integration", label: "Nova integração", icon: Plus, emit: "integrations:new" },
       { id: "test-all", label: "Testar todas", icon: FlaskConical, emit: "integrations:test-all" },
+      { id: "logo-lab", label: "Abrir LogoLab", icon: Palette, href: "/admin/logo-lab" },
+    ],
+  },
+  {
+    match: (p) => p.startsWith("/admin/logo-lab"),
+    actions: [
+      { id: "integrations", label: "Ver integrações", icon: Plug, href: "/admin/integrations" },
     ],
   },
   {
