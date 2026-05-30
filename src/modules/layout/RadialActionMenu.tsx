@@ -9,7 +9,7 @@ import {
   Users2, Calendar, LayoutDashboard, Workflow, DollarSign, Inbox,
   Webhook, UserCog, Settings, BarChart3, Brain, Plug, FolderPlus,
   X, Activity, ShieldCheck, MonitorSmartphone, FileText, Zap,
-  Briefcase, FolderKanban, Sparkles,
+  Briefcase, FolderKanban, Sparkles, Palette,
 } from "lucide-react";
 
 type Action = {
