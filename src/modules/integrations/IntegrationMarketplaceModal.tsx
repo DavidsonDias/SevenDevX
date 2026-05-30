@@ -44,12 +44,15 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
 
   const addCustom = async () => {
     if (!custom.id || !custom.name) return toast.error("ID e nome obrigatórios");
+    setAddingCustom(true);
+    const safeId = custom.id.toLowerCase().replace(/[^a-z0-9_]+/g, "_");
     const { error } = await supabase.from("integration_providers" as any).insert({
-      id: custom.id.toLowerCase().replace(/\s+/g, "_"),
+      id: safeId,
       name: custom.name, category: custom.category, description: custom.description,
       color: "#8B5CF6", is_connected: false, is_active: false, health_status: "unknown",
-      config: { base_url: custom.baseUrl, custom: true },
+      config: { base_url: custom.baseUrl, custom: true, slug: safeId },
     } as any);
+    setAddingCustom(false);
     if (error) return toast.error(error.message);
     qc.invalidateQueries({ queryKey: ["integrations"] });
     qc.invalidateQueries({ queryKey: ["integration_providers"] });
