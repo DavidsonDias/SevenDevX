@@ -181,6 +181,14 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
               </>
             ) : (
               <div className="flex-1 overflow-y-auto p-5 space-y-3">
+                <div className="flex items-center gap-3 p-3 rounded-xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent">
+                  <LogoRenderer slug={custom.id || "custom"} color="#8B5CF6" name={custom.name || "Custom"} variant="card" glow />
+                  <div className="min-w-0">
+                    <p className="text-xs uppercase tracking-[0.2em] text-white/40">Preview</p>
+                    <p className="text-sm font-semibold truncate">{custom.name || "Sua integração"}</p>
+                    <p className="text-[11px] text-white/50 truncate">{custom.baseUrl || "https://api.exemplo.com"}</p>
+                  </div>
+                </div>
                 <p className="text-sm text-white/60">Conecte qualquer API REST ou Webhook customizado.</p>
                 <input value={custom.id} onChange={(e) => setCustom({ ...custom, id: e.target.value })}
                   placeholder="ID único (ex: minha_api)"
@@ -198,8 +206,9 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
                 <textarea value={custom.description} onChange={(e) => setCustom({ ...custom, description: e.target.value })}
                   placeholder="Descrição curta" rows={3}
                   className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-white/30" />
-                <button onClick={addCustom} className="w-full px-4 py-2.5 rounded-lg bg-white text-black font-medium text-sm hover:bg-white/90">
-                  Criar integração customizada
+                <button onClick={addCustom} disabled={addingCustom}
+                  className="w-full px-4 py-2.5 rounded-lg bg-white text-black font-medium text-sm hover:bg-white/90 disabled:opacity-50">
+                  {addingCustom ? "Criando…" : "Criar integração customizada"}
                 </button>
               </div>
             )}
