@@ -9,7 +9,7 @@ import {
   Users2, Calendar, LayoutDashboard, Workflow, DollarSign, Inbox,
   Webhook, UserCog, Settings, BarChart3, Brain, Plug, FolderPlus,
   X, Activity, ShieldCheck, MonitorSmartphone, FileText, Zap,
-  Briefcase, FolderKanban, Sparkles,
+  Briefcase, FolderKanban, Sparkles, Palette,
 } from "lucide-react";
 
 type Action = {
@@ -54,6 +54,7 @@ const GROUPS: Group[] = [
       { id: "health", label: "Saúde", icon: Activity, to: "/admin/system-health", accent: "from-cyan-400/30 to-blue-500/10" },
       { id: "automations", label: "Automations", icon: Workflow, to: "/admin/automations" },
       { id: "incidents", label: "Incidentes", icon: Zap, to: "/admin/incidents" },
+      { id: "logo-lab", label: "Logo Lab", icon: Palette, to: "/admin/logo-lab", accent: "from-pink-400/30 to-purple-500/10" },
     ],
   },
   {
