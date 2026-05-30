@@ -20,6 +20,7 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
   const [tab, setTab] = useState<"catalog" | "custom">("catalog");
   const [custom, setCustom] = useState({ id: "", name: "", category: "automacao", description: "", baseUrl: "" });
   const [adding, setAdding] = useState<string | null>(null);
+  const [addingCustom, setAddingCustom] = useState(false);
 
   const items = PROVIDER_CATALOG.filter(
     (i) => (cat === "all" || i.category === cat) && (!q || (i.name + i.description + i.tagline).toLowerCase().includes(q.toLowerCase())),
