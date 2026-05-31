@@ -10,7 +10,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import LogoRenderer from "@/components/ui/logo/LogoRenderer";
 import BorderBeam from "@/components/ui/BorderBeam";
-import { PROVIDER_CATALOG, CATEGORY_LIST, type CatalogProvider } from "./providerCatalog";
+import { PROVIDER_CATALOG, CATEGORY_LIST, BADGE_META, type CatalogProvider } from "./providerCatalog";
 
 export default function IntegrationMarketplaceModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   useScrollLock(open);
@@ -139,6 +139,11 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
                       </div>
 
                       <div className="relative flex flex-wrap gap-1.5">
+                        {(i.badges ?? []).map((b) => (
+                          <span key={b} className={`inline-flex items-center text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded border ${BADGE_META[b].cls}`}>
+                            {BADGE_META[b].label}
+                          </span>
+                        ))}
                         <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
                           <Zap className="w-2.5 h-2.5" /> teste guiado
                         </span>
