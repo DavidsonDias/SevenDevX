@@ -3,11 +3,12 @@
  */
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { X, Search, Plus, Sparkles, BookOpen, Zap, Webhook, Key } from "lucide-react";
+import { X, Search, Plus, Sparkles, BookOpen, Zap, Webhook, Key, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { useScrollLock } from "@/hooks/useScrollLock";
+import { useIntegrationFavorites } from "@/hooks/useIntegrationFavorites";
 import LogoRenderer from "@/components/ui/logo/LogoRenderer";
 import BorderBeam from "@/components/ui/BorderBeam";
 import { PROVIDER_CATALOG, CATEGORY_LIST, BADGE_META, type CatalogProvider } from "./providerCatalog";
@@ -18,13 +19,16 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<string>("all");
   const [tab, setTab] = useState<"catalog" | "custom">("catalog");
+  const [onlyFavs, setOnlyFavs] = useState(false);
   const [custom, setCustom] = useState({ id: "", name: "", category: "automacao", description: "", baseUrl: "" });
   const [adding, setAdding] = useState<string | null>(null);
   const [addingCustom, setAddingCustom] = useState(false);
+  const { isFavorite, toggleFavorite, favorites } = useIntegrationFavorites();
 
-  const items = PROVIDER_CATALOG.filter(
-    (i) => (cat === "all" || i.category === cat) && (!q || (i.name + i.description + i.tagline).toLowerCase().includes(q.toLowerCase())),
-  );
+  const items = PROVIDER_CATALOG
+    .filter((i) => (cat === "all" || i.category === cat) && (!q || (i.name + i.description + i.tagline).toLowerCase().includes(q.toLowerCase())))
+    .filter((i) => !onlyFavs || isFavorite(i.id))
+    .sort((a, b) => Number(isFavorite(b.id)) - Number(isFavorite(a.id)));
 
   const add = async (item: CatalogProvider) => {
     setAdding(item.id);
