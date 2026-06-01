@@ -3,11 +3,12 @@
  */
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { X, Search, Plus, Sparkles, BookOpen, Zap, Webhook, Key } from "lucide-react";
+import { X, Search, Plus, Sparkles, BookOpen, Zap, Webhook, Key, Star } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 import { useScrollLock } from "@/hooks/useScrollLock";
+import { useIntegrationFavorites } from "@/hooks/useIntegrationFavorites";
 import LogoRenderer from "@/components/ui/logo/LogoRenderer";
 import BorderBeam from "@/components/ui/BorderBeam";
 import { PROVIDER_CATALOG, CATEGORY_LIST, BADGE_META, type CatalogProvider } from "./providerCatalog";
@@ -18,13 +19,16 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<string>("all");
   const [tab, setTab] = useState<"catalog" | "custom">("catalog");
+  const [onlyFavs, setOnlyFavs] = useState(false);
   const [custom, setCustom] = useState({ id: "", name: "", category: "automacao", description: "", baseUrl: "" });
   const [adding, setAdding] = useState<string | null>(null);
   const [addingCustom, setAddingCustom] = useState(false);
+  const { isFavorite, toggleFavorite, favorites } = useIntegrationFavorites();
 
-  const items = PROVIDER_CATALOG.filter(
-    (i) => (cat === "all" || i.category === cat) && (!q || (i.name + i.description + i.tagline).toLowerCase().includes(q.toLowerCase())),
-  );
+  const items = PROVIDER_CATALOG
+    .filter((i) => (cat === "all" || i.category === cat) && (!q || (i.name + i.description + i.tagline).toLowerCase().includes(q.toLowerCase())))
+    .filter((i) => !onlyFavs || isFavorite(i.id))
+    .sort((a, b) => Number(isFavorite(b.id)) - Number(isFavorite(a.id)));
 
   const add = async (item: CatalogProvider) => {
     setAdding(item.id);
@@ -103,6 +107,13 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
                       className="w-full bg-black/40 border border-white/10 rounded-lg pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:border-white/30" />
                   </div>
                   <div className="flex flex-wrap gap-1.5 overflow-x-auto">
+                    <button
+                      onClick={() => setOnlyFavs((v) => !v)}
+                      className={`px-2.5 py-1 text-[10px] uppercase tracking-wider rounded border whitespace-nowrap inline-flex items-center gap-1 ${onlyFavs ? "bg-amber-400 text-black border-amber-400" : "border-amber-400/30 text-amber-300 hover:bg-amber-400/10"}`}
+                    >
+                      <Star className={`w-3 h-3 ${onlyFavs ? "fill-black" : "fill-amber-300"}`} />
+                      Favoritos {favorites.length > 0 && `(${favorites.length})`}
+                    </button>
                     {CATEGORY_LIST.map(([k, label]) => (
                       <button key={k} onClick={() => setCat(k as string)}
                         className={`px-2.5 py-1 text-[10px] uppercase tracking-wider rounded border whitespace-nowrap ${cat === k ? "bg-white text-black border-white" : "border-white/10 text-white/60 hover:bg-white/5"}`}>
@@ -126,6 +137,16 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
                       />
                       {/* Brand-aware orbiting beam on hover */}
                       <BorderBeam hoverOnly size={160} duration={5.5} colorFrom="transparent" colorTo={i.color} />
+
+                      {/* Favorite toggle */}
+                      <button
+                        onClick={(e) => { e.stopPropagation(); toggleFavorite(i.id); }}
+                        className={`absolute top-2.5 right-2.5 z-10 p-1.5 rounded-md border transition-all ${isFavorite(i.id) ? "border-amber-400/60 bg-amber-400/15 text-amber-300" : "border-white/10 bg-black/40 text-white/40 hover:text-amber-300 hover:border-amber-400/40 opacity-0 group-hover:opacity-100"}`}
+                        title={isFavorite(i.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+                        aria-label="Favoritar provider"
+                      >
+                        <Star className={`w-3.5 h-3.5 ${isFavorite(i.id) ? "fill-amber-300" : ""}`} />
+                      </button>
 
                       <div className="relative flex items-start gap-3">
                         <LogoRenderer slug={i.slug} color={i.color} name={i.name} variant="card" glow />
