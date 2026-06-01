@@ -107,6 +107,13 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
                       className="w-full bg-black/40 border border-white/10 rounded-lg pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:border-white/30" />
                   </div>
                   <div className="flex flex-wrap gap-1.5 overflow-x-auto">
+                    <button
+                      onClick={() => setOnlyFavs((v) => !v)}
+                      className={`px-2.5 py-1 text-[10px] uppercase tracking-wider rounded border whitespace-nowrap inline-flex items-center gap-1 ${onlyFavs ? "bg-amber-400 text-black border-amber-400" : "border-amber-400/30 text-amber-300 hover:bg-amber-400/10"}`}
+                    >
+                      <Star className={`w-3 h-3 ${onlyFavs ? "fill-black" : "fill-amber-300"}`} />
+                      Favoritos {favorites.length > 0 && `(${favorites.length})`}
+                    </button>
                     {CATEGORY_LIST.map(([k, label]) => (
                       <button key={k} onClick={() => setCat(k as string)}
                         className={`px-2.5 py-1 text-[10px] uppercase tracking-wider rounded border whitespace-nowrap ${cat === k ? "bg-white text-black border-white" : "border-white/10 text-white/60 hover:bg-white/5"}`}>
