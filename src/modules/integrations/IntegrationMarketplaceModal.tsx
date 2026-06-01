@@ -138,6 +138,16 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
                       {/* Brand-aware orbiting beam on hover */}
                       <BorderBeam hoverOnly size={160} duration={5.5} colorFrom="transparent" colorTo={i.color} />
 
+                      {/* Favorite toggle */}
+                      <button
+                        onClick={(e) => { e.stopPropagation(); toggleFavorite(i.id); }}
+                        className={`absolute top-2.5 right-2.5 z-10 p-1.5 rounded-md border transition-all ${isFavorite(i.id) ? "border-amber-400/60 bg-amber-400/15 text-amber-300" : "border-white/10 bg-black/40 text-white/40 hover:text-amber-300 hover:border-amber-400/40 opacity-0 group-hover:opacity-100"}`}
+                        title={isFavorite(i.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+                        aria-label="Favoritar provider"
+                      >
+                        <Star className={`w-3.5 h-3.5 ${isFavorite(i.id) ? "fill-amber-300" : ""}`} />
+                      </button>
+
                       <div className="relative flex items-start gap-3">
                         <LogoRenderer slug={i.slug} color={i.color} name={i.name} variant="card" glow />
                         <div className="min-w-0 flex-1">
