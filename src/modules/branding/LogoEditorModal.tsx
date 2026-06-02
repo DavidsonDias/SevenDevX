@@ -10,7 +10,7 @@ import { toast } from "sonner";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { useLogoOverrides, type LogoOverride } from "@/hooks/useLogoOverrides";
 import LogoRenderer, { type LogoVariant } from "@/components/ui/logo/LogoRenderer";
-import type { CatalogProvider } from "./providerCatalog";
+import type { CatalogProvider } from "@/modules/integrations/providerCatalog";
 
 interface Props {
   open: boolean;
