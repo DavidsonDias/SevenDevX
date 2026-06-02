@@ -6,6 +6,7 @@
  * Tier 4: inicial da marca em gradiente brand-aware
  */
 import React, { useState } from "react";
+import { useLogoOverrides } from "@/hooks/useLogoOverrides";
 import type { IconType } from "react-icons";
 import {
   SiAirtable, SiAmazondynamodb, SiAmazons3, SiAmazonwebservices, SiAnthropic, SiApachecassandra,
@@ -278,9 +279,12 @@ export default function ProviderLogo({
   slug, color, name, size = 40, className = "",
 }: { slug?: string; color?: string; name: string; size?: number; className?: string }) {
   const [tier, setTier] = useState<0 | 1 | 2>(0);
+  const { get: getOverride } = useLogoOverrides();
+  const override = getOverride(slug);
 
-  const isWhite = !color || /^#?f{3,6}$/i.test(color);
-  const accent = color || "#ffffff";
+  const effectiveColor = override?.color || color;
+  const isWhite = !effectiveColor || /^#?f{3,6}$/i.test(effectiveColor);
+  const accent = effectiveColor || "#ffffff";
   const accentHex = accent.replace("#", "");
   const LocalIcon = slug ? LOCAL_ICONS[slug] : undefined;
   const primaryUrl = slug ? providerLogoUrl(slug, isWhite ? "ffffff" : accentHex) : null;
@@ -304,7 +308,24 @@ export default function ProviderLogo({
         color: accent,
       }}
     >
-      {Custom ? (
+      {override?.customSvg ? (
+        <span
+          aria-label={name}
+          className="inline-flex items-center justify-center"
+          style={{ width: size * 0.62, height: size * 0.62, filter: isWhite ? "drop-shadow(0 0 6px rgba(255,255,255,0.35))" : `drop-shadow(0 0 7px ${accent}66)` }}
+          dangerouslySetInnerHTML={{ __html: override.customSvg }}
+        />
+      ) : override?.customUrl ? (
+        <img
+          src={override.customUrl}
+          alt={name}
+          width={size * 0.62}
+          height={size * 0.62}
+          loading="lazy"
+          className="object-contain"
+          style={{ filter: isWhite ? "drop-shadow(0 0 6px rgba(255,255,255,0.35))" : undefined }}
+        />
+      ) : Custom ? (
         <span
           aria-label={name}
           style={{ display: "inline-flex", filter: isWhite ? "drop-shadow(0 0 6px rgba(255,255,255,0.35))" : `drop-shadow(0 0 7px ${accent}66)` }}

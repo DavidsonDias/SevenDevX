@@ -45,6 +45,7 @@ const AutomationsAdmin = lazy(() => import("@/pages/admin/AutomationsAdmin"));
 const IncidentsAdmin = lazy(() => import("@/pages/admin/IncidentsAdmin"));
 const AiOpsAdmin = lazy(() => import("@/pages/admin/AiOpsAdmin"));
 const LogoLabAdmin = lazy(() => import("@/pages/admin/LogoLabAdmin"));
+const LogoLibraryAdmin = lazy(() => import("@/pages/admin/LogoLibraryAdmin"));
 const ProjectsHub = lazy(() => import("@/pages/ProjectsHub"));
 const ProjectDetail = lazy(() => import("@/pages/ProjectDetail"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
@@ -178,6 +179,9 @@ function AnimatedRoutes() {
             } />
             <Route path="/admin/logo-lab" element={
               <ProtectedRoute requiredRole="admin"><LogoLabAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/logo-library" element={
+              <ProtectedRoute requiredRole="admin"><LogoLibraryAdmin /></ProtectedRoute>
             } />
 
             <Route path="*" element={<NotFound />} />
