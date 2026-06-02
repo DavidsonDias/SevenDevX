@@ -286,6 +286,10 @@ export default function ProviderLogo({
   const primaryUrl = slug ? providerLogoUrl(slug, isWhite ? "ffffff" : accentHex) : null;
   const maskUrl = slug ? `https://cdn.jsdelivr.net/npm/simple-icons@v13/icons/${slug}.svg` : null;
 
+  const Custom = slug ? CUSTOM_GLYPHS[slug] : undefined;
+  const glyphColor = isWhite ? "#ffffff" : accent;
+  const glyphPx = Math.round(size * 0.56);
+
   return (
     <div
       className={`relative rounded-xl border flex items-center justify-center font-bold shrink-0 overflow-hidden ${className}`}
@@ -300,7 +304,15 @@ export default function ProviderLogo({
         color: accent,
       }}
     >
-      {LocalIcon ? (
+      {Custom ? (
+        <span
+          aria-label={name}
+          style={{ display: "inline-flex", filter: isWhite ? "drop-shadow(0 0 6px rgba(255,255,255,0.35))" : `drop-shadow(0 0 7px ${accent}66)` }}
+        >
+          <Custom size={glyphPx} color={glyphColor} />
+        </span>
+      ) : LocalIcon ? (
+
         <LocalIcon
           aria-label={name}
           size={size * 0.56}
