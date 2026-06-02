@@ -308,7 +308,24 @@ export default function ProviderLogo({
         color: accent,
       }}
     >
-      {Custom ? (
+      {override?.customSvg ? (
+        <span
+          aria-label={name}
+          className="inline-flex items-center justify-center"
+          style={{ width: size * 0.62, height: size * 0.62, filter: isWhite ? "drop-shadow(0 0 6px rgba(255,255,255,0.35))" : `drop-shadow(0 0 7px ${accent}66)` }}
+          dangerouslySetInnerHTML={{ __html: override.customSvg }}
+        />
+      ) : override?.customUrl ? (
+        <img
+          src={override.customUrl}
+          alt={name}
+          width={size * 0.62}
+          height={size * 0.62}
+          loading="lazy"
+          className="object-contain"
+          style={{ filter: isWhite ? "drop-shadow(0 0 6px rgba(255,255,255,0.35))" : undefined }}
+        />
+      ) : Custom ? (
         <span
           aria-label={name}
           style={{ display: "inline-flex", filter: isWhite ? "drop-shadow(0 0 6px rgba(255,255,255,0.35))" : `drop-shadow(0 0 7px ${accent}66)` }}
