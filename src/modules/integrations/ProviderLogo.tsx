@@ -5,7 +5,7 @@
  * Tier 3: jsdelivr simple-icons via CSS mask
  * Tier 4: inicial da marca em gradiente brand-aware
  */
-import { useState } from "react";
+import React, { useState } from "react";
 import type { IconType } from "react-icons";
 import {
   SiAirtable, SiAmazondynamodb, SiAmazons3, SiAmazonwebservices, SiAnthropic, SiApachecassandra,
