@@ -396,6 +396,33 @@ export type Database = {
           },
         ]
       }
+      branding_assets: {
+        Row: {
+          color: string | null
+          custom_svg: string | null
+          custom_url: string | null
+          slug: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          color?: string | null
+          custom_svg?: string | null
+          custom_url?: string | null
+          slug: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          color?: string | null
+          custom_svg?: string | null
+          custom_url?: string | null
+          slug?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
       chat_conversations: {
         Row: {
           created_at: string

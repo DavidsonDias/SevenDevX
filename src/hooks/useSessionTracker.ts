@@ -1,5 +1,7 @@
 /**
- * 🛰️ useSessionTracker — registra a sessão do admin e mantém heartbeat
+ * 🛰️ useSessionTracker — registra sessão do usuário autenticado e mantém heartbeat
+ * Rastreia TODOS os usuários autenticados (não só admin), para que a página /admin/sessions
+ * reflita o que está realmente conectado. RLS na tabela protege a leitura (apenas admins leem).
  */
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,24 +22,38 @@ function parseUA(ua: string) {
   return { browser, os, device };
 }
 
+async function ping() {
+  try {
+    const ua = navigator.userAgent;
+    const { browser, os, device } = parseUA(ua);
+    const { error } = await supabase.rpc("upsert_admin_session" as any, {
+      _device: device,
+      _browser: browser,
+      _os: os,
+      _user_agent: ua,
+      _ip: null,
+    });
+    if (error) console.warn("[session-tracker] upsert failed:", error.message);
+  } catch (e) {
+    console.warn("[session-tracker] ping crashed:", e);
+  }
+}
+
 export function useSessionTracker(userId: string | undefined) {
   useEffect(() => {
     if (!userId) return;
-    const ua = navigator.userAgent;
-    const { browser, os, device } = parseUA(ua);
-
-    const ping = () => {
-      supabase.rpc("upsert_admin_session" as any, {
-        _device: device,
-        _browser: browser,
-        _os: os,
-        _user_agent: ua,
-        _ip: null,
-      });
-    };
-
     ping();
     const id = setInterval(ping, 60_000);
-    return () => clearInterval(id);
+    const onVis = () => { if (document.visibilityState === "visible") ping(); };
+    document.addEventListener("visibilitychange", onVis);
+    return () => {
+      clearInterval(id);
+      document.removeEventListener("visibilitychange", onVis);
+    };
   }, [userId]);
+}
+
+/** Dispara um registro imediato (usado pela página /admin/sessions para garantir presença). */
+export function pingSessionNow() {
+  return ping();
 }

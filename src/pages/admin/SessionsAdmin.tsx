@@ -11,6 +11,7 @@ import { MonitorSmartphone, Smartphone, Monitor, Loader2, LogOut, Wifi } from "l
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { pingSessionNow } from "@/hooks/useSessionTracker";
 
 type Sess = {
   id: string; user_id: string; user_email: string | null;
@@ -26,6 +27,8 @@ function SessionsInner() {
     queryKey: ["admin-sessions"],
     refetchInterval: 30_000,
     queryFn: async () => {
+      // garante que a sessão atual está registrada antes de listar
+      await pingSessionNow();
       const { data, error } = await supabase
         .from("admin_sessions")
         .select("*")
