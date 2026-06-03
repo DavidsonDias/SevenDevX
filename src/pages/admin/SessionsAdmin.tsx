@@ -27,6 +27,8 @@ function SessionsInner() {
     queryKey: ["admin-sessions"],
     refetchInterval: 30_000,
     queryFn: async () => {
+      // garante que a sessão atual está registrada antes de listar
+      await pingSessionNow();
       const { data, error } = await supabase
         .from("admin_sessions")
         .select("*")
