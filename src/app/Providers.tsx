@@ -21,6 +21,7 @@ const queryClient = new QueryClient({
 });
 
 export default function Providers({ children }: { children: ReactNode }) {
+  useEffect(() => { ensureBrandingHydrated(); }, []);
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
