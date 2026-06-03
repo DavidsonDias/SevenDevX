@@ -1,12 +1,19 @@
 /**
- * 🎨 useLogoOverrides — Customizações de logo persistidas (localStorage + sync entre abas)
- * Cada override é por slug: { color?, customSvg?, customUrl? }
- * Prioridade no render: customSvg > customUrl > LocalIcon (com color override) > pipeline padrão.
+ * 🎨 useLogoOverrides — Customizações GLOBAIS de logo (DB + Realtime + cache local)
+ *
+ * Estratégia:
+ *  - Fonte da verdade: tabela `public.branding_assets` (legível por todos, escrita por admin)
+ *  - Realtime: propagamos INSERT/UPDATE/DELETE para todos os clientes conectados
+ *  - Cache local (localStorage) para render instantâneo no boot, antes da query terminar
+ *  - Hidratação inicial via fetch único + assinatura realtime
+ *
+ * API estável (mesma usada por LogoEditorModal, LogoLibraryAdmin e ProviderLogo).
  */
 import { useCallback, useEffect, useSyncExternalStore } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
-const STORAGE_KEY = "sdx:logo-overrides:v1";
-const EVT = "sdx:logo-overrides-changed";
+const CACHE_KEY = "sdx:branding-assets:v1";
+const EVT = "sdx:branding-assets-changed";
 
 export interface LogoOverride {
   color?: string;
@@ -17,71 +24,117 @@ export interface LogoOverride {
 
 type Store = Record<string, LogoOverride>;
 
-function read(): Store {
+// ---------- cache + pub/sub ----------
+function readCache(): Store {
   try {
-    const raw = typeof localStorage !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
+    const raw = typeof localStorage !== "undefined" ? localStorage.getItem(CACHE_KEY) : null;
     return raw ? (JSON.parse(raw) as Store) : {};
-  } catch {
-    return {};
-  }
+  } catch { return {}; }
 }
-
-function write(next: Store) {
+function writeCache(next: Store) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    localStorage.setItem(CACHE_KEY, JSON.stringify(next));
     window.dispatchEvent(new Event(EVT));
-  } catch {
-    /* noop */
-  }
+  } catch { /* noop */ }
 }
 
-const listeners = new Set<() => void>();
+let memoryStore: Store = readCache();
+let memoryRaw = JSON.stringify(memoryStore);
+
+function commit(next: Store) {
+  memoryStore = next;
+  memoryRaw = JSON.stringify(next);
+  writeCache(next);
+}
+
 function subscribe(cb: () => void) {
-  listeners.add(cb);
   const onEvt = () => cb();
   window.addEventListener(EVT, onEvt);
   window.addEventListener("storage", onEvt);
   return () => {
-    listeners.delete(cb);
     window.removeEventListener(EVT, onEvt);
     window.removeEventListener("storage", onEvt);
   };
 }
+function getSnapshot(): Store { return memoryStore; }
+function getServerSnapshot(): Store { return {}; }
 
-let cachedSnapshot: Store = read();
-let cachedRaw = JSON.stringify(cachedSnapshot);
+// ---------- hidratação global única ----------
+let hydrated = false;
+let realtimeChannel: ReturnType<typeof supabase.channel> | null = null;
 
-function getSnapshot(): Store {
-  const raw = (() => {
-    try { return localStorage.getItem(STORAGE_KEY) ?? "{}"; } catch { return "{}"; }
-  })();
-  if (raw !== cachedRaw) {
-    cachedRaw = raw;
-    try { cachedSnapshot = JSON.parse(raw); } catch { cachedSnapshot = {}; }
-  }
-  return cachedSnapshot;
+function rowToOverride(row: any): LogoOverride {
+  return {
+    color: row.color ?? undefined,
+    customSvg: row.custom_svg ?? undefined,
+    customUrl: row.custom_url ?? undefined,
+    updatedAt: row.updated_at ? new Date(row.updated_at).getTime() : Date.now(),
+  };
 }
 
-function getServerSnapshot(): Store {
-  return {};
+async function hydrate() {
+  if (hydrated) return;
+  hydrated = true;
+  try {
+    const { data, error } = await supabase.from("branding_assets" as any).select("*");
+    if (error) { hydrated = false; return; }
+    const next: Store = {};
+    for (const r of (data as any[]) || []) next[r.slug] = rowToOverride(r);
+    commit(next);
+  } catch { hydrated = false; }
+
+  // Realtime — propaga mudanças em qualquer dispositivo
+  if (realtimeChannel) return;
+  realtimeChannel = supabase
+    .channel("branding-assets-rt")
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "branding_assets" },
+      (payload: any) => {
+        const next = { ...memoryStore };
+        if (payload.eventType === "DELETE") {
+          delete next[payload.old.slug];
+        } else {
+          const row = payload.new;
+          next[row.slug] = rowToOverride(row);
+        }
+        commit(next);
+      },
+    )
+    .subscribe();
 }
 
+// ---------- hook ----------
 export function useLogoOverrides() {
   const store = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-  const setOverride = useCallback((slug: string, patch: Partial<Omit<LogoOverride, "updatedAt">>) => {
-    const cur = read();
-    cur[slug] = { ...(cur[slug] || {}), ...patch, updatedAt: Date.now() };
-    write(cur);
+  useEffect(() => { hydrate(); }, []);
+
+  const setOverride = useCallback(async (slug: string, patch: Partial<Omit<LogoOverride, "updatedAt">>) => {
+    // optimistic
+    const optimistic: Store = { ...memoryStore, [slug]: { ...(memoryStore[slug] || {}), ...patch, updatedAt: Date.now() } };
+    commit(optimistic);
+    const row: any = {
+      slug,
+      color: patch.color ?? memoryStore[slug]?.color ?? null,
+      custom_svg: patch.customSvg ?? memoryStore[slug]?.customSvg ?? null,
+      custom_url: patch.customUrl ?? memoryStore[slug]?.customUrl ?? null,
+    };
+    const { error } = await supabase.from("branding_assets" as any).upsert(row, { onConflict: "slug" });
+    if (error) console.warn("[branding] upsert failed:", error.message);
   }, []);
 
-  const resetOverride = useCallback((slug: string) => {
-    const cur = read();
-    delete cur[slug];
-    write(cur);
+  const resetOverride = useCallback(async (slug: string) => {
+    const next = { ...memoryStore }; delete next[slug]; commit(next);
+    const { error } = await supabase.from("branding_assets" as any).delete().eq("slug", slug);
+    if (error) console.warn("[branding] delete failed:", error.message);
   }, []);
 
-  const resetAll = useCallback(() => write({}), []);
+  const resetAll = useCallback(async () => {
+    commit({});
+    const { error } = await supabase.from("branding_assets" as any).delete().not("slug", "is", null);
+    if (error) console.warn("[branding] reset-all failed:", error.message);
+  }, []);
 
   return {
     overrides: store,
@@ -93,8 +146,13 @@ export function useLogoOverrides() {
   };
 }
 
-/** Acesso síncrono fora de hooks (ex.: render do ProviderLogo). */
+/** Acesso síncrono fora de hooks (ex.: render do ProviderLogo). Usa cache local. */
 export function getLogoOverride(slug?: string): LogoOverride | undefined {
   if (!slug) return undefined;
-  return getSnapshot()[slug];
+  return memoryStore[slug];
+}
+
+/** Dispara hidratação manualmente (útil em boot do app). */
+export function ensureBrandingHydrated() {
+  hydrate();
 }
