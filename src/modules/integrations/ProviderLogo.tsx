@@ -7,6 +7,7 @@
  */
 import React, { useState } from "react";
 import { useLogoOverrides } from "@/hooks/useLogoOverrides";
+import { useExtractedColor } from "@/hooks/useExtractedColor";
 import type { IconType } from "react-icons";
 import {
   SiAirtable, SiAmazondynamodb, SiAmazons3, SiAmazonwebservices, SiAnthropic, SiApachecassandra,
@@ -282,7 +283,12 @@ export default function ProviderLogo({
   const { get: getOverride } = useLogoOverrides();
   const override = getOverride(slug);
 
-  const effectiveColor = override?.color || color;
+  const extracted = useExtractedColor({
+    explicitColor: override?.color || color,
+    customSvg: override?.customSvg,
+    customUrl: override?.customUrl,
+  });
+  const effectiveColor = extracted;
   const isWhite = !effectiveColor || /^#?f{3,6}$/i.test(effectiveColor);
   const accent = effectiveColor || "#ffffff";
   const accentHex = accent.replace("#", "");
