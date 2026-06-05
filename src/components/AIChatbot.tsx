@@ -361,7 +361,7 @@ export const AIChatbot = () => {
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                         message.role === "user" 
                           ? "bg-white text-black" 
-                          : "bg-white/10"
+                          : "bg-white/15 text-white border border-white/15"
                       }`}>
                         {message.role === "user" ? (
                           <User className="w-4 h-4" />
@@ -372,12 +372,16 @@ export const AIChatbot = () => {
                       <div className={`max-w-[80%] rounded-xl px-4 py-3 ${
                         message.role === "user"
                           ? "bg-white text-black"
-                          : "bg-white/10"
+                          : "bg-white/[0.09] border border-white/15 text-white"
                       }`}>
-                        <div className="text-sm prose prose-sm prose-invert max-w-none">
+                        <div className={`text-sm prose prose-sm max-w-none ${
+                          message.role === "user"
+                            ? "[&_*]:!text-black"
+                            : "prose-invert [&_*]:!text-white/95"
+                        }`}>
                           <ReactMarkdown>{message.content}</ReactMarkdown>
                         </div>
-                        <span className="text-[10px] opacity-50 mt-1 block">
+                        <span className={`text-[10px] mt-1 block ${message.role === "user" ? "text-black/50" : "text-white/55"}`}>
                           {message.timestamp.toLocaleTimeString("pt-BR", { 
                             hour: "2-digit", 
                             minute: "2-digit" 
