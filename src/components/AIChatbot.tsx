@@ -313,7 +313,7 @@ export const AIChatbot = () => {
             }}
             exit={{ opacity: 0, y: 100, scale: 0.9 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className={`fixed ${chatPosClass} z-50 w-[380px] max-w-[calc(100vw-2rem)] bg-black border border-white/20 rounded-xl shadow-2xl overflow-hidden flex flex-col`}
+            className={`fixed ${chatPosClass} z-50 w-[380px] max-w-[calc(100vw-1rem)] max-h-[calc(100dvh-6rem)] bg-black border border-white/20 rounded-xl shadow-2xl overflow-hidden flex flex-col`}
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-white/10 bg-white/5">
