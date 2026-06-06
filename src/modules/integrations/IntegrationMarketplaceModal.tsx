@@ -11,24 +11,25 @@ import { useScrollLock } from "@/hooks/useScrollLock";
 import { useIntegrationFavorites } from "@/hooks/useIntegrationFavorites";
 import LogoRenderer from "@/components/ui/logo/LogoRenderer";
 import BorderBeam from "@/components/ui/BorderBeam";
+import BrandHalo from "@/components/ui/BrandHalo";
 import { PROVIDER_CATALOG, CATEGORY_LIST, BADGE_META, type CatalogProvider } from "./providerCatalog";
-import { useResolvedAccent } from "@/hooks/useResolvedAccent";
+import { useBrandPalette } from "@/hooks/useBrandPalette";
 
 function MarketplaceCard({
   i, isFav, onFav, onAdd, adding,
 }: { i: CatalogProvider; isFav: boolean; onFav: () => void; onAdd: () => void; adding: boolean }) {
-  const accent = useResolvedAccent(i.slug, i.color);
+  const tokens = useBrandPalette(i.slug, i.color);
+  const accent = tokens.primary;
   return (
     <motion.div
       whileHover={{ y: -3 }}
       className="group relative min-h-[162px] p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/30 hover:bg-white/[0.04] transition-all flex flex-col gap-3 overflow-hidden"
     >
-      <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-        style={{ background: `radial-gradient(circle at top right, ${accent}33, transparent 60%)` }}
-      />
-      <div className="absolute inset-x-0 top-0 h-px opacity-60" style={{ background: `linear-gradient(90deg, transparent, ${accent}, transparent)` }} />
-      <BorderBeam hoverOnly size={160} duration={5.5} colorFrom="transparent" colorTo={accent} />
+      <BrandHalo tokens={tokens} />
+      <div className="absolute inset-x-0 top-0 h-px opacity-80 pointer-events-none" style={{ background: tokens.topBorderGradient }} />
+      {!tokens.isMulticolor && (
+        <BorderBeam hoverOnly size={160} duration={5.5} colorFrom="transparent" colorTo={accent} />
+      )}
       <button
         onClick={(e) => { e.stopPropagation(); onFav(); }}
         className={`absolute top-2.5 right-2.5 z-10 p-1.5 rounded-md border transition-all ${isFav ? "border-amber-400/60 bg-amber-400/15 text-amber-300" : "border-white/10 bg-black/40 text-white/40 hover:text-amber-300 hover:border-amber-400/40 opacity-0 group-hover:opacity-100"}`}
