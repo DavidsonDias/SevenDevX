@@ -16,8 +16,9 @@ import SetupGuideDrawer from "@/modules/integrations/SetupGuideDrawer";
 import ProviderConfigModal from "@/modules/integrations/ProviderConfigModal";
 import LogoRenderer from "@/components/ui/logo/LogoRenderer";
 import BorderBeam from "@/components/ui/BorderBeam";
+import BrandHalo from "@/components/ui/BrandHalo";
 import { findCatalogProvider, CATEGORY_LABEL, type CatalogProvider } from "@/modules/integrations/providerCatalog";
-import { useResolvedAccent } from "@/hooks/useResolvedAccent";
+import { useBrandPalette } from "@/hooks/useBrandPalette";
 
 // Card item isolado para que cada provider possa reagir ao branding global (DB + extração de cor)
 function ProviderItemCard({
@@ -26,7 +27,10 @@ function ProviderItemCard({
   p: IntegrationProvider; i: number; catalog?: CatalogProvider; testing: boolean;
   onOpen: () => void; onWizard: () => void; onConfig: () => void; onGuide: () => void; onToggle: () => void;
 }) {
-  const accent = useResolvedAccent(catalog?.slug ?? p.id, p.color || catalog?.color || "#ffffff");
+  const tokens = useBrandPalette(catalog?.slug ?? p.id, p.color || catalog?.color || "#ffffff");
+  const accent = tokens.primary;
+  const beamFrom = tokens.secondary || tokens.primary;
+  const beamTo = tokens.tertiary || tokens.secondary || tokens.primary;
   const stateLabel =
     testing ? "syncing" :
     p.health_status === "operational" ? "connected" :
@@ -38,16 +42,17 @@ function ProviderItemCard({
       transition={{ duration: 0.3, delay: i * 0.04 }} whileHover={{ y: -3 }}
       className="relative group"
     >
-      <div
-        className="absolute -inset-px rounded-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none blur-xl"
-        style={{ background: `radial-gradient(circle at top left, ${accent}55, transparent 70%)` }}
-      />
       <div onClick={onOpen} className="cursor-pointer h-full relative">
         <GlassCard padding="md" hover={false} className="h-full flex flex-col gap-3.5 hover:border-white/30 transition-all overflow-hidden relative">
-          <div className="absolute inset-x-0 top-0 h-px opacity-60" style={{ background: `linear-gradient(90deg, transparent, ${accent}, transparent)` }} />
-          <BorderBeam hoverOnly size={180} duration={6} colorFrom="transparent" colorTo={accent} />
-          <BorderBeam hoverOnly size={180} duration={6} delay={3} colorFrom="transparent" colorTo={accent} />
-          <div className="flex items-start gap-3">
+          <BrandHalo tokens={tokens} />
+          <div className="absolute inset-x-0 top-0 h-px opacity-80 pointer-events-none" style={{ background: tokens.topBorderGradient }} />
+          {!tokens.isMulticolor && (
+            <>
+              <BorderBeam hoverOnly size={180} duration={6} colorFrom="transparent" colorTo={accent} />
+              <BorderBeam hoverOnly size={180} duration={6} delay={3} colorFrom={beamFrom} colorTo={beamTo} />
+            </>
+          )}
+          <div className="flex items-start gap-3 relative">
             <LogoRenderer slug={catalog?.slug} color={accent} name={p.name} variant="card" glow />
             <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between gap-2">
