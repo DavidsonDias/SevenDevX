@@ -268,111 +268,16 @@ export default function IntegrationsAdmin() {
               {items.map((p, i) => {
                 const testing = testConnection.isPending && testConnection.variables?.id === p.id;
                 const catalog = findCatalogProvider(p.id);
-                const accent = p.color || catalog?.color || "#ffffff";
-                const stateLabel =
-                  testing ? "syncing" :
-                  p.health_status === "operational" ? "connected" :
-                  p.health_status === "offline" ? "error" :
-                  p.is_active ? "active" : "disconnected";
                 return (
-                  <motion.div
+                  <ProviderItemCard
                     key={p.id}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: i * 0.04 }}
-                    whileHover={{ y: -3 }}
-                    className="relative group"
-                  >
-                    {/* Glow contextual */}
-                    <div
-                      className="absolute -inset-px rounded-xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none blur-xl"
-                      style={{ background: `radial-gradient(circle at top left, ${accent}55, transparent 70%)` }}
-                    />
-                    <div onClick={() => setSelected(p)} className="cursor-pointer h-full relative">
-                      <GlassCard
-                        padding="md"
-                        hover={false}
-                        className="h-full flex flex-col gap-3.5 hover:border-white/30 transition-all overflow-hidden relative"
-                      >
-                        {/* Top border glow */}
-                        <div className="absolute inset-x-0 top-0 h-px opacity-60" style={{ background: `linear-gradient(90deg, transparent, ${accent}, transparent)` }} />
-
-                        {/* Brand-aware orbiting beam on hover */}
-                        <BorderBeam hoverOnly size={180} duration={6} colorFrom="transparent" colorTo={accent} />
-                        <BorderBeam hoverOnly size={180} duration={6} delay={3} colorFrom="transparent" colorTo={accent} />
-
-
-                        <div className="flex items-start gap-3">
-                          <LogoRenderer slug={catalog?.slug} color={accent} name={p.name} variant="card" glow />
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center justify-between gap-2">
-                              <h4 className="font-semibold truncate">{p.name}</h4>
-                              <span
-                                className={`text-[9px] uppercase tracking-[0.18em] px-1.5 py-0.5 rounded border ${
-                                  stateLabel === "connected" ? "border-emerald-400/40 text-emerald-300 bg-emerald-400/10" :
-                                  stateLabel === "syncing" ? "border-sky-400/40 text-sky-300 bg-sky-400/10 animate-pulse" :
-                                  stateLabel === "error" ? "border-red-400/40 text-red-300 bg-red-400/10" :
-                                  stateLabel === "active" ? "border-white/30 text-white/80 bg-white/5" :
-                                  "border-white/10 text-white/40"
-                                }`}
-                              >
-                                {stateLabel}
-                              </span>
-                            </div>
-                            <p className="text-xs text-white/50 mt-0.5 line-clamp-2">{p.description || catalog?.description || "—"}</p>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center justify-between text-[11px] text-white/40 border-t border-white/5 pt-3">
-                          <HealthDot status={p.health_status} />
-                          <span className="tabular-nums">
-                            {p.last_test_at ? `testado ${new Date(p.last_test_at).toLocaleTimeString("pt-BR")}` : "nunca testado"}
-                          </span>
-                        </div>
-
-                        {p.last_error && (
-                          <p className="text-[11px] text-red-300/80 border border-red-500/20 bg-red-500/5 rounded px-2 py-1.5 line-clamp-2">
-                            {p.last_error}
-                          </p>
-                        )}
-
-                        <div className="flex items-center gap-1.5 mt-auto" onClick={(e) => e.stopPropagation()}>
-                          <button
-                            onClick={() => setWizard(p)}
-                            disabled={testing}
-                            className="flex-1 inline-flex items-center justify-center gap-1.5 px-2.5 py-2 text-[11px] uppercase tracking-wider rounded-lg border border-white/15 hover:bg-white/5 disabled:opacity-50"
-                            title="Wizard guiado de teste"
-                          >
-                            {testing ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
-                            Testar
-                          </button>
-                          <button
-                            onClick={() => setConfigProvider(p)}
-                            className="flex-1 inline-flex items-center justify-center gap-1.5 px-2.5 py-2 text-[11px] uppercase tracking-wider rounded-lg border border-white/15 hover:bg-white/5"
-                            title="Configurar credenciais e parâmetros"
-                          >
-                            <Settings className="w-3.5 h-3.5" /> Config
-                          </button>
-                          <button
-                            onClick={() => setGuideId(p.id)}
-                            className="inline-flex items-center justify-center px-2 py-2 text-[11px] rounded-lg border border-white/15 hover:bg-white/5"
-                            title="Guia de setup"
-                          >
-                            <BookOpen className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            onClick={() => toggleActive.mutate({ id: p.id, active: !p.is_active })}
-                            className={`px-2.5 py-2 text-[11px] uppercase tracking-wider rounded-lg border transition-colors ${
-                              p.is_active ? "bg-white/90 text-black border-white" : "border-white/15 hover:bg-white/5"
-                            }`}
-                            title={p.is_active ? "Desativar" : "Ativar"}
-                          >
-                            {p.is_active ? "On" : "Off"}
-                          </button>
-                        </div>
-                      </GlassCard>
-                    </div>
-                  </motion.div>
+                    p={p} i={i} catalog={catalog} testing={testing}
+                    onOpen={() => setSelected(p)}
+                    onWizard={() => setWizard(p)}
+                    onConfig={() => setConfigProvider(p)}
+                    onGuide={() => setGuideId(p.id)}
+                    onToggle={() => toggleActive.mutate({ id: p.id, active: !p.is_active })}
+                  />
                 );
               })}
             </div>
