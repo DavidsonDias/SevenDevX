@@ -264,6 +264,50 @@ button, a, input, textarea, select {
 }
 .animate-float { animation: float 3s ease-in-out infinite; }
 
+/* =========================
+   🌈 BRAND PALETTE ENGINE
+   ========================= */
+@property --bp-angle {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+@keyframes bp-rotate {
+  to { --bp-angle: 360deg; }
+}
+@keyframes bp-conic-spin {
+  to { transform: rotate(360deg); }
+}
+/* Multi-color animated glow halo behind a card (uses --bp-conic var) */
+.bp-halo-multicolor {
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: var(--bp-conic, conic-gradient(from 0deg, #fff, #fff));
+  filter: blur(18px);
+  opacity: 0.0;
+  transition: opacity 0.5s ease;
+  animation: bp-conic-spin 9s linear infinite;
+}
+.group:hover .bp-halo-multicolor { opacity: 0.55; }
+/* Multi-color rotating border */
+.bp-ring-multicolor {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  padding: 1px;
+  background: var(--bp-conic, conic-gradient(from 0deg, #fff, #fff));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  animation: bp-conic-spin 6s linear infinite;
+}
+.group:hover .bp-ring-multicolor { opacity: 0.9; }
+
 /* Gradient text */
 .gradient-text {
   background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.6) 100%);
