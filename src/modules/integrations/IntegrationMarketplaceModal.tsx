@@ -12,6 +12,78 @@ import { useIntegrationFavorites } from "@/hooks/useIntegrationFavorites";
 import LogoRenderer from "@/components/ui/logo/LogoRenderer";
 import BorderBeam from "@/components/ui/BorderBeam";
 import { PROVIDER_CATALOG, CATEGORY_LIST, BADGE_META, type CatalogProvider } from "./providerCatalog";
+import { useResolvedAccent } from "@/hooks/useResolvedAccent";
+
+function MarketplaceCard({
+  i, isFav, onFav, onAdd, adding,
+}: { i: CatalogProvider; isFav: boolean; onFav: () => void; onAdd: () => void; adding: boolean }) {
+  const accent = useResolvedAccent(i.slug, i.color);
+  return (
+    <motion.div
+      whileHover={{ y: -3 }}
+      className="group relative min-h-[162px] p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/30 hover:bg-white/[0.04] transition-all flex flex-col gap-3 overflow-hidden"
+    >
+      <div
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+        style={{ background: `radial-gradient(circle at top right, ${accent}33, transparent 60%)` }}
+      />
+      <div className="absolute inset-x-0 top-0 h-px opacity-60" style={{ background: `linear-gradient(90deg, transparent, ${accent}, transparent)` }} />
+      <BorderBeam hoverOnly size={160} duration={5.5} colorFrom="transparent" colorTo={accent} />
+      <button
+        onClick={(e) => { e.stopPropagation(); onFav(); }}
+        className={`absolute top-2.5 right-2.5 z-10 p-1.5 rounded-md border transition-all ${isFav ? "border-amber-400/60 bg-amber-400/15 text-amber-300" : "border-white/10 bg-black/40 text-white/40 hover:text-amber-300 hover:border-amber-400/40 opacity-0 group-hover:opacity-100"}`}
+        title={isFav ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+        aria-label="Favoritar provider"
+      >
+        <Star className={`w-3.5 h-3.5 ${isFav ? "fill-amber-300" : ""}`} />
+      </button>
+      <div className="relative flex items-start gap-3">
+        <LogoRenderer slug={i.slug} color={accent} name={i.name} variant="card" glow />
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <h4 className="font-semibold truncate">{i.name}</h4>
+            {i.tagline && <span className="hidden sm:inline text-[9px] uppercase tracking-wider text-white/40 truncate">· {i.tagline}</span>}
+          </div>
+          <p className="text-xs text-white/50 mt-0.5 line-clamp-2">{i.description}</p>
+        </div>
+      </div>
+      <div className="relative flex flex-wrap gap-1.5">
+        {(i.badges ?? []).map((b) => (
+          <span key={b} className={`inline-flex items-center text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded border ${BADGE_META[b].cls}`}>
+            {BADGE_META[b].label}
+          </span>
+        ))}
+        <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+          <Zap className="w-2.5 h-2.5" /> teste guiado
+        </span>
+        {i.hasWebhook && (
+          <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300 border border-sky-500/20">
+            <Webhook className="w-2.5 h-2.5" /> webhook
+          </span>
+        )}
+        {i.hasOAuth && (
+          <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-violet-500/10 text-violet-300 border border-violet-500/20">
+            <Key className="w-2.5 h-2.5" /> oauth
+          </span>
+        )}
+      </div>
+      <div className="relative flex items-center gap-2 mt-auto">
+        <button
+          onClick={onAdd}
+          disabled={adding}
+          className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-white text-black text-xs font-medium hover:bg-white/90 disabled:opacity-50"
+        >
+          <Plus className="w-3.5 h-3.5" /> {adding ? "Adicionando…" : "Conectar"}
+        </button>
+        <a href={i.docs} target="_blank" rel="noreferrer"
+          className="inline-flex items-center justify-center px-2.5 py-2 rounded-lg border border-white/15 hover:bg-white/5 text-white/70"
+          title="Documentação oficial">
+          <BookOpen className="w-3.5 h-3.5" />
+        </a>
+      </div>
+    </motion.div>
+  );
+}
 
 export default function IntegrationMarketplaceModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   useScrollLock(open);
@@ -125,80 +197,14 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
 
                 <div className="flex-1 min-h-0 overflow-y-auto p-4 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 content-start">
                   {items.map((i) => (
-                    <motion.div
+                    <MarketplaceCard
                       key={i.id}
-                      whileHover={{ y: -3 }}
-                      className="group relative min-h-[162px] p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/30 hover:bg-white/[0.04] transition-all flex flex-col gap-3 overflow-hidden"
-                    >
-                      {/* Glow contextual */}
-                      <div
-                        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-                        style={{ background: `radial-gradient(circle at top right, ${i.color}22, transparent 60%)` }}
-                      />
-                      {/* Brand-aware orbiting beam on hover */}
-                      <BorderBeam hoverOnly size={160} duration={5.5} colorFrom="transparent" colorTo={i.color} />
-
-                      {/* Favorite toggle */}
-                      <button
-                        onClick={(e) => { e.stopPropagation(); toggleFavorite(i.id); }}
-                        className={`absolute top-2.5 right-2.5 z-10 p-1.5 rounded-md border transition-all ${isFavorite(i.id) ? "border-amber-400/60 bg-amber-400/15 text-amber-300" : "border-white/10 bg-black/40 text-white/40 hover:text-amber-300 hover:border-amber-400/40 opacity-0 group-hover:opacity-100"}`}
-                        title={isFavorite(i.id) ? "Remover dos favoritos" : "Adicionar aos favoritos"}
-                        aria-label="Favoritar provider"
-                      >
-                        <Star className={`w-3.5 h-3.5 ${isFavorite(i.id) ? "fill-amber-300" : ""}`} />
-                      </button>
-
-                      <div className="relative flex items-start gap-3">
-                        <LogoRenderer slug={i.slug} color={i.color} name={i.name} variant="card" glow />
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2">
-                            <h4 className="font-semibold truncate">{i.name}</h4>
-                            {i.tagline && <span className="hidden sm:inline text-[9px] uppercase tracking-wider text-white/40 truncate">· {i.tagline}</span>}
-                          </div>
-                          <p className="text-xs text-white/50 mt-0.5 line-clamp-2">{i.description}</p>
-                        </div>
-                      </div>
-
-                      <div className="relative flex flex-wrap gap-1.5">
-                        {(i.badges ?? []).map((b) => (
-                          <span key={b} className={`inline-flex items-center text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded border ${BADGE_META[b].cls}`}>
-                            {BADGE_META[b].label}
-                          </span>
-                        ))}
-                        <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
-                          <Zap className="w-2.5 h-2.5" /> teste guiado
-                        </span>
-                        {i.hasWebhook && (
-                          <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300 border border-sky-500/20">
-                            <Webhook className="w-2.5 h-2.5" /> webhook
-                          </span>
-                        )}
-                        {i.hasOAuth && (
-                          <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-violet-500/10 text-violet-300 border border-violet-500/20">
-                            <Key className="w-2.5 h-2.5" /> oauth
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="relative flex items-center gap-2 mt-auto">
-                        <button
-                          onClick={() => add(i)}
-                          disabled={adding === i.id}
-                          className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-white text-black text-xs font-medium hover:bg-white/90 disabled:opacity-50"
-                        >
-                          <Plus className="w-3.5 h-3.5" /> {adding === i.id ? "Adicionando…" : "Conectar"}
-                        </button>
-                        <a
-                          href={i.docs}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center justify-center px-2.5 py-2 rounded-lg border border-white/15 hover:bg-white/5 text-white/70"
-                          title="Documentação oficial"
-                        >
-                          <BookOpen className="w-3.5 h-3.5" />
-                        </a>
-                      </div>
-                    </motion.div>
+                      i={i}
+                      isFav={isFavorite(i.id)}
+                      onFav={() => toggleFavorite(i.id)}
+                      onAdd={() => add(i)}
+                      adding={adding === i.id}
+                    />
                   ))}
                   {items.length === 0 && (
                     <p className="sm:col-span-2 lg:col-span-3 text-center text-white/40 text-sm py-12">Nenhum resultado.</p>
