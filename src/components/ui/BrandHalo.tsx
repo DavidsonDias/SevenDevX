@@ -1,10 +1,10 @@
 /**
- * 🌈 BrandHalo — Halo + ring multicolor reativo à paleta da marca.
- * Para logos monocromáticas: glow simples.
- * Para logos multicoloridas: conic-gradient animado (halo + anel).
+ * 🌈 BrandHalo — Halo circular orbital + ring multicolor reativo à paleta.
+ * Mono: glow radial sutil.
+ * Multi: disco circular conic-gradient com máscara radial (sem cantos quadrados)
+ *        + anel de borda seguindo o formato do card.
  *
- * Deve ser usado dentro de um container `position: relative` com classe `group`
- * para herdar os estados de hover.
+ * Use dentro de container `position: relative` + `group`.
  */
 import type { BrandTokens } from "@/core/branding/palette-engine";
 
@@ -24,21 +24,21 @@ export default function BrandHalo({
       <>
         <div
           aria-hidden
-          className={`bp-halo-multicolor ${alwaysOn ? "!opacity-60" : ""} ${className}`}
+          className={`bp-halo-multicolor ${alwaysOn ? "bp-always-on" : ""} ${className}`}
           style={{
             ["--bp-conic" as any]: tokens.conicGradient,
-            filter: `blur(${18 * intensity}px)`,
+            filter: `blur(${38 * intensity}px) saturate(1.3)`,
           }}
         />
         <div
           aria-hidden
-          className="bp-ring-multicolor"
+          className={`bp-ring-multicolor ${alwaysOn ? "bp-always-on" : ""}`}
           style={{ ["--bp-conic" as any]: tokens.conicGradient }}
         />
       </>
     );
   }
-  // Mono — glow simples
+  // Mono — glow radial simples
   return (
     <div
       aria-hidden
