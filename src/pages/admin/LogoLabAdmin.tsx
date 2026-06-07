@@ -35,7 +35,9 @@ function IntegrationCardMock({ slug, name, description, fallback }: { slug: stri
     <div className="group relative">
       <GlassCard padding="md" hover={false} className="h-full flex flex-col gap-3.5 transition-all overflow-hidden relative">
         <BrandHalo tokens={tokens} alwaysOn />
-        <div className="absolute inset-x-0 top-0 h-px opacity-80 pointer-events-none" style={{ background: tokens.topBorderGradient }} />
+        {!tokens.isMulticolor && (
+          <div className="absolute inset-x-0 top-0 h-px opacity-80 pointer-events-none" style={{ background: tokens.topBorderGradient }} />
+        )}
         {!tokens.isMulticolor && (
           <BorderBeam size={180} duration={6} colorFrom="transparent" colorTo={tokens.primary} />
         )}
