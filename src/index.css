@@ -272,56 +272,48 @@ button, a, input, textarea, select {
   inherits: false;
   initial-value: 0deg;
 }
-@keyframes bp-rotate {
-  to { --bp-angle: 360deg; }
-}
-@keyframes bp-conic-spin {
-  to { transform: rotate(360deg); }
-}
-/* Multi-color animated glow halo — true circular orbit around the card */
+@keyframes bp-rotate { to { --bp-angle: 360deg; } }
+@keyframes bp-pulse  { 0%,100% { opacity: var(--bp-base,.45); } 50% { opacity: calc(var(--bp-base,.45) + .15); } }
+
+/* ✨ Halo orbital — aura suave que segue o formato do card.
+   O GRADIENTE rotaciona via @property; o box fica parado (sem seams diagonais). */
 .bp-halo-multicolor {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 140%;
-  aspect-ratio: 1 / 1;
-  transform: translate(-50%, -50%);
-  border-radius: 9999px;
+  inset: -1px;
+  border-radius: inherit;
   pointer-events: none;
   background: var(--bp-conic, conic-gradient(from 0deg, #fff, #fff));
-  filter: blur(38px) saturate(1.3);
+  filter: blur(26px) saturate(1.35);
   opacity: 0;
-  transition: opacity 0.6s ease;
-  animation: bp-conic-spin 16s linear infinite;
-  -webkit-mask: radial-gradient(circle, #000 38%, transparent 72%);
-          mask: radial-gradient(circle, #000 38%, transparent 72%);
+  transition: opacity .6s ease;
+  animation: bp-rotate 18s linear infinite;
   z-index: 0;
-  will-change: transform, opacity;
+  will-change: --bp-angle, opacity;
 }
-.group:hover .bp-halo-multicolor { opacity: 0.7; }
+.group:hover .bp-halo-multicolor { opacity: 0.6; }
+.bp-halo-multicolor.bp-always-on { --bp-base: .42; opacity: .42; animation: bp-rotate 18s linear infinite, bp-pulse 6s ease-in-out infinite; }
 
-/* Multi-color rotating border — follows the card shape */
+/* 💫 Ring multicolor — borda que acompanha o radius do card, gradiente rotaciona suave */
 .bp-ring-multicolor {
   position: absolute;
   inset: 0;
   border-radius: inherit;
   pointer-events: none;
-  padding: 1px;
+  padding: 1.25px;
   background: var(--bp-conic, conic-gradient(from 0deg, #fff, #fff));
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
           mask-composite: exclude;
+  filter: blur(.4px) saturate(1.15);
   opacity: 0;
-  transition: opacity 0.5s ease;
-  animation: bp-conic-spin 10s linear infinite;
+  transition: opacity .5s ease;
+  animation: bp-rotate 11s linear infinite;
   z-index: 1;
-  will-change: transform, opacity;
+  will-change: --bp-angle, opacity;
 }
 .group:hover .bp-ring-multicolor { opacity: 0.95; }
+.bp-ring-multicolor.bp-always-on { opacity: .9; }
 
-/* Always-on variant for previews */
-.bp-halo-multicolor.bp-always-on { opacity: 0.55; }
-.bp-ring-multicolor.bp-always-on { opacity: 0.85; }
 
 /* Gradient text */
 .gradient-text {
