@@ -30,23 +30,25 @@ export function buildBrandTokens(palette: string[], fallback = "#ffffff"): Brand
     ? pal.concat(pal[0]).map((c, i, a) => `${c} ${(i * 100) / (a.length - 1)}%`).join(", ")
     : `${primary} 0%, ${primary} 100%`;
 
+  // Suavização: duplica primeira cor no fim p/ loop contínuo e usa o @property --bp-angle
+  // (assim o GRADIENTE rotaciona, e não o box — evitando seams diagonais no card).
+  const conicSmooth = isMulticolor
+    ? `conic-gradient(from var(--bp-angle, 0deg), ${pal.join(", ")}, ${pal[0]})`
+    : `conic-gradient(from var(--bp-angle, 0deg), ${primary}, ${primary})`;
+
   return {
     palette: pal,
     primary,
     secondary,
     tertiary,
     isMulticolor,
-    conicGradient: isMulticolor
-      ? `conic-gradient(from 0deg, ${pal.join(", ")}, ${pal[0]})`
-      : `radial-gradient(circle, ${primary}66, transparent 70%)`,
+    conicGradient: conicSmooth,
     topBorderGradient: isMulticolor
       ? `linear-gradient(90deg, transparent, ${stops}, transparent)`
       : `linear-gradient(90deg, transparent, ${primary}, transparent)`,
     haloRadial: isMulticolor
       ? `radial-gradient(circle at 30% 20%, ${primary}55, transparent 55%), radial-gradient(circle at 70% 80%, ${secondary || primary}55, transparent 55%)${tertiary ? `, radial-gradient(circle at 50% 50%, ${tertiary}33, transparent 60%)` : ""}`
       : `radial-gradient(circle at top left, ${primary}55, transparent 70%)`,
-    hoverOverlay: isMulticolor
-      ? `conic-gradient(from var(--bp-angle,0deg), ${pal.join(", ")}, ${pal[0]})`
-      : `radial-gradient(circle at top right, ${primary}33, transparent 60%)`,
+    hoverOverlay: conicSmooth,
   };
 }
