@@ -69,7 +69,9 @@ function MarketplaceCardMock({ slug, name, description, fallback }: { slug: stri
   return (
     <div className="group relative min-h-[162px] p-4 rounded-xl border border-white/10 bg-white/[0.02] flex flex-col gap-3 overflow-hidden">
       <BrandHalo tokens={tokens} alwaysOn />
-      <div className="absolute inset-x-0 top-0 h-px opacity-80 pointer-events-none" style={{ background: tokens.topBorderGradient }} />
+      {!tokens.isMulticolor && (
+        <div className="absolute inset-x-0 top-0 h-px opacity-80 pointer-events-none" style={{ background: tokens.topBorderGradient }} />
+      )}
       {!tokens.isMulticolor && (
         <BorderBeam size={160} duration={5.5} colorFrom="transparent" colorTo={tokens.primary} />
       )}
