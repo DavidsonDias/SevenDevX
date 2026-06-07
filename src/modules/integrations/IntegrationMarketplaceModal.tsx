@@ -26,7 +26,9 @@ function MarketplaceCard({
       className="group relative min-h-[162px] p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/30 hover:bg-white/[0.04] transition-all flex flex-col gap-3 overflow-hidden"
     >
       <BrandHalo tokens={tokens} />
-      <div className="absolute inset-x-0 top-0 h-px opacity-80 pointer-events-none" style={{ background: tokens.topBorderGradient }} />
+      {!tokens.isMulticolor && (
+        <div className="absolute inset-x-0 top-0 h-px opacity-80 pointer-events-none" style={{ background: tokens.topBorderGradient }} />
+      )}
       {!tokens.isMulticolor && (
         <BorderBeam hoverOnly size={160} duration={5.5} colorFrom="transparent" colorTo={accent} />
       )}
