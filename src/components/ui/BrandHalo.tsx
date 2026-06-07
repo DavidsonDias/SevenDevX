@@ -1,40 +1,31 @@
 /**
- * 🌈 BrandHalo — Halo circular orbital + ring multicolor reativo à paleta.
+ * 🌈 BrandHalo — Aura orbital enterprise.
  * Mono: glow radial sutil.
- * Multi: disco circular conic-gradient com máscara radial (sem cantos quadrados)
- *        + anel de borda seguindo o formato do card.
+ * Multi: halo difuso (segue o formato do card) + ring de borda multicolor.
+ *        O GRADIENTE rotaciona via @property --bp-angle — o box fica parado,
+ *        evitando seams/diagonais em cantos.
  *
- * Use dentro de container `position: relative` + `group`.
+ * Use dentro de container com `position: relative` + classe `group`.
  */
 import type { BrandTokens } from "@/core/branding/palette-engine";
 
 export default function BrandHalo({
   tokens,
-  intensity = 1,
   alwaysOn = false,
   className = "",
 }: {
   tokens: BrandTokens;
+  /** Compat — não usado (intensidade controlada via CSS). */
   intensity?: number;
   alwaysOn?: boolean;
   className?: string;
 }) {
   if (tokens.isMulticolor) {
+    const style = { ["--bp-conic" as any]: tokens.conicGradient };
     return (
       <>
-        <div
-          aria-hidden
-          className={`bp-halo-multicolor ${alwaysOn ? "bp-always-on" : ""} ${className}`}
-          style={{
-            ["--bp-conic" as any]: tokens.conicGradient,
-            filter: `blur(${38 * intensity}px) saturate(1.3)`,
-          }}
-        />
-        <div
-          aria-hidden
-          className={`bp-ring-multicolor ${alwaysOn ? "bp-always-on" : ""}`}
-          style={{ ["--bp-conic" as any]: tokens.conicGradient }}
-        />
+        <div aria-hidden className={`bp-halo-multicolor ${alwaysOn ? "bp-always-on" : ""} ${className}`} style={style} />
+        <div aria-hidden className={`bp-ring-multicolor ${alwaysOn ? "bp-always-on" : ""}`} style={style} />
       </>
     );
   }
