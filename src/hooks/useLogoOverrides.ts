@@ -121,6 +121,7 @@ export function useLogoOverrides() {
       color: patch.color ?? memoryStore[slug]?.color ?? null,
       custom_svg: patch.customSvg ?? memoryStore[slug]?.customSvg ?? null,
       custom_url: patch.customUrl ?? memoryStore[slug]?.customUrl ?? null,
+      palette: patch.palette ?? memoryStore[slug]?.palette ?? null,
     };
     const { error } = await supabase.from("branding_assets" as any).upsert(row, { onConflict: "slug" });
     if (error) console.warn("[branding] upsert failed:", error.message);
