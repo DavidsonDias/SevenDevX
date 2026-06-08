@@ -69,6 +69,7 @@ function rowToOverride(row: any): LogoOverride {
     color: row.color ?? undefined,
     customSvg: row.custom_svg ?? undefined,
     customUrl: row.custom_url ?? undefined,
+    palette: Array.isArray(row.palette) && row.palette.length ? row.palette : undefined,
     updatedAt: row.updated_at ? new Date(row.updated_at).getTime() : Date.now(),
   };
 }
