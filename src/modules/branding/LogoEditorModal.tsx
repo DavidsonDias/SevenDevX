@@ -30,24 +30,37 @@ export default function LogoEditorModal({ open, provider, onClose }: Props) {
   const [color, setColor] = useState<string>("");
   const [customSvg, setCustomSvg] = useState<string>("");
   const [customUrl, setCustomUrl] = useState<string>("");
-  const [tab, setTab] = useState<"color" | "svg" | "url">("color");
+  const [palette, setPalette] = useState<string[]>([]);
+  const [tab, setTab] = useState<"color" | "palette" | "svg" | "url">("color");
 
   useEffect(() => {
     if (!provider) return;
     setColor(current?.color || provider.color || "#ffffff");
     setCustomSvg(current?.customSvg || "");
     setCustomUrl(current?.customUrl || "");
-    setTab(current?.customSvg ? "svg" : current?.customUrl ? "url" : "color");
+    const initialPalette =
+      current?.palette && current.palette.length
+        ? current.palette
+        : KNOWN_BRAND_PALETTES[provider.slug] || [provider.color || "#ffffff"];
+    setPalette(initialPalette.slice(0, 5));
+    setTab(
+      current?.palette?.length ? "palette" :
+      current?.customSvg ? "svg" :
+      current?.customUrl ? "url" : "color",
+    );
   }, [provider?.slug, open]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const dirty = useMemo(() => {
     if (!provider) return false;
+    const currentPaletteStr = JSON.stringify(current?.palette || []);
+    const newPaletteStr = JSON.stringify(tab === "palette" ? palette : (current?.palette || []));
     return (
       (color || "") !== (current?.color || provider.color || "") ||
       (customSvg || "") !== (current?.customSvg || "") ||
-      (customUrl || "") !== (current?.customUrl || "")
+      (customUrl || "") !== (current?.customUrl || "") ||
+      currentPaletteStr !== newPaletteStr
     );
-  }, [color, customSvg, customUrl, current, provider]);
+  }, [color, customSvg, customUrl, palette, tab, current, provider]);
 
   if (!provider) return null;
 
