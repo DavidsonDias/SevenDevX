@@ -5,11 +5,13 @@
  */
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
-import { X, RotateCcw, Save, Paintbrush, Code2, Link2, Sparkles } from "lucide-react";
+import { X, RotateCcw, Save, Paintbrush, Code2, Link2, Sparkles, Palette, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { useLogoOverrides, type LogoOverride } from "@/hooks/useLogoOverrides";
 import LogoRenderer, { type LogoVariant } from "@/components/ui/logo/LogoRenderer";
+import BrandHalo from "@/components/ui/BrandHalo";
+import { buildBrandTokens, KNOWN_BRAND_PALETTES } from "@/core/branding/palette-engine";
 import type { CatalogProvider } from "@/modules/integrations/providerCatalog";
 
 interface Props {
@@ -28,24 +30,37 @@ export default function LogoEditorModal({ open, provider, onClose }: Props) {
   const [color, setColor] = useState<string>("");
   const [customSvg, setCustomSvg] = useState<string>("");
   const [customUrl, setCustomUrl] = useState<string>("");
-  const [tab, setTab] = useState<"color" | "svg" | "url">("color");
+  const [palette, setPalette] = useState<string[]>([]);
+  const [tab, setTab] = useState<"color" | "palette" | "svg" | "url">("color");
 
   useEffect(() => {
     if (!provider) return;
     setColor(current?.color || provider.color || "#ffffff");
     setCustomSvg(current?.customSvg || "");
     setCustomUrl(current?.customUrl || "");
-    setTab(current?.customSvg ? "svg" : current?.customUrl ? "url" : "color");
+    const initialPalette =
+      current?.palette && current.palette.length
+        ? current.palette
+        : KNOWN_BRAND_PALETTES[provider.slug] || [provider.color || "#ffffff"];
+    setPalette(initialPalette.slice(0, 5));
+    setTab(
+      current?.palette?.length ? "palette" :
+      current?.customSvg ? "svg" :
+      current?.customUrl ? "url" : "color",
+    );
   }, [provider?.slug, open]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const dirty = useMemo(() => {
     if (!provider) return false;
+    const currentPaletteStr = JSON.stringify(current?.palette || []);
+    const newPaletteStr = JSON.stringify(tab === "palette" ? palette : (current?.palette || []));
     return (
       (color || "") !== (current?.color || provider.color || "") ||
       (customSvg || "") !== (current?.customSvg || "") ||
-      (customUrl || "") !== (current?.customUrl || "")
+      (customUrl || "") !== (current?.customUrl || "") ||
+      currentPaletteStr !== newPaletteStr
     );
-  }, [color, customSvg, customUrl, current, provider]);
+  }, [color, customSvg, customUrl, palette, tab, current, provider]);
 
   if (!provider) return null;
 
@@ -54,6 +69,7 @@ export default function LogoEditorModal({ open, provider, onClose }: Props) {
     if (color && color !== provider.color) patch.color = color;
     if (customSvg.trim()) patch.customSvg = customSvg.trim();
     if (customUrl.trim()) patch.customUrl = customUrl.trim();
+    if (tab === "palette" && palette.length >= 1) patch.palette = palette;
     if (Object.keys(patch).length === 0) {
       resetOverride(provider.slug);
       toast.success(`${provider.name} restaurado ao padrão`);
@@ -69,6 +85,7 @@ export default function LogoEditorModal({ open, provider, onClose }: Props) {
     setColor(provider.color || "#ffffff");
     setCustomSvg("");
     setCustomUrl("");
+    setPalette(KNOWN_BRAND_PALETTES[provider.slug] || [provider.color || "#ffffff"]);
     toast.success("Override removido");
   };
 
@@ -77,8 +94,14 @@ export default function LogoEditorModal({ open, provider, onClose }: Props) {
     color: color || provider.color,
     customSvg: tab === "svg" ? customSvg : undefined,
     customUrl: tab === "url" ? customUrl : undefined,
+    palette: tab === "palette" ? palette : undefined,
     updatedAt: 0,
   };
+
+  const previewTokens = buildBrandTokens(
+    tab === "palette" && palette.length ? palette : [color || provider.color || "#ffffff"],
+    provider.color,
+  );
 
   return (
     <AnimatePresence>
@@ -109,18 +132,37 @@ export default function LogoEditorModal({ open, provider, onClose }: Props) {
 
             {/* Live preview */}
             <div className="px-5 py-4 border-b border-white/5 bg-gradient-to-br from-white/[0.03] to-transparent">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-3">Preview ao vivo</p>
+              <div className="flex items-center justify-between mb-3">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">Preview ao vivo</p>
+                {previewTokens.isMulticolor && (
+                  <span className="text-[9px] uppercase tracking-wider text-emerald-300 px-1.5 py-0.5 rounded border border-emerald-400/40 bg-emerald-400/10">
+                    multi · {previewTokens.palette.length} cores
+                  </span>
+                )}
+              </div>
               <div className="flex items-end gap-4 flex-wrap">
                 {PREVIEW_VARIANTS.map((v) => (
                   <PreviewTile key={v} variant={v} provider={provider} override={previewOverride} />
                 ))}
+                {/* Card mock com halo orbital */}
+                <div className="group relative w-[200px] h-[110px] rounded-xl border border-white/10 bg-white/[0.02] overflow-hidden flex items-center gap-3 px-3">
+                  <BrandHalo tokens={previewTokens} alwaysOn />
+                  <div className="relative">
+                    <LogoRenderer slug={provider.slug} color={previewTokens.primary} name={provider.name} variant="card" glow />
+                  </div>
+                  <div className="relative min-w-0">
+                    <p className="text-xs font-semibold truncate">{provider.name}</p>
+                    <p className="text-[9px] uppercase tracking-wider text-white/40">card halo</p>
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* Tabs */}
-            <div className="px-5 pt-4 flex gap-1">
+            <div className="px-5 pt-4 flex gap-1 flex-wrap">
               {([
                 ["color", "Cor", Paintbrush],
+                ["palette", "Paleta", Palette],
                 ["svg", "SVG inline", Code2],
                 ["url", "URL externa", Link2],
               ] as const).map(([k, label, Icon]) => (
@@ -139,7 +181,7 @@ export default function LogoEditorModal({ open, provider, onClose }: Props) {
             <div className="px-5 py-4 flex-1 overflow-y-auto space-y-3">
               {tab === "color" && (
                 <div className="space-y-3">
-                  <p className="text-xs text-white/60">Cor de marca usada no glow, fundo gradiente e tint do glifo.</p>
+                  <p className="text-xs text-white/60">Cor de marca usada no glow, fundo gradiente e tint do glifo (mono).</p>
                   <div className="flex items-center gap-3">
                     <input
                       type="color"
@@ -159,6 +201,65 @@ export default function LogoEditorModal({ open, provider, onClose }: Props) {
                     >
                       Padrão
                     </button>
+                  </div>
+                </div>
+              )}
+              {tab === "palette" && (
+                <div className="space-y-3">
+                  <p className="text-xs text-white/60">
+                    Defina entre 1 e 5 cores. Com 2+ cores, o card ativa o <strong>halo orbital multicolor</strong> animado.
+                  </p>
+                  <div className="space-y-2">
+                    {palette.map((c, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <span className="text-[10px] uppercase tracking-widest text-white/40 w-6">{i + 1}</span>
+                        <input
+                          type="color"
+                          value={c}
+                          onChange={(e) => {
+                            const next = [...palette]; next[i] = e.target.value; setPalette(next);
+                          }}
+                          className="w-12 h-10 rounded-lg bg-transparent border border-white/15 cursor-pointer"
+                        />
+                        <input
+                          value={c}
+                          onChange={(e) => {
+                            const next = [...palette]; next[i] = e.target.value; setPalette(next);
+                          }}
+                          placeholder="#RRGGBB"
+                          className="flex-1 bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:border-white/30"
+                        />
+                        <button
+                          onClick={() => setPalette(palette.filter((_, idx) => idx !== i))}
+                          disabled={palette.length <= 1}
+                          className="p-2 text-red-300 border border-red-500/30 rounded-lg hover:bg-red-500/10 disabled:opacity-30"
+                          title="Remover cor"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex items-center justify-between gap-2 pt-1">
+                    <button
+                      onClick={() => setPalette([...palette, "#ffffff"])}
+                      disabled={palette.length >= 5}
+                      className="inline-flex items-center gap-1.5 px-3 py-2 text-xs uppercase tracking-wider border border-white/15 rounded-lg hover:bg-white/5 disabled:opacity-40"
+                    >
+                      <Plus className="w-3.5 h-3.5" /> Adicionar cor ({palette.length}/5)
+                    </button>
+                    <button
+                      onClick={() => setPalette(KNOWN_BRAND_PALETTES[provider.slug] || [provider.color || "#ffffff"])}
+                      className="px-3 py-2 text-xs uppercase tracking-wider border border-white/10 rounded-lg hover:bg-white/5"
+                    >
+                      Resetar paleta
+                    </button>
+                  </div>
+                  {/* Live swatch row */}
+                  <div className="flex items-center gap-2 pt-2">
+                    {palette.map((c, i) => (
+                      <span key={i} className="w-7 h-7 rounded-full ring-2 ring-white/20" style={{ background: c }} title={c} />
+                    ))}
                   </div>
                 </div>
               )}
@@ -191,6 +292,7 @@ export default function LogoEditorModal({ open, provider, onClose }: Props) {
                 </div>
               )}
             </div>
+
 
             <footer className="p-4 border-t border-white/10 flex items-center justify-between gap-3">
               <button

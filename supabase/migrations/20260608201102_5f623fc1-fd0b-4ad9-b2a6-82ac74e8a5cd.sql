@@ -1,0 +1,1 @@
+ALTER TABLE public.branding_assets ADD COLUMN IF NOT EXISTS palette text[];

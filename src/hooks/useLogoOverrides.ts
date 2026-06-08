@@ -19,6 +19,7 @@ export interface LogoOverride {
   color?: string;
   customSvg?: string;
   customUrl?: string;
+  palette?: string[];
   updatedAt: number;
 }
 
@@ -68,6 +69,7 @@ function rowToOverride(row: any): LogoOverride {
     color: row.color ?? undefined,
     customSvg: row.custom_svg ?? undefined,
     customUrl: row.custom_url ?? undefined,
+    palette: Array.isArray(row.palette) && row.palette.length ? row.palette : undefined,
     updatedAt: row.updated_at ? new Date(row.updated_at).getTime() : Date.now(),
   };
 }
@@ -119,6 +121,7 @@ export function useLogoOverrides() {
       color: patch.color ?? memoryStore[slug]?.color ?? null,
       custom_svg: patch.customSvg ?? memoryStore[slug]?.customSvg ?? null,
       custom_url: patch.customUrl ?? memoryStore[slug]?.customUrl ?? null,
+      palette: patch.palette ?? memoryStore[slug]?.palette ?? null,
     };
     const { error } = await supabase.from("branding_assets" as any).upsert(row, { onConflict: "slug" });
     if (error) console.warn("[branding] upsert failed:", error.message);
