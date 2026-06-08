@@ -309,9 +309,9 @@ const AdminDashboard = () => {
                     <Users className="w-5 h-5 text-white/40" />
                   </div>
                   <div className="text-3xl font-bold mb-1">{stats.totalContacts}</div>
-                  <div className="flex items-center gap-1 text-xs text-green-400">
-                    <ArrowUp className="w-3 h-3" />
-                    {stats.contactGrowth}% este mês
+                  <div className={`flex items-center gap-1 text-xs ${stats.contactGrowth >= 0 ? "text-green-400" : "text-red-400"}`}>
+                    {stats.contactGrowth >= 0 ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
+                    {Math.abs(stats.contactGrowth)}% últimos 30d
                   </div>
                 </GlassCard>
 
@@ -330,9 +330,9 @@ const AdminDashboard = () => {
                     <Eye className="w-5 h-5 text-white/40" />
                   </div>
                   <div className="text-3xl font-bold mb-1">{stats.totalPageViews}</div>
-                  <div className="flex items-center gap-1 text-xs text-green-400">
-                    <ArrowUp className="w-3 h-3" />
-                    {stats.viewsGrowth}% esta semana
+                  <div className={`flex items-center gap-1 text-xs ${stats.viewsGrowth >= 0 ? "text-green-400" : "text-red-400"}`}>
+                    {stats.viewsGrowth >= 0 ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
+                    {Math.abs(stats.viewsGrowth)}% últimos 7d
                   </div>
                 </GlassCard>
 
