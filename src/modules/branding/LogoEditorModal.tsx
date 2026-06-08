@@ -5,11 +5,13 @@
  */
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
-import { X, RotateCcw, Save, Paintbrush, Code2, Link2, Sparkles } from "lucide-react";
+import { X, RotateCcw, Save, Paintbrush, Code2, Link2, Sparkles, Palette, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { useLogoOverrides, type LogoOverride } from "@/hooks/useLogoOverrides";
 import LogoRenderer, { type LogoVariant } from "@/components/ui/logo/LogoRenderer";
+import BrandHalo from "@/components/ui/BrandHalo";
+import { buildBrandTokens, KNOWN_BRAND_PALETTES } from "@/core/branding/palette-engine";
 import type { CatalogProvider } from "@/modules/integrations/providerCatalog";
 
 interface Props {
