@@ -117,31 +117,43 @@ const AdminDashboard = () => {
         // Calculate stats
         const today = new Date();
         today.setHours(0, 0, 0, 0);
+        const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+        const twoMonthsAgo = new Date(Date.now() - 60 * 24 * 60 * 60 * 1000).toISOString();
+        const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+        const twoWeeksAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000).toISOString();
 
-        const { count: totalContacts } = await supabase
-          .from("contacts")
-          .select("*", { count: "exact", head: true });
+        const [
+          { count: totalContacts },
+          { count: newContactsToday },
+          { count: totalPageViews },
+          { count: totalChatSessions },
+          { count: contactsLast30 },
+          { count: contactsPrev30 },
+          { count: viewsLast7 },
+          { count: viewsPrev7 },
+        ] = await Promise.all([
+          supabase.from("contacts").select("*", { count: "exact", head: true }),
+          supabase.from("contacts").select("*", { count: "exact", head: true }).gte("created_at", today.toISOString()),
+          supabase.from("page_views").select("*", { count: "exact", head: true }),
+          supabase.from("chat_conversations").select("*", { count: "exact", head: true }),
+          supabase.from("contacts").select("*", { count: "exact", head: true }).gte("created_at", monthAgo),
+          supabase.from("contacts").select("*", { count: "exact", head: true }).gte("created_at", twoMonthsAgo).lt("created_at", monthAgo),
+          supabase.from("page_views").select("*", { count: "exact", head: true }).gte("created_at", weekAgo),
+          supabase.from("page_views").select("*", { count: "exact", head: true }).gte("created_at", twoWeeksAgo).lt("created_at", weekAgo),
+        ]);
 
-        const { count: newContactsToday } = await supabase
-          .from("contacts")
-          .select("*", { count: "exact", head: true })
-          .gte("created_at", today.toISOString());
-
-        const { count: totalPageViews } = await supabase
-          .from("page_views")
-          .select("*", { count: "exact", head: true });
-
-        const { count: totalChatSessions } = await supabase
-          .from("chat_conversations")
-          .select("*", { count: "exact", head: true });
+        const pctGrowth = (curr: number, prev: number) => {
+          if (!prev) return curr > 0 ? 100 : 0;
+          return Math.round(((curr - prev) / prev) * 1000) / 10;
+        };
 
         setStats({
           totalContacts: totalContacts || 0,
           newContactsToday: newContactsToday || 0,
           totalPageViews: totalPageViews || 0,
           totalChatSessions: totalChatSessions || 0,
-          contactGrowth: 12.5, // Placeholder
-          viewsGrowth: 8.3, // Placeholder
+          contactGrowth: pctGrowth(contactsLast30 || 0, contactsPrev30 || 0),
+          viewsGrowth: pctGrowth(viewsLast7 || 0, viewsPrev7 || 0),
         });
 
       } catch (error) {
