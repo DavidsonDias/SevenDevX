@@ -105,7 +105,7 @@ export default function SmartInsights() {
             {stale.map((s) => (
               <button
                 key={s.kind + s.id}
-                onClick={() => navigate(s.url)}
+                onClick={() => navigate(s.kind === "contact" ? `/admin/contact-center?id=${s.id}` : s.url)}
                 className="w-full text-left flex items-center gap-3 p-2.5 rounded-lg hover:bg-white/5 transition-colors group"
               >
                 <div className={`shrink-0 w-1.5 h-10 rounded-full ${s.days_idle > 14 ? "bg-red-500" : "bg-amber-500"}`} />
