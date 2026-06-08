@@ -19,6 +19,7 @@ export interface LogoOverride {
   color?: string;
   customSvg?: string;
   customUrl?: string;
+  palette?: string[];
   updatedAt: number;
 }
 
