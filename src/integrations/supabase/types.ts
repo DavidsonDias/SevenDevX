@@ -401,6 +401,7 @@ export type Database = {
           color: string | null
           custom_svg: string | null
           custom_url: string | null
+          palette: string[] | null
           slug: string
           updated_at: string
           updated_by: string | null
@@ -409,6 +410,7 @@ export type Database = {
           color?: string | null
           custom_svg?: string | null
           custom_url?: string | null
+          palette?: string[] | null
           slug: string
           updated_at?: string
           updated_by?: string | null
@@ -417,6 +419,7 @@ export type Database = {
           color?: string | null
           custom_svg?: string | null
           custom_url?: string | null
+          palette?: string[] | null
           slug?: string
           updated_at?: string
           updated_by?: string | null
