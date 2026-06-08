@@ -51,6 +51,8 @@ export function useBrandPalette(slug?: string, fallback = "#ffffff"): BrandToken
   }, [ov?.customUrl]);
 
   return useMemo(() => {
+    // 0. Paleta customizada explícita (admin) → prioridade máxima
+    if (ov?.palette && ov.palette.length) return buildBrandTokens(ov.palette, fallback);
     // 1. Override com cor explícita → mono-cor forçada
     if (ov?.color && !ov.customSvg && !ov.customUrl) {
       return buildBrandTokens([ov.color], fallback);
@@ -64,5 +66,5 @@ export function useBrandPalette(slug?: string, fallback = "#ffffff"): BrandToken
     if (known?.length) return buildBrandTokens(known, fallback);
     // 5. Fallback
     return buildBrandTokens([ov?.color || fallback], fallback);
-  }, [ov?.color, ov?.customSvg, ov?.customUrl, svgPalette, urlPalette, slug, fallback]);
+  }, [ov?.color, ov?.customSvg, ov?.customUrl, ov?.palette, svgPalette, urlPalette, slug, fallback]);
 }
