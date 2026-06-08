@@ -69,6 +69,7 @@ export default function LogoEditorModal({ open, provider, onClose }: Props) {
     if (color && color !== provider.color) patch.color = color;
     if (customSvg.trim()) patch.customSvg = customSvg.trim();
     if (customUrl.trim()) patch.customUrl = customUrl.trim();
+    if (tab === "palette" && palette.length >= 1) patch.palette = palette;
     if (Object.keys(patch).length === 0) {
       resetOverride(provider.slug);
       toast.success(`${provider.name} restaurado ao padrão`);
@@ -84,6 +85,7 @@ export default function LogoEditorModal({ open, provider, onClose }: Props) {
     setColor(provider.color || "#ffffff");
     setCustomSvg("");
     setCustomUrl("");
+    setPalette(KNOWN_BRAND_PALETTES[provider.slug] || [provider.color || "#ffffff"]);
     toast.success("Override removido");
   };
 
@@ -92,8 +94,14 @@ export default function LogoEditorModal({ open, provider, onClose }: Props) {
     color: color || provider.color,
     customSvg: tab === "svg" ? customSvg : undefined,
     customUrl: tab === "url" ? customUrl : undefined,
+    palette: tab === "palette" ? palette : undefined,
     updatedAt: 0,
   };
+
+  const previewTokens = buildBrandTokens(
+    tab === "palette" && palette.length ? palette : [color || provider.color || "#ffffff"],
+    provider.color,
+  );
 
   return (
     <AnimatePresence>
