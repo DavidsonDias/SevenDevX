@@ -33,6 +33,7 @@ export default function WebhooksAdmin() {
   const [selected, setSelected] = useState<string | null>(null);
   const [viewing, setViewing] = useState<any | null>(null);
   const [debugging, setDebugging] = useState<Webhook | null>(null);
+  const [guideOpen, setGuideOpen] = useState(false);
 
   const load = async () => {
     setLoading(true);
