@@ -97,9 +97,14 @@ export default function WebhooksAdmin() {
       title="Webhooks"
       subtitle="Endpoints assinados HMAC · entregas · replay"
       actions={
-        <button onClick={() => setCreating(true)} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-black text-sm font-medium hover:bg-white/90">
-          <Plus className="w-4 h-4" /> Novo webhook
-        </button>
+        <div className="flex gap-2">
+          <button onClick={() => setGuideOpen(true)} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/15 text-sm hover:bg-white/5">
+            <BookOpen className="w-4 h-4" /> Guia
+          </button>
+          <button onClick={() => setCreating(true)} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-black text-sm font-medium hover:bg-white/90">
+            <Plus className="w-4 h-4" /> Novo webhook
+          </button>
+        </div>
       }
     >
       {creating && (
