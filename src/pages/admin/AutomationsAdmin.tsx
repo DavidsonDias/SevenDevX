@@ -36,9 +36,14 @@ export default function AutomationsAdmin() {
   return (
     <AdminPageShell title="Automações" subtitle="Workflows · WHEN → IF → THEN · Visual builder"
       actions={
-        <button onClick={openNew} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-black text-sm font-medium">
-          <Plus className="w-4 h-4" /> Novo fluxo
-        </button>
+        <div className="flex gap-2">
+          <button onClick={() => setGuideOpen(true)} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/15 text-sm hover:bg-white/5">
+            <BookOpen className="w-4 h-4" /> Guia
+          </button>
+          <button onClick={openNew} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-black text-sm font-medium">
+            <Plus className="w-4 h-4" /> Novo fluxo
+          </button>
+        </div>
       }>
       {loading ? <div className="flex justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-white/50" /></div> :
         list.length === 0 ? (
