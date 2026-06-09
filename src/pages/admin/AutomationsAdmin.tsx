@@ -81,6 +81,7 @@ export default function AutomationsAdmin() {
         </div>}
 
       <AutomationFlowBuilder open={builderOpen} onClose={closeBuilder} automationId={editingId} />
+      <AutomationGuideDrawer open={guideOpen} onClose={() => setGuideOpen(false)} />
     </AdminPageShell>
   );
 }
