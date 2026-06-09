@@ -1,16 +1,38 @@
-// AI Ops assistant: analyzes recent events/logs/incidents via Lovable AI Gateway.
+// AI Ops assistant: analyzes recent events/logs/incidents via Lovable AI Gateway. Admin-only.
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
+const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')!;
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   try {
-    const auth = req.headers.get('Authorization');
-    if (!auth) return new Response(JSON.stringify({ error: 'no_auth' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    const authHeader = req.headers.get('Authorization') || '';
+    if (!authHeader.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ error: 'unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data: userData, error: uErr } = await userClient.auth.getUser();
+    if (uErr || !userData?.user) {
+      return new Response(JSON.stringify({ error: 'unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const { data: isAdmin } = await userClient.rpc('has_role', {
+      _user_id: userData.user.id, _role: 'admin',
+    });
+    if (!isAdmin) {
+      return new Response(JSON.stringify({ error: 'forbidden' }), {
+        status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     const supa = createClient(SUPABASE_URL, SERVICE_KEY);
     const { question } = await req.json().catch(() => ({}));
@@ -27,7 +49,7 @@ Deno.serve(async (req) => {
       integrations: intR.data || [],
     });
 
-    const prompt = `Você é o SevenOS Ops Assistant. Analise o estado operacional e responda objetivamente em português. 
+    const prompt = `Você é o SevenOS Ops Assistant. Analise o estado operacional e responda objetivamente em português.
 Contexto JSON:
 ${context}
 

@@ -1,3 +1,4 @@
+// Vercel watch cron — protected by service role key OR CRON_SECRET shared header.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -8,6 +9,7 @@ const corsHeaders = {
 const VERCEL_TOKEN = Deno.env.get("VERCEL_TOKEN") ?? "";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const CRON_SECRET = Deno.env.get("CRON_SECRET") ?? "";
 
 async function vc(path: string) {
   const r = await fetch(`https://api.vercel.com${path}`, {
@@ -19,6 +21,18 @@ async function vc(path: string) {
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+
+  // ✅ Restrict to internal scheduler: must present service role key or CRON_SECRET
+  const auth = req.headers.get("Authorization") || "";
+  const provided = auth.replace(/^Bearer\s+/i, "");
+  const okAuth =
+    (CRON_SECRET && provided === CRON_SECRET) ||
+    (SERVICE_KEY && provided === SERVICE_KEY);
+  if (!okAuth) {
+    return new Response(JSON.stringify({ error: "unauthorized" }), {
+      status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
 
   try {
     const admin = createClient(SUPABASE_URL, SERVICE_KEY);
@@ -37,7 +51,6 @@ Deno.serve(async (req) => {
         const errored = (deps.deployments ?? []).find((d: any) => d.state === "ERROR");
         if (!errored) continue;
 
-        // dedupe
         const { data: existing } = await admin
           .from("vercel_deploy_alerts")
           .select("id")
@@ -52,7 +65,6 @@ Deno.serve(async (req) => {
           state: errored.state,
         });
 
-        // dispara push via push-send (auth com service role)
         await fetch(`${SUPABASE_URL}/functions/v1/push-send`, {
           method: "POST",
           headers: {
