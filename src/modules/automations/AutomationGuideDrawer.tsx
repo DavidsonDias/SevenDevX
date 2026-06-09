@@ -202,13 +202,13 @@ export default function AutomationGuideDrawer({ open, onClose }: { open: boolean
                           { t: "IF",   d: "filtros passam", c: "text-sky-300" },
                           { t: "THEN", d: "ações rodam",   c: "text-emerald-300" },
                         ].map((b, i) => (
-                          <>
-                            <div key={b.t} className="flex-1">
+                          <div key={b.t} className="flex items-center flex-1 gap-2">
+                            <div className="flex-1 text-center">
                               <div className={`text-xl font-bold ${b.c}`}>{b.t}</div>
                               <div className="text-[11px] text-white/50 mt-1">{b.d}</div>
                             </div>
                             {i < 2 && <ChevronRight className="w-5 h-5 text-white/30 shrink-0" />}
-                          </>
+                          </div>
                         ))}
                       </div>
                     </div>
