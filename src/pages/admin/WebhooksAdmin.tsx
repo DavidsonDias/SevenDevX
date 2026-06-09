@@ -221,6 +221,7 @@ export default function WebhooksAdmin() {
         }} />
       <WebhookDebugger webhook={debugging} open={!!debugging} onClose={() => setDebugging(null)}
         onSent={() => { if (debugging) setSelected(debugging.id); }} />
+      <WebhookGuideDrawer open={guideOpen} onClose={() => setGuideOpen(false)} />
     </AdminPageShell>
   );
 }
