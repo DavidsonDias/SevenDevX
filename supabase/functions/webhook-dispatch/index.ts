@@ -1,8 +1,9 @@
-// Webhook dispatcher: signs payload (HMAC-SHA256), POSTs to webhook URL, logs delivery.
+// Webhook dispatcher: signs payload (HMAC-SHA256), POSTs to webhook URL, logs delivery. Admin-only.
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
+const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
 async function sign(secret: string, body: string): Promise<string> {
@@ -17,8 +18,32 @@ async function sign(secret: string, body: string): Promise<string> {
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   try {
+    const authHeader = req.headers.get('Authorization') || '';
+    if (!authHeader.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ error: 'unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data: userData, error: uErr } = await userClient.auth.getUser();
+    if (uErr || !userData?.user) {
+      return new Response(JSON.stringify({ error: 'unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    const { data: isAdmin } = await userClient.rpc('has_role', {
+      _user_id: userData.user.id, _role: 'admin',
+    });
+    if (!isAdmin) {
+      return new Response(JSON.stringify({ error: 'forbidden' }), {
+        status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const supa = createClient(SUPABASE_URL, SERVICE_KEY);
-    const { webhook_id, event, payload, delivery_id } = await req.json();
+    const { webhook_id, event, payload } = await req.json();
     if (!webhook_id || !event) {
       return new Response(JSON.stringify({ error: 'missing_params' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
