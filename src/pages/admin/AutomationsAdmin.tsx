@@ -5,15 +5,17 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import AdminPageShell from "@/components/admin/AdminPageShell";
-import { Plus, Zap, Power, Trash2, Loader2, Pencil } from "lucide-react";
+import { Plus, Zap, Power, Trash2, Loader2, Pencil, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import AutomationFlowBuilder from "@/modules/automations/AutomationFlowBuilder";
+import AutomationGuideDrawer from "@/modules/automations/AutomationGuideDrawer";
 
 export default function AutomationsAdmin() {
   const [list, setList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [builderOpen, setBuilderOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [guideOpen, setGuideOpen] = useState(false);
 
   const load = () => supabase.from("automations").select("*").order("created_at", { ascending: false })
     .then(({ data }) => { setList(data || []); setLoading(false); });
@@ -34,9 +36,14 @@ export default function AutomationsAdmin() {
   return (
     <AdminPageShell title="Automações" subtitle="Workflows · WHEN → IF → THEN · Visual builder"
       actions={
-        <button onClick={openNew} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-black text-sm font-medium">
-          <Plus className="w-4 h-4" /> Novo fluxo
-        </button>
+        <div className="flex gap-2">
+          <button onClick={() => setGuideOpen(true)} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/15 text-sm hover:bg-white/5">
+            <BookOpen className="w-4 h-4" /> Guia
+          </button>
+          <button onClick={openNew} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-black text-sm font-medium">
+            <Plus className="w-4 h-4" /> Novo fluxo
+          </button>
+        </div>
       }>
       {loading ? <div className="flex justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-white/50" /></div> :
         list.length === 0 ? (
@@ -74,6 +81,7 @@ export default function AutomationsAdmin() {
         </div>}
 
       <AutomationFlowBuilder open={builderOpen} onClose={closeBuilder} automationId={editingId} />
+      <AutomationGuideDrawer open={guideOpen} onClose={() => setGuideOpen(false)} />
     </AdminPageShell>
   );
 }

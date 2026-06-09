@@ -4,11 +4,12 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import AdminPageShell from "@/components/admin/AdminPageShell";
-import { Plus, Webhook as WebhookIcon, Send, Trash2, Power, Copy, CheckCircle2, XCircle, Loader2, Bug } from "lucide-react";
+import { Plus, Webhook as WebhookIcon, Send, Trash2, Power, Copy, CheckCircle2, XCircle, Loader2, Bug, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import WebhookPayloadViewer from "@/modules/webhooks/WebhookPayloadViewer";
 import WebhookDebugger from "@/modules/webhooks/WebhookDebugger";
+import WebhookGuideDrawer from "@/modules/webhooks/WebhookGuideDrawer";
 
 const EVENT_CATALOG = [
   "lead.created", "lead.updated", "project.created", "project.pipeline_changed",
@@ -32,6 +33,7 @@ export default function WebhooksAdmin() {
   const [selected, setSelected] = useState<string | null>(null);
   const [viewing, setViewing] = useState<any | null>(null);
   const [debugging, setDebugging] = useState<Webhook | null>(null);
+  const [guideOpen, setGuideOpen] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -95,9 +97,14 @@ export default function WebhooksAdmin() {
       title="Webhooks"
       subtitle="Endpoints assinados HMAC · entregas · replay"
       actions={
-        <button onClick={() => setCreating(true)} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-black text-sm font-medium hover:bg-white/90">
-          <Plus className="w-4 h-4" /> Novo webhook
-        </button>
+        <div className="flex gap-2">
+          <button onClick={() => setGuideOpen(true)} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/15 text-sm hover:bg-white/5">
+            <BookOpen className="w-4 h-4" /> Guia
+          </button>
+          <button onClick={() => setCreating(true)} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-black text-sm font-medium hover:bg-white/90">
+            <Plus className="w-4 h-4" /> Novo webhook
+          </button>
+        </div>
       }
     >
       {creating && (
@@ -214,6 +221,7 @@ export default function WebhooksAdmin() {
         }} />
       <WebhookDebugger webhook={debugging} open={!!debugging} onClose={() => setDebugging(null)}
         onSent={() => { if (debugging) setSelected(debugging.id); }} />
+      <WebhookGuideDrawer open={guideOpen} onClose={() => setGuideOpen(false)} />
     </AdminPageShell>
   );
 }
