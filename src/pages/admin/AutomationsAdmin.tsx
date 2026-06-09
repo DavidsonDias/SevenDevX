@@ -15,6 +15,7 @@ export default function AutomationsAdmin() {
   const [loading, setLoading] = useState(true);
   const [builderOpen, setBuilderOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [guideOpen, setGuideOpen] = useState(false);
 
   const load = () => supabase.from("automations").select("*").order("created_at", { ascending: false })
     .then(({ data }) => { setList(data || []); setLoading(false); });
