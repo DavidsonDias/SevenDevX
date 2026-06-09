@@ -5,9 +5,10 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import AdminPageShell from "@/components/admin/AdminPageShell";
-import { Plus, Zap, Power, Trash2, Loader2, Pencil } from "lucide-react";
+import { Plus, Zap, Power, Trash2, Loader2, Pencil, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import AutomationFlowBuilder from "@/modules/automations/AutomationFlowBuilder";
+import AutomationGuideDrawer from "@/modules/automations/AutomationGuideDrawer";
 
 export default function AutomationsAdmin() {
   const [list, setList] = useState<any[]>([]);
