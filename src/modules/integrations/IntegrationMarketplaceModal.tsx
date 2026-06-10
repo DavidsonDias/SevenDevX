@@ -64,7 +64,7 @@ function MarketplaceCard({
           <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-white/5 text-white/40 border border-white/10">
             em breve
           </span>
-        )}
+        {i.hasWebhook && (
           <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300 border border-sky-500/20">
             <Webhook className="w-2.5 h-2.5" /> webhook
           </span>
