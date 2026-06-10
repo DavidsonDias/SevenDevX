@@ -21,6 +21,11 @@ const FUNCTION_MAP: Record<string, string> = {
   vercel: "vercel-test",
   figma: "figma-test",
   whatsapp: "whatsapp-test",
+  stripe: "stripe-test",
+  openai: "openai-test",
+  resend: "resend-test",
+  slack: "slack-test",
+  discord: "discord-test",
 };
 
 const STEPS_BY_PROVIDER: Record<string, string[]> = {
@@ -28,6 +33,11 @@ const STEPS_BY_PROVIDER: Record<string, string[]> = {
   vercel: ["Validar token", "Listar teams", "Listar projects", "Verificar deployments"],
   figma: ["Validar token", "Buscar usuário", "Listar teams"],
   whatsapp: ["Validar Phone ID", "Verificar display name", "Verificar webhook subscriptions"],
+  stripe: ["Validar secret key", "Buscar account info", "Verificar balance", "Listar customers", "Webhook secret"],
+  openai: ["Validar API key", "Listar modelos disponíveis", "Chat completion teste"],
+  resend: ["Validar API key", "Listar domínios", "Listar API keys", "Verificar domínios verificados"],
+  slack: ["Validar bot token", "Buscar workspace info", "Listar conversations", "Signing secret"],
+  discord: ["Validar bot token", "Buscar bot user", "Listar guilds", "Application info"],
 };
 
 const DEFAULT_STEPS = ["Validar secrets", "Executar teste real", "Analisar resposta", "Persistir diagnóstico"];

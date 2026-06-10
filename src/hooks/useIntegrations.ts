@@ -49,6 +49,11 @@ const TEST_FUNCTION: Record<string, string> = {
   vercel: "vercel-test",
   figma: "figma-test",
   whatsapp: "whatsapp-test",
+  stripe: "stripe-test",
+  openai: "openai-test",
+  resend: "resend-test",
+  slack: "slack-test",
+  discord: "discord-test",
 };
 
 export const useIntegrations = () => {
