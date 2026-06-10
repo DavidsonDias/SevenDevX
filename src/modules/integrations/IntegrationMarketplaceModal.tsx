@@ -56,9 +56,15 @@ function MarketplaceCard({
             {BADGE_META[b].label}
           </span>
         ))}
-        <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
-          <Zap className="w-2.5 h-2.5" /> teste guiado
-        </span>
+        {i.hasTest ? (
+          <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-300 border border-emerald-500/20">
+            <Zap className="w-2.5 h-2.5" /> teste real
+          </span>
+        ) : (
+          <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-white/5 text-white/40 border border-white/10">
+            em breve
+          </span>
+        )}
         {i.hasWebhook && (
           <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-300 border border-sky-500/20">
             <Webhook className="w-2.5 h-2.5" /> webhook
