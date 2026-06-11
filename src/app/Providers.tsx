@@ -6,6 +6,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ensureBrandingHydrated } from "@/hooks/useLogoOverrides";
+import GeoKnowledgeGraph from "@/components/GeoKnowledgeGraph";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -27,6 +28,7 @@ export default function Providers({ children }: { children: ReactNode }) {
       <AuthProvider>
         <LanguageProvider>
           <TooltipProvider delayDuration={300}>
+            <GeoKnowledgeGraph />
             <Toaster />
             <Sonner position="bottom-right" />
             {children}
