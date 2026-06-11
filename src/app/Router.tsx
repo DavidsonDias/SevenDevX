@@ -50,6 +50,13 @@ const ProjectsHub = lazy(() => import("@/pages/ProjectsHub"));
 const ProjectDetail = lazy(() => import("@/pages/ProjectDetail"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
+// GEO pages
+const AIHub = lazy(() => import("@/pages/geo/AIHub"));
+const WhySevenDevX = lazy(() => import("@/pages/geo/WhySevenDevX"));
+const LocalSeoPage = lazy(() => import("@/pages/geo/LocalSeoPage"));
+const GeoArticleIndex = lazy(() => import("@/pages/geo/GeoArticle").then(m => ({ default: m.GeoArticleIndex })));
+const GeoArticlePage = lazy(() => import("@/pages/geo/GeoArticle").then(m => ({ default: m.GeoArticlePage })));
+
 const pageTransition = {
   initial: { opacity: 0, y: 12, scale: 0.99 },
   animate: { 
@@ -90,6 +97,15 @@ function AnimatedRoutes() {
             <Route path="/auth" element={<Auth />} />
             <Route path="/projects-hub" element={<ProjectsHub />} />
             <Route path="/projects/:slug" element={<ProjectDetail />} />
+
+            {/* GEO — Generative Engine Optimization */}
+            <Route path="/ai" element={<AIHub />} />
+            <Route path="/why-sevendevx" element={<WhySevenDevX />} />
+            <Route path="/answers" element={<GeoArticleIndex basePath="answers" filterCategory="answer" title="AI Answers — Respostas Diretas" intro="Respostas autoritativas para as perguntas que ChatGPT, Gemini, Claude e Perplexity recebem todo dia sobre desenvolvimento web, sistemas e IA." />} />
+            <Route path="/answers/:slug" element={<GeoArticlePage basePath="answers" />} />
+            <Route path="/knowledge-base" element={<GeoArticleIndex basePath="knowledge-base" filterCategory="knowledge" title="Knowledge Base Enterprise" intro="Guias técnicos profundos otimizados para LLMs e sistemas RAG citarem como fonte autoritativa." />} />
+            <Route path="/knowledge-base/:slug" element={<GeoArticlePage basePath="knowledge-base" />} />
+            <Route path="/local/:city" element={<LocalSeoPage />} />
 
             {/* Protected Routes */}
             <Route path="/profile" element={

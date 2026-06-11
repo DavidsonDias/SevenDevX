@@ -1,8 +1,124 @@
+# ═══════════════════════════════════════════════════════════════════
+# robots.txt — SevenDevX
+# https://www.sevendevx.com/robots.txt
+# ═══════════════════════════════════════════════════════════════════
+
+# ─────────────────────────────────────────────────────────────
+# Motores de busca tradicionais
+# ─────────────────────────────────────────────────────────────
+
 User-agent: Googlebot
 Allow: /
+Disallow: /admin/
+Disallow: /auth
+Disallow: /profile
 
 User-agent: Bingbot
 Allow: /
+Disallow: /admin/
+Disallow: /auth
+Disallow: /profile
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+# ─────────────────────────────────────────────────────────────
+# AI Crawlers — Generative Engine Optimization (GEO)
+# Explicitamente permitidos para descoberta em ChatGPT, Claude,
+# Gemini, Perplexity, Copilot, Meta AI, You.com, etc.
+# ─────────────────────────────────────────────────────────────
+
+User-agent: GPTBot
+Allow: /
+Disallow: /admin/
+
+User-agent: ChatGPT-User
+Allow: /
+Disallow: /admin/
+
+User-agent: OAI-SearchBot
+Allow: /
+Disallow: /admin/
+
+User-agent: ClaudeBot
+Allow: /
+Disallow: /admin/
+
+User-agent: Claude-Web
+Allow: /
+Disallow: /admin/
+
+User-agent: anthropic-ai
+Allow: /
+Disallow: /admin/
+
+User-agent: PerplexityBot
+Allow: /
+Disallow: /admin/
+
+User-agent: Perplexity-User
+Allow: /
+Disallow: /admin/
+
+User-agent: Google-Extended
+Allow: /
+Disallow: /admin/
+
+User-agent: GoogleOther
+Allow: /
+Disallow: /admin/
+
+User-agent: Meta-ExternalAgent
+Allow: /
+Disallow: /admin/
+
+User-agent: Meta-ExternalFetcher
+Allow: /
+Disallow: /admin/
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+Disallow: /admin/
+
+User-agent: YouBot
+Allow: /
+Disallow: /admin/
+
+User-agent: DuckAssistBot
+Allow: /
+Disallow: /admin/
+
+User-agent: cohere-ai
+Allow: /
+Disallow: /admin/
+
+User-agent: Bytespider
+Allow: /
+Disallow: /admin/
+
+User-agent: Amazonbot
+Allow: /
+Disallow: /admin/
+
+User-agent: Diffbot
+Allow: /
+Disallow: /admin/
+
+# ─────────────────────────────────────────────────────────────
+# Social preview crawlers
+# ─────────────────────────────────────────────────────────────
 
 User-agent: Twitterbot
 Allow: /
@@ -10,7 +126,27 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+User-agent: TelegramBot
+Allow: /
+
+# ─────────────────────────────────────────────────────────────
+# Default (qualquer outro user-agent)
+# ─────────────────────────────────────────────────────────────
+
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /auth
+Disallow: /profile
+
+# ─────────────────────────────────────────────────────────────
+# Discovery files
+# ─────────────────────────────────────────────────────────────
 
 Sitemap: https://www.sevendevx.com/sitemap.xml
