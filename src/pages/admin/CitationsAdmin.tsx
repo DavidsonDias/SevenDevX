@@ -59,8 +59,8 @@ export default function CitationsAdmin() {
       supabase.from("ai_referrals" as any).select("id, ai_source, landing_path, query_hint, created_at")
         .order("created_at", { ascending: false }).limit(200),
     ]);
-    setCitations((cit.data as Citation[]) || []);
-    setReferrals((ref.data as Referral[]) || []);
+    setCitations(((cit.data as unknown) as Citation[]) || []);
+    setReferrals(((ref.data as unknown) as Referral[]) || []);
     setLoading(false);
   };
 
