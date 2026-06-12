@@ -54,6 +54,9 @@ const NotFound = lazy(() => import("@/pages/NotFound"));
 const AIHub = lazy(() => import("@/pages/geo/AIHub"));
 const WhySevenDevX = lazy(() => import("@/pages/geo/WhySevenDevX"));
 const LocalSeoPage = lazy(() => import("@/pages/geo/LocalSeoPage"));
+const SolutionPage = lazy(() => import("@/pages/geo/SolutionPage"));
+const SolutionsIndex = lazy(() => import("@/pages/geo/SolutionPage").then(m => ({ default: m.SolutionsIndex })));
+const GeoAnalyticsAdmin = lazy(() => import("@/pages/admin/GeoAnalyticsAdmin"));
 const GeoArticleIndex = lazy(() => import("@/pages/geo/GeoArticle").then(m => ({ default: m.GeoArticleIndex })));
 const GeoArticlePage = lazy(() => import("@/pages/geo/GeoArticle").then(m => ({ default: m.GeoArticlePage })));
 
@@ -106,6 +109,8 @@ function AnimatedRoutes() {
             <Route path="/knowledge-base" element={<GeoArticleIndex basePath="knowledge-base" filterCategory="knowledge" title="Knowledge Base Enterprise" intro="Guias técnicos profundos otimizados para LLMs e sistemas RAG citarem como fonte autoritativa." />} />
             <Route path="/knowledge-base/:slug" element={<GeoArticlePage basePath="knowledge-base" />} />
             <Route path="/local/:city" element={<LocalSeoPage />} />
+            <Route path="/solucoes" element={<SolutionsIndex />} />
+            <Route path="/solucoes/:slug" element={<SolutionPage />} />
 
             {/* Protected Routes */}
             <Route path="/profile" element={
@@ -198,6 +203,9 @@ function AnimatedRoutes() {
             } />
             <Route path="/admin/logo-library" element={
               <ProtectedRoute requiredRole="admin"><LogoLibraryAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/geo" element={
+              <ProtectedRoute requiredRole="admin"><GeoAnalyticsAdmin /></ProtectedRoute>
             } />
 
             <Route path="*" element={<NotFound />} />

@@ -10,7 +10,7 @@ import {
   Menu, X, LayoutDashboard, FolderKanban, Users, Workflow, Settings2, Sparkles,
   FileQuestion, Tag, Cpu, MessageSquare, GitBranch, Home as HomeIcon, LogOut,
   ListTodo, Coins, Plug, Inbox, Webhook, ScrollText, MonitorSmartphone, ShieldCheck, HeartPulse,
-  Activity, Zap, AlertTriangle, Bot, Palette,
+  Activity, Zap, AlertTriangle, Bot, Palette, Sparkles as SparklesIcon,
 } from "lucide-react";
 import { useAuthContext as useAuth } from "@/contexts/AuthContext";
 
@@ -41,6 +41,7 @@ const NAV: { label: string; to: string; icon: any; group: string }[] = [
   { group: "Super Admin", label: "AI Ops",     to: "/admin/ai-ops",     icon: Bot },
   { group: "Super Admin", label: "Logo Lab",   to: "/admin/logo-lab",   icon: Palette },
   { group: "Super Admin", label: "Logo Library", to: "/admin/logo-library", icon: Palette },
+  { group: "Super Admin", label: "GEO Analytics", to: "/admin/geo", icon: SparklesIcon },
 ];
 
 export default function AdminMenu() {
