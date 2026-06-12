@@ -7,6 +7,7 @@ import { LanguageProvider } from "@/i18n/LanguageContext";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ensureBrandingHydrated } from "@/hooks/useLogoOverrides";
 import GeoKnowledgeGraph from "@/components/GeoKnowledgeGraph";
+import EntityGraphSchema from "@/components/EntityGraphSchema";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,6 +30,7 @@ export default function Providers({ children }: { children: ReactNode }) {
         <LanguageProvider>
           <TooltipProvider delayDuration={300}>
             <GeoKnowledgeGraph />
+            <EntityGraphSchema />
             <Toaster />
             <Sonner position="bottom-right" />
             {children}

@@ -19,10 +19,12 @@ export default function Footer() {
     { name: t.header.about, path: "/about" },
     { name: t.header.services, path: "/services" },
     { name: t.header.projects, path: "/projects" },
+    { name: "CASES", path: "/cases" },
     { name: "BLOG", path: "/blog" },
     { name: "AI HUB", path: "/ai" },
     { name: "SOLUÇÕES", path: "/solucoes" },
     { name: "ANSWERS", path: "/answers" },
+    { name: "CLUSTERS", path: "/clusters" },
     { name: t.footer.privacy, path: "/privacy-policy" },
     { name: t.footer.suppliers, path: "/fornecedores" },
   ];
