@@ -131,6 +131,17 @@
     <priority>0.8</priority>
   </url>
 
+  <!-- ── SOLUÇÕES (Programmatic SEO) ────────────────────── -->
+  <url><loc>https://www.sevendevx.com/solucoes</loc><lastmod>2026-06-11</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://www.sevendevx.com/solucoes/desenvolvimento-web</loc><lastmod>2026-06-11</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://www.sevendevx.com/solucoes/landing-pages</loc><lastmod>2026-06-11</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://www.sevendevx.com/solucoes/sistemas-empresariais</loc><lastmod>2026-06-11</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://www.sevendevx.com/solucoes/saas-sob-demanda</loc><lastmod>2026-06-11</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://www.sevendevx.com/solucoes/crm-personalizado</loc><lastmod>2026-06-11</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://www.sevendevx.com/solucoes/automacoes-empresariais</loc><lastmod>2026-06-11</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+  <url><loc>https://www.sevendevx.com/solucoes/integracao-ia</loc><lastmod>2026-06-11</lastmod><changefreq>monthly</changefreq><priority>0.85</priority></url>
+
+
   <!-- ── BLOG ARTICLES ──────────────────────────────────── -->
   <url>
     <loc>https://www.sevendevx.com/blog/react-typescript-frontend-escalavel</loc>
