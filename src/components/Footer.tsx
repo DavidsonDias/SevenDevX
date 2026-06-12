@@ -21,6 +21,7 @@ export default function Footer() {
     { name: t.header.projects, path: "/projects" },
     { name: "BLOG", path: "/blog" },
     { name: "AI HUB", path: "/ai" },
+    { name: "SOLUÇÕES", path: "/solucoes" },
     { name: "ANSWERS", path: "/answers" },
     { name: t.footer.privacy, path: "/privacy-policy" },
     { name: t.footer.suppliers, path: "/fornecedores" },
