@@ -59,6 +59,87 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_citations: {
+        Row: {
+          context: string | null
+          created_at: string
+          created_by: string | null
+          detected_at: string
+          id: string
+          query_text: string | null
+          sentiment: string | null
+          source: string
+          source_type: string
+          updated_at: string
+          url: string | null
+          verified: boolean
+        }
+        Insert: {
+          context?: string | null
+          created_at?: string
+          created_by?: string | null
+          detected_at?: string
+          id?: string
+          query_text?: string | null
+          sentiment?: string | null
+          source: string
+          source_type?: string
+          updated_at?: string
+          url?: string | null
+          verified?: boolean
+        }
+        Update: {
+          context?: string | null
+          created_at?: string
+          created_by?: string | null
+          detected_at?: string
+          id?: string
+          query_text?: string | null
+          sentiment?: string | null
+          source?: string
+          source_type?: string
+          updated_at?: string
+          url?: string | null
+          verified?: boolean
+        }
+        Relationships: []
+      }
+      ai_referrals: {
+        Row: {
+          ai_source: string
+          created_at: string
+          id: string
+          landing_path: string
+          query_hint: string | null
+          referrer: string | null
+          session_id: string | null
+          user_agent: string | null
+          visitor_id: string | null
+        }
+        Insert: {
+          ai_source: string
+          created_at?: string
+          id?: string
+          landing_path: string
+          query_hint?: string | null
+          referrer?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          visitor_id?: string | null
+        }
+        Update: {
+          ai_source?: string
+          created_at?: string
+          id?: string
+          landing_path?: string
+          query_hint?: string | null
+          referrer?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+          visitor_id?: string | null
+        }
+        Relationships: []
+      }
       ai_usage: {
         Row: {
           created_at: string
