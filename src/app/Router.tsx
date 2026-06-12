@@ -5,6 +5,7 @@ import ScrollToTop from "@/components/ScrollToTop";
 import AppLoaderOrbital from "@/components/ui/AppLoaderOrbital";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { useNavHistoryTracker } from "@/hooks/useSmartBack";
+import { useAiReferralTracker } from "@/hooks/useAiReferralTracker";
 import MobileBottomNav from "@/modules/layout/MobileBottomNav";
 import GlobalFAB from "@/modules/layout/GlobalFAB";
 import AIChatbot from "@/components/AIChatbot";
@@ -79,6 +80,7 @@ const pageTransition = {
 function AnimatedRoutes() {
   const location = useLocation();
   useNavHistoryTracker();
+  useAiReferralTracker();
 
   return (
     <AnimatePresence mode="wait">

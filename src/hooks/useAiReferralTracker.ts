@@ -61,7 +61,7 @@ export function useAiReferralTracker() {
     const query_hint = params.get("q") || params.get("query") || params.get("utm_term") || null;
 
     supabase
-      .from("ai_referrals")
+      .from("ai_referrals" as any)
       .insert({
         ai_source: matched.id,
         landing_path: location.pathname,

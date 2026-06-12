@@ -55,8 +55,8 @@ export default function CitationsAdmin() {
   const load = async () => {
     setLoading(true);
     const [cit, ref] = await Promise.all([
-      supabase.from("ai_citations").select("*").order("detected_at", { ascending: false }).limit(200),
-      supabase.from("ai_referrals").select("id, ai_source, landing_path, query_hint, created_at")
+      supabase.from("ai_citations" as any).select("*").order("detected_at", { ascending: false }).limit(200),
+      supabase.from("ai_referrals" as any).select("id, ai_source, landing_path, query_hint, created_at")
         .order("created_at", { ascending: false }).limit(200),
     ]);
     setCitations((cit.data as Citation[]) || []);
@@ -71,7 +71,7 @@ export default function CitationsAdmin() {
       toast.error("Preencha origem e contexto");
       return;
     }
-    const { error } = await supabase.from("ai_citations").insert({
+    const { error } = await supabase.from("ai_citations" as any).insert({
       source: form.source,
       source_type: "manual",
       url: form.url || null,
@@ -88,13 +88,13 @@ export default function CitationsAdmin() {
   };
 
   const toggleVerified = async (c: Citation) => {
-    await supabase.from("ai_citations").update({ verified: !c.verified }).eq("id", c.id);
+    await supabase.from("ai_citations" as any).update({ verified: !c.verified }).eq("id", c.id);
     load();
   };
 
   const removeCitation = async (id: string) => {
     if (!confirm("Remover esta citação?")) return;
-    await supabase.from("ai_citations").delete().eq("id", id);
+    await supabase.from("ai_citations" as any).delete().eq("id", id);
     load();
   };
 
