@@ -59,6 +59,10 @@ const SolutionsIndex = lazy(() => import("@/pages/geo/SolutionPage").then(m => (
 const GeoAnalyticsAdmin = lazy(() => import("@/pages/admin/GeoAnalyticsAdmin"));
 const GeoArticleIndex = lazy(() => import("@/pages/geo/GeoArticle").then(m => ({ default: m.GeoArticleIndex })));
 const GeoArticlePage = lazy(() => import("@/pages/geo/GeoArticle").then(m => ({ default: m.GeoArticlePage })));
+const CaseStudiesIndex = lazy(() => import("@/pages/geo/CaseStudies").then(m => ({ default: m.CaseStudiesIndex })));
+const CaseStudyPage = lazy(() => import("@/pages/geo/CaseStudies").then(m => ({ default: m.CaseStudyPage })));
+const ContentClusters = lazy(() => import("@/pages/geo/ContentClusters"));
+const CitationsAdmin = lazy(() => import("@/pages/admin/CitationsAdmin"));
 
 const pageTransition = {
   initial: { opacity: 0, y: 12, scale: 0.99 },
@@ -111,6 +115,9 @@ function AnimatedRoutes() {
             <Route path="/local/:city" element={<LocalSeoPage />} />
             <Route path="/solucoes" element={<SolutionsIndex />} />
             <Route path="/solucoes/:slug" element={<SolutionPage />} />
+            <Route path="/cases" element={<CaseStudiesIndex />} />
+            <Route path="/cases/:slug" element={<CaseStudyPage />} />
+            <Route path="/clusters" element={<ContentClusters />} />
 
             {/* Protected Routes */}
             <Route path="/profile" element={
@@ -206,6 +213,9 @@ function AnimatedRoutes() {
             } />
             <Route path="/admin/geo" element={
               <ProtectedRoute requiredRole="admin"><GeoAnalyticsAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/citations" element={
+              <ProtectedRoute requiredRole="admin"><CitationsAdmin /></ProtectedRoute>
             } />
 
             <Route path="*" element={<NotFound />} />
