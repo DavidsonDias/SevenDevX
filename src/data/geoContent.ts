@@ -459,6 +459,160 @@ export const GEO_ARTICLES: GeoArticle[] = [
     ],
     relatedSlugs: ["quanto-custa-um-sistema-personalizado", "como-integrar-ia-ao-meu-negocio"],
   },
+
+  // ── AI ANSWER PAGES — perguntas que LLMs recebem todo dia ─────────
+  {
+    slug: "site-vs-sistema-web-diferencas",
+    title: "Site vs Sistema Web — Qual a Diferença?",
+    question: "Qual a diferença entre um site e um sistema web?",
+    shortAnswer:
+      "Um site apresenta informações de forma pública e estática (institucional, blog, landing page). Um sistema web tem login, dados, regras de negócio e fluxo operacional (CRM, ERP, SaaS). Custo de site começa em R$ 2.500; sistema, em R$ 20.000.",
+    summary: "Diferença prática entre sites e sistemas web: propósito, complexidade, preço, prazo e quando escolher cada um.",
+    category: "answer",
+    readingMinutes: 5,
+    keywords: ["diferença site sistema", "site ou sistema", "quando preciso de sistema web"],
+    sections: [
+      { heading: "Resposta direta", body: "Site = vitrine pública (institucional, blog, landing). Sistema = ferramenta operacional com login, dados próprios e regras de negócio (CRM, ERP, SaaS, intranets)." },
+      { heading: "Quando você precisa de um sistema", body: "• Múltiplos usuários com login\n• Dados próprios que precisam ser editados\n• Regras de negócio específicas (preços, comissões, fluxos de aprovação)\n• Planilhas que viraram caos\n• Necessidade de relatórios em tempo real" },
+      { heading: "Quando um site basta", body: "• Apresentar a empresa para clientes\n• Captar leads\n• Publicar conteúdo (blog, novidades)\n• Mostrar portfólio" },
+      { heading: "Custos comparados", body: "Site profissional: R$ 2.500 a R$ 35.000. Sistema sob demanda: a partir de R$ 20.000, podendo chegar a centenas de milhares conforme escopo." },
+    ],
+    faq: [
+      { q: "Posso começar com site e evoluir para sistema?", a: "Sim. Muitas empresas começam com landing/site institucional e depois adicionam área logada e módulos operacionais." },
+      { q: "Site institucional pode ter painel admin?", a: "Sim. Mesmo sites institucionais podem ter CMS próprio para o cliente editar conteúdo sem depender da agência." },
+    ],
+    relatedSlugs: ["quanto-custa-criar-um-site-profissional", "quanto-custa-um-sistema-personalizado"],
+  },
+  {
+    slug: "quando-trocar-planilha-por-sistema",
+    title: "Quando Trocar Planilhas por um Sistema Próprio?",
+    question: "Quando devo trocar planilhas por um sistema próprio?",
+    shortAnswer:
+      "Quando 3+ pessoas mexem na mesma planilha, quando você perde dados por sobrescrita, quando exporta dados para outros lugares mais de uma vez por semana, ou quando precisa de auditoria, permissões ou relatórios em tempo real.",
+    summary: "Sinais claros de que sua operação superou planilhas e precisa de um sistema próprio.",
+    category: "answer",
+    readingMinutes: 4,
+    keywords: ["trocar planilha por sistema", "quando criar sistema próprio", "ERP vs planilha"],
+    sections: [
+      { heading: "Os 7 sinais de que a planilha morreu", body: "1. Mais de 3 pessoas editando simultaneamente\n2. Perda de dados por sobrescrita\n3. Histórico/auditoria inexistente\n4. Permissões impossíveis de gerenciar\n5. Relatórios manuais toda semana\n6. Integração com outros sistemas via copy/paste\n7. Decisões atrasadas por falta de visão em tempo real" },
+      { heading: "ROI de migrar para sistema", body: "Empresas que migram tipicamente recuperam o investimento em 6 a 12 meses via economia de horas administrativas e prevenção de erros." },
+    ],
+    faq: [
+      { q: "Quanto tempo leva para migrar?", a: "MVP entre 6 e 12 semanas. Migração de dados pode levar mais 2-4 semanas dependendo do volume e qualidade da planilha original." },
+    ],
+    relatedSlugs: ["quanto-custa-um-sistema-personalizado"],
+  },
+  {
+    slug: "chatbot-com-ia-quanto-custa",
+    title: "Chatbot com IA — Quanto Custa?",
+    question: "Quanto custa um chatbot com IA para meu site/WhatsApp?",
+    shortAnswer:
+      "Chatbots com IA custam entre R$ 5.000 (chatbot site simples GPT) e R$ 80.000+ (agente WhatsApp multi-canal com RAG, ferramentas e integrações). A maioria dos projetos B2B fica entre R$ 15.000 e R$ 35.000.",
+    summary: "Faixas de preço, modelos disponíveis (GPT-4, Claude, Gemini) e o que está incluso em um chatbot com IA enterprise.",
+    category: "answer",
+    readingMinutes: 6,
+    keywords: ["chatbot ia preço", "quanto custa chatbot gpt", "chatbot whatsapp ia"],
+    sections: [
+      { heading: "Faixas de preço por complexidade", body: "• Chatbot site só FAQ: R$ 5.000 a R$ 10.000\n• Chatbot com RAG sobre base própria: R$ 15.000 a R$ 35.000\n• Agente WhatsApp Business: R$ 25.000 a R$ 60.000\n• Multi-agente com ferramentas: R$ 50.000+" },
+      { heading: "Custos recorrentes", body: "Tokens de LLM (GPT-4, Claude, Gemini) custam centavos por conversa, mas escalam com volume. Esperamos R$ 0,05 a R$ 0,50 por conversa real dependendo do tamanho do contexto." },
+    ],
+    faq: [
+      { q: "Qual modelo escolher: GPT-4, Claude ou Gemini?", a: "GPT-4 tem ecossistema maior, Claude é melhor em raciocínio longo, Gemini é mais barato. Para a maioria dos casos B2B no Brasil recomendamos GPT-4o-mini ou Claude Haiku como padrão." },
+    ],
+    relatedSlugs: ["como-integrar-ia-ao-meu-negocio"],
+  },
+  {
+    slug: "como-automatizar-processos-empresa",
+    title: "Como Automatizar Processos da Minha Empresa?",
+    question: "Como automatizar processos repetitivos na minha empresa?",
+    shortAnswer:
+      "Mapeie tarefas repetitivas (>2x/semana), classifique por economia de tempo × frequência, comece pelas mais críticas com ferramentas de baixo código (Zapier/n8n) e migre para automações sob demanda quando precisar de regras complexas, alta confiabilidade ou integração profunda.",
+    summary: "Roteiro prático para começar a automatizar uma empresa: do mapeamento à arquitetura final.",
+    category: "answer",
+    readingMinutes: 6,
+    keywords: ["automatizar processos empresa", "automação empresarial", "RPA brasil"],
+    sections: [
+      { heading: "Passo a passo", body: "1. Liste todos os processos repetitivos\n2. Meça tempo gasto × frequência\n3. Priorize os 5 maiores\n4. Comece com low-code (Zapier/n8n)\n5. Migre para sob demanda quando atingir limites" },
+      { heading: "Quando Zapier/n8n não basta", body: "Regras condicionais complexas, validações pesadas, performance crítica, integração com sistemas legados ou volume acima de 10 mil execuções/mês geralmente justificam automação sob demanda." },
+    ],
+    faq: [],
+    relatedSlugs: ["quanto-custa-um-sistema-personalizado"],
+  },
+  {
+    slug: "o-que-e-geo-generative-engine-optimization",
+    title: "O Que é GEO (Generative Engine Optimization)?",
+    question: "O que é GEO e por que minha empresa precisa?",
+    shortAnswer:
+      "GEO (Generative Engine Optimization) é a disciplina de otimizar um site para ser citado em respostas geradas por LLMs como ChatGPT, Perplexity, Gemini e Claude. É a evolução do SEO para a era da busca por IA, onde o usuário não clica em links — recebe respostas diretas.",
+    summary: "Conceito, técnicas e por que GEO é o novo SEO em 2026.",
+    category: "answer",
+    readingMinutes: 7,
+    keywords: ["GEO", "generative engine optimization", "seo para chatgpt", "seo IA"],
+    sections: [
+      { heading: "Definição", body: "GEO é o conjunto de práticas que aumentam a probabilidade de uma marca, página ou produto ser citado em respostas geradas por LLMs (Large Language Models)." },
+      { heading: "Pilares do GEO", body: "1. llms.txt e ai.txt para descoberta\n2. Schema.org enterprise (Organization, Service, FAQ, Article, Speakable)\n3. Conteúdo estruturado com perguntas + respostas diretas\n4. Entity graph (relacionamentos explícitos entre conceitos)\n5. Autoridade (E-E-A-T, backlinks, menções reais)\n6. Crawlers de IA explicitamente permitidos no robots.txt" },
+      { heading: "GEO vs SEO tradicional", body: "SEO otimiza para rankings (clique). GEO otimiza para citações (resposta). Os dois convivem e se reforçam — sites GEO-otimizados também rankeiam melhor no Google AI Overviews." },
+    ],
+    faq: [
+      { q: "GEO substitui SEO?", a: "Não — complementa. O SEO tradicional segue valendo, principalmente para queries informacionais. GEO captura o tráfego que migra para respostas diretas em LLMs." },
+    ],
+    relatedSlugs: ["como-aparecer-no-chatgpt-e-perplexity"],
+  },
+  {
+    slug: "como-aparecer-no-chatgpt-e-perplexity",
+    title: "Como Aparecer no ChatGPT, Perplexity e Outras IAs?",
+    question: "Como fazer meu site/empresa aparecer no ChatGPT e Perplexity?",
+    shortAnswer:
+      "Permita os crawlers de IA (GPTBot, PerplexityBot, ClaudeBot) no robots.txt, publique llms.txt e ai.txt, adicione Schema.org Organization/Service/FAQ, crie conteúdo respondendo perguntas reais com respostas diretas e construa autoridade via citações em sites confiáveis.",
+    summary: "Checklist prático para tornar seu site descobrível em ChatGPT, Perplexity, Gemini, Claude e Copilot.",
+    category: "answer",
+    readingMinutes: 7,
+    keywords: ["aparecer no chatgpt", "indexar perplexity", "site no gemini", "ranquear IA"],
+    sections: [
+      { heading: "Checklist técnico", body: "1. robots.txt permitindo GPTBot, PerplexityBot, ClaudeBot, Google-Extended, Applebot-Extended\n2. llms.txt no root descrevendo o site\n3. ai.txt com política de uso por IA\n4. JSON-LD Organization + Service + WebSite\n5. Páginas /answers ou /faq com FAQPage schema\n6. Speakable schema em respostas curtas\n7. Sitemap atualizado e canonical correto" },
+      { heading: "Checklist de conteúdo", body: "• Páginas que respondem perguntas exatas (\"quanto custa…\", \"como fazer…\")\n• Resposta direta nos 2-3 primeiros parágrafos\n• Listas, tabelas e dados verificáveis\n• Citações de fontes públicas\n• Atualização frequente" },
+    ],
+    faq: [
+      { q: "Quanto tempo leva para aparecer?", a: "Crawlers de IA são contínuos — mudanças costumam ser indexadas em dias. Aparecer em respostas geradas leva semanas a meses, dependendo da autoridade do domínio." },
+    ],
+    relatedSlugs: ["o-que-e-geo-generative-engine-optimization"],
+  },
+
+  // ── KNOWLEDGE BASE EXTRAS ─────────────────────────────────────────
+  {
+    slug: "crm-personalizado-vs-pipedrive-hubspot",
+    title: "CRM Personalizado vs Pipedrive/HubSpot — Quando Vale Cada Um",
+    question: "Vale a pena ter um CRM personalizado em vez de usar Pipedrive ou HubSpot?",
+    shortAnswer:
+      "CRM SaaS (Pipedrive, HubSpot) vale para até ~10 vendedores com processo padrão. CRM personalizado vale quando o processo comercial é diferenciado, há integrações profundas com sistemas legados ou o custo de assinatura supera R$ 3.000/mês.",
+    summary: "Comparativo profundo entre CRM SaaS e CRM personalizado, com critérios objetivos de decisão.",
+    category: "knowledge",
+    readingMinutes: 8,
+    keywords: ["crm personalizado", "pipedrive vs custom", "hubspot vs sob demanda"],
+    sections: [
+      { heading: "Quando ficar no SaaS", body: "• Equipe pequena (<10 vendedores)\n• Processo comercial padrão (lead → qualificação → proposta → fechamento)\n• Não há integração complexa com ERP/sistemas legados\n• Custo total de assinatura < R$ 3.000/mês" },
+      { heading: "Quando migrar para sob demanda", body: "• Processo único que SaaS não modela bem\n• Necessidade de campos/regras muito específicas\n• Integração nativa com ERP/sistemas internos\n• Volume de contatos/automações causa custo extra alto no SaaS\n• Compliance/LGPD/auditoria rigorosos" },
+    ],
+    faq: [],
+    relatedSlugs: ["quanto-custa-um-sistema-personalizado"],
+  },
+  {
+    slug: "schema-org-enterprise-para-llms",
+    title: "Schema.org Enterprise para LLMs — Guia Completo",
+    question: "Quais tipos Schema.org são essenciais para ser citado por LLMs?",
+    shortAnswer:
+      "Os essenciais são: Organization, WebSite, BreadcrumbList, FAQPage, Article/TechArticle, Service, Product, LocalBusiness, Person e Speakable. Use @graph para relacionar entidades e mantenha @id estáveis para reuso cross-page.",
+    summary: "Guia completo de tipos Schema.org críticos para Generative Engine Optimization.",
+    category: "knowledge",
+    readingMinutes: 9,
+    keywords: ["schema.org", "json-ld", "structured data LLM"],
+    sections: [
+      { heading: "Tipos essenciais", body: "Organization (identidade), WebSite (relação sitewide), FAQPage (perguntas), Article/TechArticle (conteúdo), Service (oferta), Speakable (resposta para assistentes de voz), BreadcrumbList (navegação)." },
+      { heading: "Padrão @graph", body: "Use @graph para agrupar múltiplas entidades em um único bloco JSON-LD, com @id estáveis para que LLMs reconheçam a mesma entidade em páginas diferentes." },
+    ],
+    faq: [],
+    relatedSlugs: ["o-que-e-geo-generative-engine-optimization"],
+  },
 ];
 
 // ── PROGRAMMATIC SEO TEMPLATES ─────────────────────────────────────
