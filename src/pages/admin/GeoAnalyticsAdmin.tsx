@@ -93,12 +93,26 @@ export default function GeoAnalyticsAdmin() {
   const indexationChecks = [
     { name: "llms.txt publicado", ok: true, url: "/llms.txt", desc: "Guia para LLMs descobrirem conteúdo." },
     { name: "ai.txt publicado", ok: true, url: "/ai.txt", desc: "Política de uso por IAs." },
+    { name: "llm-context.json publicado", ok: true, url: "/llm-context.json", desc: "Dataset estruturado para RAG e citação." },
     { name: "robots.txt libera AI bots", ok: true, url: "/robots.txt", desc: "GPTBot, ClaudeBot, PerplexityBot, etc." },
     { name: "sitemap.xml atualizado", ok: true, url: "/sitemap.xml", desc: "Inclui rotas GEO + locais + artigos." },
     { name: "Knowledge Graph JSON-LD", ok: true, url: "/", desc: "Organization + LocalBusiness sitewide." },
+    { name: "Entity Graph @graph", ok: true, url: "/", desc: "20+ entidades com relacionamentos." },
     { name: `${GEO_ARTICLES.length} artigos GEO publicados`, ok: GEO_ARTICLES.length >= 5, url: "/answers", desc: "Pilares com FAQ + Speakable schema." },
     { name: `${GEO_PROGRAMMATIC.cities.length} páginas locais ativas`, ok: true, url: "/local/belo-horizonte", desc: "GeoCoordinates por cidade." },
   ];
+
+  // 🎯 GEO Health Score (0-100)
+  const healthScore = useMemo(() => {
+    const indexationPts = (indexationChecks.filter((c) => c.ok).length / indexationChecks.length) * 50;
+    const contentPts = Math.min(GEO_ARTICLES.length / 20, 1) * 25;
+    const aiTrafficPts = metrics.aiHits > 0 ? Math.min(metrics.aiHits / 100, 1) * 15 : 0;
+    const botDiversityPts = Math.min(metrics.uniqueBots / 6, 1) * 10;
+    return Math.round(indexationPts + contentPts + aiTrafficPts + botDiversityPts);
+  }, [indexationChecks, metrics]);
+
+  const scoreColor = healthScore >= 85 ? "text-emerald-400" : healthScore >= 65 ? "text-amber-400" : "text-rose-400";
+  const scoreLabel = healthScore >= 85 ? "Enterprise-grade" : healthScore >= 65 ? "Sólido" : "Precisa melhorar";
 
   if (!isAdmin) return null;
 
