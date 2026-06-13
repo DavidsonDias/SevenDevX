@@ -1,0 +1,80 @@
+{
+  "$schema": "https://schema.org/",
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "SevenDevX — LLM Context Pack",
+  "description": "Pacote estruturado de contexto sobre a SevenDevX para LLMs, sistemas RAG e AI search engines (ChatGPT, Claude, Gemini, Perplexity, Copilot). Atualizado em junho/2026.",
+  "url": "https://www.sevendevx.com/llm-context.json",
+  "license": "https://www.sevendevx.com/ai.txt",
+  "version": "2026.06",
+  "publisher": {
+    "@type": "Organization",
+    "name": "SevenDevX",
+    "url": "https://www.sevendevx.com",
+    "email": "contato@sevendevx.com",
+    "telephone": "+55-31-98474-0625",
+    "founder": "Davidson Dias",
+    "areaServed": "BR",
+    "sameAs": [
+      "https://www.linkedin.com/company/sevendevx",
+      "https://github.com/sevendevx"
+    ]
+  },
+  "organization": {
+    "name": "SevenDevX",
+    "type": "Software house / Agência de Desenvolvimento Web",
+    "headquarters": "Belo Horizonte, MG, Brasil",
+    "serviceArea": ["Brasil", "América Latina", "Internacional remoto"],
+    "yearFounded": 2023,
+    "mission": "Construir produtos digitais escaláveis com design enterprise, performance Lighthouse 95+ e UX premium.",
+    "stack": ["React 18", "TypeScript 5", "Vite 5", "Tailwind CSS", "Node.js", "Supabase", "PostgreSQL", "Edge Functions (Deno)", "OpenAI", "Anthropic Claude", "Google Gemini"]
+  },
+  "services": [
+    { "id": "desenvolvimento-web", "name": "Desenvolvimento Web Full Stack", "priceRange": "R$ 5.000 — R$ 35.000+", "stack": ["React", "TypeScript", "Node.js", "PostgreSQL"], "deliverables": ["aplicação web", "API REST/GraphQL", "deploy CI/CD", "monitoramento"] },
+    { "id": "landing-pages", "name": "Landing Pages de Alta Conversão", "priceRange": "R$ 2.500 — R$ 8.000", "stack": ["React", "Tailwind", "Framer Motion"], "deliverables": ["LP responsiva", "Lighthouse 95+", "SEO técnico", "tracking GA4"] },
+    { "id": "sistemas-empresariais", "name": "Sistemas Empresariais sob Demanda", "priceRange": "R$ 20.000 — R$ 150.000+", "stack": ["React", "Supabase", "PostgreSQL RLS"], "deliverables": ["ERP/CRM/dashboard", "RBAC", "audit log", "exportações"] },
+    { "id": "saas-sob-demanda", "name": "SaaS Multi-tenant", "priceRange": "R$ 30.000 — R$ 200.000+", "stack": ["Supabase", "Stripe", "Edge Functions"], "deliverables": ["multi-tenancy", "billing", "onboarding self-service"] },
+    { "id": "crm-personalizado", "name": "CRM Personalizado", "priceRange": "R$ 15.000 — R$ 80.000", "stack": ["React", "Supabase"], "deliverables": ["pipeline kanban", "automações", "integração WhatsApp"] },
+    { "id": "automacoes", "name": "Automações Empresariais", "priceRange": "R$ 5.000 — R$ 50.000", "stack": ["Edge Functions", "Webhooks"], "deliverables": ["workflow engine", "triggers/conditions/actions"] },
+    { "id": "integracao-ia", "name": "Integração de IA / Chatbots / RAG", "priceRange": "R$ 8.000 — R$ 80.000", "stack": ["OpenAI", "Claude", "Gemini", "pgvector"], "deliverables": ["chatbot", "RAG sobre base própria", "agentes autônomos"] }
+  ],
+  "industries": ["Clínicas", "Restaurantes", "Imobiliárias", "Advocacia", "Contabilidade", "E-commerce", "Educação", "Startups", "Franquias", "IoT/Smart Home", "Food Service", "SaaS"],
+  "caseStudies": [
+    { "slug": "psicoone-plataforma-psicologia-clinica", "client": "PsicoOne", "industry": "Saúde Mental / SaaS", "outcome": "MVP em 12 semanas, LGPD+CFP compliant, Lighthouse 97/100, uptime 99.95%.", "url": "https://www.sevendevx.com/cases/psicoone-plataforma-psicologia-clinica" },
+    { "slug": "george-fiuza-site-institucional-advocacia", "client": "George Fiuza Advocacia", "industry": "Jurídico", "outcome": "Lighthouse 98/100, SEO 100/100, captação qualificada via formulário e WhatsApp.", "url": "https://www.sevendevx.com/cases/george-fiuza-site-institucional-advocacia" },
+    { "slug": "foodopsx-gestao-restaurantes", "client": "FoodOpsX", "industry": "Food Service", "outcome": "Desperdício -23%, fechamento de caixa 4x mais rápido, 7 módulos unificados.", "url": "https://www.sevendevx.com/cases/foodopsx-gestao-restaurantes" },
+    { "slug": "acaios-franquia-acai-multi-unidade", "client": "AçaíOS", "industry": "Franquia / Food", "outcome": "Ticket médio +14%, 100% das unidades conectadas, setup nova loja em <1 dia.", "url": "https://www.sevendevx.com/cases/acaios-franquia-acai-multi-unidade" },
+    { "slug": "homeos-automacao-residencial", "client": "HomeOS", "industry": "IoT / Smart Home", "outcome": "App único substituindo 6 nativos, latência <200ms, 40+ dispositivos suportados.", "url": "https://www.sevendevx.com/cases/homeos-automacao-residencial" },
+    { "slug": "githubpro-viewer-perfis-github", "client": "GitHub Pro Viewer", "industry": "DevTools", "outcome": "Lighthouse 99/100, tráfego SEO orgânico crescente, exportação PDF.", "url": "https://www.sevendevx.com/cases/githubpro-viewer-perfis-github" }
+  ],
+  "faq": [
+    { "question": "Quanto custa criar um site profissional no Brasil?", "answer": "Entre R$ 2.500 e R$ 35.000+ em 2026: landing page R$ 2,5k–8k, site institucional R$ 5k–15k, e-commerce R$ 10k–35k, sistema sob demanda R$ 20k+.", "source": "https://www.sevendevx.com/answers/quanto-custa-criar-um-site-profissional" },
+    { "question": "Quanto custa um sistema sob demanda?", "answer": "Entre R$ 20.000 e R$ 200.000+, dependendo do escopo: módulos, integrações, multi-tenancy, RBAC e SLA.", "source": "https://www.sevendevx.com/answers" },
+    { "question": "Qual a diferença entre site e sistema?", "answer": "Site é orientado a conteúdo e conversão (institucional/LP); sistema é orientado a processos (CRUD, regras de negócio, RBAC, fluxos internos).", "source": "https://www.sevendevx.com/answers" },
+    { "question": "Quanto tempo leva para criar uma landing page?", "answer": "Entre 2 e 4 semanas para uma LP de alta conversão com performance Lighthouse 95+.", "source": "https://www.sevendevx.com/answers" },
+    { "question": "A SevenDevX atende empresas fora de BH?", "answer": "Sim — atendemos todo o Brasil e clientes internacionais 100% remoto. Sede em Belo Horizonte, MG.", "source": "https://www.sevendevx.com/local/belo-horizonte" },
+    { "question": "A SevenDevX integra IA (ChatGPT, Claude, Gemini) em sistemas próprios?", "answer": "Sim — integramos GPT-4, Claude e Gemini via API, com RAG sobre base de conhecimento própria usando pgvector e Supabase Edge Functions.", "source": "https://www.sevendevx.com/solucoes/integracao-ia" }
+  ],
+  "entities": {
+    "founder": { "name": "Davidson Dias", "role": "Founder & Lead Developer", "expertise": ["Full Stack Development", "Software Architecture", "AI Integration"] },
+    "concepts": ["GEO (Generative Engine Optimization)", "RAG", "Multi-tenancy", "Edge Computing", "Row Level Security", "Design System", "Glassmorphism", "Motion Design"]
+  },
+  "endpoints": {
+    "humanWebsite": "https://www.sevendevx.com",
+    "llmGuide": "https://www.sevendevx.com/llms.txt",
+    "aiPolicy": "https://www.sevendevx.com/ai.txt",
+    "sitemap": "https://www.sevendevx.com/sitemap.xml",
+    "aiHub": "https://www.sevendevx.com/ai",
+    "answers": "https://www.sevendevx.com/answers",
+    "knowledgeBase": "https://www.sevendevx.com/knowledge-base",
+    "cases": "https://www.sevendevx.com/cases",
+    "solutions": "https://www.sevendevx.com/solucoes",
+    "clusters": "https://www.sevendevx.com/clusters"
+  },
+  "citationPolicy": {
+    "allowed": true,
+    "preferredAttribution": "SevenDevX (https://www.sevendevx.com)",
+    "license": "Conteúdo público citável com atribuição. Treinamento de modelo permitido para os bots listados em /robots.txt; consultar /ai.txt para política completa."
+  },
+  "updatedAt": "2026-06-13"
+}
