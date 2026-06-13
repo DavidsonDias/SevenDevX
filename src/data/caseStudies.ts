@@ -167,6 +167,102 @@ export const CASE_STUDIES: CaseStudy[] = [
     imageHint: "GithubProViewer",
     publishedAt: "2025-08-12",
   },
+  {
+    slug: "cleansweep-gestao-servicos-limpeza",
+    title: "CleanSweep — plataforma de gestão para empresas de limpeza",
+    client: "CleanSweep",
+    industry: "Facilities / Serviços",
+    summary:
+      "Sistema para empresas de limpeza profissional gerenciarem clientes, contratos, equipes, escalas, checklists e faturamento recorrente.",
+    problem:
+      "Operações de limpeza dependem de planilhas e WhatsApp para escala de equipe, controle de presença e checklists por cliente. Resultado: retrabalho, falhas de SLA e dificuldade de cobrar contratos recorrentes.",
+    solution:
+      "Plataforma web + PWA mobile para supervisores em campo. Escalas drag-and-drop, check-in com geolocalização, checklists por contrato com fotos e geração automática de faturas mensais com integração ASAAS.",
+    outcome:
+      "SLA mensurável por contrato, redução de 31% nas reclamações de cliente e faturamento recorrente automatizado.",
+    metrics: [
+      { label: "Reclamações -", value: "31%" },
+      { label: "Faturamento auto", value: "100%" },
+      { label: "Supervisores em campo", value: "PWA" },
+    ],
+    technologies: ["React", "TypeScript", "Supabase", "PWA", "Geolocation API"],
+    services: ["Sistema Empresarial", "PWA", "Integração de Pagamentos"],
+    duration: "14 semanas",
+    imageHint: "CleanSweep",
+    publishedAt: "2026-03-08",
+  },
+  {
+    slug: "logix-rastreamento-frota-logistica",
+    title: "Logix — rastreamento e despacho para transportadoras",
+    client: "Logix Transportes",
+    industry: "Logística",
+    summary:
+      "Painel de despacho com rastreamento em tempo real, otimização de rotas, controle de combustível e portal do embarcador.",
+    problem:
+      "Transportadora regional perdia entregas por falta de visibilidade de motoristas, não tinha dados consolidados de consumo e o cliente embarcador cobrava transparência que não existia.",
+    solution:
+      "Plataforma com mapa Leaflet em tempo real via WebSocket, app PWA para motoristas com check-in/coleta/entrega, motor de otimização de rotas e portal do embarcador com tracking link público.",
+    outcome:
+      "Redução de 18% no consumo de combustível por rota otimizada e onboarding de 3 novos embarcadores graças ao portal de rastreio.",
+    metrics: [
+      { label: "Combustível -", value: "18%" },
+      { label: "Novos embarcadores", value: "+3" },
+      { label: "Tracking público", value: "Sim" },
+    ],
+    technologies: ["React", "TypeScript", "Supabase", "WebSockets", "Leaflet", "PWA"],
+    services: ["Sistema Empresarial", "Real-time", "Mobile PWA"],
+    duration: "18 semanas",
+    imageHint: "Logix",
+    publishedAt: "2026-04-12",
+  },
+  {
+    slug: "edutrack-gestao-escola-particular",
+    title: "EduTrack — gestão acadêmica para escolas particulares",
+    client: "EduTrack",
+    industry: "Educação",
+    summary:
+      "Sistema acadêmico completo com matrículas, boletim digital, comunicação com responsáveis, financeiro e portal do aluno.",
+    problem:
+      "Escola de médio porte usava sistema legado em desktop, sem app para pais, sem boletim digital e com cobrança manual gerando inadimplência.",
+    solution:
+      "Plataforma SaaS com matrícula online, boletim digital com pareceres, app do responsável (PWA), mural de avisos, financeiro com boleto/PIX e relatórios pedagógicos.",
+    outcome:
+      "Inadimplência reduzida em 27%, comunicação com pais centralizada e onboarding de matrículas 5x mais rápido.",
+    metrics: [
+      { label: "Inadimplência -", value: "27%" },
+      { label: "Matrícula", value: "5x mais rápida" },
+      { label: "Responsáveis no app", value: "92%" },
+    ],
+    technologies: ["React", "TypeScript", "Supabase", "PWA", "PIX"],
+    services: ["SaaS", "PWA", "Integração de Pagamentos"],
+    duration: "16 semanas",
+    imageHint: "EduTrack",
+    publishedAt: "2026-05-20",
+  },
+  {
+    slug: "medflow-prontuario-clinica-multiprofissional",
+    title: "MedFlow — prontuário eletrônico para clínica multiprofissional",
+    client: "MedFlow",
+    industry: "Saúde",
+    summary:
+      "Prontuário eletrônico multi-especialidade com agenda compartilhada, prescrição digital, teleconsulta e faturamento de convênios.",
+    problem:
+      "Clínica com 12 profissionais de especialidades distintas (médicos, fisio, nutri) sem prontuário unificado, agenda fragmentada e faturamento de convênio manual.",
+    solution:
+      "Prontuário multi-profissional com templates por especialidade, agenda compartilhada com bloqueios, teleconsulta via WebRTC, prescrição digital com Memed e TISS para convênios.",
+    outcome:
+      "Faturamento de convênio automatizado, redução de 40% no tempo administrativo e teleconsulta adotada por 60% dos pacientes.",
+    metrics: [
+      { label: "Tempo admin -", value: "40%" },
+      { label: "Teleconsulta", value: "60% pacientes" },
+      { label: "TISS", value: "Automatizado" },
+    ],
+    technologies: ["React", "TypeScript", "Supabase", "WebRTC", "TISS", "Memed API"],
+    services: ["SaaS", "Integração APIs", "Real-time"],
+    duration: "20 semanas",
+    imageHint: "MedFlow",
+    publishedAt: "2026-06-01",
+  },
 ];
 
 export function getCaseStudyBySlug(slug: string) {
