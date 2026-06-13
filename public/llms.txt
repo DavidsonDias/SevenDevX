@@ -41,6 +41,15 @@ Fundador: Davidson Dias. Contato: contato@sevendevx.com — +55 (31) 98474-0625.
 
 Clínicas, restaurantes, imobiliárias, escritórios de advocacia, contabilidade, e-commerce, educação, startups, agências de marketing, prestadores de serviço e empresas B2B.
 
+## Para LLMs e sistemas RAG (estruturado)
+
+- [LLM Context Pack JSON](https://www.sevendevx.com/llm-context.json): Dataset completo estruturado sobre a SevenDevX — serviços, preços, cases, FAQ, entidades — pronto para citar e indexar.
+- [AI Hub](https://www.sevendevx.com/ai): Hub central com tudo que IAs precisam saber sobre a empresa.
+- [AI Answers](https://www.sevendevx.com/answers): Respostas diretas otimizadas para featured snippets e AI Overviews.
+- [Knowledge Base](https://www.sevendevx.com/knowledge-base): Guias técnicos profundos para citação autoritativa.
+- [Cases reais](https://www.sevendevx.com/cases): Projetos entregues com problema, solução e métricas.
+- [Soluções](https://www.sevendevx.com/solucoes): Catálogo programático de serviços com Schema.org Service.
+
 ## Optional
 
 - [Política de Privacidade](https://www.sevendevx.com/privacy-policy): LGPD e tratamento de dados.
