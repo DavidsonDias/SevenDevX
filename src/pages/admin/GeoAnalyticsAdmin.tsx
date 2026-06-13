@@ -167,6 +167,51 @@ export default function GeoAnalyticsAdmin() {
           ))}
         </div>
 
+        {/* 🎯 GEO Health Score Hero */}
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <GlassCard className="p-6 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 via-transparent to-cyan-500/5 pointer-events-none" />
+            <div className="relative flex flex-col md:flex-row md:items-center gap-6">
+              <div className="flex items-center gap-5">
+                <div className="relative w-24 h-24 shrink-0">
+                  <svg className="w-24 h-24 -rotate-90" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="42" stroke="currentColor" strokeWidth="6" fill="none" className="text-white/5" />
+                    <circle
+                      cx="50" cy="50" r="42" stroke="currentColor" strokeWidth="6" fill="none"
+                      strokeLinecap="round" strokeDasharray={`${(healthScore / 100) * 264} 264`}
+                      className={scoreColor}
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className={`text-2xl font-bold font-orbitron ${scoreColor}`}>{healthScore}</span>
+                    <span className="text-[8px] uppercase tracking-wider text-white/40">score</span>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-white/40">GEO Health Score</p>
+                  <h2 className={`text-xl font-bold font-orbitron ${scoreColor}`}>{scoreLabel}</h2>
+                  <p className="text-xs text-white/60 mt-1 max-w-md">
+                    Score composto por indexação técnica (50pts), volume de conteúdo (25pts), tráfego de bots de IA (15pts) e diversidade de bots (10pts).
+                  </p>
+                </div>
+              </div>
+              <div className="flex-1 grid grid-cols-2 sm:grid-cols-4 gap-2 md:border-l md:border-white/10 md:pl-6">
+                {[
+                  { label: "Indexação", value: `${indexationChecks.filter((c) => c.ok).length}/${indexationChecks.length}`, color: "text-emerald-400" },
+                  { label: "Artigos GEO", value: GEO_ARTICLES.length, color: "text-cyan-400" },
+                  { label: "AI Hits", value: metrics.aiHits, color: "text-violet-400" },
+                  { label: "Bots únicos", value: metrics.uniqueBots, color: "text-amber-400" },
+                ].map((s) => (
+                  <div key={s.label} className="rounded-lg bg-white/[0.02] border border-white/5 p-3">
+                    <p className="text-[9px] uppercase tracking-wider text-white/40">{s.label}</p>
+                    <p className={`text-lg font-bold font-mono mt-0.5 ${s.color}`}>{s.value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </GlassCard>
+        </motion.div>
+
         <div className="grid lg:grid-cols-2 gap-6">
           {/* AI Bots */}
           <GlassCard className="p-5">
