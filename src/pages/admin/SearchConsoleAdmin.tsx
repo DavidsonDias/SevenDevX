@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Search, TrendingUp, MousePointerClick, Eye, Loader2, RefreshCcw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import AdminPageShell from "@/components/admin/AdminPageShell";
+import { AdminPageShell } from "@/components/admin/AdminPageShell";
 import { Button } from "@/components/ui/button";
 
 type Row = { keys: string[]; clicks: number; impressions: number; ctr: number; position: number };
@@ -50,7 +50,7 @@ export default function SearchConsoleAdmin() {
   const avgPos = rows.length ? rows.reduce((s, r) => s + r.position, 0) / rows.length : 0;
 
   return (
-    <AdminPageShell title="Search Console" description="Performance orgânica no Google — queries, páginas, países e devices.">
+    <AdminPageShell title="Search Console" subtitle="Performance orgânica no Google — queries, páginas, países e devices.">
       <div className="flex flex-wrap gap-3 items-center mb-6">
         <select value={site} onChange={(e) => setSite(e.target.value)} className="px-3 py-2 rounded-lg border border-border bg-card text-sm">
           {sites.length === 0 && <option value={site}>{site}</option>}
