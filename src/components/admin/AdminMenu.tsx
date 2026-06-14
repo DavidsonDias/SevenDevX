@@ -43,6 +43,7 @@ const NAV: { label: string; to: string; icon: any; group: string }[] = [
   { group: "Super Admin", label: "Logo Library", to: "/admin/logo-library", icon: Palette },
   { group: "Super Admin", label: "GEO Analytics", to: "/admin/geo", icon: SparklesIcon },
   { group: "Super Admin", label: "Citations", to: "/admin/citations", icon: Megaphone },
+  { group: "Super Admin", label: "Search Console", to: "/admin/search-console", icon: SparklesIcon },
 ];
 
 export default function AdminMenu() {

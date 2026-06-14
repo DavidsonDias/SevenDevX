@@ -64,6 +64,7 @@ const CaseStudiesIndex = lazy(() => import("@/pages/geo/CaseStudies").then(m => 
 const CaseStudyPage = lazy(() => import("@/pages/geo/CaseStudies").then(m => ({ default: m.CaseStudyPage })));
 const ContentClusters = lazy(() => import("@/pages/geo/ContentClusters"));
 const CitationsAdmin = lazy(() => import("@/pages/admin/CitationsAdmin"));
+const SearchConsoleAdmin = lazy(() => import("@/pages/admin/SearchConsoleAdmin"));
 
 const pageTransition = {
   initial: { opacity: 0, y: 12, scale: 0.99 },
@@ -219,6 +220,10 @@ function AnimatedRoutes() {
             <Route path="/admin/citations" element={
               <ProtectedRoute requiredRole="admin"><CitationsAdmin /></ProtectedRoute>
             } />
+            <Route path="/admin/search-console" element={
+              <ProtectedRoute requiredRole="admin"><SearchConsoleAdmin /></ProtectedRoute>
+            } />
+
 
             <Route path="*" element={<NotFound />} />
           </Routes>
