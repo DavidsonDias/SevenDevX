@@ -11,16 +11,20 @@ const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_ROLE = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
-// Modelos disponíveis no Lovable AI Gateway
-const MODELS: { id: string; label: string }[] = [
+// Modelos padrão (sobrescritos pelas settings se presentes)
+const DEFAULT_MODELS: { id: string; label: string }[] = [
   { id: 'google/gemini-2.5-flash', label: 'Gemini' },
-  { id: 'google/gemini-2.5-pro', label: 'Gemini Pro' },
   { id: 'openai/gpt-5-mini', label: 'ChatGPT' },
-  { id: 'openai/gpt-5', label: 'ChatGPT (GPT-5)' },
 ];
 
-// Perguntas que simulam um usuário real procurando fornecedor de software
-const QUERIES = [
+function modelLabel(id: string): string {
+  if (id.startsWith('google/gemini')) return id.includes('pro') ? 'Gemini Pro' : 'Gemini';
+  if (id.startsWith('openai/gpt')) return id.includes('5-mini') ? 'ChatGPT' : 'ChatGPT (GPT-5)';
+  return id;
+}
+
+// Perguntas padrão (sobrescritas pelas settings se presentes)
+const DEFAULT_QUERIES = [
   'Quais são as melhores empresas brasileiras de desenvolvimento de software sob medida em 2026?',
   'Quero contratar uma agência para criar uma landing page de alta conversão. Quem você recomenda no Brasil?',
   'Preciso de um sistema web personalizado (ERP/CRM). Quais empresas brasileiras posso considerar?',
