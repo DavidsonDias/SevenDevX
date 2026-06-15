@@ -7,13 +7,14 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Megaphone, Plus, ExternalLink, RefreshCw, ShieldCheck,
-  TrendingUp, Bot, X, Check,
+  TrendingUp, Bot, X, Check, Settings2,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthContext as useAuth } from "@/contexts/AuthContext";
 import AdminMenu from "@/components/admin/AdminMenu";
 import GlassCard from "@/components/GlassCard";
 import SEOHead from "@/components/SEOHead";
+import CitationMonitorSettings from "@/components/admin/CitationMonitorSettings";
 import { toast } from "sonner";
 
 interface Citation {
@@ -44,6 +45,7 @@ export default function CitationsAdmin() {
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [form, setForm] = useState({
     source: "ChatGPT",
     url: "",
@@ -135,12 +137,21 @@ export default function CitationsAdmin() {
                   const { data, error } = await supabase.functions.invoke("citation-monitor", { body: { onlyMentions: false } });
                   toast.dismiss(t);
                   if (error) { toast.error("Falhou: " + error.message); return; }
+                  if ((data as any)?.paused) { toast.warning("Monitor está pausado. Reative em Configurações."); return; }
                   toast.success(`Monitor: ${data?.summary?.mentions ?? 0}/${data?.summary?.total ?? 0} menções`);
                   load();
                 }}
                 className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-white/10 hover:bg-white/5 text-sm"
               >
                 <Bot className="w-4 h-4" /> Rodar monitor
+              </button>
+              <button
+                onClick={() => setShowSettings((v) => !v)}
+                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border text-sm ${
+                  showSettings ? "border-primary/40 bg-primary/10 text-primary" : "border-white/10 hover:bg-white/5"
+                }`}
+              >
+                <Settings2 className="w-4 h-4" /> Configurar
               </button>
               <button
                 onClick={() => setShowForm((v) => !v)}
@@ -153,6 +164,8 @@ export default function CitationsAdmin() {
         </header>
 
         <main className="container mx-auto px-4 py-6 space-y-6">
+          {showSettings && <CitationMonitorSettings />}
+
           {/* KPIs */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <GlassCard className="p-4">

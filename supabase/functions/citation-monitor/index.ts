@@ -11,16 +11,20 @@ const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_ROLE = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
-// Modelos disponíveis no Lovable AI Gateway
-const MODELS: { id: string; label: string }[] = [
+// Modelos padrão (sobrescritos pelas settings se presentes)
+const DEFAULT_MODELS: { id: string; label: string }[] = [
   { id: 'google/gemini-2.5-flash', label: 'Gemini' },
-  { id: 'google/gemini-2.5-pro', label: 'Gemini Pro' },
   { id: 'openai/gpt-5-mini', label: 'ChatGPT' },
-  { id: 'openai/gpt-5', label: 'ChatGPT (GPT-5)' },
 ];
 
-// Perguntas que simulam um usuário real procurando fornecedor de software
-const QUERIES = [
+function modelLabel(id: string): string {
+  if (id.startsWith('google/gemini')) return id.includes('pro') ? 'Gemini Pro' : 'Gemini';
+  if (id.startsWith('openai/gpt')) return id.includes('5-mini') ? 'ChatGPT' : 'ChatGPT (GPT-5)';
+  return id;
+}
+
+// Perguntas padrão (sobrescritas pelas settings se presentes)
+const DEFAULT_QUERIES = [
   'Quais são as melhores empresas brasileiras de desenvolvimento de software sob medida em 2026?',
   'Quero contratar uma agência para criar uma landing page de alta conversão. Quem você recomenda no Brasil?',
   'Preciso de um sistema web personalizado (ERP/CRM). Quais empresas brasileiras posso considerar?',
@@ -80,9 +84,31 @@ Deno.serve(async (req) => {
 
   let body: any = {};
   try { body = await req.json(); } catch {}
-  const onlyMentions: boolean = body?.onlyMentions ?? false;
+  const force: boolean = body?.force === true; // permite rodar mesmo se pausado
+
+  // Carrega settings (pause/queries/models)
+  const { data: settings } = await supabase
+    .from('citation_monitor_settings')
+    .select('*')
+    .eq('singleton', true)
+    .maybeSingle();
+
+  if (settings && settings.enabled === false && !force) {
+    return new Response(JSON.stringify({
+      paused: true,
+      message: 'Monitor está pausado. Reative em /admin/citations ou rode com force=true.',
+    }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+  }
+
+  const onlyMentions: boolean = body?.onlyMentions ?? settings?.only_save_mentions ?? false;
   const customQueries: string[] | undefined = Array.isArray(body?.queries) ? body.queries : undefined;
-  const queries = customQueries?.length ? customQueries : QUERIES;
+  const settingsQueries: string[] | undefined = Array.isArray(settings?.queries) ? (settings!.queries as string[]) : undefined;
+  const queries = customQueries?.length ? customQueries : (settingsQueries?.length ? settingsQueries : DEFAULT_QUERIES);
+
+  const settingsModels: string[] | undefined = Array.isArray(settings?.models) ? (settings!.models as string[]) : undefined;
+  const MODELS = (settingsModels?.length
+    ? settingsModels.map((id) => ({ id, label: modelLabel(id) }))
+    : DEFAULT_MODELS);
 
   const results: any[] = [];
   let mentions = 0;
@@ -118,6 +144,16 @@ Deno.serve(async (req) => {
       }
     }
   }
+
+  // Grava timestamp da última execução
+  await supabase
+    .from('citation_monitor_settings')
+    .update({
+      last_run_at: new Date().toISOString(),
+      last_run_mentions: mentions,
+      last_run_total: total,
+    })
+    .eq('singleton', true);
 
   return new Response(JSON.stringify({
     summary: { total, mentions, mention_rate: total ? +(mentions / total).toFixed(2) : 0 },

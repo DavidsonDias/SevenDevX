@@ -13,7 +13,7 @@ type Row = { keys: string[]; clicks: number; impressions: number; ctr: number; p
 type Dim = "query" | "page" | "country" | "device";
 
 export default function SearchConsoleAdmin() {
-  const [site, setSite] = useState("https://www.sevendevx.com/");
+  const [site, setSite] = useState<string>("");
   const [days, setDays] = useState(28);
   const [dim, setDim] = useState<Dim>("query");
   const [rows, setRows] = useState<Row[]>([]);
@@ -24,18 +24,24 @@ export default function SearchConsoleAdmin() {
   async function loadSites() {
     const { data, error } = await supabase.functions.invoke("gsc-insights", { body: { action: "sites" } });
     if (error) return setError(error.message);
-    const entries = (data?.siteEntry ?? []).map((s: any) => s.siteUrl);
+    if (data?.ok === false) return setError(data?.error || "Falha ao listar sites no Search Console");
+    const entries: string[] = (data?.siteEntry ?? []).map((s: any) => s.siteUrl);
     setSites(entries);
+    if (entries.length && !site) setSite(entries[0]);
   }
 
   async function load() {
+    if (!site) return;
     setLoading(true); setError(null);
     const { data, error } = await supabase.functions.invoke("gsc-insights", {
       body: { action: "analytics", site, days, dimension: dim },
     });
     setLoading(false);
     if (error) return setError(error.message);
-    if (data?.error) return setError(typeof data.error === "string" ? data.error : JSON.stringify(data.error));
+    if (data?.ok === false) {
+      setRows([]);
+      return setError(data?.error || `GSC retornou ${data?.gsc_status}`);
+    }
     setRows(data?.rows ?? []);
   }
 
