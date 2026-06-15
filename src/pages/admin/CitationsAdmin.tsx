@@ -7,13 +7,14 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Megaphone, Plus, ExternalLink, RefreshCw, ShieldCheck,
-  TrendingUp, Bot, X, Check,
+  TrendingUp, Bot, X, Check, Settings2,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthContext as useAuth } from "@/contexts/AuthContext";
 import AdminMenu from "@/components/admin/AdminMenu";
 import GlassCard from "@/components/GlassCard";
 import SEOHead from "@/components/SEOHead";
+import CitationMonitorSettings from "@/components/admin/CitationMonitorSettings";
 import { toast } from "sonner";
 
 interface Citation {
