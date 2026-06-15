@@ -25,23 +25,26 @@ Deno.serve(async (req) => {
     'Content-Type': 'application/json',
   };
 
+  const json = (data: unknown, status = 200) =>
+    new Response(JSON.stringify(data), {
+      status,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+
   try {
     const body = await req.json().catch(() => ({}));
     const action = body.action ?? 'overview';
-    const site = body.site ?? 'https://www.sevendevx.com/';
+    const site = body.site ?? 'sc-domain:sevendevx.com';
     const days = Number(body.days ?? 28);
     const dim = body.dimension ?? 'query'; // query | page | country | device
 
     if (action === 'sites') {
       const r = await fetch(`${GATEWAY}/webmasters/v3/sites`, { headers });
-      const data = await r.json();
-      return new Response(JSON.stringify(data), {
-        status: r.status,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      const data = await r.json().catch(() => ({}));
+      // Sempre 200 para o cliente; status real vai no body para o painel exibir.
+      return json({ ok: r.ok, gsc_status: r.status, ...data });
     }
 
-    // Overview / search analytics
     const end = new Date();
     const start = new Date();
     start.setDate(end.getDate() - days);
@@ -56,16 +59,18 @@ Deno.serve(async (req) => {
     };
 
     const r = await fetch(url, { method: 'POST', headers, body: JSON.stringify(payload) });
-    const data = await r.json();
+    const data = await r.json().catch(() => ({}));
 
-    return new Response(JSON.stringify({ site, days, dimension: dim, ...data }), {
-      status: r.status,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    return json({
+      ok: r.ok,
+      gsc_status: r.status,
+      site,
+      days,
+      dimension: dim,
+      ...data,
+      ...(r.ok ? {} : { error: (data as any)?.error?.message || `GSC retornou ${r.status}` }),
     });
   } catch (err) {
-    return new Response(
-      JSON.stringify({ error: String((err as Error).message ?? err) }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
-    );
+    return json({ ok: false, error: String((err as Error).message ?? err) }, 200);
   }
 });

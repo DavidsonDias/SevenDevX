@@ -569,6 +569,48 @@ export type Database = {
           },
         ]
       }
+      citation_monitor_settings: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          id: string
+          last_run_at: string | null
+          last_run_mentions: number | null
+          last_run_total: number | null
+          models: Json
+          only_save_mentions: boolean
+          queries: Json
+          singleton: boolean
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          last_run_at?: string | null
+          last_run_mentions?: number | null
+          last_run_total?: number | null
+          models?: Json
+          only_save_mentions?: boolean
+          queries?: Json
+          singleton?: boolean
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          last_run_at?: string | null
+          last_run_mentions?: number | null
+          last_run_total?: number | null
+          models?: Json
+          only_save_mentions?: boolean
+          queries?: Json
+          singleton?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       client_interactions: {
         Row: {
           client_id: string
