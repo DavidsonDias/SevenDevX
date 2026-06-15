@@ -130,6 +130,19 @@ export default function CitationsAdmin() {
                 <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
               </button>
               <button
+                onClick={async () => {
+                  const t = toast.loading("Consultando IAs sobre a SevenDevX...");
+                  const { data, error } = await supabase.functions.invoke("citation-monitor", { body: { onlyMentions: false } });
+                  toast.dismiss(t);
+                  if (error) { toast.error("Falhou: " + error.message); return; }
+                  toast.success(`Monitor: ${data?.summary?.mentions ?? 0}/${data?.summary?.total ?? 0} menções`);
+                  load();
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-white/10 hover:bg-white/5 text-sm"
+              >
+                <Bot className="w-4 h-4" /> Rodar monitor
+              </button>
+              <button
                 onClick={() => setShowForm((v) => !v)}
                 className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-sm"
               >
