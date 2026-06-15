@@ -45,6 +45,7 @@ export default function CitationsAdmin() {
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [form, setForm] = useState({
     source: "ChatGPT",
     url: "",
