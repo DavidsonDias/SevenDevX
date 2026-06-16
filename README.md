@@ -4,26 +4,46 @@
 
 # ⚡ SevenDevX — Plataforma Web + SevenOS
 
-### _"Transformamos ideias em soluções digitais de alto impacto."_
+### _Transformamos ideias em soluções digitais de alto impacto._
 
-**Site institucional premium + ERP/CRM interno (SevenOS) construído em uma única stack React + Supabase Edge.**
+**Site institucional premium + ERP/CRM interno (SevenOS) construídos sobre uma arquitetura Full Stack moderna com React, TypeScript, Supabase Edge e Inteligência Artificial.**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
-[![Deploy on Vercel](https://img.shields.io/badge/Deploy-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com)
+[![Website](https://img.shields.io/badge/Website-sevendevx.com-blue?style=for-the-badge)](https://sevendevx.com)
+[![License](https://img.shields.io/github/license/DavidsonDias/SevenDevX?style=for-the-badge)](https://github.com/DavidsonDias/SevenDevX/blob/main/LICENSE)
+[![Deploy](https://img.shields.io/badge/Deploy-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com)
 [![PWA](https://img.shields.io/badge/PWA-Installable-5A0FC8?style=for-the-badge&logo=pwa)](https://sevendevx.com)
-[![GEO Ready](https://img.shields.io/badge/GEO-Ready_for_ChatGPT_%7C_Gemini_%7C_Claude-10A37F?style=for-the-badge)]()
+[![GEO](https://img.shields.io/badge/GEO-ChatGPT%20%7C%20Gemini%20%7C%20Claude-10A37F?style=for-the-badge)]()
+[![SEO](https://img.shields.io/badge/SEO-Optimized-success?style=for-the-badge)]
+[![Core Web Vitals](https://img.shields.io/badge/Core_Web_Vitals-Passing-success?style=for-the-badge)]
 
-![React](https://img.shields.io/badge/React-18.3-20232A?logo=react&logoColor=61DAFB)
-![TypeScript](https://img.shields.io/badge/TypeScript-5-007ACC?logo=typescript&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-5-646CFF?logo=vite&logoColor=white)
-![Tailwind](https://img.shields.io/badge/Tailwind-3-38B2AC?logo=tailwindcss&logoColor=white)
-![Framer Motion](https://img.shields.io/badge/Framer_Motion-12-0055FF?logo=framer&logoColor=white)
-![Supabase](https://img.shields.io/badge/Supabase-Edge_Runtime-3ECF8E?logo=supabase&logoColor=white)
-![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-Radix-000?logo=radixui)
-![TanStack Query](https://img.shields.io/badge/TanStack_Query-v5-FF4154?logo=reactquery&logoColor=white)
+<br>
 
-🌐 **Produção:** [sevendevx.com](https://sevendevx.com) · [sevendevx.lovable.app](https://sevendevx.lovable.app)
-🏢 **HQ:** Belo Horizonte · MG · Brasil
+![React](https://img.shields.io/badge/React-18.3-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-5+-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-5+-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-3+-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Framer Motion](https://img.shields.io/badge/Framer_Motion-12+-0055FF?style=for-the-badge&logo=framer&logoColor=white)
+![GSAP](https://img.shields.io/badge/GSAP-3.13-88CE02?style=for-the-badge&logo=greensock&logoColor=black)
+![Supabase](https://img.shields.io/badge/Supabase-Backend-181818?style=for-the-badge&logo=supabase&logoColor=3ECF8E)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-336791?style=for-the-badge&logo=postgresql&logoColor=white)
+![Deno](https://img.shields.io/badge/Deno-Edge_Functions-000000?style=for-the-badge&logo=deno&logoColor=white)
+![TanStack Query](https://img.shields.io/badge/TanStack_Query-v5-FF4154?style=for-the-badge&logo=reactquery&logoColor=white)
+
+<br>
+
+![OpenAI](https://img.shields.io/badge/OpenAI-GPT--5-412991?style=for-the-badge&logo=openai&logoColor=white)
+![Gemini](https://img.shields.io/badge/Gemini-2.5-4285F4?style=for-the-badge&logo=google-gemini&logoColor=white)
+![PWA](https://img.shields.io/badge/Offline_First-Enabled-5A0FC8?style=for-the-badge)
+![RLS](https://img.shields.io/badge/Security-RLS-success?style=for-the-badge)
+![JWT](https://img.shields.io/badge/Auth-JWT-black?style=for-the-badge)
+![Edge Runtime](https://img.shields.io/badge/Edge_Runtime-Global-black?style=for-the-badge)
+
+<br>
+
+🌐 **Produção:** https://sevendevx.com  
+🚀 **Deploy:** Vercel Edge Network  
+🏢 **HQ:** Belo Horizonte • MG • Brasil  
+⚡ **Arquitetura:** React + TypeScript + Supabase + Edge Functions + AI
 
 </div>
 
