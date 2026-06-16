@@ -33,7 +33,7 @@
 
 1. [Sobre o Projeto](#-sobre-o-projeto)
 2. [Dois Produtos, Uma Stack](#-dois-produtos-uma-stack)
-3. [Stack Técnica Completa](#-stack-técnica-completa)
+3. [Stack Técnica Completa](#-stack-tecnológica-completa)
 4. [Arquitetura Geral](#️-arquitetura-geral)
 5. [SevenDevX — Site Público](#-sevendevx--site-público)
 6. [SevenOS — ERP/CRM Interno](#-sevenos--ercrm-interno)
@@ -54,14 +54,60 @@
 
 ## 📖 Sobre o Projeto
 
-A **SevenDevX** é um studio brasileiro de desenvolvimento de software com sede em **Belo Horizonte (MG)**, especializado em:
+A **SevenDevX** é uma empresa brasileira de tecnologia e desenvolvimento de software, sediada em **Belo Horizonte (MG)**, especializada na criação de soluções digitais modernas, escaláveis e orientadas a resultados.
 
-- 🎯 **Sites de alta conversão** (LPs, institucionais, e-commerce headless)
-- 🧠 **Sistemas web sob medida** (ERP/CRM, plataformas SaaS)
-- 🤖 **Integração com IA** (chatbots, automações, RAG, GEO)
-- 📱 **PWAs enterprise** (offline-first, instaláveis, push notifications)
+### 🚀 Nossas Especialidades
 
-Este repositório é **monorepo de produto único** que entrega **dois sistemas** rodando na mesma stack, mesmo deploy e mesmo banco — com separação por rota, role e Service Worker.
+- 🌐 **Desenvolvimento Web Full Stack**
+- 💻 **Sites Institucionais e Landing Pages de Alta Conversão**
+- 🛒 **E-commerce Moderno e Headless Commerce**
+- 🧠 **Sistemas Web Sob Medida (ERP, CRM, SaaS e Portais)**
+- 🤖 **Integrações com Inteligência Artificial e Automações**
+- 📱 **Progressive Web Apps (PWAs) Enterprise**
+- 🛠️ **Instalação e Implantação de Software Empresarial**
+- 🔧 **Suporte Técnico, Infraestrutura e Manutenção de Hardware**
+
+
+### 🎯 Objetivo do Projeto
+
+Este projeto representa a plataforma institucional oficial da **SevenDevX**, funcionando simultaneamente como:
+
+- ✨ **Portfólio digital interativo**
+- 🚀 **Vitrine de serviços e soluções tecnológicas**
+- 💼 **Demonstração prática de capacidade técnica**
+- 📞 **Canal de geração de leads e contato comercial**
+- 🧠 **Hub de autoridade digital e posicionamento de marca**
+
+Mais do que um website institucional, este projeto demonstra a aplicação real de arquitetura moderna, experiência do usuário avançada, SEO técnico e engenharia de software voltada para performance.
+
+
+### ⚙️ Arquitetura e Tecnologia
+
+O projeto foi concebido utilizando uma arquitetura moderna e escalável, baseada em princípios de performance, acessibilidade, indexação e experiência do usuário.
+
+Entre os recursos implementados estão:
+
+- ⚡ Arquitetura Full Stack moderna
+- 🔍 SEO avançado e otimização para mecanismos de busca
+- 🤖 GEO (Generative Engine Optimization) para IA e LLMs
+- 📱 Design responsivo e mobile-first
+- 🚀 Performance otimizada (Core Web Vitals)
+- 🔐 Boas práticas de segurança e confiabilidade
+- 🌙 Interface moderna inspirada no design da SpaceX
+- 📈 Estrutura preparada para crescimento e evolução contínua
+
+
+### 🌟 Nossa Missão
+
+> **Transformar ideias em soluções digitais inteligentes, escaláveis e de alto impacto, conectando tecnologia, inovação e resultados reais para empresas de todos os portes.**
+
+
+### 🔗 Produção
+
+**Website Oficial:**  
+👉 https://sevendevx.com
+
+**Empresa:** SevenDevX — Software, Web, IA & Soluções Digitais
 
 ---
 
@@ -76,42 +122,132 @@ Este repositório é **monorepo de produto único** que entrega **dois sistemas*
 
 ---
 
-## 🧩 Stack Técnica Completa
+## 🧩 Stack Tecnológica Completa
 
-### 🎨 Frontend
-| Tech | Versão | Função |
-|---|---|---|
-| React | 18.3 | UI declarativa, Suspense + lazy routes |
-| TypeScript | 5+ | Type-safety end-to-end (frontend ↔ DB via types gerados) |
-| Vite | 5+ | Build, HMR, code splitting agressivo |
-| Tailwind CSS | 3+ | Styling com **tokens semânticos HSL** (zero cores hardcoded) |
-| Framer Motion | 12+ | Animações cinematográficas, layoutId transitions, spring physics |
-| shadcn/ui + Radix | latest | Componentes acessíveis (WCAG AA) |
-| React Router | v6 | SPA routing + AnimatePresence |
-| React Hook Form + Zod | v7 / v3 | Forms tipados, validação schema-first |
-| TanStack Query | v5 | Cache, sync, optimistic updates |
-| Recharts | latest | Gráficos do SevenOS |
-| lucide-react | latest | Ícones SVG tree-shaken |
-| vite-plugin-pwa + Workbox | latest | Service Worker, offline-first |
+A arquitetura da **SevenDevX** foi projetada para entregar aplicações modernas, escaláveis, seguras e preparadas para crescimento, combinando experiência premium no frontend, backend serverless de alta performance, observabilidade, automação e recursos de Inteligência Artificial.
 
-### ⚙️ Backend (100% serverless)
-| Tech | Função |
-|---|---|
-| **Supabase Auth** | Email + Google OAuth, JWT, refresh rotation |
-| **Supabase Postgres** | Banco transacional com RLS |
-| **Supabase Edge Functions** | 28 funções Deno na borda (~30–60ms cold start) |
-| **Supabase Storage** | Bucket `attachments` **privado** com signed URLs |
-| **Supabase Realtime** | Activity Feed, System Health, Citation Engine |
-| **Lovable AI Gateway** | Gemini 2.5 Flash / Pro, GPT-5 (sem gerenciar chaves OpenAI) |
-| **Lovable Connector Gateway** | Google Search Console, GitHub, Figma, Vercel |
-| **Web Push (VAPID)** | Notificações nativas |
-| **Vercel Edge Network** | CDN global, headers, redirects |
 
-### 🛠️ DevOps & Tooling
-- ESLint 9 (flat config) · Prettier (auto via shadcn) · TypeScript strict
-- Deploy contínuo via **Lovable** (push → build → Vercel + Edge Functions)
-- Migrations versionadas em `supabase/migrations/` (46 arquivos)
-- `vercel.json` com headers de segurança + CSP
+### 🎨 Frontend Engineering
+
+<div align="center">
+
+| Tecnologia | Versão | Função |
+|------------|:------:|---------|
+| ![React](https://img.shields.io/badge/REACT-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) | 18.3+ | Interface declarativa moderna |
+| ![TypeScript](https://img.shields.io/badge/TYPESCRIPT-007ACC?style=for-the-badge&logo=typescript&logoColor=white) | 5+ | Tipagem forte end-to-end |
+| ![Vite](https://img.shields.io/badge/VITE-646CFF?style=for-the-badge&logo=vite&logoColor=white) | 5+ | Build ultra rápido e HMR |
+| ![Tailwind CSS](https://img.shields.io/badge/TAILWIND-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white) | 3+ | Design System baseado em tokens |
+| ![Framer Motion](https://img.shields.io/badge/FRAMER-0055FF?style=for-the-badge&logo=framer&logoColor=white) | 12+ | Motion Design e microinterações |
+| ![GSAP](https://img.shields.io/badge/GSAP-88CE02?style=for-the-badge&logo=greensock&logoColor=black) | 3.13+ | Animações avançadas |
+| ![shadcn/ui](https://img.shields.io/badge/SHADCN_UI-000000?style=for-the-badge&logo=shadcnui&logoColor=white) | Latest | Componentes modernos |
+| ![Radix UI](https://img.shields.io/badge/RADIX_UI-161618?style=for-the-badge&logo=radix-ui&logoColor=white) | Latest | Componentes acessíveis (WCAG) |
+| ![React Router](https://img.shields.io/badge/REACT_ROUTER-CA4245?style=for-the-badge&logo=react-router&logoColor=white) | v6 | Roteamento SPA |
+| ![React Hook Form](https://img.shields.io/badge/REACT_HOOK_FORM-EC5990?style=for-the-badge&logo=reacthookform&logoColor=white) | v7 | Gerenciamento de formulários |
+| ![Zod](https://img.shields.io/badge/ZOD-3068B7?style=for-the-badge&logo=zod&logoColor=white) | v3 | Validação schema-first |
+| ![TanStack Query](https://img.shields.io/badge/TANSTACK_QUERY-FF4154?style=for-the-badge&logo=react-query&logoColor=white) | v5 | Cache e sincronização de dados |
+| ![Recharts](https://img.shields.io/badge/RECHARTS-FF6384?style=for-the-badge) | Latest | Dashboards e Analytics |
+| ![Lucide](https://img.shields.io/badge/LUCIDE-000000?style=for-the-badge&logo=lucide&logoColor=white) | Latest | Biblioteca de ícones SVG |
+| ![PWA](https://img.shields.io/badge/PWA-5A0FC8?style=for-the-badge&logo=pwa&logoColor=white) | Latest | Offline-first e Service Worker |
+
+</div>
+
+
+### ⚙️ Backend & Cloud Infrastructure
+
+<div align="center">
+
+| Tecnologia | Versão | Função |
+|------------|:------:|---------|
+| ![Supabase](https://img.shields.io/badge/SUPABASE-181818?style=for-the-badge&logo=supabase&logoColor=3ECF8E) | Latest | Autenticação JWT + OAuth |
+| ![PostgreSQL](https://img.shields.io/badge/POSTGRESQL-316192?style=for-the-badge&logo=postgresql&logoColor=white) | 16+ | Banco relacional escalável |
+| ![RLS](https://img.shields.io/badge/ROW_LEVEL_SECURITY-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white) | Latest | Segurança em nível de linha (RLS) |
+| ![Edge Functions](https://img.shields.io/badge/EDGE_FUNCTIONS-000000?style=for-the-badge&logo=cloudflare&logoColor=white) | Latest | Backend Serverless em Deno |
+| ![Storage](https://img.shields.io/badge/STORAGE-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white) | Latest | Arquivos privados com Signed URLs |
+| ![Realtime](https://img.shields.io/badge/REALTIME-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white) | Latest | Atualizações em tempo real |
+| ![Deno](https://img.shields.io/badge/DENO-000000?style=for-the-badge&logo=deno&logoColor=white) | 2+ | Runtime das Edge Functions |
+| ![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white) | Latest | Tokens seguros de autenticação |
+| ![Google OAuth](https://img.shields.io/badge/GOOGLE_OAUTH-4285F4?style=for-the-badge&logo=google&logoColor=white) | OAuth 2.0 | Login social |
+| ![Web Push](https://img.shields.io/badge/WEB_PUSH-4285F4?style=for-the-badge&logo=googlechrome&logoColor=white) | Latest | Notificações Push |
+
+</div>
+
+
+### 🤖 Inteligência Artificial & Automação
+
+<div align="center">
+
+| Tecnologia | Versão | Aplicação |
+|------------|:------:|------------|
+| ![OpenAI GPT-5](https://img.shields.io/badge/OPENAI_GPT--5-412991?style=for-the-badge&logo=openai&logoColor=white) | GPT-5 | IA Generativa |
+| ![Gemini](https://img.shields.io/badge/GEMINI-4285F4?style=for-the-badge&logo=google-gemini&logoColor=white) | 2.5 Pro | Processamento multimodal |
+| ![Lovable](https://img.shields.io/badge/LOVABLE_AI-FF4F8B?style=for-the-badge) | Latest | Gateway de modelos |
+| ![RAG](https://img.shields.io/badge/RAG-2563EB?style=for-the-badge) | Latest | Busca contextual inteligente |
+| ![GEO](https://img.shields.io/badge/GEO-0F766E?style=for-the-badge) | Latest | Generative Engine Optimization |
+| ![Automation](https://img.shields.io/badge/AUTOMATION-16A34A?style=for-the-badge) | Enterprise | Fluxos automatizados |
+
+</div>
+
+
+### 🚀 DevOps, Deploy & Performance
+
+<div align="center">
+
+| Tecnologia | Versão | Função |
+|------------|:------:|---------|
+| ![Vercel](https://img.shields.io/badge/VERCEL-000000?style=for-the-badge&logo=vercel&logoColor=white) | Latest | Deploy Global Edge |
+| ![GitHub](https://img.shields.io/badge/GITHUB-181717?style=for-the-badge&logo=github&logoColor=white) | Latest | Versionamento Git |
+| ![Figma](https://img.shields.io/badge/FIGMA-F24E1E?style=for-the-badge&logo=figma&logoColor=white) | Latest | Design e prototipação |
+| ![Search Console](https://img.shields.io/badge/SEARCH_CONSOLE-4285F4?style=for-the-badge&logo=google-search-console&logoColor=white) | Latest | SEO e indexação |
+| ![ESLint](https://img.shields.io/badge/ESLINT-4B32C3?style=for-the-badge&logo=eslint&logoColor=white) | 9+ | Qualidade de código |
+| ![Prettier](https://img.shields.io/badge/PRETTIER-F7B93E?style=for-the-badge&logo=prettier&logoColor=black) | 3+ | Padronização do código |
+| ![TypeScript](https://img.shields.io/badge/TYPESCRIPT_STRICT-007ACC?style=for-the-badge&logo=typescript&logoColor=white) | Strict | Segurança em tempo de desenvolvimento |
+| ![CSP](https://img.shields.io/badge/CSP_HEADERS-DC2626?style=for-the-badge) | Latest | Proteção contra ataques XSS |
+| ![Edge Deploy](https://img.shields.io/badge/EDGE_DEPLOYMENTS-000000?style=for-the-badge&logo=vercel&logoColor=white) | Latest | Deploy global distribuído |
+| ![Core Web Vitals](https://img.shields.io/badge/CORE_WEB_VITALS-4285F4?style=for-the-badge&logo=lighthouse&logoColor=white) | Google | Performance otimizada |
+
+</div>
+
+
+### 🏗️ Arquitetura
+
+```text
+Frontend (React + TypeScript)
+          │
+          ▼
+Vercel Edge Network
+          │
+          ▼
+Supabase Platform
+├── PostgreSQL
+├── Auth
+├── Storage
+├── Realtime
+└── Edge Functions
+          │
+          ▼
+AI Gateway
+├── GPT-5
+├── Gemini 2.5
+└── Automações Inteligentes
+```
+
+
+🌟 Diferenciais SevenDevX
+
+✅ Arquitetura Full Stack Moderna
+✅ Serverless First
+✅ Mobile First
+✅ SEO + GEO Ready
+✅ PWA Enterprise
+✅ Integração com IA
+✅ Segurança com RLS e JWT
+✅ Escalabilidade Horizontal
+✅ Edge Computing
+✅ Alta Performance (Core Web Vitals)
+✅ UX Inspirada na SpaceX
+✅ Código Type-Safe End-to-End
+
+> SevenDevX — Transformando ideias em soluções digitais inteligentes, escaláveis e de alto impacto.
 
 ---
 
@@ -543,6 +679,40 @@ bun dev            # → http://localhost:5173
 
 ---
 
+## 🧰 Ferramentas & Integrações
+
+<div align="center">
+  
+| Ferramenta | Uso |
+|------------|-----|
+| ![VS Code](https://img.shields.io/badge/VS%20Code-007ACC?logo=visual-studio-code&logoColor=white) | Editor principal |
+| ![Git](https://img.shields.io/badge/Git-F05032?logo=git&logoColor=white) | Controle de versão |
+| ![ESLint](https://img.shields.io/badge/ESLint-4B32C3?logo=eslint&logoColor=white) | Linting |
+| ![Prettier](https://img.shields.io/badge/Prettier-F7B93E?logo=prettier&logoColor=black) | Formatação |
+| ![Vercel](https://img.shields.io/badge/Vercel-000000?logo=vercel&logoColor=white) | Hosting |
+| ![Google Analytics](https://img.shields.io/badge/Analytics-E37400?logo=google-analytics&logoColor=white) | Métricas |
+
+</div>
+
+---
+
+## 🎯 Performance & SEO
+
+### ⚡ Lighthouse Scores
+
+<div align="center">
+
+| Métrica | Desktop | Mobile |
+|:-------:|:-------:|:------:|
+| 🎨 **Performance** | 95+ | 90+ |
+| ♿ **Accessibility** | 100 | 100 |
+| ✅ **Best Practices** | 95+ | 95+ |
+| 🔍 **SEO** | 100 | 100 |
+
+</div>
+
+---
+
 ## 📊 Status do Projeto
 
 | Métrica | Estado |
@@ -574,9 +744,50 @@ bun dev            # → http://localhost:5173
 
 ---
 
+## 💬 Contato
+
+<div align="center">
+
+| Canal | Link |
+|:-----:|:----:|
+| 📧 **Email** | [contato@sevendevx.com](mailto:contato@sevendevx.com) |
+| 📱 **WhatsApp** | [Clique aqui](https://wa.me/5531984740625) |
+| 🌐 **Website** | [sevendevx.com](https://sevendevx.com) |
+| 💼 **LinkedIn** | [/company/sevendevx](https://linkedin.com/company/sevendevx) |
+| 📸 **Instagram** | [@sevendevx](https://instagram.com/sevendevx) |
+| 🐙 **GitHub** | [@DavidsonDias](https://github.com/DavidsonDias) |
+
+</div>
+
+---
+
+## 🏆 Créditos
+
+**Desenvolvido com ❤️ por:**
+
+<div align="center">
+
+### Davidson Dias
+**Full Stack Developer**
+
+[![GitHub](https://img.shields.io/badge/GitHub-100000?logo=github&logoColor=white)](https://github.com/DavidsonDias)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?logo=linkedin&logoColor=white)](https://linkedin.com/in/davidson-dias)
+
+</div>
+
+© 2025 **SevenDevX** — Todos os direitos reservados.
+
+---
+
 ## 📜 Licença
 
 MIT © [Davidson Dias](https://github.com/DavidsonDias) — SevenDevX
+
+[![MIT License](https://img.shields.io/github/license/DavidsonDias/SevenDevX?style=for-the-badge)](https://github.com/DavidsonDias/SevenDevX/blob/main/LICENSE)
+
+Distribuído sob a **MIT License**.  
+Consulte o arquivo [LICENSE](./LICENSE) para mais detalhes.
+
 
 ---
 
