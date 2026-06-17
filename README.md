@@ -40,7 +40,8 @@
 
 <br>
 
-🌐 **Produção:** https://sevendevx.com  
+🌐 **Produção:** https://sevendevx.com _(domínio oficial — propagação DNS em andamento)_  
+🟢 **Live agora:** https://sevendevx.lovable.app  
 🚀 **Deploy:** Vercel Edge Network  
 🏢 **HQ:** Belo Horizonte • MG • Brasil  
 ⚡ **Arquitetura:** React + TypeScript + Supabase + Edge Functions + AI
