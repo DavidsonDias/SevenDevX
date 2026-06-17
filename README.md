@@ -13,8 +13,8 @@
 [![Deploy](https://img.shields.io/badge/Deploy-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com)
 [![PWA](https://img.shields.io/badge/PWA-Installable-5A0FC8?style=for-the-badge&logo=pwa)](https://sevendevx.com)
 [![GEO](https://img.shields.io/badge/GEO-ChatGPT%20%7C%20Gemini%20%7C%20Claude-10A37F?style=for-the-badge)]()
-[![SEO](https://img.shields.io/badge/SEO-Optimized-success?style=for-the-badge)]
-[![Core Web Vitals](https://img.shields.io/badge/Core_Web_Vitals-Passing-success?style=for-the-badge)]
+[![SEO](https://img.shields.io/badge/SEO-Optimized-success?style=for-the-badge)](https://sevendevx.com)
+[![Core Web Vitals](https://img.shields.io/badge/Core_Web_Vitals-Passing-success?style=for-the-badge)](https://sevendevx.com)
 
 <br>
 
