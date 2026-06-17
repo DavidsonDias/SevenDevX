@@ -252,7 +252,7 @@ AI Gateway
 ```
 
 
-🌟 Diferenciais SevenDevX
+### 🌟 Diferenciais SevenDevX
 
 ✅ Arquitetura Full Stack Moderna
 ✅ Serverless First
