@@ -13,8 +13,8 @@
 [![Deploy](https://img.shields.io/badge/Deploy-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com)
 [![PWA](https://img.shields.io/badge/PWA-Installable-5A0FC8?style=for-the-badge&logo=pwa)](https://sevendevx.com)
 [![GEO](https://img.shields.io/badge/GEO-ChatGPT%20%7C%20Gemini%20%7C%20Claude-10A37F?style=for-the-badge)]()
-[![SEO](https://img.shields.io/badge/SEO-Optimized-success?style=for-the-badge)]
-[![Core Web Vitals](https://img.shields.io/badge/Core_Web_Vitals-Passing-success?style=for-the-badge)]
+[![SEO](https://img.shields.io/badge/SEO-Optimized-success?style=for-the-badge)](https://sevendevx.com)
+[![Core Web Vitals](https://img.shields.io/badge/Core_Web_Vitals-Passing-success?style=for-the-badge)](https://sevendevx.com)
 
 <br>
 
@@ -56,7 +56,7 @@
 3. [Stack Técnica Completa](#-stack-tecnológica-completa)
 4. [Arquitetura Geral](#️-arquitetura-geral)
 5. [SevenDevX — Site Público](#-sevendevx--site-público)
-6. [SevenOS — ERP/CRM Interno](#-sevenos--ercrm-interno)
+6. [SevenOS — ERP/CRM Interno](#-sevenos--erpcrm-interno)
 7. [O que é Serverless aqui?](#-o-que-é-serverless-aqui)
 8. [Edge Functions (28 funções)](#️-edge-functions-28-funções)
 9. [Banco de Dados](#-banco-de-dados--rls-grants)
@@ -252,7 +252,7 @@ AI Gateway
 ```
 
 
-🌟 Diferenciais SevenDevX
+### 🌟 Diferenciais SevenDevX
 
 ✅ Arquitetura Full Stack Moderna
 ✅ Serverless First
