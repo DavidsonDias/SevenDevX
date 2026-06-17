@@ -52,44 +52,31 @@
 
 ## 📑 Sumário
 
-1. [Sobre o Projeto](#-sobre-o-projeto)
-2. [Dois Produtos, Uma Stack](#-dois-produtos-uma-stack)
-3. [Stack Técnica Completa](#-stack-tecnológica-completa)
-4. [Arquitetura Geral](#️-arquitetura-geral)
-5. [SevenDevX — Site Público](#-sevendevx--site-público)
-6. [SevenOS — ERP/CRM Interno](#-sevenos--erpcrm-interno)
-7. [O que é Serverless aqui?](#-o-que-é-serverless-aqui)
-8. [Edge Functions (28 funções)](#️-edge-functions-28-funções)
-9. [Banco de Dados](#-banco-de-dados--rls-grants)
-10. [Estrutura Completa de Pastas](#-estrutura-completa-de-pastas)
-11. [Design System](#-design-system)
-12. [SEO + GEO (AI-first)](#-seo--geo-ai-first)
-13. [Segurança](#-segurança--rbac)
-14. [Performance & PWA](#-performance--pwa)
-15. [i18n](#-internacionalização)
-16. [Como Rodar Localmente](#-como-rodar-localmente)
-17. [Métricas Reais](#-métricas-reais)
-18. [Status do Site](#-status-do-projeto)
-19. [Roadmap](#️-roadmap)
+- [📖 Sobre o Projeto](#-sobre-o-projeto)
+- [📊 Métricas Reais](#-métricas-reais)
+- [🎭 Dois Produtos, Uma Stack](#-dois-produtos-uma-stack)
+- [🧩 Stack Tecnológica Completa](#-stack-tecnológica-completa)
+- [🏛️ Arquitetura Geral](#️-arquitetura-geral)
+- [🌐 SevenDevX — Site Público](#-sevendevx--site-público)
+- [🛠️ SevenOS — ERP/CRM Interno](#️-sevenos--erpcrm-interno)
+- [☁️ O que é Serverless aqui?](#️-o-que-é-serverless-aqui)
+- [⚡ Edge Functions (28 funções)](#️-edge-functions-28-funções)
+- [🗄️ Banco de Dados — RLS + GRANTs](#️-banco-de-dados--rls--grants)
+- [📂 Estrutura Completa de Pastas](#-estrutura-completa-de-pastas)
+- [🎨 Design System](#-design-system)
+- [🌍 SEO + GEO (AI-first)](#-seo--geo-ai-first)
+- [🔐 Segurança + RBAC](#-segurança--rbac)
+- [🚀 Performance & PWA](#-performance--pwa)
+- [🌎 Internacionalização](#-internacionalização)
+- [💻 Como Rodar Localmente](#-como-rodar-localmente)
+- [🧰 Ferramentas & Integrações](#-ferramentas--integrações)
+- [🎯 Performance & SEO](#-performance--seo)
+- [📊 Status do Projeto](#-status-do-projeto)
+- [🗺️ Roadmap](#️-roadmap)
+- [💬 Contato](#-contato)
+- [🏆 Créditos](#-créditos)
+- [📜 Licença](#-licença)
 
----
-
-## 📊 Métricas Reais
-
-> Snapshot consolidado do projeto — atualizado a cada release.
-
-| Categoria | Métrica | Valor |
-|-----------|---------|-------|
-| ⚡ **Lighthouse** | Performance · Acessibilidade · Best Practices · SEO | **98 / 100 / 100 / 100** |
-| 🎯 **Core Web Vitals** | LCP · INP · CLS | **< 1.2s · < 80ms · < 0.05** |
-| 📦 **Bundle** | Initial JS (gzip) · CSS (gzip) | **~ 142 KB · ~ 18 KB** |
-| 🧭 **Rotas** | Públicas · Admin (SevenOS) · GEO Hub | **18 · 28 · 7** |
-| 🧩 **Componentes** | UI atômicos · Admin · Módulos | **45+ · 60+ · 25+** |
-| ⚙️ **Edge Functions** | Serverless deploys ativos | **28** |
-| 🗄️ **Database** | Migrations · Tabelas · Policies RLS | **46 · 38 · 120+** |
-| 🌍 **i18n** | Idiomas suportados | **PT · EN · ES** |
-| 📱 **PWA** | Instalável · Offline · Push | **✅ · ✅ · ✅** |
-| 🔐 **Segurança** | RBAC roles · Linter Supabase | **3 · 0 issues** |
 
 ---
 
@@ -149,6 +136,25 @@ Entre os recursos implementados estão:
 👉 https://sevendevx.com
 
 **Empresa:** SevenDevX — Software, Web, IA & Soluções Digitais
+
+---
+
+## 📊 Métricas Reais
+
+> Snapshot consolidado do projeto — atualizado a cada release.
+
+| Categoria | Métrica | Valor |
+|-----------|---------|-------|
+| ⚡ **Lighthouse** | Performance · Acessibilidade · Best Practices · SEO | **98 / 100 / 100 / 100** |
+| 🎯 **Core Web Vitals** | LCP · INP · CLS | **< 1.2s · < 80ms · < 0.05** |
+| 📦 **Bundle** | Initial JS (gzip) · CSS (gzip) | **~ 142 KB · ~ 18 KB** |
+| 🧭 **Rotas** | Públicas · Admin (SevenOS) · GEO Hub | **18 · 28 · 7** |
+| 🧩 **Componentes** | UI atômicos · Admin · Módulos | **45+ · 60+ · 25+** |
+| ⚙️ **Edge Functions** | Serverless deploys ativos | **28** |
+| 🗄️ **Database** | Migrations · Tabelas · Policies RLS | **46 · 38 · 120+** |
+| 🌍 **i18n** | Idiomas suportados | **PT · EN · ES** |
+| 📱 **PWA** | Instalável · Offline · Push | **✅ · ✅ · ✅** |
+| 🔐 **Segurança** | RBAC roles · Linter Supabase | **3 · 0 issues** |
 
 ---
 
