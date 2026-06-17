@@ -56,7 +56,7 @@
 3. [Stack Técnica Completa](#-stack-tecnológica-completa)
 4. [Arquitetura Geral](#️-arquitetura-geral)
 5. [SevenDevX — Site Público](#-sevendevx--site-público)
-6. [SevenOS — ERP/CRM Interno](#-sevenos--ercrm-interno)
+6. [SevenOS — ERP/CRM Interno](#-sevenos--erpcrm-interno)
 7. [O que é Serverless aqui?](#-o-que-é-serverless-aqui)
 8. [Edge Functions (28 funções)](#️-edge-functions-28-funções)
 9. [Banco de Dados](#-banco-de-dados--rls-grants)
