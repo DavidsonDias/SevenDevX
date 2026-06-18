@@ -5,7 +5,8 @@
  * Tier 3: jsdelivr simple-icons via CSS mask
  * Tier 4: inicial da marca em gradiente brand-aware
  */
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
+import DOMPurify from "dompurify";
 import { useLogoOverrides } from "@/hooks/useLogoOverrides";
 import { useExtractedColor } from "@/hooks/useExtractedColor";
 import type { IconType } from "react-icons";
@@ -319,7 +320,7 @@ export default function ProviderLogo({
           aria-label={name}
           className="inline-flex items-center justify-center"
           style={{ width: size * 0.62, height: size * 0.62, filter: isWhite ? "drop-shadow(0 0 6px rgba(255,255,255,0.35))" : `drop-shadow(0 0 7px ${accent}66)` }}
-          dangerouslySetInnerHTML={{ __html: override.customSvg }}
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(override.customSvg, { USE_PROFILES: { svg: true, svgFilters: true } }) }}
         />
       ) : override?.customUrl ? (
         <img

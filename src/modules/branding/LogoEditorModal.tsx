@@ -4,6 +4,7 @@
  * com preview live em múltiplas variantes. Persistência via useLogoOverrides.
  */
 import { motion, AnimatePresence } from "framer-motion";
+import DOMPurify from "dompurify";
 import { useEffect, useMemo, useState } from "react";
 import { X, RotateCcw, Save, Paintbrush, Code2, Link2, Sparkles, Palette, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -371,7 +372,7 @@ function PreviewSvg({ svg, color, variant, name }: { svg: string; color?: string
     >
       <span
         style={{ width: px * 0.62, height: px * 0.62, display: "inline-flex", alignItems: "center", justifyContent: "center" }}
-        dangerouslySetInnerHTML={{ __html: svg }}
+        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(svg, { USE_PROFILES: { svg: true, svgFilters: true } }) }}
       />
     </div>
   );

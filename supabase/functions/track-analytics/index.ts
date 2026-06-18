@@ -45,24 +45,37 @@ serve(async (req) => {
 
   try {
     const payload: AnalyticsPayload = await req.json();
-    const userAgent = req.headers.get("user-agent") || "";
+    const userAgent = (req.headers.get("user-agent") || "").slice(0, 512);
 
-    console.log(`[Analytics] Tracking ${payload.type} - Visitor: ${payload.visitor_id}`);
+    // Input validation
+    if (!payload || (payload.type !== "pageview" && payload.type !== "event")) {
+      return new Response(JSON.stringify({ error: "invalid type" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    if (typeof payload.visitor_id !== "string" || payload.visitor_id.length === 0 || payload.visitor_id.length > 64) {
+      return new Response(JSON.stringify({ error: "invalid visitor_id" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    if (typeof payload.session_id !== "string" || payload.session_id.length === 0 || payload.session_id.length > 64) {
+      return new Response(JSON.stringify({ error: "invalid session_id" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    const trunc = (v: unknown, n: number) => (typeof v === "string" ? v.slice(0, n) : undefined);
+
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     if (payload.type === "pageview") {
+      const duration = typeof payload.duration_seconds === "number" && payload.duration_seconds >= 0 && payload.duration_seconds < 86400
+        ? Math.floor(payload.duration_seconds) : null;
       const { error } = await supabase.from("page_views").insert({
-        page_path: payload.page_path,
-        page_title: payload.page_title,
+        page_path: trunc(payload.page_path, 512) ?? "/",
+        page_title: trunc(payload.page_title, 256),
         visitor_id: payload.visitor_id,
         session_id: payload.session_id,
-        referrer: payload.referrer,
+        referrer: trunc(payload.referrer, 512),
         user_agent: userAgent,
         device_type: getDeviceType(userAgent),
-        duration_seconds: payload.duration_seconds,
+        duration_seconds: duration,
       });
 
       if (error) {
@@ -70,16 +83,21 @@ serve(async (req) => {
         throw error;
       }
 
-      console.log(`[Analytics] Page view recorded: ${payload.page_path}`);
+      console.log(`[Analytics] Page view recorded`);
     } else if (payload.type === "event") {
+      const eventData = payload.event_data && typeof payload.event_data === "object" && !Array.isArray(payload.event_data) ? payload.event_data : {};
+      const dataStr = JSON.stringify(eventData);
+      if (dataStr.length > 4096) {
+        return new Response(JSON.stringify({ error: "event_data too large" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+      }
       const { error } = await supabase.from("analytics_events").insert({
-        event_type: payload.event_type,
-        event_data: payload.event_data || {},
-        page_url: payload.page_url,
+        event_type: trunc(payload.event_type, 64) ?? "unknown",
+        event_data: eventData,
+        page_url: trunc(payload.page_url, 512),
         visitor_id: payload.visitor_id,
         session_id: payload.session_id,
         user_agent: userAgent,
-        referrer: req.headers.get("referer"),
+        referrer: (req.headers.get("referer") || "").slice(0, 512) || null,
       });
 
       if (error) {

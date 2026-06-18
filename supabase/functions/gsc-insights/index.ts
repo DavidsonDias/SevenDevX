@@ -3,6 +3,7 @@
 // Retorna queries, páginas, cliques, impressões, CTR e posição média.
 
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
+import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const GATEWAY = 'https://connector-gateway.lovable.dev/google_search_console';
 
@@ -19,17 +20,29 @@ Deno.serve(async (req) => {
     );
   }
 
+  const json = (data: unknown, status = 200) =>
+    new Response(JSON.stringify(data), {
+      status,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+
+  // Admin auth guard
+  const authHeader = req.headers.get('Authorization') || '';
+  if (!authHeader.startsWith('Bearer ')) return json({ error: 'unauthorized' }, 401);
+  const SB_URL = Deno.env.get('SUPABASE_URL')!;
+  const SB_ANON = Deno.env.get('SUPABASE_ANON_KEY')!;
+  const userClient = createClient(SB_URL, SB_ANON, { global: { headers: { Authorization: authHeader } } });
+  const { data: userData } = await userClient.auth.getUser();
+  if (!userData?.user) return json({ error: 'unauthorized' }, 401);
+  const { data: isAdmin } = await userClient.rpc('has_role', { _user_id: userData.user.id, _role: 'admin' });
+  if (!isAdmin) return json({ error: 'forbidden' }, 403);
+
   const headers = {
     Authorization: `Bearer ${LOVABLE_API_KEY}`,
     'X-Connection-Api-Key': GSC_KEY,
     'Content-Type': 'application/json',
   };
 
-  const json = (data: unknown, status = 200) =>
-    new Response(JSON.stringify(data), {
-      status,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
 
   try {
     const body = await req.json().catch(() => ({}));
