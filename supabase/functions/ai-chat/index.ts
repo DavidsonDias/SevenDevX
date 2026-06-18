@@ -41,7 +41,29 @@ serve(async (req) => {
   }
 
   try {
-    const { messages, conversationId, visitorId } = await req.json();
+    const { messages: rawMessages, conversationId, visitorId } = await req.json();
+
+    // Input validation - prevent API credit exhaustion
+    const MAX_MESSAGES = 30;
+    const MAX_MSG_LENGTH = 4000;
+    const MAX_TOTAL_CHARS = 30000;
+    if (!Array.isArray(rawMessages) || rawMessages.length === 0) {
+      return new Response(JSON.stringify({ error: "Mensagens inválidas" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    if (rawMessages.length > MAX_MESSAGES) {
+      return new Response(JSON.stringify({ error: "Conversa muito longa" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    const messages = rawMessages.map((m: any) => ({
+      role: m?.role === "assistant" || m?.role === "system" ? m.role : "user",
+      content: String(m?.content ?? "").slice(0, MAX_MSG_LENGTH),
+    }));
+    const totalChars = messages.reduce((s, m) => s + m.content.length, 0);
+    if (totalChars > MAX_TOTAL_CHARS) {
+      return new Response(JSON.stringify({ error: "Conteúdo muito grande" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    const safeVisitorId = typeof visitorId === "string" ? visitorId.slice(0, 64) : "anonymous";
+    const safeConversationId = typeof conversationId === "string" && conversationId.length <= 64 ? conversationId : null;
+
     
     console.log(`[AI-Chat] Processing request - Conversation: ${conversationId}, Messages: ${messages?.length}`);
 
