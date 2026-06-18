@@ -4,6 +4,7 @@
  * com preview live em múltiplas variantes. Persistência via useLogoOverrides.
  */
 import { motion, AnimatePresence } from "framer-motion";
+import DOMPurify from "dompurify";
 import { useEffect, useMemo, useState } from "react";
 import { X, RotateCcw, Save, Paintbrush, Code2, Link2, Sparkles, Palette, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
