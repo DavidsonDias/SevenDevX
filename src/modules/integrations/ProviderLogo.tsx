@@ -5,7 +5,8 @@
  * Tier 3: jsdelivr simple-icons via CSS mask
  * Tier 4: inicial da marca em gradiente brand-aware
  */
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
+import DOMPurify from "dompurify";
 import { useLogoOverrides } from "@/hooks/useLogoOverrides";
 import { useExtractedColor } from "@/hooks/useExtractedColor";
 import type { IconType } from "react-icons";
