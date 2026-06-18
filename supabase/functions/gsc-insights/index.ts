@@ -3,6 +3,7 @@
 // Retorna queries, páginas, cliques, impressões, CTR e posição média.
 
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
+import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const GATEWAY = 'https://connector-gateway.lovable.dev/google_search_console';
 
