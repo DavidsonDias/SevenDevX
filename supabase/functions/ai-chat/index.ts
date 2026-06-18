@@ -65,7 +65,7 @@ serve(async (req) => {
     const safeConversationId = typeof conversationId === "string" && conversationId.length <= 64 ? conversationId : null;
 
     
-    console.log(`[AI-Chat] Processing request - Conversation: ${conversationId}, Messages: ${messages?.length}`);
+    console.log(`[AI-Chat] Processing request - Conversation: ${safeConversationId}, Messages: ${messages.length}`);
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
