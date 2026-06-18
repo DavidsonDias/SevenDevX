@@ -79,11 +79,11 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Create or update conversation
-    let currentConversationId = conversationId;
+    let currentConversationId = safeConversationId;
     if (!currentConversationId) {
       const { data: newConv, error: convError } = await supabase
         .from("chat_conversations")
-        .insert({ visitor_id: visitorId || "anonymous" })
+        .insert({ visitor_id: safeVisitorId })
         .select()
         .single();
       
