@@ -162,11 +162,14 @@ const Header = () => {
                   >
                     <Link
                       to={link.path} onClick={() => setIsMenuOpen(false)}
-                      className={`block py-6 text-right text-base md:text-lg tracking-[0.3em] font-light border-b border-white/10 transition-colors ${
+                      className={`group flex justify-end py-6 text-right text-base md:text-lg tracking-[0.3em] font-light border-b border-white/10 transition-colors ${
                         location.pathname === link.path ? "text-white" : "text-white/80 hover:text-white"
                       }`}
                     >
-                      {link.name}
+                      <span className="relative inline-block">
+                        {link.name}
+                        <span className="pointer-events-none absolute right-0 -bottom-1 h-px w-0 group-hover:w-full bg-gradient-to-l from-white/0 via-white to-white/0 transition-all duration-500 ease-out" />
+                      </span>
                     </Link>
                   </motion.div>
                 ))}
@@ -178,8 +181,12 @@ const Header = () => {
                       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
                         transition={{ duration: 0.3, delay: 0.1 + navLinks.length * 0.08 }} className="w-full">
                         <Link to="/admin" onClick={() => setIsMenuOpen(false)}
-                          className="flex items-center justify-end gap-2 py-6 text-right text-base md:text-lg tracking-[0.3em] font-light border-b border-white/10 text-amber-400/90 hover:text-amber-300 transition-colors">
-                          <Shield className="w-4 h-4" /> ADMIN
+                          className="group flex items-center justify-end gap-2 py-6 text-right text-base md:text-lg tracking-[0.3em] font-light border-b border-white/10 text-amber-400/90 hover:text-amber-300 transition-colors">
+                          <Shield className="w-4 h-4" />
+                          <span className="relative inline-block">
+                            ADMIN
+                            <span className="pointer-events-none absolute right-0 -bottom-1 h-px w-0 group-hover:w-full bg-gradient-to-l from-amber-300/0 via-amber-300 to-amber-300/0 transition-all duration-500 ease-out" />
+                          </span>
                         </Link>
                       </motion.div>
                     )}
@@ -188,15 +195,23 @@ const Header = () => {
                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
                           transition={{ duration: 0.3, delay: 0.1 + (navLinks.length + 1) * 0.08 }} className="w-full">
                           <Link to="/profile" onClick={() => setIsMenuOpen(false)}
-                            className="flex items-center justify-end gap-2 py-6 text-right text-base md:text-lg tracking-[0.3em] font-light border-b border-white/10 text-white/80 hover:text-white transition-colors">
-                            <UserCircle className="w-4 h-4" /> PERFIL
+                            className="group flex items-center justify-end gap-2 py-6 text-right text-base md:text-lg tracking-[0.3em] font-light border-b border-white/10 text-white/80 hover:text-white transition-colors">
+                            <UserCircle className="w-4 h-4" />
+                            <span className="relative inline-block">
+                              PERFIL
+                              <span className="pointer-events-none absolute right-0 -bottom-1 h-px w-0 group-hover:w-full bg-gradient-to-l from-white/0 via-white to-white/0 transition-all duration-500 ease-out" />
+                            </span>
                           </Link>
                         </motion.div>
                         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
                           transition={{ duration: 0.3, delay: 0.1 + (navLinks.length + 2) * 0.08 }} className="w-full">
                           <button type="button" onClick={handleLogout}
-                            className="w-full flex items-center justify-end gap-2 py-6 text-right text-base md:text-lg tracking-[0.3em] font-light border-b border-white/10 text-white/80 hover:text-red-400 transition-colors">
-                            <LogOut className="w-4 h-4" /> SAIR
+                            className="group w-full flex items-center justify-end gap-2 py-6 text-right text-base md:text-lg tracking-[0.3em] font-light border-b border-white/10 text-white/80 hover:text-red-400 transition-colors">
+                            <LogOut className="w-4 h-4" />
+                            <span className="relative inline-block">
+                              SAIR
+                              <span className="pointer-events-none absolute right-0 -bottom-1 h-px w-0 group-hover:w-full bg-gradient-to-l from-red-400/0 via-red-400 to-red-400/0 transition-all duration-500 ease-out" />
+                            </span>
                           </button>
                         </motion.div>
                       </>
@@ -205,8 +220,11 @@ const Header = () => {
                       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
                         transition={{ duration: 0.3, delay: 0.1 + navLinks.length * 0.08 }} className="w-full">
                         <Link to="/auth" onClick={() => setIsMenuOpen(false)}
-                          className="block py-6 text-right text-base md:text-lg tracking-[0.3em] font-light border-b border-white/10 text-white/80 hover:text-white transition-colors">
-                          LOGIN
+                          className="group flex justify-end py-6 text-right text-base md:text-lg tracking-[0.3em] font-light border-b border-white/10 text-white/80 hover:text-white transition-colors">
+                          <span className="relative inline-block">
+                            LOGIN
+                            <span className="pointer-events-none absolute right-0 -bottom-1 h-px w-0 group-hover:w-full bg-gradient-to-l from-white/0 via-white to-white/0 transition-all duration-500 ease-out" />
+                          </span>
                         </Link>
                       </motion.div>
                     )}
