@@ -48,31 +48,42 @@ const Header = () => {
     { name: "BLOG", path: "/blog" },
   ];
 
+  // Animated underline (mesma estética dos nav links)
+  const underline = (extraClass = "via-white") => (
+    <span
+      className={`pointer-events-none absolute left-0 -bottom-1 h-px w-0 group-hover:w-full bg-gradient-to-r from-white/0 ${extraClass} to-white/0 transition-all duration-500 ease-out`}
+    />
+  );
+
   // Auth-aware items for desktop
   const authLinks = () => {
     if (authLoading) return null;
     if (!user) {
       return (
-        <Link to="/auth" className="text-xs tracking-[0.2em] font-light text-white/70 hover:text-white transition-colors">
+        <Link to="/auth" className="relative group text-xs tracking-[0.2em] font-light text-white/70 hover:text-white transition-colors">
           LOGIN
+          {underline()}
         </Link>
       );
     }
     return (
       <div className="flex items-center gap-6">
         {isAdmin && (
-          <Link to="/admin" className="flex items-center gap-1.5 text-xs tracking-[0.2em] font-light text-amber-400/90 hover:text-amber-300 transition-colors">
+          <Link to="/admin" className="relative group flex items-center gap-1.5 text-xs tracking-[0.2em] font-light text-amber-400/90 hover:text-amber-300 transition-colors">
             <Shield className="w-3.5 h-3.5" />
             ADMIN
+            {underline("via-amber-300")}
           </Link>
         )}
-        <Link to="/profile" className="flex items-center gap-1.5 text-xs tracking-[0.2em] font-light text-white/70 hover:text-white transition-colors">
+        <Link to="/profile" className="relative group flex items-center gap-1.5 text-xs tracking-[0.2em] font-light text-white/70 hover:text-white transition-colors">
           <UserCircle className="w-3.5 h-3.5" />
           PERFIL
+          {underline()}
         </Link>
-        <button type="button" onClick={handleLogout} className="flex items-center gap-1.5 text-xs tracking-[0.2em] font-light text-white/70 hover:text-red-400 transition-colors">
+        <button type="button" onClick={handleLogout} className="relative group flex items-center gap-1.5 text-xs tracking-[0.2em] font-light text-white/70 hover:text-red-400 transition-colors">
           <LogOut className="w-3.5 h-3.5" />
           SAIR
+          {underline("via-red-400")}
         </button>
       </div>
     );
