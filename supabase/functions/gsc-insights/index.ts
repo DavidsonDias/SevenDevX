@@ -43,11 +43,6 @@ Deno.serve(async (req) => {
     'Content-Type': 'application/json',
   };
 
-  const json = (data: unknown, status = 200) =>
-    new Response(JSON.stringify(data), {
-      status,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
 
   try {
     const body = await req.json().catch(() => ({}));
