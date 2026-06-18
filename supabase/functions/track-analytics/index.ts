@@ -45,9 +45,20 @@ serve(async (req) => {
 
   try {
     const payload: AnalyticsPayload = await req.json();
-    const userAgent = req.headers.get("user-agent") || "";
+    const userAgent = (req.headers.get("user-agent") || "").slice(0, 512);
 
-    console.log(`[Analytics] Tracking ${payload.type} - Visitor: ${payload.visitor_id}`);
+    // Input validation
+    if (!payload || (payload.type !== "pageview" && payload.type !== "event")) {
+      return new Response(JSON.stringify({ error: "invalid type" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    if (typeof payload.visitor_id !== "string" || payload.visitor_id.length === 0 || payload.visitor_id.length > 64) {
+      return new Response(JSON.stringify({ error: "invalid visitor_id" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    if (typeof payload.session_id !== "string" || payload.session_id.length === 0 || payload.session_id.length > 64) {
+      return new Response(JSON.stringify({ error: "invalid session_id" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    const trunc = (v: unknown, n: number) => (typeof v === "string" ? v.slice(0, n) : undefined);
+
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
