@@ -310,8 +310,11 @@ export type Database = {
           error: string | null
           event_id: string | null
           id: string
+          replay_of: string | null
           result: Json | null
           status: string
+          trigger_event: string | null
+          trigger_payload: Json | null
         }
         Insert: {
           automation_id: string
@@ -320,8 +323,11 @@ export type Database = {
           error?: string | null
           event_id?: string | null
           id?: string
+          replay_of?: string | null
           result?: Json | null
           status?: string
+          trigger_event?: string | null
+          trigger_payload?: Json | null
         }
         Update: {
           automation_id?: string
@@ -330,8 +336,11 @@ export type Database = {
           error?: string | null
           event_id?: string | null
           id?: string
+          replay_of?: string | null
           result?: Json | null
           status?: string
+          trigger_event?: string | null
+          trigger_payload?: Json | null
         }
         Relationships: [
           {
@@ -339,6 +348,13 @@ export type Database = {
             columns: ["automation_id"]
             isOneToOne: false
             referencedRelation: "automations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_runs_replay_of_fkey"
+            columns: ["replay_of"]
+            isOneToOne: false
+            referencedRelation: "automation_runs"
             referencedColumns: ["id"]
           },
         ]
@@ -349,11 +365,13 @@ export type Database = {
           conditions: Json
           created_at: string
           created_by: string | null
+          cron_expression: string | null
           description: string | null
           id: string
           is_active: boolean
           last_run_at: string | null
           name: string
+          next_run_at: string | null
           run_count: number
           trigger_event: string
           updated_at: string
@@ -363,11 +381,13 @@ export type Database = {
           conditions?: Json
           created_at?: string
           created_by?: string | null
+          cron_expression?: string | null
           description?: string | null
           id?: string
           is_active?: boolean
           last_run_at?: string | null
           name: string
+          next_run_at?: string | null
           run_count?: number
           trigger_event: string
           updated_at?: string
@@ -377,11 +397,13 @@ export type Database = {
           conditions?: Json
           created_at?: string
           created_by?: string | null
+          cron_expression?: string | null
           description?: string | null
           id?: string
           is_active?: boolean
           last_run_at?: string | null
           name?: string
+          next_run_at?: string | null
           run_count?: number
           trigger_event?: string
           updated_at?: string
@@ -1212,6 +1234,108 @@ export type Database = {
           request_count?: number
           secret_refs?: string[]
           updated_at?: string
+        }
+        Relationships: []
+      }
+      notification_preferences: {
+        Row: {
+          channel: string
+          created_at: string
+          enabled: boolean
+          event_type: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          channel: string
+          created_at?: string
+          enabled?: boolean
+          event_type: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          channel?: string
+          created_at?: string
+          enabled?: boolean
+          event_type?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          body: string | null
+          created_at: string
+          id: string
+          payload: Json
+          read_at: string | null
+          severity: string
+          title: string
+          type: string
+          url: string | null
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          payload?: Json
+          read_at?: string | null
+          severity?: string
+          title: string
+          type: string
+          url?: string | null
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          id?: string
+          payload?: Json
+          read_at?: string | null
+          severity?: string
+          title?: string
+          type?: string
+          url?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      onboarding_progress: {
+        Row: {
+          completed_at: string | null
+          completed_steps: string[]
+          created_at: string
+          dismissed_at: string | null
+          id: string
+          tour_key: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          completed_steps?: string[]
+          created_at?: string
+          dismissed_at?: string | null
+          id?: string
+          tour_key: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          completed_steps?: string[]
+          created_at?: string
+          dismissed_at?: string | null
+          id?: string
+          tour_key?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -2333,6 +2457,17 @@ export type Database = {
           limit: number
           used: number
         }[]
+      }
+      fn_emit_notification: {
+        Args: {
+          _body: string
+          _payload?: Json
+          _severity?: string
+          _title: string
+          _type: string
+          _url: string
+        }
+        Returns: undefined
       }
       fn_pipeline_forecast: {
         Args: never

@@ -57,8 +57,10 @@ export default function AutomationFlowBuilder({
   const [conditions, setConditions] = useState<Condition[]>([]);
   const [actions, setActions] = useState<Action[]>([]);
   const [isActive, setIsActive] = useState(true);
+  const [cronExpression, setCronExpression] = useState<string>("");
   const [saving, setSaving] = useState(false);
   const [running, setRunning] = useState(false);
+  const [testingReal, setTestingReal] = useState(false);
   const [showCatalog, setShowCatalog] = useState(false);
 
   // Load existing
@@ -74,6 +76,7 @@ export default function AutomationFlowBuilder({
       setName(data.name);
       setTrigger(data.trigger_event);
       setIsActive(data.is_active);
+      setCronExpression((data as any).cron_expression ?? "");
       setConditions(((data.conditions as any[]) || []).map((c, i) => ({ id: `c${i}`, ...c })));
       setActions(((data.actions as any[]) || []).map((a, i) => ({ id: `a${i}`, type: a.type, params: a.params || {} })));
     })();
@@ -106,6 +109,7 @@ export default function AutomationFlowBuilder({
     setSaving(true);
     const payload = {
       name, trigger_event: trigger, is_active: isActive,
+      cron_expression: cronExpression || null,
       conditions: conditions.map(({ id, ...c }) => c),
       actions: actions.map(({ id, ...a }) => a),
     };
@@ -148,6 +152,23 @@ export default function AutomationFlowBuilder({
     status === "success" ? toast.success(`Dry-run OK (${Date.now() - t0}ms)`) : toast.error(`Dry-run falhou: ${error}`);
   };
 
+  const testTriggerReal = async () => {
+    setTestingReal(true);
+    try {
+      const samplePayload = trigger === "lead.created"
+        ? { contact_id: "test", name: "Lead Teste", email: "teste@example.com", company: "Acme" }
+        : { test: true, ts: Date.now() };
+      const { data, error } = await supabase.functions.invoke("automation-runner", {
+        body: { trigger_event: trigger, payload: samplePayload, automation_id: automationId },
+      });
+      if (error) throw error;
+      toast.success(`Trigger real executado · ${data?.executed ?? 0} automação(ões)`);
+    } catch (e: any) {
+      toast.error("Falhou: " + e.message);
+    }
+    setTestingReal(false);
+  };
+
   return (
     <AnimatePresence>
       {open && (
@@ -183,7 +204,12 @@ export default function AutomationFlowBuilder({
                 </label>
                 <button onClick={dryRun} disabled={running}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/15 text-xs hover:bg-white/5 disabled:opacity-50">
-                  <Play className="w-3 h-3" /> {running ? "Executando..." : "Dry-run"}
+                  <Play className="w-3 h-3" /> {running ? "..." : "Dry-run"}
+                </button>
+                <button onClick={testTriggerReal} disabled={testingReal || !automationId}
+                  title={!automationId ? "Salve primeiro" : "Executa o motor real com payload de exemplo"}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-amber-400/40 text-amber-200 text-xs hover:bg-amber-400/10 disabled:opacity-50">
+                  <Zap className="w-3 h-3" /> {testingReal ? "..." : "Test real"}
                 </button>
                 <button onClick={save} disabled={saving}
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white text-black text-xs font-medium disabled:opacity-50">
@@ -202,6 +228,10 @@ export default function AutomationFlowBuilder({
                     className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-white/30">
                     {TRIGGERS.map((t) => <option key={t} value={t}>{t}</option>)}
                   </select>
+                  {trigger === "schedule.cron" && (
+                    <input value={cronExpression} onChange={(e) => setCronExpression(e.target.value)}
+                      placeholder="0 9 * * * (cron)" className="mt-2 w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-xs font-mono focus:outline-none focus:border-white/30" />
+                  )}
                 </FlowNode>
 
                 <Connector />

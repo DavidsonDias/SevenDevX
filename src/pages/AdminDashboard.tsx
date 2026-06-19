@@ -22,6 +22,9 @@ import KpiCards from "@/components/admin/KpiCards";
 import GlassCard from "@/components/GlassCard";
 import ActivityFeed from "@/components/admin/ActivityFeed";
 import SmartInsights from "@/components/admin/SmartInsights";
+import OnboardingChecklist from "@/modules/onboarding/OnboardingChecklist";
+import OnboardingTour from "@/modules/onboarding/OnboardingTour";
+import { ADMIN_TOUR } from "@/modules/onboarding/tourSteps";
 import { StatsCardSkeleton } from "@/components/SkeletonLoader";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -286,6 +289,8 @@ const AdminDashboard = () => {
         </header>
 
         <main className="container mx-auto px-6 py-8">
+          <OnboardingChecklist />
+          <OnboardingTour tourKey="admin_dashboard" steps={ADMIN_TOUR} />
           {/* KPIs avançados (#6) */}
           <KpiCards />
 

@@ -3,12 +3,15 @@
  * Editor visual via AutomationFlowBuilder (node-based).
  */
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import AdminPageShell from "@/components/admin/AdminPageShell";
-import { Plus, Zap, Power, Trash2, Loader2, Pencil, BookOpen } from "lucide-react";
+import { Plus, Zap, Power, Trash2, Loader2, Pencil, BookOpen, History, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import AutomationFlowBuilder from "@/modules/automations/AutomationFlowBuilder";
 import AutomationGuideDrawer from "@/modules/automations/AutomationGuideDrawer";
+import { AUTOMATION_TEMPLATES } from "@/modules/automations/automationTemplates";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function AutomationsAdmin() {
   const [list, setList] = useState<any[]>([]);
@@ -16,10 +19,21 @@ export default function AutomationsAdmin() {
   const [builderOpen, setBuilderOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [guideOpen, setGuideOpen] = useState(false);
+  const [templatesOpen, setTemplatesOpen] = useState(false);
 
   const load = () => supabase.from("automations").select("*").order("created_at", { ascending: false })
     .then(({ data }) => { setList(data || []); setLoading(false); });
   useEffect(() => { load(); }, []);
+
+  const createFromTemplate = async (tpl: typeof AUTOMATION_TEMPLATES[number]) => {
+    const { error } = await supabase.from("automations").insert({
+      name: tpl.name, trigger_event: tpl.trigger_event, conditions: tpl.conditions, actions: tpl.actions, is_active: false,
+    } as any);
+    if (error) return toast.error(error.message);
+    toast.success("Automação criada (inativa) — revise os params e ative");
+    setTemplatesOpen(false);
+    load();
+  };
 
   const openNew = () => { setEditingId(null); setBuilderOpen(true); };
   const openEdit = (id: string) => { setEditingId(id); setBuilderOpen(true); };
@@ -36,9 +50,15 @@ export default function AutomationsAdmin() {
   return (
     <AdminPageShell title="Automações" subtitle="Workflows · WHEN → IF → THEN · Visual builder"
       actions={
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
+          <Link to="/admin/automations/runs" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/15 text-sm hover:bg-white/5">
+            <History className="w-4 h-4" /> Runs
+          </Link>
           <button onClick={() => setGuideOpen(true)} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-white/15 text-sm hover:bg-white/5">
             <BookOpen className="w-4 h-4" /> Guia
+          </button>
+          <button onClick={() => setTemplatesOpen(true)} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-amber-400/40 text-amber-200 text-sm hover:bg-amber-400/10">
+            <Sparkles className="w-4 h-4" /> Templates
           </button>
           <button onClick={openNew} className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-white text-black text-sm font-medium">
             <Plus className="w-4 h-4" /> Novo fluxo
@@ -82,6 +102,41 @@ export default function AutomationsAdmin() {
 
       <AutomationFlowBuilder open={builderOpen} onClose={closeBuilder} automationId={editingId} />
       <AutomationGuideDrawer open={guideOpen} onClose={() => setGuideOpen(false)} />
+
+      <AnimatePresence>
+        {templatesOpen && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            onClick={() => setTemplatesOpen(false)}
+            className="fixed inset-0 z-[90] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+            <motion.div initial={{ scale: 0.95, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.95, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-3xl max-h-[85vh] overflow-y-auto rounded-2xl bg-[#0a0a0a] border border-white/10 p-6">
+              <div className="flex items-center gap-2 mb-1">
+                <Sparkles className="w-5 h-5 text-amber-300" />
+                <h3 className="text-lg font-semibold">Templates de Automação</h3>
+              </div>
+              <p className="text-xs text-white/50 mb-5">Clique para criar — vem desativada para você revisar os params.</p>
+              <div className="grid sm:grid-cols-2 gap-3">
+                {AUTOMATION_TEMPLATES.map((t) => (
+                  <button key={t.id} onClick={() => createFromTemplate(t)}
+                    className="text-left p-4 rounded-xl border border-white/10 hover:border-amber-400/40 hover:bg-amber-400/[0.03] transition-colors group">
+                    <div className="flex items-start gap-3">
+                      <span className="text-2xl">{t.emoji}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-semibold group-hover:text-amber-200">{t.name}</div>
+                        <div className="text-[11px] text-white/50 mt-1">{t.description}</div>
+                        <div className="text-[10px] text-white/30 mt-2 font-mono">
+                          {t.trigger_event} → {t.actions.map((a: any) => a.type).join(" · ")}
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </AdminPageShell>
   );
 }

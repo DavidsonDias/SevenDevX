@@ -9,6 +9,7 @@ import AdminMenu from "@/components/admin/AdminMenu";
 import PushSubscribeButton from "@/components/admin/PushSubscribeButton";
 import Breadcrumb from "@/components/admin/Breadcrumb";
 import GlobalSearch from "@/components/admin/GlobalSearch";
+import NotificationBell from "@/modules/notifications/NotificationBell";
 import { useSmartBack } from "@/hooks/useSmartBack";
 
 interface Props {
@@ -57,8 +58,9 @@ export const AdminPageShell = ({ title, subtitle, actions, children, backFallbac
             </span>
           </div>
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <GlobalSearch />
-            <PushSubscribeButton />
+            <div data-tour="global-search"><GlobalSearch /></div>
+            <div data-tour="notif-bell"><NotificationBell /></div>
+            <div data-tour="push-button"><PushSubscribeButton /></div>
             <Link
               to="/"
               className="hidden md:inline-flex items-center gap-1.5 px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-xs uppercase tracking-wider"
