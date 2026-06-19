@@ -228,6 +228,10 @@ export default function AutomationFlowBuilder({
                     className="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-white/30">
                     {TRIGGERS.map((t) => <option key={t} value={t}>{t}</option>)}
                   </select>
+                  {trigger === "schedule.cron" && (
+                    <input value={cronExpression} onChange={(e) => setCronExpression(e.target.value)}
+                      placeholder="0 9 * * * (cron)" className="mt-2 w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-xs font-mono focus:outline-none focus:border-white/30" />
+                  )}
                 </FlowNode>
 
                 <Connector />
