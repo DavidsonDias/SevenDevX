@@ -10,7 +10,7 @@ import {
   Menu, X, LayoutDashboard, FolderKanban, Users, Workflow, Settings2, Sparkles,
   FileQuestion, Tag, Cpu, MessageSquare, GitBranch, Home as HomeIcon, LogOut,
   ListTodo, Coins, Plug, Inbox, Webhook, ScrollText, MonitorSmartphone, ShieldCheck, HeartPulse,
-  Activity, Zap, AlertTriangle, Bot, Palette, Sparkles as SparklesIcon, Megaphone,
+  Activity, Zap, AlertTriangle, Bot, Palette, Sparkles as SparklesIcon, Megaphone, Bell, History,
 } from "lucide-react";
 import { useAuthContext as useAuth } from "@/contexts/AuthContext";
 
@@ -37,6 +37,9 @@ const NAV: { label: string; to: string; icon: any; group: string }[] = [
   { group: "Super Admin", label: "Saúde",      to: "/admin/system-health", icon: HeartPulse },
   { group: "Super Admin", label: "Eventos",    to: "/admin/events",     icon: Activity },
   { group: "Super Admin", label: "Automações", to: "/admin/automations", icon: Zap },
+  { group: "Super Admin", label: "Histórico Runs", to: "/admin/automations/runs", icon: History },
+  { group: "Super Admin", label: "Notificações", to: "/admin/notifications", icon: Bell },
+  { group: "Super Admin", label: "Pref. Notificações", to: "/admin/notifications/preferences", icon: Bell },
   { group: "Super Admin", label: "Incidentes", to: "/admin/incidents",  icon: AlertTriangle },
   { group: "Super Admin", label: "AI Ops",     to: "/admin/ai-ops",     icon: Bot },
   { group: "Super Admin", label: "Logo Lab",   to: "/admin/logo-lab",   icon: Palette },

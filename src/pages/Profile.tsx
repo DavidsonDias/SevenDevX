@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Loader2, Save, User as UserIcon, Mail, ArrowLeft, Shield, Calendar,
-  KeyRound, LogOut, ImageIcon, Sparkles, CheckCircle2, Copy,
+  KeyRound, LogOut, ImageIcon, Sparkles, CheckCircle2, Copy, Compass,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useOnboarding } from "@/hooks/useOnboarding";
 
 type ProfileFormState = { fullName: string; bio: string; avatarUrl: string };
 
@@ -18,6 +19,7 @@ const Profile = () => {
   const { user, isAdmin, signOut } = useAuthContext();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { reset: resetTour } = useOnboarding("admin_dashboard");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isSendingReset, setIsSendingReset] = useState(false);
@@ -348,6 +350,21 @@ const Profile = () => {
                   {isSendingReset ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ArrowLeft className="w-3.5 h-3.5 rotate-180 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />}
                 </button>
               </GlassCard>
+
+              {isAdmin && (
+                <GlassCard className="p-6">
+                  <h3 className="text-sm font-bold font-orbitron mb-1 flex items-center gap-2">
+                    <Compass className="w-4 h-4" /> Tour Guiado
+                  </h3>
+                  <p className="text-xs text-muted-foreground mb-4">Refaça o walkthrough inicial do SevenOS.</p>
+                  <button
+                    onClick={async () => { await resetTour(); toast({ title: "Tour reiniciado", description: "Abra o painel Admin para começar." }); }}
+                    className="w-full px-4 py-3 border border-border rounded-lg text-xs uppercase tracking-wider hover:bg-white/5 transition-all"
+                  >
+                    Refazer tour
+                  </button>
+                </GlassCard>
+              )}
 
               {isAdmin && (
                 <GlassCard className="p-6 border-amber-400/20">

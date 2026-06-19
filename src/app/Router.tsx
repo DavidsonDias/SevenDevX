@@ -65,6 +65,9 @@ const CaseStudyPage = lazy(() => import("@/pages/geo/CaseStudies").then(m => ({ 
 const ContentClusters = lazy(() => import("@/pages/geo/ContentClusters"));
 const CitationsAdmin = lazy(() => import("@/pages/admin/CitationsAdmin"));
 const SearchConsoleAdmin = lazy(() => import("@/pages/admin/SearchConsoleAdmin"));
+const NotificationsAdmin = lazy(() => import("@/pages/admin/NotificationsAdmin"));
+const NotificationPreferencesAdmin = lazy(() => import("@/pages/admin/NotificationPreferencesAdmin"));
+const AutomationRunsAdmin = lazy(() => import("@/pages/admin/AutomationRunsAdmin"));
 
 const pageTransition = {
   initial: { opacity: 0, y: 12, scale: 0.99 },
@@ -223,7 +226,15 @@ function AnimatedRoutes() {
             <Route path="/admin/search-console" element={
               <ProtectedRoute requiredRole="admin"><SearchConsoleAdmin /></ProtectedRoute>
             } />
-
+            <Route path="/admin/notifications" element={
+              <ProtectedRoute requiredRole="admin"><NotificationsAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/notifications/preferences" element={
+              <ProtectedRoute requiredRole="admin"><NotificationPreferencesAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/automations/runs" element={
+              <ProtectedRoute requiredRole="admin"><AutomationRunsAdmin /></ProtectedRoute>
+            } />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
