@@ -1,60 +1,93 @@
-# 🚀 Central de Integrações + Administração Global — SevenOS
+# SevenOS — Fase 2 Enterprise (Top 3 ROI)
 
-Esse escopo é gigantesco (8 novos módulos enterprise, dezenas de providers reais com OAuth, RBAC completo, audit, sessions, webhooks, central de contatos, WhatsApp Business API completo, etc). Tentar entregar tudo num único loop vira código raso e instável. Vou propor uma entrega **faseada em 4 fases**, começando pela fundação e pelos módulos de maior valor imediato — mas preciso da sua confirmação de prioridade antes.
-
-## Fase 1 — Fundação (essa rodada)
-
-Backend e shell visual que destravam todas as outras fases.
-
-1. **Migração DB**:
-   - `contact_messages` (central de contatos do site) + RLS admin + trigger push
-   - `admin_sessions` (rastreio de sessões ativas: device, browser, ip, last_seen)
-   - `webhooks` (endpoints registrados, secret, ativos, contagem de entregas)
-   - `webhook_deliveries` (log de payloads + status + replay)
-   - `integration_providers` (catálogo: id, nome, categoria, status, config JSON, secret_ref)
-   - `integration_logs` (request/response/erro/timing)
-   - extensão de `app_role`: `super_admin`, `manager`, `editor`, `viewer`
-2. **Shell de navegação Super Admin**: novo grupo no `AdminMenu` com as 8 rotas (`/admin/integrations`, `/admin/users`, `/admin/contact-center`, `/admin/security`, `/admin/logs`, `/admin/sessions`, `/admin/webhooks`, `/admin/system-health`) + páginas placeholder com `AdminPageShell` + KPI skeletons (já navegável, sem dados mock).
-3. **Header site — animated underline premium** nos links de navegação (item isolado e rápido).
-4. **Página `/admin/integrations`** funcional com hero KPIs reais (contagem de providers, falhas, último sync) + grid de cards por categoria + botão "Testar conexão" para os 3 providers já existentes (GitHub, Vercel, Figma) reaproveitando as edge functions atuais.
-
-## Fase 2 — Central de Contatos + Usuários & Sessões
-
-- `/admin/contact-center` estilo inbox (lista + detail pane + responder + converter em cliente/projeto + atribuir).
-- Migrar formulário do site para gravar em `contact_messages` (mantendo trigger push existente).
-- `/admin/users`: convidar admin, promover/rebaixar role, revogar sessão, reset senha (via edge function service-role).
-- `/admin/sessions`: lista de sessões ativas + encerrar individual/todas.
-- Audit log expandido (usar tabela `audit_log` já existente + UI dedicada).
-
-## Fase 3 — Webhooks + Logs + System Health + Security
-
-- `/admin/webhooks`: gerar callback URL, secret, replay payload.
-- `/admin/logs`: viewer realtime virtualizado de `integration_logs` + `audit_log` + `webhook_deliveries`.
-- `/admin/system-health`: uptime, latência média de cada edge function (via `analytics_query`), status Supabase, fila de jobs.
-- `/admin/security`: rate-limit config, rotação de tokens, force-logout global, password policy.
-
-## Fase 4 — Provider deep-dives + roadmap
-
-- WhatsApp Business API completo (credenciais, números, templates Meta, envio de teste).
-- GitHub/Vercel/Figma enterprise views (PRs, deploys com logs, embeds Figma).
-- Google Calendar OAuth + sync.
-- Roadmap "Em breve": Telegram, Twilio, Slack, Discord, Zapier, Make, n8n.
+Três grandes entregas integradas, com efeito imediato no dia-a-dia do admin.
 
 ---
 
-## Decisões técnicas
+## 1. Onboarding Tour Guiado (`/admin`)
 
-- **Stack**: Supabase (DB + Edge Functions + Realtime) + React Query + Framer Motion + tokens semânticos do design system existente.
-- **Secrets de provider**: armazenados em Supabase Secrets (server-side), nunca no frontend. Tabela `integration_providers` guarda apenas nome do secret + metadados públicos.
-- **RBAC**: estender enum `app_role` mantendo retrocompatibilidade (`admin` continua válido como super_admin).
-- **Realtime**: usar canais Supabase em logs, sessões, contact_messages.
-- **Testes de conexão**: edge function genérica `integration-test` que despacha por provider id.
-- **WhatsApp Business**: requer secrets `META_WABA_TOKEN`, `META_PHONE_NUMBER_ID`, `META_APP_SECRET`, `META_VERIFY_TOKEN` — vou pedir na fase 4.
+**Objetivo:** todo novo admin (e o próprio dono em telas novas) recebe um walkthrough contextual.
 
-## Perguntas antes de começar
+- Componente `OnboardingTour.tsx` baseado em portal + spotlight (overlay com recorte do elemento alvo via `getBoundingClientRect`) — sem libs externas.
+- Steps definidos por rota em `src/modules/onboarding/tourSteps.ts` (target seletor + título + descrição + ação opcional).
+- Persistência em nova tabela `onboarding_progress` (user_id, tour_key, completed_steps[], dismissed_at).
+- Botão "Refazer tour" no Profile + auto-start na 1ª visita.
+- Checklist inicial (`OnboardingChecklist.tsx`) no Dashboard: "Configurar perfil", "Conectar 1 integração", "Criar 1 projeto", "Convidar usuário", "Configurar push", "Criar 1 automação". Cada item com link direto e status real (query no DB).
+- Dicas contextuais (`<TourHint>`) — tooltip discreto no canto de seções complexas (FlowBuilder, FinanceAdmin).
 
-1. **Confirmo começar pela Fase 1** (fundação + shell + integrations base + animated underline)? Ou quer que eu inverta a ordem (ex: começar por Central de Contatos que tem impacto comercial direto)?
-2. Posso **estender o enum `app_role`** para incluir `super_admin`, `manager`, `editor`, `viewer`? Hoje só existe `admin`/`moderator`/`user`.
-3. O formulário público do site hoje grava em `contacts` — quer que eu **migre para `contact_messages`** ou mantenha `contacts` e use ela como tabela única da Central?
+## 2. Central de Notificações In-App (sino 🔔)
 
-Responde essas 3 e eu começo a Fase 1 imediatamente.
+**Objetivo:** unificar push + eventos do sistema num inbox persistente.
+
+- Nova tabela `notifications` (user_id, type, title, body, url, severity, read_at, payload jsonb).
+- Tabela `notification_preferences` (user_id, channel [push/email/inapp], event_type, enabled).
+- Trigger `fn_emit_notification()` plugado em: `contacts INSERT`, `projects pipeline_changed`, `events severity=error`, `automation_runs status=failed`, `user_roles INSERT`.
+- Componente `NotificationBell.tsx` no Header admin:
+  - Badge com contador unread (Realtime subscription).
+  - Dropdown com últimas 20 + agrupamento por dia + ações inline ("Marcar lida", "Abrir").
+  - Filtros: Todas / Não lidas / Críticas.
+- Página `/admin/notifications` com histórico completo, filtros por tipo/severidade, marcar todas como lidas, exportar.
+- Página `/admin/notifications/preferences` — matriz canal×evento.
+- Edge function `notification-digest` (cron diário) que envia resumo por email via Resend.
+
+## 3. Automações com Triggers Reais (não só dry-run)
+
+**Objetivo:** o FlowBuilder existe — falta o motor.
+
+- Edge function `automation-runner` (HTTP + invocável):
+  - Recebe `{ trigger_event, payload }`.
+  - Busca automations ativas com `trigger_event` correspondente.
+  - Avalia `conditions` (engine simples com operadores existentes).
+  - Executa `actions` em sequência (webhook, email via Resend, slack, discord, ai.summarize via Lovable AI, db.update, delay, push.send, http.request, transform via Function constructor sandboxed).
+  - Registra cada execução em `automation_runs` com steps detalhados.
+- Trigger SQL `fn_dispatch_automation()` em `events` table → chama runner via `pg_net`/`http_post` (já temos extensão).
+- Trigger `lead.created` (contacts INSERT) e `project.pipeline_changed` (já tem evento) → dispatcher.
+- Scheduler cron via `pg_cron` para automações `schedule.cron` (campo `cron_expression` adicionado a `automations`).
+- Nova aba "Templates" no AutomationsAdmin com 8 templates prontos: "Notificar Slack ao receber lead", "Email de boas-vindas", "Webhook ao mudar pipeline", "Resumo IA diário", "Alerta de deploy falho", "Push ao receber pagamento", "Backup semanal", "Lead scoring com IA".
+- Página `/admin/automations/runs` — histórico paginado com replay button (re-executa com payload original).
+- Botão "Test trigger" no FlowBuilder dispara o runner real com payload de exemplo editável.
+
+---
+
+## Mudanças no banco (uma migration)
+
+```text
+- onboarding_progress
+- notifications
+- notification_preferences
+- automations: adicionar cron_expression, last_run_at, next_run_at
+- automation_runs: adicionar trigger_payload, replay_of (self-ref)
+- triggers: fn_emit_notification em 5 tabelas, fn_dispatch_automation em events
+- pg_cron job: notification-digest diário 8h, automation-cron a cada minuto
+```
+
+## Arquivos novos (resumo)
+
+- `src/modules/onboarding/{OnboardingTour,OnboardingChecklist,TourHint,tourSteps}.tsx/ts`
+- `src/modules/notifications/{NotificationBell,NotificationItem,NotificationFilters}.tsx`
+- `src/hooks/{useOnboarding,useNotifications,useNotificationPrefs}.ts`
+- `src/pages/admin/{NotificationsAdmin,NotificationPreferencesAdmin,AutomationRunsAdmin,AutomationTemplatesAdmin}.tsx`
+- `supabase/functions/automation-runner/index.ts`
+- `supabase/functions/notification-digest/index.ts`
+- Migration com tudo acima.
+
+## Arquivos editados
+
+- `src/components/admin/AdminPageShell.tsx` — slot do sino.
+- `src/pages/AdminDashboard.tsx` — checklist no topo.
+- `src/pages/Profile.tsx` — botão "Refazer tour".
+- `src/app/Router.tsx` — novas rotas admin.
+- `src/modules/automations/AutomationFlowBuilder.tsx` — botão "Test trigger real" + campo cron.
+- `src/pages/admin/AutomationsAdmin.tsx` — aba templates + link runs.
+- `src/components/admin/AdminMenu.tsx` — entradas notificações + automation runs.
+
+## Ordem de execução
+
+1. Migration (tabelas + triggers + cron) → aprovação.
+2. Edge functions (`automation-runner`, `notification-digest`).
+3. Hooks + componentes notificações + sino no header.
+4. Onboarding tour + checklist.
+5. Templates de automação + página de runs + integração no FlowBuilder.
+6. Tradução PT/EN/ES das strings novas (mantém i18n consistente).
+
+Pronto para começar pela migration?
