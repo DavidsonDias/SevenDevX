@@ -68,6 +68,12 @@ const SearchConsoleAdmin = lazy(() => import("@/pages/admin/SearchConsoleAdmin")
 const NotificationsAdmin = lazy(() => import("@/pages/admin/NotificationsAdmin"));
 const NotificationPreferencesAdmin = lazy(() => import("@/pages/admin/NotificationPreferencesAdmin"));
 const AutomationRunsAdmin = lazy(() => import("@/pages/admin/AutomationRunsAdmin"));
+const MfaAdmin = lazy(() => import("@/pages/admin/MfaAdmin"));
+const ForecastAdmin = lazy(() => import("@/pages/admin/ForecastAdmin"));
+const BackupAdmin = lazy(() => import("@/pages/admin/BackupAdmin"));
+const SystemSettingsAdmin = lazy(() => import("@/pages/admin/SystemSettingsAdmin"));
+const ResponseTemplatesAdmin = lazy(() => import("@/pages/admin/ResponseTemplatesAdmin"));
+const DlqAdmin = lazy(() => import("@/pages/admin/DlqAdmin"));
 
 const pageTransition = {
   initial: { opacity: 0, y: 12, scale: 0.99 },
@@ -234,6 +240,24 @@ function AnimatedRoutes() {
             } />
             <Route path="/admin/automations/runs" element={
               <ProtectedRoute requiredRole="admin"><AutomationRunsAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/security/mfa" element={
+              <ProtectedRoute><MfaAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/forecast" element={
+              <ProtectedRoute requiredRole="admin"><ForecastAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/backup" element={
+              <ProtectedRoute requiredRole="admin"><BackupAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/settings" element={
+              <ProtectedRoute requiredRole="admin"><SystemSettingsAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/templates" element={
+              <ProtectedRoute requiredRole="admin"><ResponseTemplatesAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/webhooks/dlq" element={
+              <ProtectedRoute requiredRole="admin"><DlqAdmin /></ProtectedRoute>
             } />
 
             <Route path="*" element={<NotFound />} />
