@@ -17,13 +17,21 @@ export type Database = {
       admin_sessions: {
         Row: {
           browser: string | null
+          city: string | null
+          country: string | null
           created_at: string
           device: string | null
+          geo_checked_at: string | null
           id: string
           ip: string | null
+          is_suspicious: boolean | null
+          isp: string | null
           last_seen_at: string
+          lat: number | null
+          lng: number | null
           location: string | null
           os: string | null
+          region: string | null
           revoked_at: string | null
           user_agent: string | null
           user_email: string | null
@@ -31,13 +39,21 @@ export type Database = {
         }
         Insert: {
           browser?: string | null
+          city?: string | null
+          country?: string | null
           created_at?: string
           device?: string | null
+          geo_checked_at?: string | null
           id?: string
           ip?: string | null
+          is_suspicious?: boolean | null
+          isp?: string | null
           last_seen_at?: string
+          lat?: number | null
+          lng?: number | null
           location?: string | null
           os?: string | null
+          region?: string | null
           revoked_at?: string | null
           user_agent?: string | null
           user_email?: string | null
@@ -45,13 +61,21 @@ export type Database = {
         }
         Update: {
           browser?: string | null
+          city?: string | null
+          country?: string | null
           created_at?: string
           device?: string | null
+          geo_checked_at?: string | null
           id?: string
           ip?: string | null
+          is_suspicious?: boolean | null
+          isp?: string | null
           last_seen_at?: string
+          lat?: number | null
+          lng?: number | null
           location?: string | null
           os?: string | null
+          region?: string | null
           revoked_at?: string | null
           user_agent?: string | null
           user_email?: string | null
@@ -819,11 +843,15 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          last_contacted_at: string | null
+          lead_score: number | null
           message: string | null
           name: string
           notes: string | null
           phone: string | null
+          score_reasons: Json | null
           service_type: string | null
+          sla_due_at: string | null
           source: string | null
           status: Database["public"]["Enums"]["contact_status"]
           updated_at: string
@@ -835,11 +863,15 @@ export type Database = {
           created_at?: string
           email: string
           id?: string
+          last_contacted_at?: string | null
+          lead_score?: number | null
           message?: string | null
           name: string
           notes?: string | null
           phone?: string | null
+          score_reasons?: Json | null
           service_type?: string | null
+          sla_due_at?: string | null
           source?: string | null
           status?: Database["public"]["Enums"]["contact_status"]
           updated_at?: string
@@ -851,11 +883,15 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          last_contacted_at?: string | null
+          lead_score?: number | null
           message?: string | null
           name?: string
           notes?: string | null
           phone?: string | null
+          score_reasons?: Json | null
           service_type?: string | null
+          sla_due_at?: string | null
           source?: string | null
           status?: Database["public"]["Enums"]["contact_status"]
           updated_at?: string
@@ -1672,8 +1708,10 @@ export type Database = {
           created_by: string | null
           description: string
           display_order: number
+          expected_close_date: string | null
           featured_level: Database["public"]["Enums"]["featured_level"]
           figma_url: string | null
+          forecast_value: number | null
           gallery: Json
           github_repo: string | null
           github_url: string | null
@@ -1683,6 +1721,7 @@ export type Database = {
           live_url: string | null
           long_description: string | null
           pipeline_stage: Database["public"]["Enums"]["project_pipeline_stage"]
+          probability: number | null
           published_at: string | null
           seo_description: string | null
           seo_keywords: string[] | null
@@ -1712,8 +1751,10 @@ export type Database = {
           created_by?: string | null
           description: string
           display_order?: number
+          expected_close_date?: string | null
           featured_level?: Database["public"]["Enums"]["featured_level"]
           figma_url?: string | null
+          forecast_value?: number | null
           gallery?: Json
           github_repo?: string | null
           github_url?: string | null
@@ -1723,6 +1764,7 @@ export type Database = {
           live_url?: string | null
           long_description?: string | null
           pipeline_stage?: Database["public"]["Enums"]["project_pipeline_stage"]
+          probability?: number | null
           published_at?: string | null
           seo_description?: string | null
           seo_keywords?: string[] | null
@@ -1752,8 +1794,10 @@ export type Database = {
           created_by?: string | null
           description?: string
           display_order?: number
+          expected_close_date?: string | null
           featured_level?: Database["public"]["Enums"]["featured_level"]
           figma_url?: string | null
+          forecast_value?: number | null
           gallery?: Json
           github_repo?: string | null
           github_url?: string | null
@@ -1763,6 +1807,7 @@ export type Database = {
           live_url?: string | null
           long_description?: string | null
           pipeline_stage?: Database["public"]["Enums"]["project_pipeline_stage"]
+          probability?: number | null
           published_at?: string | null
           seo_description?: string | null
           seo_keywords?: string[] | null
@@ -1817,6 +1862,75 @@ export type Database = {
           p256dh?: string
           user_agent?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      response_templates: {
+        Row: {
+          body: string
+          category: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+          subject: string | null
+          updated_at: string
+          usage_count: number | null
+          variables: string[] | null
+        }
+        Insert: {
+          body: string
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name: string
+          subject?: string | null
+          updated_at?: string
+          usage_count?: number | null
+          variables?: string[] | null
+        }
+        Update: {
+          body?: string
+          category?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
+          subject?: string | null
+          updated_at?: string
+          usage_count?: number | null
+          variables?: string[] | null
+        }
+        Relationships: []
+      }
+      service_health_snapshots: {
+        Row: {
+          checked_at: string
+          error: string | null
+          id: string
+          latency_ms: number | null
+          metadata: Json | null
+          service_name: string
+          status: string
+        }
+        Insert: {
+          checked_at?: string
+          error?: string | null
+          id?: string
+          latency_ms?: number | null
+          metadata?: Json | null
+          service_name: string
+          status: string
+        }
+        Update: {
+          checked_at?: string
+          error?: string | null
+          id?: string
+          latency_ms?: number | null
+          metadata?: Json | null
+          service_name?: string
+          status?: string
         }
         Relationships: []
       }
@@ -1984,6 +2098,30 @@ export type Database = {
         }
         Relationships: []
       }
+      system_settings: {
+        Row: {
+          description: string | null
+          key: string
+          updated_at: string
+          updated_by: string | null
+          value: Json
+        }
+        Insert: {
+          description?: string | null
+          key: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: Json
+        }
+        Update: {
+          description?: string | null
+          key?: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: Json
+        }
+        Relationships: []
+      }
       tag_registry: {
         Row: {
           color: string
@@ -2107,6 +2245,42 @@ export type Database = {
           slug?: string
           updated_at?: string
           usage_count?: number
+        }
+        Relationships: []
+      }
+      tenant_backups: {
+        Row: {
+          created_at: string
+          error: string | null
+          id: string
+          size_bytes: number | null
+          status: string | null
+          storage_path: string
+          tables_included: string[] | null
+          triggered_by: string | null
+          triggered_kind: string | null
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          size_bytes?: number | null
+          status?: string | null
+          storage_path: string
+          tables_included?: string[] | null
+          triggered_by?: string | null
+          triggered_kind?: string | null
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          id?: string
+          size_bytes?: number | null
+          status?: string | null
+          storage_path?: string
+          tables_included?: string[] | null
+          triggered_by?: string | null
+          triggered_kind?: string | null
         }
         Relationships: []
       }
@@ -2251,6 +2425,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_mfa: {
+        Row: {
+          backup_codes: string[] | null
+          created_at: string
+          enabled_at: string | null
+          last_used_at: string | null
+          secret_encrypted: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          backup_codes?: string[] | null
+          created_at?: string
+          enabled_at?: string | null
+          last_used_at?: string | null
+          secret_encrypted: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          backup_codes?: string[] | null
+          created_at?: string
+          enabled_at?: string | null
+          last_used_at?: string | null
+          secret_encrypted?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -2312,9 +2516,13 @@ export type Database = {
           error: string | null
           event: string
           id: string
+          is_dead_letter: boolean | null
+          next_retry_at: string | null
           payload: Json
+          replay_of: string | null
           response_body: string | null
           response_status: number | null
+          signature_verified: boolean | null
           webhook_id: string
         }
         Insert: {
@@ -2324,9 +2532,13 @@ export type Database = {
           error?: string | null
           event: string
           id?: string
+          is_dead_letter?: boolean | null
+          next_retry_at?: string | null
           payload?: Json
+          replay_of?: string | null
           response_body?: string | null
           response_status?: number | null
+          signature_verified?: boolean | null
           webhook_id: string
         }
         Update: {
@@ -2336,9 +2548,13 @@ export type Database = {
           error?: string | null
           event?: string
           id?: string
+          is_dead_letter?: boolean | null
+          next_retry_at?: string | null
           payload?: Json
+          replay_of?: string | null
           response_body?: string | null
           response_status?: number | null
+          signature_verified?: boolean | null
           webhook_id?: string
         }
         Relationships: [
@@ -2351,10 +2567,62 @@ export type Database = {
           },
         ]
       }
+      webhook_dlq: {
+        Row: {
+          attempts: number | null
+          delivery_id: string | null
+          event: string | null
+          id: string
+          last_error: string | null
+          moved_at: string
+          payload: Json | null
+          replayed_at: string | null
+          webhook_id: string | null
+        }
+        Insert: {
+          attempts?: number | null
+          delivery_id?: string | null
+          event?: string | null
+          id?: string
+          last_error?: string | null
+          moved_at?: string
+          payload?: Json | null
+          replayed_at?: string | null
+          webhook_id?: string | null
+        }
+        Update: {
+          attempts?: number | null
+          delivery_id?: string | null
+          event?: string | null
+          id?: string
+          last_error?: string | null
+          moved_at?: string
+          payload?: Json | null
+          replayed_at?: string | null
+          webhook_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webhook_dlq_delivery_id_fkey"
+            columns: ["delivery_id"]
+            isOneToOne: false
+            referencedRelation: "webhook_deliveries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "webhook_dlq_webhook_id_fkey"
+            columns: ["webhook_id"]
+            isOneToOne: false
+            referencedRelation: "webhooks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       webhooks: {
         Row: {
           created_at: string
           created_by: string | null
+          dead_letter_after: number | null
           delivery_count: number
           description: string | null
           events: string[]
@@ -2364,14 +2632,17 @@ export type Database = {
           is_active: boolean
           last_delivery_at: string | null
           name: string
+          retry_policy: Json | null
           secret: string
           success_count: number
           updated_at: string
           url: string
+          verify_signature: boolean | null
         }
         Insert: {
           created_at?: string
           created_by?: string | null
+          dead_letter_after?: number | null
           delivery_count?: number
           description?: string | null
           events?: string[]
@@ -2381,14 +2652,17 @@ export type Database = {
           is_active?: boolean
           last_delivery_at?: string | null
           name: string
+          retry_policy?: Json | null
           secret?: string
           success_count?: number
           updated_at?: string
           url: string
+          verify_signature?: boolean | null
         }
         Update: {
           created_at?: string
           created_by?: string | null
+          dead_letter_after?: number | null
           delivery_count?: number
           description?: string | null
           events?: string[]
@@ -2398,10 +2672,12 @@ export type Database = {
           is_active?: boolean
           last_delivery_at?: string | null
           name?: string
+          retry_policy?: Json | null
           secret?: string
           success_count?: number
           updated_at?: string
           url?: string
+          verify_signature?: boolean | null
         }
         Relationships: []
       }
@@ -2478,6 +2754,15 @@ export type Database = {
           weighted_revenue: number
         }[]
       }
+      fn_pipeline_forecast_v2: {
+        Args: never
+        Returns: {
+          month_label: string
+          project_count: number
+          raw_revenue: number
+          weighted_revenue: number
+        }[]
+      }
       fn_project_margin: {
         Args: { _project_id: string }
         Returns: {
@@ -2489,6 +2774,16 @@ export type Database = {
           income_brl: number
           margin_percent: number
           net_margin_brl: number
+        }[]
+      }
+      fn_service_slo: {
+        Args: { _days?: number; _service: string }
+        Returns: {
+          avg_latency_ms: number
+          incidents: number
+          total_checks: number
+          up_checks: number
+          uptime_percent: number
         }[]
       }
       fn_stale_leads: {
@@ -2523,6 +2818,19 @@ export type Database = {
       }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      update_session_geo: {
+        Args: {
+          _city: string
+          _country: string
+          _is_suspicious: boolean
+          _isp: string
+          _lat: number
+          _lng: number
+          _region: string
+          _session_id: string
+        }
+        Returns: undefined
+      }
       upsert_admin_session: {
         Args: {
           _browser: string
