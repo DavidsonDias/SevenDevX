@@ -5,7 +5,7 @@
  */
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
-import { LayoutDashboard, FolderKanban, Plug, Workflow, Sparkles } from "lucide-react";
+import { LayoutDashboard, FolderKanban, Inbox, GitBranch, Sparkles } from "lucide-react";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,11 +13,11 @@ import RadialActionMenu from "./RadialActionMenu";
 
 const TABS_LEFT = [
   { to: "/admin", label: "Home", icon: LayoutDashboard, match: (p: string) => p === "/admin" },
-  { to: "/admin/projects", label: "Projects", icon: FolderKanban, match: (p: string) => p.startsWith("/admin/projects") },
+  { to: "/admin/projects", label: "Projetos", icon: FolderKanban, match: (p: string) => p.startsWith("/admin/projects") },
 ];
 const TABS_RIGHT = [
-  { to: "/admin/integrations", label: "Integra", icon: Plug, match: (p: string) => p.startsWith("/admin/integrations") || p.startsWith("/admin/webhooks") },
-  { to: "/admin/pipeline", label: "Pipeline", icon: Workflow, match: (p: string) => p.startsWith("/admin/pipeline") || p.startsWith("/admin/clients") },
+  { to: "/admin/contact-center", label: "Contatos", icon: Inbox, match: (p: string) => p.startsWith("/admin/contact-center") || p.startsWith("/admin/clients") },
+  { to: "/admin/pipeline", label: "Pipeline", icon: GitBranch, match: (p: string) => p.startsWith("/admin/pipeline") },
 ];
 
 function TabItem({ tab, active }: { tab: any; active: boolean }) {
