@@ -74,6 +74,7 @@ const BackupAdmin = lazy(() => import("@/pages/admin/BackupAdmin"));
 const SystemSettingsAdmin = lazy(() => import("@/pages/admin/SystemSettingsAdmin"));
 const ResponseTemplatesAdmin = lazy(() => import("@/pages/admin/ResponseTemplatesAdmin"));
 const DlqAdmin = lazy(() => import("@/pages/admin/DlqAdmin"));
+const BlogAdmin = lazy(() => import("@/pages/admin/BlogAdmin"));
 
 const pageTransition = {
   initial: { opacity: 0, y: 12, scale: 0.99 },
@@ -258,6 +259,9 @@ function AnimatedRoutes() {
             } />
             <Route path="/admin/webhooks/dlq" element={
               <ProtectedRoute requiredRole="admin"><DlqAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/blog" element={
+              <ProtectedRoute requiredRole="admin"><BlogAdmin /></ProtectedRoute>
             } />
 
             <Route path="*" element={<NotFound />} />
