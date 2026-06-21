@@ -72,7 +72,7 @@ export default function SecurityAdmin() {
 
   const forceLogoutAll = async () => {
     if (!confirm("Forçar logout de TODAS as sessões ativas? Todos usuários precisarão entrar de novo.")) return;
-    const { error } = await supabase.from("admin_sessions").update({ revoked: true }).eq("revoked", false);
+    const { error } = await supabase.from("admin_sessions").update({ revoked_at: new Date().toISOString() } as any).is("revoked_at", null);
     if (error) return toast({ title: "Erro", description: error.message, variant: "destructive" });
     toast({ title: "Sessões revogadas", description: "Logout global executado." });
     setSessionsCount(0);
