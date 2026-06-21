@@ -91,7 +91,7 @@ export default function MobileBottomNav() {
               {TABS_RIGHT.map((t) => (
                 <div key={t.to} className="relative">
                   <TabItem tab={t} active={t.match(pathname)} />
-                  {t.label === "Integra" && unread > 0 && (
+                  {t.label === "Contatos" && unread > 0 && (
                     <span className="absolute top-1.5 right-3 min-w-[16px] h-[16px] px-1 rounded-full bg-emerald-400 text-black text-[9px] font-bold flex items-center justify-center shadow-[0_0_10px_rgba(52,211,153,0.7)]">
                       {unread > 9 ? "9+" : unread}
                     </span>
