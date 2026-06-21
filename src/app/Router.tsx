@@ -74,6 +74,7 @@ const BackupAdmin = lazy(() => import("@/pages/admin/BackupAdmin"));
 const SystemSettingsAdmin = lazy(() => import("@/pages/admin/SystemSettingsAdmin"));
 const ResponseTemplatesAdmin = lazy(() => import("@/pages/admin/ResponseTemplatesAdmin"));
 const DlqAdmin = lazy(() => import("@/pages/admin/DlqAdmin"));
+const BlogAdmin = lazy(() => import("@/pages/admin/BlogAdmin"));
 
 const pageTransition = {
   initial: { opacity: 0, y: 12, scale: 0.99 },
