@@ -35,14 +35,14 @@ export default function SecurityAdmin() {
     (async () => {
       const [{ data: a }, { count: s }, { count: m }] = await Promise.all([
         supabase.from("audit_log")
-          .select("id,action,entity,created_at,user_id")
+          .select("id,action,table_name,occurred_at,actor_email")
           .in("action", ["role.change", "mfa.disable", "settings.update", "secret.rotate"])
-          .order("created_at", { ascending: false })
+          .order("occurred_at", { ascending: false })
           .limit(8),
-        supabase.from("admin_sessions").select("*", { count: "exact", head: true }).eq("revoked", false),
+        supabase.from("admin_sessions").select("*", { count: "exact", head: true }).is("revoked_at", null),
         supabase.from("user_mfa").select("*", { count: "exact", head: true }).eq("enabled", true),
       ]);
-      setAudit((a as AuditRow[]) ?? []);
+      setAudit(((a as unknown) as AuditRow[]) ?? []);
       setSessionsCount(s ?? 0);
       setMfaCount(m ?? 0);
     })();
