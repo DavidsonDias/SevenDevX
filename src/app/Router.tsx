@@ -260,6 +260,9 @@ function AnimatedRoutes() {
             <Route path="/admin/webhooks/dlq" element={
               <ProtectedRoute requiredRole="admin"><DlqAdmin /></ProtectedRoute>
             } />
+            <Route path="/admin/blog" element={
+              <ProtectedRoute requiredRole="admin"><BlogAdmin /></ProtectedRoute>
+            } />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
