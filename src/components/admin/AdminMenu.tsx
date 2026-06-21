@@ -16,43 +16,62 @@ import {
 import { useAuthContext as useAuth } from "@/contexts/AuthContext";
 
 const NAV: { label: string; to: string; icon: any; group: string }[] = [
+  // Operação — visão diária
   { group: "Operação", label: "Dashboard",     to: "/admin",            icon: LayoutDashboard },
   { group: "Operação", label: "Pipeline",      to: "/admin/pipeline",   icon: GitBranch },
   { group: "Operação", label: "Projetos",      to: "/admin/projects",   icon: FolderKanban },
   { group: "Operação", label: "Forecast",      to: "/admin/forecast",   icon: TrendingUp },
   { group: "Operação", label: "Financeiro",    to: "/admin/financeiro", icon: Coins },
-  { group: "CRM",      label: "Clientes",      to: "/admin/clients",    icon: Users },
+
+  // CRM
+  { group: "CRM",      label: "Clientes",      to: "/admin/clients",          icon: Users },
   { group: "CRM",      label: "Central Contatos", to: "/admin/contact-center", icon: Inbox },
-  { group: "CRM",      label: "Templates",     to: "/admin/templates",  icon: MessageSquare },
+  { group: "CRM",      label: "Templates",     to: "/admin/templates",        icon: MessageSquare },
+
+  // Conteúdo
   { group: "Conteúdo", label: "Serviços",      to: "/admin/services",   icon: Sparkles },
   { group: "Conteúdo", label: "Processo",      to: "/admin/process",    icon: Workflow },
   { group: "Conteúdo", label: "FAQ",           to: "/admin/faq",        icon: FileQuestion },
   { group: "Conteúdo", label: "Blog",          to: "/admin/blog",       icon: ListTodo },
+
+  // Catálogo
   { group: "Catálogo", label: "Tecnologias",   to: "/admin/technologies", icon: Cpu },
-  { group: "Catálogo", label: "Tags",          to: "/admin/tags",       icon: Tag },
-  { group: "Super Admin", label: "Integrações", to: "/admin/integrations", icon: Plug },
-  { group: "Super Admin", label: "Usuários",   to: "/admin/users",      icon: Users },
-  { group: "Super Admin", label: "Webhooks",   to: "/admin/webhooks",   icon: Webhook },
-  { group: "Super Admin", label: "Dead Letter Queue", to: "/admin/webhooks/dlq", icon: AlertOctagon },
-  { group: "Super Admin", label: "Logs",       to: "/admin/logs",       icon: ScrollText },
-  { group: "Super Admin", label: "Sessões",    to: "/admin/sessions",   icon: MonitorSmartphone },
-  { group: "Super Admin", label: "Segurança",  to: "/admin/security",   icon: ShieldCheck },
-  { group: "Super Admin", label: "2FA",        to: "/admin/security/mfa", icon: KeyRound },
-  { group: "Super Admin", label: "Saúde",      to: "/admin/system-health", icon: HeartPulse },
-  { group: "Super Admin", label: "Backups",    to: "/admin/backup",     icon: Database },
-  { group: "Super Admin", label: "Configurações", to: "/admin/settings", icon: Settings2 },
-  { group: "Super Admin", label: "Eventos",    to: "/admin/events",     icon: Activity },
-  { group: "Super Admin", label: "Automações", to: "/admin/automations", icon: Zap },
-  { group: "Super Admin", label: "Histórico Runs", to: "/admin/automations/runs", icon: History },
-  { group: "Super Admin", label: "Notificações", to: "/admin/notifications", icon: Bell },
-  { group: "Super Admin", label: "Pref. Notificações", to: "/admin/notifications/preferences", icon: Bell },
-  { group: "Super Admin", label: "Incidentes", to: "/admin/incidents",  icon: AlertTriangle },
-  { group: "Super Admin", label: "AI Ops",     to: "/admin/ai-ops",     icon: Bot },
-  { group: "Super Admin", label: "Logo Lab",   to: "/admin/logo-lab",   icon: Palette },
-  { group: "Super Admin", label: "Logo Library", to: "/admin/logo-library", icon: Palette },
-  { group: "Super Admin", label: "GEO Analytics", to: "/admin/geo", icon: SparklesIcon },
-  { group: "Super Admin", label: "Citations", to: "/admin/citations", icon: Megaphone },
-  { group: "Super Admin", label: "Search Console", to: "/admin/search-console", icon: SparklesIcon },
+  { group: "Catálogo", label: "Tags",          to: "/admin/tags",         icon: Tag },
+  { group: "Catálogo", label: "Logo Library",  to: "/admin/logo-library", icon: Palette },
+  { group: "Catálogo", label: "Logo Lab",      to: "/admin/logo-lab",     icon: Palette },
+
+  // Automação & Integração
+  { group: "Automação", label: "Automações",   to: "/admin/automations",      icon: Zap },
+  { group: "Automação", label: "Histórico Runs", to: "/admin/automations/runs", icon: History },
+  { group: "Automação", label: "Integrações",  to: "/admin/integrations",     icon: Plug },
+  { group: "Automação", label: "Webhooks",     to: "/admin/webhooks",         icon: Webhook },
+  { group: "Automação", label: "Dead Letter Queue", to: "/admin/webhooks/dlq", icon: AlertOctagon },
+
+  // Observabilidade
+  { group: "Observabilidade", label: "Saúde",     to: "/admin/system-health",   icon: HeartPulse },
+  { group: "Observabilidade", label: "Eventos",   to: "/admin/events",          icon: Activity },
+  { group: "Observabilidade", label: "Logs",      to: "/admin/logs",            icon: ScrollText },
+  { group: "Observabilidade", label: "Incidentes", to: "/admin/incidents",      icon: AlertTriangle },
+  { group: "Observabilidade", label: "AI Ops",    to: "/admin/ai-ops",          icon: Bot },
+
+  // Crescimento (GEO)
+  { group: "Crescimento", label: "GEO Analytics", to: "/admin/geo",            icon: SparklesIcon },
+  { group: "Crescimento", label: "Citations",     to: "/admin/citations",      icon: Megaphone },
+  { group: "Crescimento", label: "Search Console", to: "/admin/search-console", icon: SparklesIcon },
+
+  // Notificações
+  { group: "Notificações", label: "Caixa",        to: "/admin/notifications",              icon: Bell },
+  { group: "Notificações", label: "Preferências", to: "/admin/notifications/preferences",  icon: Bell },
+
+  // Segurança
+  { group: "Segurança", label: "Segurança",   to: "/admin/security",     icon: ShieldCheck },
+  { group: "Segurança", label: "2FA",         to: "/admin/security/mfa", icon: KeyRound },
+  { group: "Segurança", label: "Sessões",     to: "/admin/sessions",     icon: MonitorSmartphone },
+
+  // Sistema
+  { group: "Sistema", label: "Usuários",      to: "/admin/users",     icon: Users },
+  { group: "Sistema", label: "Configurações", to: "/admin/settings",  icon: Settings2 },
+  { group: "Sistema", label: "Backups",       to: "/admin/backup",    icon: Database },
 ];
 
 export default function AdminMenu() {
