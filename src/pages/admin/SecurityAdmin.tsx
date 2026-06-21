@@ -33,18 +33,16 @@ export default function SecurityAdmin() {
 
   useEffect(() => {
     (async () => {
-      const [{ data: a }, { count: s }, { count: m }] = await Promise.all([
-        supabase.from("audit_log")
-          .select("id,action,table_name,occurred_at,actor_email")
-          .in("action", ["role.change", "mfa.disable", "settings.update", "secret.rotate"])
-          .order("occurred_at", { ascending: false })
-          .limit(8),
-        supabase.from("admin_sessions").select("*", { count: "exact", head: true }).is("revoked_at", null),
-        supabase.from("user_mfa").select("*", { count: "exact", head: true }).eq("enabled", true),
-      ]);
-      setAudit(((a as unknown) as AuditRow[]) ?? []);
-      setSessionsCount(s ?? 0);
-      setMfaCount(m ?? 0);
+      const a = await supabase.from("audit_log")
+        .select("id,action,table_name,occurred_at,actor_email")
+        .in("action", ["role.change", "mfa.disable", "settings.update", "secret.rotate"])
+        .order("occurred_at", { ascending: false })
+        .limit(8);
+      const s = await supabase.from("admin_sessions").select("*", { count: "exact", head: true }).is("revoked_at", null);
+      const m = await supabase.from("user_mfa").select("*", { count: "exact", head: true }).eq("enabled", true);
+      setAudit(((a.data as unknown) as AuditRow[]) ?? []);
+      setSessionsCount(s.count ?? 0);
+      setMfaCount(m.count ?? 0);
     })();
   }, []);
 
