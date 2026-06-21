@@ -187,9 +187,9 @@ export default function SecurityAdmin() {
                   <div key={r.id} className="p-3 flex items-center justify-between gap-3 text-xs">
                     <div className="min-w-0">
                       <span className="font-mono text-white/80">{r.action}</span>
-                      <span className="text-white/40 ml-2">{r.entity}</span>
+                      <span className="text-white/40 ml-2">{r.table_name ?? "—"}</span>
                     </div>
-                    <span className="text-white/40 shrink-0">{new Date(r.created_at).toLocaleString("pt-BR")}</span>
+                    <span className="text-white/40 shrink-0">{new Date(r.occurred_at).toLocaleString("pt-BR")}</span>
                   </div>
                 ))}
               </div>
