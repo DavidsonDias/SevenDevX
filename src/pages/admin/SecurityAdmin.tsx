@@ -39,7 +39,7 @@ export default function SecurityAdmin() {
         .order("occurred_at", { ascending: false })
         .limit(8);
       const s: any = await (supabase.from("admin_sessions") as any).select("*", { count: "exact", head: true }).filter("revoked_at", "is", null);
-      const m = await supabase.from("user_mfa").select("*", { count: "exact", head: true }).eq("enabled", true);
+      const m: any = await (supabase.from("user_mfa") as any).select("*", { count: "exact", head: true }).eq("enabled", true);
       setAudit(((a.data as unknown) as AuditRow[]) ?? []);
       setSessionsCount(s.count ?? 0);
       setMfaCount(m.count ?? 0);
