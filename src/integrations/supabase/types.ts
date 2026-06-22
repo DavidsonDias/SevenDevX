@@ -2734,6 +2734,17 @@ export type Database = {
           used: number
         }[]
       }
+      fn_audit_cleanup: { Args: never; Returns: undefined }
+      fn_cashflow_forecast: {
+        Args: { _days?: number }
+        Returns: {
+          day_label: string
+          net: number
+          projected_expense: number
+          projected_income: number
+          running_balance: number
+        }[]
+      }
       fn_emit_notification: {
         Args: {
           _body: string
