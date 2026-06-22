@@ -75,6 +75,7 @@ const SystemSettingsAdmin = lazy(() => import("@/pages/admin/SystemSettingsAdmin
 const ResponseTemplatesAdmin = lazy(() => import("@/pages/admin/ResponseTemplatesAdmin"));
 const DlqAdmin = lazy(() => import("@/pages/admin/DlqAdmin"));
 const BlogAdmin = lazy(() => import("@/pages/admin/BlogAdmin"));
+const CashflowAdmin = lazy(() => import("@/pages/admin/CashflowAdmin"));
 
 const pageTransition = {
   initial: { opacity: 0, y: 12, scale: 0.99 },
@@ -262,6 +263,9 @@ function AnimatedRoutes() {
             } />
             <Route path="/admin/blog" element={
               <ProtectedRoute requiredRole="admin"><BlogAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/cashflow" element={
+              <ProtectedRoute requiredRole="admin"><CashflowAdmin /></ProtectedRoute>
             } />
 
             <Route path="*" element={<NotFound />} />
