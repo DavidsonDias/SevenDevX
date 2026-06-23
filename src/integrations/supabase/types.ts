@@ -128,6 +128,54 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_ops_actions: {
+        Row: {
+          applied_at: string | null
+          applied_by: string | null
+          confidence: number | null
+          created_at: string
+          id: string
+          input: Json
+          kind: string
+          notes: string | null
+          output: Json
+          source_entity: string | null
+          source_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          applied_at?: string | null
+          applied_by?: string | null
+          confidence?: number | null
+          created_at?: string
+          id?: string
+          input?: Json
+          kind: string
+          notes?: string | null
+          output?: Json
+          source_entity?: string | null
+          source_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          applied_at?: string | null
+          applied_by?: string | null
+          confidence?: number | null
+          created_at?: string
+          id?: string
+          input?: Json
+          kind?: string
+          notes?: string | null
+          output?: Json
+          source_entity?: string | null
+          source_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       ai_referrals: {
         Row: {
           ai_source: string
@@ -1904,6 +1952,65 @@ export type Database = {
         }
         Relationships: []
       }
+      restore_jobs: {
+        Row: {
+          backup_id: string | null
+          created_at: string
+          error: string | null
+          executed_by: string | null
+          id: string
+          inserted_rows: number
+          log: Json
+          mode: string
+          progress: number
+          selected_tables: string[]
+          source_url: string | null
+          status: string
+          total_rows: number
+          updated_at: string
+        }
+        Insert: {
+          backup_id?: string | null
+          created_at?: string
+          error?: string | null
+          executed_by?: string | null
+          id?: string
+          inserted_rows?: number
+          log?: Json
+          mode?: string
+          progress?: number
+          selected_tables?: string[]
+          source_url?: string | null
+          status?: string
+          total_rows?: number
+          updated_at?: string
+        }
+        Update: {
+          backup_id?: string | null
+          created_at?: string
+          error?: string | null
+          executed_by?: string | null
+          id?: string
+          inserted_rows?: number
+          log?: Json
+          mode?: string
+          progress?: number
+          selected_tables?: string[]
+          source_url?: string | null
+          status?: string
+          total_rows?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "restore_jobs_backup_id_fkey"
+            columns: ["backup_id"]
+            isOneToOne: false
+            referencedRelation: "tenant_backups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       service_health_snapshots: {
         Row: {
           checked_at: string
@@ -2680,6 +2787,106 @@ export type Database = {
           verify_signature?: boolean | null
         }
         Relationships: []
+      }
+      whatsapp_messages: {
+        Row: {
+          body: string | null
+          created_at: string
+          direction: string
+          error: string | null
+          id: string
+          media_type: string | null
+          media_url: string | null
+          sent_by: string | null
+          status: string
+          thread_id: string
+          wa_message_id: string | null
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          direction: string
+          error?: string | null
+          id?: string
+          media_type?: string | null
+          media_url?: string | null
+          sent_by?: string | null
+          status?: string
+          thread_id: string
+          wa_message_id?: string | null
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          direction?: string
+          error?: string | null
+          id?: string
+          media_type?: string | null
+          media_url?: string | null
+          sent_by?: string | null
+          status?: string
+          thread_id?: string
+          wa_message_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_messages_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "whatsapp_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      whatsapp_threads: {
+        Row: {
+          assigned_to: string | null
+          contact_id: string | null
+          contact_name: string | null
+          contact_phone: string
+          created_at: string
+          id: string
+          last_message_at: string | null
+          last_message_preview: string | null
+          status: string
+          unread_count: number
+          updated_at: string
+        }
+        Insert: {
+          assigned_to?: string | null
+          contact_id?: string | null
+          contact_name?: string | null
+          contact_phone: string
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          last_message_preview?: string | null
+          status?: string
+          unread_count?: number
+          updated_at?: string
+        }
+        Update: {
+          assigned_to?: string | null
+          contact_id?: string | null
+          contact_name?: string | null
+          contact_phone?: string
+          created_at?: string
+          id?: string
+          last_message_at?: string | null
+          last_message_preview?: string | null
+          status?: string
+          unread_count?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_threads_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

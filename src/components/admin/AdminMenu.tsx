@@ -27,6 +27,7 @@ const NAV: { label: string; to: string; icon: any; group: string }[] = [
   // CRM
   { group: "CRM",      label: "Clientes",      to: "/admin/clients",          icon: Users },
   { group: "CRM",      label: "Central Contatos", to: "/admin/contact-center", icon: Inbox },
+  { group: "CRM",      label: "WhatsApp",      to: "/admin/whatsapp",         icon: MessageSquare },
   { group: "CRM",      label: "Templates",     to: "/admin/templates",        icon: MessageSquare },
 
   // Conteúdo
@@ -73,6 +74,7 @@ const NAV: { label: string; to: string; icon: any; group: string }[] = [
   { group: "Sistema", label: "Usuários",      to: "/admin/users",     icon: Users },
   { group: "Sistema", label: "Configurações", to: "/admin/settings",  icon: Settings2 },
   { group: "Sistema", label: "Backups",       to: "/admin/backup",    icon: Database },
+  { group: "Sistema", label: "Restore",       to: "/admin/restore",   icon: Database },
 ];
 
 export default function AdminMenu() {
