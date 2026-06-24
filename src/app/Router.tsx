@@ -78,6 +78,9 @@ const BlogAdmin = lazy(() => import("@/pages/admin/BlogAdmin"));
 const CashflowAdmin = lazy(() => import("@/pages/admin/CashflowAdmin"));
 const WhatsAppInboxAdmin = lazy(() => import("@/pages/admin/WhatsAppInboxAdmin"));
 const RestoreAdmin = lazy(() => import("@/pages/admin/RestoreAdmin"));
+const ClientsFinanceAdmin = lazy(() => import("@/pages/admin/ClientsFinanceAdmin"));
+const ReconciliationAdmin = lazy(() => import("@/pages/admin/ReconciliationAdmin"));
+const IntegrationsMarketplace = lazy(() => import("@/pages/IntegrationsMarketplace"));
 
 const pageTransition = {
   initial: { opacity: 0, y: 12, scale: 0.99 },
