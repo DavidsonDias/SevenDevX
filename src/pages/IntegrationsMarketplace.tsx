@@ -6,7 +6,7 @@ import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Search, Sparkles, ArrowRight, Check } from "lucide-react";
-import { Header } from "@/components/Header";
+import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
 import { Input } from "@/components/ui/input";
@@ -41,7 +41,6 @@ export default function IntegrationsMarketplace() {
       <SEOHead
         title="Marketplace de Integrações | SevenDevX"
         description={`Conectamos seu produto a ${PROVIDER_CATALOG.length}+ ferramentas enterprise. GitHub, Vercel, Stripe, OpenAI, Slack, WhatsApp e muito mais.`}
-        canonical="https://sevendevx.com/integracoes"
       />
       <Header />
       <main className="min-h-screen bg-background pt-24 pb-24">
@@ -116,7 +115,7 @@ export default function IntegrationsMarketplace() {
                 >
                   <div className="flex items-center gap-2.5 mb-2">
                     <div className="w-10 h-10 rounded-lg bg-white/5 border border-white/10 grid place-items-center overflow-hidden shrink-0">
-                      <ProviderLogo provider={p} size={28} />
+                      <ProviderLogo slug={p.slug} color={p.color} name={p.name} size={28} />
                     </div>
                     <div className="min-w-0">
                       <div className="text-sm font-semibold truncate">{p.name}</div>
