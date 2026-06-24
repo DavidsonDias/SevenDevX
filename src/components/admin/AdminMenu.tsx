@@ -22,6 +22,8 @@ const NAV: { label: string; to: string; icon: any; group: string }[] = [
   { group: "Operação", label: "Projetos",      to: "/admin/projects",   icon: FolderKanban },
   { group: "Operação", label: "Forecast",      to: "/admin/forecast",   icon: TrendingUp },
   { group: "Operação", label: "Financeiro",    to: "/admin/financeiro", icon: Coins },
+  { group: "Operação", label: "Por Cliente",   to: "/admin/finance/clients", icon: Users },
+  { group: "Operação", label: "Conciliação",   to: "/admin/finance/reconciliation", icon: Coins },
   { group: "Operação", label: "Fluxo de Caixa", to: "/admin/cashflow",  icon: TrendingUp },
 
   // CRM
