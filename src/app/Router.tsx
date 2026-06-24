@@ -78,6 +78,9 @@ const BlogAdmin = lazy(() => import("@/pages/admin/BlogAdmin"));
 const CashflowAdmin = lazy(() => import("@/pages/admin/CashflowAdmin"));
 const WhatsAppInboxAdmin = lazy(() => import("@/pages/admin/WhatsAppInboxAdmin"));
 const RestoreAdmin = lazy(() => import("@/pages/admin/RestoreAdmin"));
+const ClientsFinanceAdmin = lazy(() => import("@/pages/admin/ClientsFinanceAdmin"));
+const ReconciliationAdmin = lazy(() => import("@/pages/admin/ReconciliationAdmin"));
+const IntegrationsMarketplace = lazy(() => import("@/pages/IntegrationsMarketplace"));
 
 const pageTransition = {
   initial: { opacity: 0, y: 12, scale: 0.99 },
@@ -134,6 +137,8 @@ function AnimatedRoutes() {
             <Route path="/cases" element={<CaseStudiesIndex />} />
             <Route path="/cases/:slug" element={<CaseStudyPage />} />
             <Route path="/clusters" element={<ContentClusters />} />
+            <Route path="/integracoes" element={<IntegrationsMarketplace />} />
+
 
             {/* Protected Routes */}
             <Route path="/profile" element={
@@ -274,6 +279,12 @@ function AnimatedRoutes() {
             } />
             <Route path="/admin/restore" element={
               <ProtectedRoute requiredRole="admin"><RestoreAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/finance/clients" element={
+              <ProtectedRoute requiredRole="admin"><ClientsFinanceAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/finance/reconciliation" element={
+              <ProtectedRoute requiredRole="admin"><ReconciliationAdmin /></ProtectedRoute>
             } />
 
             <Route path="*" element={<NotFound />} />
