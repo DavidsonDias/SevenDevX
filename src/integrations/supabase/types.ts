@@ -482,6 +482,42 @@ export type Database = {
         }
         Relationships: []
       }
+      bank_import_batches: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          file_name: string
+          id: string
+          raw_summary: Json | null
+          rows_imported: number
+          rows_skipped: number
+          rows_total: number
+          source: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          file_name: string
+          id?: string
+          raw_summary?: Json | null
+          rows_imported?: number
+          rows_skipped?: number
+          rows_total?: number
+          source?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          file_name?: string
+          id?: string
+          raw_summary?: Json | null
+          rows_imported?: number
+          rows_skipped?: number
+          rows_total?: number
+          source?: string
+        }
+        Relationships: []
+      }
       blog_categories: {
         Row: {
           color: string | null
@@ -2446,6 +2482,7 @@ export type Database = {
         Row: {
           amount: number
           amount_brl: number
+          bank_ref: string | null
           category: Database["public"]["Enums"]["transaction_category"]
           client_id: string | null
           created_at: string
@@ -2455,12 +2492,15 @@ export type Database = {
           due_at: string | null
           fx_rate_used: number | null
           id: string
+          imported_from: string | null
           is_recurring: boolean
           kind: Database["public"]["Enums"]["transaction_kind"]
           metadata: Json
           occurred_at: string
           paid_at: string | null
           project_id: string | null
+          reconciled: boolean
+          reconciled_at: string | null
           recurring_period: string | null
           status: Database["public"]["Enums"]["transaction_status"]
           updated_at: string
@@ -2468,6 +2508,7 @@ export type Database = {
         Insert: {
           amount: number
           amount_brl: number
+          bank_ref?: string | null
           category: Database["public"]["Enums"]["transaction_category"]
           client_id?: string | null
           created_at?: string
@@ -2477,12 +2518,15 @@ export type Database = {
           due_at?: string | null
           fx_rate_used?: number | null
           id?: string
+          imported_from?: string | null
           is_recurring?: boolean
           kind: Database["public"]["Enums"]["transaction_kind"]
           metadata?: Json
           occurred_at?: string
           paid_at?: string | null
           project_id?: string | null
+          reconciled?: boolean
+          reconciled_at?: string | null
           recurring_period?: string | null
           status?: Database["public"]["Enums"]["transaction_status"]
           updated_at?: string
@@ -2490,6 +2534,7 @@ export type Database = {
         Update: {
           amount?: number
           amount_brl?: number
+          bank_ref?: string | null
           category?: Database["public"]["Enums"]["transaction_category"]
           client_id?: string | null
           created_at?: string
@@ -2499,12 +2544,15 @@ export type Database = {
           due_at?: string | null
           fx_rate_used?: number | null
           id?: string
+          imported_from?: string | null
           is_recurring?: boolean
           kind?: Database["public"]["Enums"]["transaction_kind"]
           metadata?: Json
           occurred_at?: string
           paid_at?: string | null
           project_id?: string | null
+          reconciled?: boolean
+          reconciled_at?: string | null
           recurring_period?: string | null
           status?: Database["public"]["Enums"]["transaction_status"]
           updated_at?: string
@@ -2950,6 +2998,21 @@ export type Database = {
           projected_expense: number
           projected_income: number
           running_balance: number
+        }[]
+      }
+      fn_client_finance_summary: {
+        Args: never
+        Returns: {
+          client_id: string
+          client_name: string
+          expense_brl: number
+          income_brl: number
+          last_tx_at: string
+          margin_percent: number
+          net_margin_brl: number
+          paid_brl: number
+          pending_brl: number
+          projects_count: number
         }[]
       }
       fn_emit_notification: {
