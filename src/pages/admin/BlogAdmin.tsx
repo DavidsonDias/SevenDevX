@@ -124,8 +124,18 @@ export default function BlogAdmin() {
         ) : (
           <div className="divide-y divide-white/5">
             {filtered.map((p) => (
-              <div key={p.id} className="p-4 flex items-center gap-4 hover:bg-white/[0.02] transition-colors">
-                <div className="flex-1 min-w-0">
+              <div key={p.id} className="p-3 flex items-center gap-3 hover:bg-white/[0.02] transition-colors">
+                {p.cover_image ? (
+                  <img src={p.cover_image} alt="" className="w-16 h-12 rounded-lg object-cover border border-white/10 shrink-0" />
+                ) : (
+                  <div className="w-16 h-12 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                    <ImageIcon className="w-4 h-4 text-white/30" />
+                  </div>
+                )}
+                <button
+                  onClick={() => { setEditingId(p.id); setEditorOpen(true); }}
+                  className="flex-1 min-w-0 text-left"
+                >
                   <div className="flex items-center gap-2 mb-1">
                     <span
                       className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${
@@ -145,8 +155,15 @@ export default function BlogAdmin() {
                   </div>
                   <h3 className="text-sm font-bold truncate">{p.title}</h3>
                   {p.excerpt && <p className="text-xs text-white/50 truncate mt-0.5">{p.excerpt}</p>}
-                </div>
+                </button>
                 <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    onClick={() => { setEditingId(p.id); setEditorOpen(true); }}
+                    className="p-2 rounded-lg border border-white/10 hover:bg-white/5"
+                    title="Editar"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                  </button>
                   <Link
                     to={`/blog/${p.slug}`}
                     target="_blank"
