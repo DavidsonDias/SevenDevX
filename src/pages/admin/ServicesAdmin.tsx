@@ -49,17 +49,39 @@ export default function ServicesAdmin() {
       ) : (
         <div className="grid sm:grid-cols-2 gap-4">
           {services.map((s: any) => (
-            <GlassCard key={s.id} className="p-5">
-              <div className="flex items-start justify-between gap-3 mb-3">
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className="w-2 h-2 rounded-full" style={{ background: s.color }} />
-                    <h3 className="font-bold truncate">{s.title}</h3>
-                    {s.is_featured && <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">Featured</span>}
+            <GlassCard key={s.id} className="p-0 overflow-hidden">
+              {s.cover_image && (
+                <div className="relative aspect-[16/7] bg-black">
+                  <img src={s.cover_image} alt={s.title} className="absolute inset-0 w-full h-full object-cover opacity-90" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                  <div
+                    className="absolute bottom-3 left-3 w-10 h-10 rounded-xl flex items-center justify-center backdrop-blur-md border"
+                    style={{ background: `${s.color}33`, borderColor: `${s.color}66` }}
+                  >
+                    <LucideIconRender name={s.icon} className="w-5 h-5" style={{ color: s.color }} />
                   </div>
-                  {s.subtitle && <p className="text-sm text-white/60">{s.subtitle}</p>}
                 </div>
-                {s.is_published ? <Eye className="w-4 h-4 text-emerald-400" /> : <EyeOff className="w-4 h-4 text-white/30" />}
+              )}
+              <div className="p-5">
+              <div className="flex items-start justify-between gap-3 mb-3">
+                <div className="min-w-0 flex items-center gap-3">
+                  {!s.cover_image && (
+                    <div
+                      className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border"
+                      style={{ background: `${s.color}22`, borderColor: `${s.color}55` }}
+                    >
+                      <LucideIconRender name={s.icon} className="w-5 h-5" style={{ color: s.color }} />
+                    </div>
+                  )}
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-bold truncate">{s.title}</h3>
+                      {s.is_featured && <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">Featured</span>}
+                    </div>
+                    {s.subtitle && <p className="text-sm text-white/60 truncate">{s.subtitle}</p>}
+                  </div>
+                </div>
+                {s.is_published ? <Eye className="w-4 h-4 text-emerald-400 shrink-0" /> : <EyeOff className="w-4 h-4 text-white/30 shrink-0" />}
               </div>
               <p className="text-sm text-white/70 line-clamp-2 mb-3">{s.description}</p>
 
