@@ -15,9 +15,15 @@ interface IconUploaderProps {
   /** Used to build a stable filename. */
   slug?: string;
   size?: number;
+  /** Storage bucket (must be public). Defaults to tech-icons. */
+  bucket?: string;
+  /** Max file size in bytes. Default 1MB. */
+  maxBytes?: number;
+  /** Landscape aspect (cover style) instead of square. */
+  aspect?: "square" | "landscape";
 }
 
-const MAX_BYTES = 1024 * 1024; // 1MB
+const DEFAULT_MAX_BYTES = 1024 * 1024; // 1MB
 const ALLOWED = ["image/svg+xml", "image/png", "image/jpeg", "image/jpg", "image/webp"];
 
 export const IconUploader = ({
@@ -26,6 +32,9 @@ export const IconUploader = ({
   folder = "tech",
   slug = "icon",
   size = 96,
+  bucket = "tech-icons",
+  maxBytes = DEFAULT_MAX_BYTES,
+  aspect = "square",
 }: IconUploaderProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
