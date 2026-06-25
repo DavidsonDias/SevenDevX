@@ -698,7 +698,7 @@ const Services = () => {
           description: s.subtitle || s.description,
           features: cmsFeatures.length > 0 ? cmsFeatures : (i18nFeatures || []),
           image: s.cover_image || COVER_BY_SLUG[s.slug] || serviceDev,
-          icon: ICON_MAP[(s.icon || "").toLowerCase()] || Code,
+          icon: resolveLucideIcon(s.icon),
         };
       })
     : fallbackServices;
