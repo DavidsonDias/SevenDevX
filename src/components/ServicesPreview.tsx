@@ -58,7 +58,7 @@ const ServicesPreview = () => {
         title: s.title,
         description: s.subtitle || s.description,
         image: s.cover_image || COVER_BY_SLUG[s.slug] || serviceDev,
-        icon: ICON_MAP[(s.icon || "").toLowerCase()] || Code,
+        icon: resolveLucideIcon(s.icon),
       }))
     : fallbackServices;
 
