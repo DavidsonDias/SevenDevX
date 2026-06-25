@@ -88,7 +88,7 @@ export const IconUploader = ({
         setUploading(false);
       }
     },
-    [folder, slug, onChange, toast]
+    [folder, slug, onChange, toast, bucket, maxBytes]
   );
 
   const onDrop = (e: React.DragEvent) => {
