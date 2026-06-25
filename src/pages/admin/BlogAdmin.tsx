@@ -6,7 +6,8 @@ import { Link } from "react-router-dom";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { Eye, EyeOff, ExternalLink, Trash2, Plus, FileText, Search } from "lucide-react";
+import { Eye, EyeOff, ExternalLink, Trash2, Plus, FileText, Search, Edit2, ImageIcon } from "lucide-react";
+import BlogPostEditor from "@/components/admin/BlogPostEditor";
 
 type Post = {
   id: string;
