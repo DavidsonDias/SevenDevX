@@ -636,12 +636,8 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { useServicesPageServices } from "@/hooks/useEcosystem";
 
-// Map icon name string -> Lucide component
-const ICON_MAP: Record<string, any> = {
-  code: Code, settings: Settings, wrench: Wrench, "file-text": FileText,
-  lightbulb: Lightbulb, sparkles: Sparkles, briefcase: Briefcase, layers: Layers,
-  rocket: Rocket, palette: Palette, database: Database,
-};
+// Resolver dinâmico de ícones lucide (qualquer nome, com fallback)
+import { resolveLucideIcon } from "@/components/ui/LucideIconRender";
 
 // Map slug -> default cover (fallback de imagem)
 const COVER_BY_SLUG: Record<string, string> = {
