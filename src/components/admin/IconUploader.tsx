@@ -108,37 +108,47 @@ export const IconUploader = ({
         onDragLeave={() => setDragOver(false)}
         onDrop={onDrop}
         onClick={() => inputRef.current?.click()}
-        className={`relative flex items-center justify-center rounded-lg border-2 border-dashed cursor-pointer transition-colors ${
+        className={`relative flex items-center justify-center rounded-lg border-2 border-dashed cursor-pointer transition-colors overflow-hidden ${
           dragOver ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
         }`}
-        style={{ height: size + 24 }}
+        style={
+          aspect === "landscape"
+            ? { width: "100%", aspectRatio: "16/9", minHeight: 140 }
+            : { height: size + 24 }
+        }
       >
         {uploading ? (
           <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         ) : value ? (
-          <div className="flex items-center gap-3">
-            <img
-              src={value}
-              alt="Preview"
-              className="object-contain rounded"
-              style={{ width: size, height: size }}
-            />
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onChange(null);
-              }}
-              className="absolute top-1 right-1 p-1 rounded-full bg-background/80 hover:bg-destructive hover:text-destructive-foreground transition-colors"
-              aria-label="Remover ícone"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          </div>
+          aspect === "landscape" ? (
+            <>
+              <img src={value} alt="Preview" className="absolute inset-0 w-full h-full object-cover" />
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onChange(null); }}
+                className="absolute top-2 right-2 p-1.5 rounded-full bg-background/90 hover:bg-destructive hover:text-destructive-foreground transition-colors z-10"
+                aria-label="Remover imagem"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </>
+          ) : (
+            <div className="flex items-center gap-3">
+              <img src={value} alt="Preview" className="object-contain rounded" style={{ width: size, height: size }} />
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onChange(null); }}
+                className="absolute top-1 right-1 p-1 rounded-full bg-background/80 hover:bg-destructive hover:text-destructive-foreground transition-colors"
+                aria-label="Remover ícone"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )
         ) : (
-          <div className="flex flex-col items-center gap-1.5 text-muted-foreground text-xs">
+          <div className="flex flex-col items-center gap-1.5 text-muted-foreground text-xs px-3 text-center">
             <Upload className="w-5 h-5" />
-            <span>Clique ou arraste SVG/PNG/JPG/WEBP (≤1MB)</span>
+            <span>Clique ou arraste SVG/PNG/JPG/WEBP (≤{Math.round(maxBytes / 1024 / 1024)}MB)</span>
           </div>
         )}
         <input
