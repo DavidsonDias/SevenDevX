@@ -118,6 +118,7 @@ export default function ServicesAdmin() {
                   <Trash2 className="w-3 h-3" />
                 </button>
               </div>
+              </div>
             </GlassCard>
           ))}
         </div>
