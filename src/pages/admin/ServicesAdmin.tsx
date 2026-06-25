@@ -6,6 +6,9 @@ import { Plus, Edit2, Trash2, X, Save, Eye, EyeOff } from "lucide-react";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import GlassCard from "@/components/GlassCard";
 import { useAllServices, useUpsertService, useDeleteService } from "@/hooks/useEcosystem";
+import LucideIconPicker from "@/components/admin/LucideIconPicker";
+import IconUploader from "@/components/admin/IconUploader";
+import LucideIconRender from "@/components/ui/LucideIconRender";
 
 const slugify = (s: string) =>
   s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
