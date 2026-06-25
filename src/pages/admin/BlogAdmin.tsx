@@ -76,13 +76,12 @@ export default function BlogAdmin() {
       title="Blog"
       subtitle="Gerencie posts, publicações e tráfego editorial"
       actions={
-        <a
-          href="https://supabase.com/dashboard"
-          onClick={(e) => { e.preventDefault(); toast({ title: "Em breve", description: "Editor visual de posts chega na próxima fase." }); }}
+        <button
+          onClick={() => { setEditingId(null); setEditorOpen(true); }}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-black text-xs font-bold uppercase tracking-wider hover:bg-white/90"
         >
           <Plus className="w-4 h-4" /> Novo Post
-        </a>
+        </button>
       }
     >
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
