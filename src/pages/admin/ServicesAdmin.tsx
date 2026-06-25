@@ -161,9 +161,29 @@ function ServiceModal({ initial, onClose, onSave }: any) {
           <Field label="Subtítulo"><input className={inp} value={form.subtitle || ""} onChange={(e) => ch("subtitle", e.target.value)} /></Field>
           <Field label="Descrição curta *"><textarea className={inp} rows={2} value={form.description || ""} onChange={(e) => ch("description", e.target.value)} /></Field>
           <Field label="Descrição longa"><textarea className={inp} rows={4} value={form.long_description || ""} onChange={(e) => ch("long_description", e.target.value)} /></Field>
-          <div className="grid grid-cols-3 gap-3">
-            <Field label="Ícone (lucide)"><input className={inp} value={form.icon || ""} onChange={(e) => ch("icon", e.target.value)} /></Field>
-            <Field label="Cor"><input className={inp} value={form.color || ""} onChange={(e) => ch("color", e.target.value)} /></Field>
+
+          <Field label="Imagem de capa do serviço">
+            <IconUploader
+              value={form.cover_image}
+              onChange={(url) => ch("cover_image", url ?? "")}
+              folder="services"
+              slug={form.slug || "service"}
+              bucket="blog-images"
+              aspect="landscape"
+              maxBytes={4 * 1024 * 1024}
+            />
+          </Field>
+
+          <div className="grid grid-cols-1 sm:grid-cols-[1fr_120px_100px] gap-3">
+            <Field label="Ícone (lucide)">
+              <LucideIconPicker value={form.icon} color={form.color} onChange={(name) => ch("icon", name)} />
+            </Field>
+            <Field label="Cor">
+              <div className="flex gap-1.5">
+                <input type="color" className="h-10 w-12 rounded-lg bg-transparent border border-white/10 cursor-pointer" value={form.color || "#8B5CF6"} onChange={(e) => ch("color", e.target.value)} />
+                <input className={inp} value={form.color || ""} onChange={(e) => ch("color", e.target.value)} />
+              </div>
+            </Field>
             <Field label="Ordem"><input type="number" className={inp} value={form.display_order || 0} onChange={(e) => ch("display_order", parseInt(e.target.value) || 0)} /></Field>
           </div>
           <Field label="Features (uma por linha)">
