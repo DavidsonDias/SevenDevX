@@ -51,10 +51,10 @@ export const IconUploader = ({
         });
         return;
       }
-      if (file.size > MAX_BYTES) {
+      if (file.size > maxBytes) {
         toast({
           title: "Arquivo muito grande",
-          description: "O ícone deve ter no máximo 1MB.",
+          description: `O arquivo deve ter no máximo ${Math.round(maxBytes / 1024 / 1024)}MB.`,
           variant: "destructive",
         });
         return;
@@ -67,7 +67,7 @@ export const IconUploader = ({
         const path = `${folder}/${safeSlug}-${Date.now()}.${ext}`;
 
         const { error: upErr } = await supabase.storage
-          .from("tech-icons")
+          .from(bucket)
           .upload(path, file, {
             cacheControl: "31536000",
             upsert: false,
@@ -75,9 +75,9 @@ export const IconUploader = ({
           });
         if (upErr) throw upErr;
 
-        const { data } = supabase.storage.from("tech-icons").getPublicUrl(path);
+        const { data } = supabase.storage.from(bucket).getPublicUrl(path);
         onChange(data.publicUrl);
-        toast({ title: "Ícone enviado", description: "Upload concluído." });
+        toast({ title: "Upload concluído" });
       } catch (e: any) {
         toast({
           title: "Erro no upload",
