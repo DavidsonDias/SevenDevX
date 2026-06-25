@@ -32,7 +32,7 @@ export default function BlogAdmin() {
     setLoading(true);
     const { data, error } = await supabase
       .from("blog_posts")
-      .select("id,title,slug,status,views_count,published_at,updated_at,excerpt")
+      .select("id,title,slug,status,views_count,published_at,updated_at,excerpt,cover_image")
       .order("updated_at", { ascending: false });
     if (error) toast({ title: "Erro ao carregar", description: error.message, variant: "destructive" });
     setPosts((data as Post[]) ?? []);
