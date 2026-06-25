@@ -192,6 +192,14 @@ export default function BlogAdmin() {
           </div>
         )}
       </div>
+
+      {editorOpen && (
+        <BlogPostEditor
+          postId={editingId}
+          onClose={() => setEditorOpen(false)}
+          onSaved={load}
+        />
+      )}
     </AdminPageShell>
   );
 }
