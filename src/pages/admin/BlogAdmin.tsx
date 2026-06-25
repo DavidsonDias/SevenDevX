@@ -18,12 +18,15 @@ type Post = {
   published_at: string | null;
   updated_at: string;
   excerpt: string | null;
+  cover_image: string | null;
 };
 
 export default function BlogAdmin() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const load = async () => {
     setLoading(true);
