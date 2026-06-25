@@ -6,7 +6,8 @@ import { Link } from "react-router-dom";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { Eye, EyeOff, ExternalLink, Trash2, Plus, FileText, Search } from "lucide-react";
+import { Eye, EyeOff, ExternalLink, Trash2, Plus, FileText, Search, Edit2, ImageIcon } from "lucide-react";
+import BlogPostEditor from "@/components/admin/BlogPostEditor";
 
 type Post = {
   id: string;
@@ -17,18 +18,21 @@ type Post = {
   published_at: string | null;
   updated_at: string;
   excerpt: string | null;
+  cover_image: string | null;
 };
 
 export default function BlogAdmin() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const load = async () => {
     setLoading(true);
     const { data, error } = await supabase
       .from("blog_posts")
-      .select("id,title,slug,status,views_count,published_at,updated_at,excerpt")
+      .select("id,title,slug,status,views_count,published_at,updated_at,excerpt,cover_image")
       .order("updated_at", { ascending: false });
     if (error) toast({ title: "Erro ao carregar", description: error.message, variant: "destructive" });
     setPosts((data as Post[]) ?? []);
@@ -72,13 +76,12 @@ export default function BlogAdmin() {
       title="Blog"
       subtitle="Gerencie posts, publicações e tráfego editorial"
       actions={
-        <a
-          href="https://supabase.com/dashboard"
-          onClick={(e) => { e.preventDefault(); toast({ title: "Em breve", description: "Editor visual de posts chega na próxima fase." }); }}
+        <button
+          onClick={() => { setEditingId(null); setEditorOpen(true); }}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-black text-xs font-bold uppercase tracking-wider hover:bg-white/90"
         >
           <Plus className="w-4 h-4" /> Novo Post
-        </a>
+        </button>
       }
     >
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
@@ -121,8 +124,18 @@ export default function BlogAdmin() {
         ) : (
           <div className="divide-y divide-white/5">
             {filtered.map((p) => (
-              <div key={p.id} className="p-4 flex items-center gap-4 hover:bg-white/[0.02] transition-colors">
-                <div className="flex-1 min-w-0">
+              <div key={p.id} className="p-3 flex items-center gap-3 hover:bg-white/[0.02] transition-colors">
+                {p.cover_image ? (
+                  <img src={p.cover_image} alt="" className="w-16 h-12 rounded-lg object-cover border border-white/10 shrink-0" />
+                ) : (
+                  <div className="w-16 h-12 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                    <ImageIcon className="w-4 h-4 text-white/30" />
+                  </div>
+                )}
+                <button
+                  onClick={() => { setEditingId(p.id); setEditorOpen(true); }}
+                  className="flex-1 min-w-0 text-left"
+                >
                   <div className="flex items-center gap-2 mb-1">
                     <span
                       className={`text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full ${
@@ -142,8 +155,15 @@ export default function BlogAdmin() {
                   </div>
                   <h3 className="text-sm font-bold truncate">{p.title}</h3>
                   {p.excerpt && <p className="text-xs text-white/50 truncate mt-0.5">{p.excerpt}</p>}
-                </div>
+                </button>
                 <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    onClick={() => { setEditingId(p.id); setEditorOpen(true); }}
+                    className="p-2 rounded-lg border border-white/10 hover:bg-white/5"
+                    title="Editar"
+                  >
+                    <Edit2 className="w-4 h-4" />
+                  </button>
                   <Link
                     to={`/blog/${p.slug}`}
                     target="_blank"
@@ -172,6 +192,14 @@ export default function BlogAdmin() {
           </div>
         )}
       </div>
+
+      {editorOpen && (
+        <BlogPostEditor
+          postId={editingId}
+          onClose={() => setEditorOpen(false)}
+          onSaved={load}
+        />
+      )}
     </AdminPageShell>
   );
 }

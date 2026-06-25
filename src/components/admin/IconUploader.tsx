@@ -15,9 +15,15 @@ interface IconUploaderProps {
   /** Used to build a stable filename. */
   slug?: string;
   size?: number;
+  /** Storage bucket (must be public). Defaults to tech-icons. */
+  bucket?: string;
+  /** Max file size in bytes. Default 1MB. */
+  maxBytes?: number;
+  /** Landscape aspect (cover style) instead of square. */
+  aspect?: "square" | "landscape";
 }
 
-const MAX_BYTES = 1024 * 1024; // 1MB
+const DEFAULT_MAX_BYTES = 1024 * 1024; // 1MB
 const ALLOWED = ["image/svg+xml", "image/png", "image/jpeg", "image/jpg", "image/webp"];
 
 export const IconUploader = ({
@@ -26,6 +32,9 @@ export const IconUploader = ({
   folder = "tech",
   slug = "icon",
   size = 96,
+  bucket = "tech-icons",
+  maxBytes = DEFAULT_MAX_BYTES,
+  aspect = "square",
 }: IconUploaderProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -42,10 +51,10 @@ export const IconUploader = ({
         });
         return;
       }
-      if (file.size > MAX_BYTES) {
+      if (file.size > maxBytes) {
         toast({
           title: "Arquivo muito grande",
-          description: "O ícone deve ter no máximo 1MB.",
+          description: `O arquivo deve ter no máximo ${Math.round(maxBytes / 1024 / 1024)}MB.`,
           variant: "destructive",
         });
         return;
@@ -58,7 +67,7 @@ export const IconUploader = ({
         const path = `${folder}/${safeSlug}-${Date.now()}.${ext}`;
 
         const { error: upErr } = await supabase.storage
-          .from("tech-icons")
+          .from(bucket)
           .upload(path, file, {
             cacheControl: "31536000",
             upsert: false,
@@ -66,9 +75,9 @@ export const IconUploader = ({
           });
         if (upErr) throw upErr;
 
-        const { data } = supabase.storage.from("tech-icons").getPublicUrl(path);
+        const { data } = supabase.storage.from(bucket).getPublicUrl(path);
         onChange(data.publicUrl);
-        toast({ title: "Ícone enviado", description: "Upload concluído." });
+        toast({ title: "Upload concluído" });
       } catch (e: any) {
         toast({
           title: "Erro no upload",
@@ -79,7 +88,7 @@ export const IconUploader = ({
         setUploading(false);
       }
     },
-    [folder, slug, onChange, toast]
+    [folder, slug, onChange, toast, bucket, maxBytes]
   );
 
   const onDrop = (e: React.DragEvent) => {
@@ -99,37 +108,47 @@ export const IconUploader = ({
         onDragLeave={() => setDragOver(false)}
         onDrop={onDrop}
         onClick={() => inputRef.current?.click()}
-        className={`relative flex items-center justify-center rounded-lg border-2 border-dashed cursor-pointer transition-colors ${
+        className={`relative flex items-center justify-center rounded-lg border-2 border-dashed cursor-pointer transition-colors overflow-hidden ${
           dragOver ? "border-primary bg-primary/5" : "border-border hover:border-primary/50"
         }`}
-        style={{ height: size + 24 }}
+        style={
+          aspect === "landscape"
+            ? { width: "100%", aspectRatio: "16/9", minHeight: 140 }
+            : { height: size + 24 }
+        }
       >
         {uploading ? (
           <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         ) : value ? (
-          <div className="flex items-center gap-3">
-            <img
-              src={value}
-              alt="Preview"
-              className="object-contain rounded"
-              style={{ width: size, height: size }}
-            />
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onChange(null);
-              }}
-              className="absolute top-1 right-1 p-1 rounded-full bg-background/80 hover:bg-destructive hover:text-destructive-foreground transition-colors"
-              aria-label="Remover ícone"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          </div>
+          aspect === "landscape" ? (
+            <>
+              <img src={value} alt="Preview" className="absolute inset-0 w-full h-full object-cover" />
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onChange(null); }}
+                className="absolute top-2 right-2 p-1.5 rounded-full bg-background/90 hover:bg-destructive hover:text-destructive-foreground transition-colors z-10"
+                aria-label="Remover imagem"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </>
+          ) : (
+            <div className="flex items-center gap-3">
+              <img src={value} alt="Preview" className="object-contain rounded" style={{ width: size, height: size }} />
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onChange(null); }}
+                className="absolute top-1 right-1 p-1 rounded-full bg-background/80 hover:bg-destructive hover:text-destructive-foreground transition-colors"
+                aria-label="Remover ícone"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )
         ) : (
-          <div className="flex flex-col items-center gap-1.5 text-muted-foreground text-xs">
+          <div className="flex flex-col items-center gap-1.5 text-muted-foreground text-xs px-3 text-center">
             <Upload className="w-5 h-5" />
-            <span>Clique ou arraste SVG/PNG/JPG/WEBP (≤1MB)</span>
+            <span>Clique ou arraste SVG/PNG/JPG/WEBP (≤{Math.round(maxBytes / 1024 / 1024)}MB)</span>
           </div>
         )}
         <input

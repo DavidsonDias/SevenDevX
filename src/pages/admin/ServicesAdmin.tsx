@@ -6,6 +6,9 @@ import { Plus, Edit2, Trash2, X, Save, Eye, EyeOff } from "lucide-react";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import GlassCard from "@/components/GlassCard";
 import { useAllServices, useUpsertService, useDeleteService } from "@/hooks/useEcosystem";
+import LucideIconPicker from "@/components/admin/LucideIconPicker";
+import IconUploader from "@/components/admin/IconUploader";
+import LucideIconRender from "@/components/ui/LucideIconRender";
 
 const slugify = (s: string) =>
   s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -46,17 +49,39 @@ export default function ServicesAdmin() {
       ) : (
         <div className="grid sm:grid-cols-2 gap-4">
           {services.map((s: any) => (
-            <GlassCard key={s.id} className="p-5">
-              <div className="flex items-start justify-between gap-3 mb-3">
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <div className="w-2 h-2 rounded-full" style={{ background: s.color }} />
-                    <h3 className="font-bold truncate">{s.title}</h3>
-                    {s.is_featured && <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">Featured</span>}
+            <GlassCard key={s.id} className="p-0 overflow-hidden">
+              {s.cover_image && (
+                <div className="relative aspect-[16/7] bg-black">
+                  <img src={s.cover_image} alt={s.title} className="absolute inset-0 w-full h-full object-cover opacity-90" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+                  <div
+                    className="absolute bottom-3 left-3 w-10 h-10 rounded-xl flex items-center justify-center backdrop-blur-md border"
+                    style={{ background: `${s.color}33`, borderColor: `${s.color}66` }}
+                  >
+                    <LucideIconRender name={s.icon} className="w-5 h-5" style={{ color: s.color }} />
                   </div>
-                  {s.subtitle && <p className="text-sm text-white/60">{s.subtitle}</p>}
                 </div>
-                {s.is_published ? <Eye className="w-4 h-4 text-emerald-400" /> : <EyeOff className="w-4 h-4 text-white/30" />}
+              )}
+              <div className="p-5">
+              <div className="flex items-start justify-between gap-3 mb-3">
+                <div className="min-w-0 flex items-center gap-3">
+                  {!s.cover_image && (
+                    <div
+                      className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border"
+                      style={{ background: `${s.color}22`, borderColor: `${s.color}55` }}
+                    >
+                      <LucideIconRender name={s.icon} className="w-5 h-5" style={{ color: s.color }} />
+                    </div>
+                  )}
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-bold truncate">{s.title}</h3>
+                      {s.is_featured && <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">Featured</span>}
+                    </div>
+                    {s.subtitle && <p className="text-sm text-white/60 truncate">{s.subtitle}</p>}
+                  </div>
+                </div>
+                {s.is_published ? <Eye className="w-4 h-4 text-emerald-400 shrink-0" /> : <EyeOff className="w-4 h-4 text-white/30 shrink-0" />}
               </div>
               <p className="text-sm text-white/70 line-clamp-2 mb-3">{s.description}</p>
 
@@ -92,6 +117,7 @@ export default function ServicesAdmin() {
                 >
                   <Trash2 className="w-3 h-3" />
                 </button>
+              </div>
               </div>
             </GlassCard>
           ))}
@@ -135,9 +161,29 @@ function ServiceModal({ initial, onClose, onSave }: any) {
           <Field label="Subtítulo"><input className={inp} value={form.subtitle || ""} onChange={(e) => ch("subtitle", e.target.value)} /></Field>
           <Field label="Descrição curta *"><textarea className={inp} rows={2} value={form.description || ""} onChange={(e) => ch("description", e.target.value)} /></Field>
           <Field label="Descrição longa"><textarea className={inp} rows={4} value={form.long_description || ""} onChange={(e) => ch("long_description", e.target.value)} /></Field>
-          <div className="grid grid-cols-3 gap-3">
-            <Field label="Ícone (lucide)"><input className={inp} value={form.icon || ""} onChange={(e) => ch("icon", e.target.value)} /></Field>
-            <Field label="Cor"><input className={inp} value={form.color || ""} onChange={(e) => ch("color", e.target.value)} /></Field>
+
+          <Field label="Imagem de capa do serviço">
+            <IconUploader
+              value={form.cover_image}
+              onChange={(url) => ch("cover_image", url ?? "")}
+              folder="services"
+              slug={form.slug || "service"}
+              bucket="blog-images"
+              aspect="landscape"
+              maxBytes={4 * 1024 * 1024}
+            />
+          </Field>
+
+          <div className="grid grid-cols-1 sm:grid-cols-[1fr_120px_100px] gap-3">
+            <Field label="Ícone (lucide)">
+              <LucideIconPicker value={form.icon} color={form.color} onChange={(name) => ch("icon", name)} />
+            </Field>
+            <Field label="Cor">
+              <div className="flex gap-1.5">
+                <input type="color" className="h-10 w-12 rounded-lg bg-transparent border border-white/10 cursor-pointer" value={form.color || "#8B5CF6"} onChange={(e) => ch("color", e.target.value)} />
+                <input className={inp} value={form.color || ""} onChange={(e) => ch("color", e.target.value)} />
+              </div>
+            </Field>
             <Field label="Ordem"><input type="number" className={inp} value={form.display_order || 0} onChange={(e) => ch("display_order", parseInt(e.target.value) || 0)} /></Field>
           </div>
           <Field label="Features (uma por linha)">

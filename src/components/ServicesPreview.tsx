@@ -26,12 +26,8 @@ import serviceMaintenance from "@/assets/images/service-maintenance.webp";
 import serviceLanding from "@/assets/images/service-landing.webp";
 import serviceConsulting from "@/assets/images/DavidsonConsultig.webp";
 
-// Map icon name string -> Lucide component (used by CMS records)
-const ICON_MAP: Record<string, any> = {
-  code: Code, settings: Settings, wrench: Wrench, "file-text": FileText,
-  lightbulb: Lightbulb, sparkles: Sparkles, briefcase: Briefcase, layers: Layers,
-  rocket: Rocket, palette: Palette, database: Database,
-};
+// Resolver dinâmico de ícones lucide (qualquer nome → componente)
+import { resolveLucideIcon } from "@/components/ui/LucideIconRender";
 
 // Map service slug -> default cover (fallback if CMS has no cover_image)
 const COVER_BY_SLUG: Record<string, string> = {
@@ -62,7 +58,7 @@ const ServicesPreview = () => {
         title: s.title,
         description: s.subtitle || s.description,
         image: s.cover_image || COVER_BY_SLUG[s.slug] || serviceDev,
-        icon: ICON_MAP[(s.icon || "").toLowerCase()] || Code,
+        icon: resolveLucideIcon(s.icon),
       }))
     : fallbackServices;
 
