@@ -2990,6 +2990,26 @@ export type Database = {
         }[]
       }
       fn_audit_cleanup: { Args: never; Returns: undefined }
+      fn_audit_export: {
+        Args: { _days?: number; _table?: string }
+        Returns: {
+          action: string
+          actor_email: string | null
+          actor_id: string | null
+          diff: Json
+          id: string
+          occurred_at: string
+          record_id: string | null
+          summary: string | null
+          table_name: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "audit_log"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       fn_cashflow_forecast: {
         Args: { _days?: number }
         Returns: {
@@ -3013,6 +3033,19 @@ export type Database = {
           paid_brl: number
           pending_brl: number
           projects_count: number
+        }[]
+      }
+      fn_cron_status: {
+        Args: never
+        Returns: {
+          active: boolean
+          command: string
+          jobid: number
+          jobname: string
+          last_duration_ms: number
+          last_run: string
+          last_status: string
+          schedule: string
         }[]
       }
       fn_emit_notification: {

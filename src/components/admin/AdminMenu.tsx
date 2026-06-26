@@ -11,7 +11,7 @@ import {
   FileQuestion, Tag, Cpu, MessageSquare, GitBranch, Home as HomeIcon, LogOut,
   ListTodo, Coins, Plug, Inbox, Webhook, ScrollText, MonitorSmartphone, ShieldCheck, HeartPulse,
   Activity, Zap, AlertTriangle, Bot, Palette, Sparkles as SparklesIcon, Megaphone, Bell, History,
-  TrendingUp, Database, KeyRound, AlertOctagon,
+  TrendingUp, Database, KeyRound, AlertOctagon, Clock,
 } from "lucide-react";
 import { useAuthContext as useAuth } from "@/contexts/AuthContext";
 
@@ -57,6 +57,7 @@ const NAV: { label: string; to: string; icon: any; group: string }[] = [
   { group: "Observabilidade", label: "Logs",      to: "/admin/logs",            icon: ScrollText },
   { group: "Observabilidade", label: "Incidentes", to: "/admin/incidents",      icon: AlertTriangle },
   { group: "Observabilidade", label: "AI Ops",    to: "/admin/ai-ops",          icon: Bot },
+  { group: "Observabilidade", label: "Scheduler", to: "/admin/cron",            icon: Clock },
 
   // Crescimento (GEO)
   { group: "Crescimento", label: "GEO Analytics", to: "/admin/geo",            icon: SparklesIcon },
