@@ -287,6 +287,10 @@ function AnimatedRoutes() {
             <Route path="/admin/finance/reconciliation" element={
               <ProtectedRoute requiredRole="admin"><ReconciliationAdmin /></ProtectedRoute>
             } />
+            <Route path="/admin/cron" element={
+              <ProtectedRoute requiredRole="admin"><CronAdmin /></ProtectedRoute>
+            } />
+
 
             <Route path="*" element={<NotFound />} />
           </Routes>
