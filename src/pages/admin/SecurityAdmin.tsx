@@ -11,6 +11,7 @@ import { toast } from "@/hooks/use-toast";
 import {
   ShieldCheck, KeyRound, Lock, Activity, Globe, AlertOctagon,
   Save, Power, Plus, X, MonitorSmartphone, History, ChevronRight,
+  Webhook, Database,
 } from "lucide-react";
 
 type AuditRow = { id: string; action: string; table_name: string | null; occurred_at: string; actor_email: string | null };
