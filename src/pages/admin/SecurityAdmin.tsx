@@ -31,6 +31,15 @@ export default function SecurityAdmin() {
   const rate = useMemo(() => ({ ...DEFAULT_RATE, ...(settings.rate_limits ?? {}) }), [settings]);
   const mfaRequired: string[] = settings.mfa_required_roles ?? ["admin"];
   const ipAllowlist: string[] = settings.ip_allowlist ?? [];
+  const discordUrl: string = settings.discord_webhook_url ?? "";
+  const slackUrl: string = settings.slack_webhook_url ?? "";
+  const retentionDays: number = Number(settings.audit_retention_days ?? 180);
+  const [discordDraft, setDiscordDraft] = useState("");
+  const [slackDraft, setSlackDraft] = useState("");
+  const [retentionDraft, setRetentionDraft] = useState(180);
+  useEffect(() => {
+    setDiscordDraft(discordUrl); setSlackDraft(slackUrl); setRetentionDraft(retentionDays);
+  }, [discordUrl, slackUrl, retentionDays]);
 
   useEffect(() => {
     (async () => {
