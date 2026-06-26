@@ -92,6 +92,7 @@ function LogsInner() {
           <option value="all">Todas as tabelas</option>
           {tables.map((t) => <option key={t} value={t}>{t}</option>)}
         </select>
+        <ExportMenu tableFilter={tableFilter} />
       </div>
 
       {isLoading ? (
