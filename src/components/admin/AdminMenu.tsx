@@ -57,6 +57,7 @@ const NAV: { label: string; to: string; icon: any; group: string }[] = [
   { group: "Observabilidade", label: "Logs",      to: "/admin/logs",            icon: ScrollText },
   { group: "Observabilidade", label: "Incidentes", to: "/admin/incidents",      icon: AlertTriangle },
   { group: "Observabilidade", label: "AI Ops",    to: "/admin/ai-ops",          icon: Bot },
+  { group: "Observabilidade", label: "Scheduler", to: "/admin/cron",            icon: Clock },
 
   // Crescimento (GEO)
   { group: "Crescimento", label: "GEO Analytics", to: "/admin/geo",            icon: SparklesIcon },
