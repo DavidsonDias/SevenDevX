@@ -168,3 +168,63 @@ export default function LogsAdmin() {
     </ProtectedRoute>
   );
 }
+
+function ExportMenu({ tableFilter }: { tableFilter: string }) {
+  const [busy, setBusy] = useState(false);
+  const [days, setDays] = useState(30);
+
+  const exportData = async (format: "csv" | "json") => {
+    setBusy(true);
+    try {
+      const { data, error } = await supabase.rpc("fn_audit_export" as any, {
+        _days: days,
+        _table: tableFilter === "all" ? null : tableFilter,
+      });
+      if (error) throw error;
+      const rows = ((data as any) ?? []) as Entry[];
+      if (!rows.length) { toast({ title: "Nenhum registro no período" }); return; }
+      let blob: Blob;
+      let filename: string;
+      if (format === "json") {
+        blob = new Blob([JSON.stringify(rows, null, 2)], { type: "application/json" });
+        filename = `audit-${days}d.json`;
+      } else {
+        const cols = ["occurred_at","actor_email","table_name","record_id","action","summary"];
+        const esc = (v: any) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+        const csv = [cols.join(","), ...rows.map((r: any) => cols.map(c => esc(r[c])).join(","))].join("\n");
+        blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+        filename = `audit-${days}d.csv`;
+      }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = filename; a.click();
+      URL.revokeObjectURL(url);
+      toast({ title: `✅ Exportado (${rows.length})`, description: filename });
+    } catch (e: any) {
+      toast({ title: "Erro ao exportar", description: e?.message, variant: "destructive" });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="flex gap-2">
+      <select value={days} onChange={(e) => setDays(Number(e.target.value))}
+        className="px-2 py-2 bg-black/30 border border-white/10 rounded-lg text-xs">
+        <option value={7}>7d</option>
+        <option value={30}>30d</option>
+        <option value={90}>90d</option>
+        <option value={180}>180d</option>
+        <option value={365}>365d</option>
+      </select>
+      <button disabled={busy} onClick={() => exportData("csv")}
+        className="px-3 py-2 rounded-lg border border-white/15 hover:bg-white/5 text-xs inline-flex items-center gap-1.5 disabled:opacity-50">
+        <Download className="w-3.5 h-3.5" /> CSV
+      </button>
+      <button disabled={busy} onClick={() => exportData("json")}
+        className="px-3 py-2 rounded-lg border border-white/15 hover:bg-white/5 text-xs inline-flex items-center gap-1.5 disabled:opacity-50">
+        <Download className="w-3.5 h-3.5" /> JSON
+      </button>
+    </div>
+  );
+}
