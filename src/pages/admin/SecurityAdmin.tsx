@@ -177,6 +177,44 @@ export default function SecurityAdmin() {
             )}
           </Section>
 
+          {/* Webhooks de incidentes */}
+          <Section icon={Webhook} title="Alertas de incidente" desc="URLs disparadas automaticamente quando um incident é aberto">
+            <label className="block">
+              <span className="text-[10px] uppercase tracking-wider text-white/50 block mb-1.5">Discord webhook URL</span>
+              <div className="flex gap-2">
+                <input value={discordDraft} onChange={(e) => setDiscordDraft(e.target.value)} placeholder="https://discord.com/api/webhooks/..."
+                  className="flex-1 px-3 py-2 rounded-lg bg-black border border-white/10 text-sm font-mono focus:border-white/30 outline-none" />
+                <button onClick={() => save("discord_webhook_url", discordDraft.trim(), "Discord")} className="px-3 rounded-lg border border-white/15 hover:bg-white/5"><Save className="w-4 h-4" /></button>
+              </div>
+            </label>
+            <label className="block">
+              <span className="text-[10px] uppercase tracking-wider text-white/50 block mb-1.5">Slack webhook URL</span>
+              <div className="flex gap-2">
+                <input value={slackDraft} onChange={(e) => setSlackDraft(e.target.value)} placeholder="https://hooks.slack.com/services/..."
+                  className="flex-1 px-3 py-2 rounded-lg bg-black border border-white/10 text-sm font-mono focus:border-white/30 outline-none" />
+                <button onClick={() => save("slack_webhook_url", slackDraft.trim(), "Slack")} className="px-3 rounded-lg border border-white/15 hover:bg-white/5"><Save className="w-4 h-4" /></button>
+              </div>
+            </label>
+            <p className="text-[11px] text-white/40">Cada novo incidente dispara mensagem rica com severidade, status e link para o painel.</p>
+          </Section>
+
+          {/* Retenção */}
+          <Section icon={Database} title="Retenção de auditoria" desc="Limpeza automática semanal aos domingos">
+            <div className="flex gap-2 items-end">
+              <label className="block flex-1">
+                <span className="text-[10px] uppercase tracking-wider text-white/50 block mb-1.5">Manter por (dias)</span>
+                <input type="number" value={retentionDraft} min={30} max={3650}
+                  onChange={(e) => setRetentionDraft(Number(e.target.value))}
+                  className="w-full px-3 py-2 rounded-lg bg-black border border-white/10 text-sm font-mono focus:border-white/30 outline-none" />
+              </label>
+              <button onClick={() => save("audit_retention_days", retentionDraft, "Retenção")}
+                className="px-4 py-2 rounded-lg border border-white/15 hover:bg-white/5 inline-flex items-center gap-1.5 text-xs">
+                <Save className="w-3.5 h-3.5" /> Salvar
+              </button>
+            </div>
+            <p className="text-[11px] text-white/40">Mínimo recomendado: 90 dias. Logs anteriores ao período são removidos automaticamente.</p>
+          </Section>
+
           {/* Emergency */}
           <Section icon={AlertOctagon} title="Ações de emergência" desc="Use apenas em incidentes confirmados" danger>
             <button onClick={forceLogoutAll}
