@@ -7,7 +7,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import { ScrollText, Loader2, Plus, Pencil, Trash2, Search } from "lucide-react";
+import { ScrollText, Loader2, Plus, Pencil, Trash2, Search, Download } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
