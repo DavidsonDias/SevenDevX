@@ -11,7 +11,7 @@ import {
   FileQuestion, Tag, Cpu, MessageSquare, GitBranch, Home as HomeIcon, LogOut,
   ListTodo, Coins, Plug, Inbox, Webhook, ScrollText, MonitorSmartphone, ShieldCheck, HeartPulse,
   Activity, Zap, AlertTriangle, Bot, Palette, Sparkles as SparklesIcon, Megaphone, Bell, History,
-  TrendingUp, Database, KeyRound, AlertOctagon,
+  TrendingUp, Database, KeyRound, AlertOctagon, Clock,
 } from "lucide-react";
 import { useAuthContext as useAuth } from "@/contexts/AuthContext";
 
