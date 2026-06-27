@@ -43,6 +43,7 @@ const NAV: { label: string; to: string; icon: any; group: string }[] = [
   { group: "Catálogo", label: "Tags",          to: "/admin/tags",         icon: Tag },
   { group: "Catálogo", label: "Logo Library",  to: "/admin/logo-library", icon: Palette },
   { group: "Catálogo", label: "Logo Lab",      to: "/admin/logo-lab",     icon: Palette },
+  { group: "Catálogo", label: "Brand Studio",  to: "/admin/brand-studio", icon: SparklesIcon },
 
   // Automação & Integração
   { group: "Automação", label: "Automações",   to: "/admin/automations",      icon: Zap },
