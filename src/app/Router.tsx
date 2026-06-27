@@ -82,6 +82,7 @@ const ClientsFinanceAdmin = lazy(() => import("@/pages/admin/ClientsFinanceAdmin
 const ReconciliationAdmin = lazy(() => import("@/pages/admin/ReconciliationAdmin"));
 const IntegrationsMarketplace = lazy(() => import("@/pages/IntegrationsMarketplace"));
 const CronAdmin = lazy(() => import("@/pages/admin/CronAdmin"));
+const BrandStudioAdmin = lazy(() => import("@/pages/admin/BrandStudioAdmin"));
 
 const pageTransition = {
   initial: { opacity: 0, y: 12, scale: 0.99 },
@@ -289,6 +290,9 @@ function AnimatedRoutes() {
             } />
             <Route path="/admin/cron" element={
               <ProtectedRoute requiredRole="admin"><CronAdmin /></ProtectedRoute>
+            } />
+            <Route path="/admin/brand-studio" element={
+              <ProtectedRoute requiredRole="admin"><BrandStudioAdmin /></ProtectedRoute>
             } />
 
 
