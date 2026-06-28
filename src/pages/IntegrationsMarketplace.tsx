@@ -167,6 +167,14 @@ export default function IntegrationsMarketplace() {
                       ))}
                     </div>
                   )}
+                  <button
+                    onClick={() => install(p)}
+                    disabled={installing === p.id}
+                    className="mt-3 w-full inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white text-white hover:text-black text-[11px] font-medium transition-colors disabled:opacity-50"
+                  >
+                    {installing === p.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Plus className="w-3 h-3" />}
+                    {isAdmin ? "Instalar" : "Solicitar"}
+                  </button>
                 </motion.div>
               ))}
             </div>
