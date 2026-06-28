@@ -51,6 +51,7 @@ const NAV: { label: string; to: string; icon: any; group: string }[] = [
   { group: "Automação", label: "Integrações",  to: "/admin/integrations",     icon: Plug },
   { group: "Automação", label: "Webhooks",     to: "/admin/webhooks",         icon: Webhook },
   { group: "Automação", label: "Dead Letter Queue", to: "/admin/webhooks/dlq", icon: AlertOctagon },
+  { group: "Automação", label: "OAuth Conexões", to: "/admin/oauth",          icon: KeyRound },
 
   // Observabilidade
   { group: "Observabilidade", label: "Saúde",     to: "/admin/system-health",   icon: HeartPulse },
