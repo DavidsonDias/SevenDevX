@@ -1,12 +1,15 @@
 /**
- * 📜 ContractVersionHistory — timeline de versões do contrato com hash SHA256.
+ * 📜 ContractVersionHistory — timeline de versões do contrato com hash SHA256 + análise IA.
  */
-import { FileText, ExternalLink, Hash, User as UserIcon } from "lucide-react";
+import { useState } from "react";
+import { FileText, ExternalLink, Hash, User as UserIcon, Sparkles } from "lucide-react";
 import { useContractVersions } from "@/hooks/useContractVersions";
+import ContractAiAnalysisModal from "@/components/admin/ContractAiAnalysisModal";
 
 interface Props {
   entityType: "client" | "project";
   entityId?: string | null;
+  contractText?: string | null;
 }
 
 const fmtDate = (iso: string) =>
