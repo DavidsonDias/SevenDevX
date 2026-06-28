@@ -11,7 +11,9 @@ import BrandHalo from "@/components/ui/BrandHalo";
 import BorderBeam from "@/components/ui/BorderBeam";
 import { PROVIDER_CATALOG, CATEGORY_LABEL, type ProviderCategory } from "@/modules/integrations/providerCatalog";
 import { useBrandPalette } from "@/hooks/useBrandPalette";
-import { Sparkles, Search, Plus, BookOpen, Settings } from "lucide-react";
+import { Sparkles, Search, Plus, BookOpen, Settings, Download, Loader2 } from "lucide-react";
+import { generateBrandKitZip, downloadBlob } from "@/core/branding/brandKit";
+import { toast } from "@/hooks/use-toast";
 
 const VARIANTS: LogoVariant[] = ["xs", "sm", "md", "lg", "xl", "card", "marketplace", "hero", "inline"];
 
