@@ -1357,6 +1357,78 @@ export type Database = {
         }
         Relationships: []
       }
+      logo_variations: {
+        Row: {
+          ai_model: string | null
+          created_at: string
+          generated_by: string | null
+          id: string
+          image_url: string
+          name: string
+          prompt: string | null
+          slug: string
+          variant_kind: string
+        }
+        Insert: {
+          ai_model?: string | null
+          created_at?: string
+          generated_by?: string | null
+          id?: string
+          image_url: string
+          name: string
+          prompt?: string | null
+          slug: string
+          variant_kind: string
+        }
+        Update: {
+          ai_model?: string | null
+          created_at?: string
+          generated_by?: string | null
+          id?: string
+          image_url?: string
+          name?: string
+          prompt?: string | null
+          slug?: string
+          variant_kind?: string
+        }
+        Relationships: []
+      }
+      marketplace_installs: {
+        Row: {
+          created_at: string
+          id: string
+          installed_by: string | null
+          notes: string | null
+          provider_name: string
+          provider_slug: string
+          requested_secrets: string[] | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          installed_by?: string | null
+          notes?: string | null
+          provider_name: string
+          provider_slug: string
+          requested_secrets?: string[] | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          installed_by?: string | null
+          notes?: string | null
+          provider_name?: string
+          provider_slug?: string
+          requested_secrets?: string[] | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notification_preferences: {
         Row: {
           channel: string
@@ -1422,6 +1494,63 @@ export type Database = {
           title?: string
           type?: string
           url?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      oauth_connections: {
+        Row: {
+          access_token: string | null
+          account_avatar: string | null
+          account_email: string | null
+          account_name: string | null
+          created_at: string
+          expires_at: string | null
+          id: string
+          last_refreshed_at: string | null
+          provider: string
+          raw_profile: Json | null
+          refresh_token: string | null
+          scopes: string[] | null
+          status: string
+          token_type: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token?: string | null
+          account_avatar?: string | null
+          account_email?: string | null
+          account_name?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          last_refreshed_at?: string | null
+          provider: string
+          raw_profile?: Json | null
+          refresh_token?: string | null
+          scopes?: string[] | null
+          status?: string
+          token_type?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string | null
+          account_avatar?: string | null
+          account_email?: string | null
+          account_name?: string | null
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          last_refreshed_at?: string | null
+          provider?: string
+          raw_profile?: Json | null
+          refresh_token?: string | null
+          scopes?: string[] | null
+          status?: string
+          token_type?: string | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: []

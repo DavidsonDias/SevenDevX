@@ -93,7 +93,7 @@ function TransactionDialog({ trigger }: { trigger: React.ReactNode }) {
           <DialogTitle>Nova transação</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <Label className="text-xs text-white/60">Tipo</Label>
               <Select value={form.kind} onValueChange={(v) => setForm({ ...form, kind: v, category: v === "income" ? "contract" : "tool" })}>
@@ -120,7 +120,7 @@ function TransactionDialog({ trigger }: { trigger: React.ReactNode }) {
             <Input value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} className="bg-white/5 border-white/10" />
           </div>
 
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="col-span-2">
               <Label className="text-xs text-white/60">Valor</Label>
               <Input type="number" step="0.01" value={form.amount} onChange={e => setForm({ ...form, amount: e.target.value })} className="bg-white/5 border-white/10" />
@@ -138,7 +138,7 @@ function TransactionDialog({ trigger }: { trigger: React.ReactNode }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <Label className="text-xs text-white/60">Status</Label>
               <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
@@ -178,7 +178,7 @@ function FxEditor() {
     <Card className="bg-white/5 border-white/10">
       <CardHeader><CardTitle className="text-base flex items-center gap-2"><RefreshCw className="w-4 h-4" /> Cotações</CardTitle></CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-3 gap-3 text-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
           {(["BRL", "USD", "EUR"] as CurrencyCode[]).map(c => (
             <div key={c} className="p-3 border border-white/10 rounded-lg">
               <div className="text-[10px] uppercase tracking-wider text-white/50">{c} → BRL</div>
@@ -186,7 +186,7 @@ function FxEditor() {
             </div>
           ))}
         </div>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="flex gap-2">
             <Input placeholder="Nova cotação USD" type="number" step="0.0001" value={usd} onChange={e => setUsd(e.target.value)} className="bg-white/5 border-white/10" />
             <Button size="sm" variant="outline" disabled={!usd} onClick={async () => { await upsert.mutateAsync({ currency: "USD", rate_to_brl: Number(usd) }); setUsd(""); }}>USD</Button>

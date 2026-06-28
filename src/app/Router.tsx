@@ -83,6 +83,8 @@ const ReconciliationAdmin = lazy(() => import("@/pages/admin/ReconciliationAdmin
 const IntegrationsMarketplace = lazy(() => import("@/pages/IntegrationsMarketplace"));
 const CronAdmin = lazy(() => import("@/pages/admin/CronAdmin"));
 const BrandStudioAdmin = lazy(() => import("@/pages/admin/BrandStudioAdmin"));
+const OAuthAdmin = lazy(() => import("@/pages/admin/OAuthAdmin"));
+const OAuthCallback = lazy(() => import("@/pages/OAuthCallback"));
 
 const pageTransition = {
   initial: { opacity: 0, y: 12, scale: 0.99 },
@@ -294,6 +296,10 @@ function AnimatedRoutes() {
             <Route path="/admin/brand-studio" element={
               <ProtectedRoute requiredRole="admin"><BrandStudioAdmin /></ProtectedRoute>
             } />
+            <Route path="/admin/oauth" element={
+              <ProtectedRoute requiredRole="admin"><OAuthAdmin /></ProtectedRoute>
+            } />
+            <Route path="/oauth/callback" element={<OAuthCallback />} />
 
 
             <Route path="*" element={<NotFound />} />

@@ -3,7 +3,7 @@
  * Mostra preview real do card de Integração, Marketplace e Hero usando a paleta
  * multicor extraída automaticamente.
  */
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import GlassCard from "@/components/GlassCard";
 import LogoRenderer, { type LogoVariant } from "@/components/ui/logo/LogoRenderer";
@@ -11,9 +11,10 @@ import BrandHalo from "@/components/ui/BrandHalo";
 import BorderBeam from "@/components/ui/BorderBeam";
 import { PROVIDER_CATALOG, CATEGORY_LABEL, type ProviderCategory } from "@/modules/integrations/providerCatalog";
 import { useBrandPalette } from "@/hooks/useBrandPalette";
-import { Sparkles, Search, Plus, BookOpen, Settings, Download, Loader2 } from "lucide-react";
+import { Sparkles, Search, Plus, BookOpen, Settings, Download, Loader2, Wand2, ImageIcon } from "lucide-react";
 import { generateBrandKitZip, downloadBlob } from "@/core/branding/brandKit";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const VARIANTS: LogoVariant[] = ["xs", "sm", "md", "lg", "xl", "card", "marketplace", "hero", "inline"];
 
@@ -118,6 +119,30 @@ export default function LogoLabAdmin() {
   const [cat, setCat] = useState<ProviderCategory | "all">("all");
   const [selectedSlug, setSelectedSlug] = useState<string>("google");
   const [exporting, setExporting] = useState(false);
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiVariations, setAiVariations] = useState<any[]>([]);
+
+  const loadVariations = async (slug: string) => {
+    const { data } = await supabase.from("logo_variations" as any).select("*")
+      .eq("slug", slug).order("created_at", { ascending: false }).limit(8);
+    setAiVariations((data as any) || []);
+  };
+  useEffect(() => { loadVariations(selectedSlug); }, [selectedSlug]);
+
+  const generateAiVariations = async () => {
+    setAiBusy(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("logo-variations-ai", {
+        body: { slug: selected.slug, name: selected.name, color: selected.color,
+                variants: ["iconmark", "horizontal", "vertical", "monochrome"] },
+      });
+      if (error) throw error;
+      toast({ title: "Variações geradas", description: `${(data as any)?.results?.length || 0} imagens` });
+      loadVariations(selected.slug);
+    } catch (e: any) {
+      toast({ title: "Falha ao gerar", description: e?.message, variant: "destructive" });
+    } finally { setAiBusy(false); }
+  };
 
   const exportKit = async () => {
     setExporting(true);
@@ -147,10 +172,19 @@ export default function LogoLabAdmin() {
       title="LogoLab"
       subtitle="Playground do Dynamic Brand Palette Engine — paleta multicor, halo conic, beam contextual"
       actions={
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <span className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/15 bg-white/5 text-[10px] uppercase tracking-[0.2em]">
             <Sparkles className="w-3 h-3" /> {filtered.length} providers
           </span>
+          <button
+            onClick={generateAiVariations}
+            disabled={aiBusy}
+            title={`Gerar variações IA do logo de ${selected.name} (iconmark, horizontal, vertical, monochrome)`}
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg border border-purple-400/40 bg-purple-500/10 text-purple-200 text-xs font-bold disabled:opacity-50"
+          >
+            {aiBusy ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Wand2 className="w-3.5 h-3.5" />}
+            {aiBusy ? "Gerando IA..." : "Variações IA"}
+          </button>
           <button
             onClick={exportKit}
             disabled={exporting}
@@ -163,6 +197,28 @@ export default function LogoLabAdmin() {
         </div>
       }
     >
+      {/* AI Variations gallery */}
+      {aiVariations.length > 0 && (
+        <div className="mb-8 p-5 rounded-2xl border border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-transparent">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-xs uppercase tracking-[0.2em] text-purple-300 inline-flex items-center gap-2">
+              <ImageIcon className="w-3.5 h-3.5" /> Variações IA · {selected.name}
+            </p>
+            <span className="text-[10px] text-white/40">Gemini 2.5 Flash Image</span>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {aiVariations.map((v: any) => (
+              <a key={v.id} href={v.image_url} target="_blank" rel="noopener noreferrer"
+                className="group relative rounded-xl overflow-hidden border border-white/10 bg-white/5 aspect-square hover:border-purple-400/40 transition-colors">
+                <img src={v.image_url} alt={v.variant_kind} className="w-full h-full object-contain" />
+                <span className="absolute bottom-0 inset-x-0 px-2 py-1 bg-black/60 text-[10px] uppercase tracking-wider text-center backdrop-blur">
+                  {v.variant_kind}
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
       {/* Live preview do provider selecionado */}
       <div className="grid lg:grid-cols-3 gap-4 mb-8">
         <div>
