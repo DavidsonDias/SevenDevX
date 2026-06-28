@@ -1,11 +1,10 @@
 /**
- * 🛒 IntegrationsMarketplace — vitrine pública de integrações da SevenDevX.
- * Catálogo interativo com 100+ providers, busca, filtros e CTA de orçamento.
+ * 🛒 IntegrationsMarketplace — vitrine pública + 1-click install (admin).
  */
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { Search, Sparkles, ArrowRight, Check } from "lucide-react";
+import { Search, Sparkles, ArrowRight, Check, Loader2, Plus } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import SEOHead from "@/components/SEOHead";
@@ -14,6 +13,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PROVIDER_CATALOG, CATEGORY_LABEL, type ProviderCategory } from "@/modules/integrations/providerCatalog";
 import ProviderLogo from "@/modules/integrations/ProviderLogo";
+import { useAuthContext } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 const CATS = Object.keys(CATEGORY_LABEL) as ProviderCategory[];
 
