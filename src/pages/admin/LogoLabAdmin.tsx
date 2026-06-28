@@ -119,6 +119,30 @@ export default function LogoLabAdmin() {
   const [cat, setCat] = useState<ProviderCategory | "all">("all");
   const [selectedSlug, setSelectedSlug] = useState<string>("google");
   const [exporting, setExporting] = useState(false);
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiVariations, setAiVariations] = useState<any[]>([]);
+
+  const loadVariations = async (slug: string) => {
+    const { data } = await supabase.from("logo_variations" as any).select("*")
+      .eq("slug", slug).order("created_at", { ascending: false }).limit(8);
+    setAiVariations((data as any) || []);
+  };
+  useEffect(() => { loadVariations(selectedSlug); }, [selectedSlug]);
+
+  const generateAiVariations = async () => {
+    setAiBusy(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("logo-variations-ai", {
+        body: { slug: selected.slug, name: selected.name, color: selected.color,
+                variants: ["iconmark", "horizontal", "vertical", "monochrome"] },
+      });
+      if (error) throw error;
+      toast({ title: "Variações geradas", description: `${(data as any)?.results?.length || 0} imagens` });
+      loadVariations(selected.slug);
+    } catch (e: any) {
+      toast({ title: "Falha ao gerar", description: e?.message, variant: "destructive" });
+    } finally { setAiBusy(false); }
+  };
 
   const exportKit = async () => {
     setExporting(true);
