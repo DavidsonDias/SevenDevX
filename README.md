@@ -639,6 +639,135 @@ sevendevx/
 
 ---
 
+## 🆕 Atualizações Recentes — Phases 1 → 10 (SevenOS Enterprise)
+
+Desde a última revisão deste README, o SevenOS recebeu **10 fases consecutivas de evolução** que transformaram o ERP/CRM interno em uma plataforma de operações autônomas, segurança enterprise e inteligência de marca.
+
+### 🌐 Site Público — Polimento UX
+- Efeito **underline gradient animado** unificado em todos os links da navbar, menu mobile, botões LOGIN / ADMIN / PERFIL / SAIR.
+- Página **Profile** reconstruída: hero card, badges de role, barra de progresso, grid de stats, painel de segurança.
+
+### 🛡️ Phase 1 — Hardening de Segurança
+- Rate limiting client-side, sanitização XSS, mappings de erro de auth amigáveis (`src/utils/authErrors.ts`).
+
+### 🧭 Phase 2 — Onboarding · Notificações · Automações
+- `onboarding_progress`, `notifications`, **`automation-runner`** edge function com interpolação de payload e triggers realtime.
+- UI: `NotificationBell`, `OnboardingTour` (spotlight), `OnboardingChecklist`, `AutomationRunsAdmin` com replay.
+
+### 🔐 Phase 3 — Reliability & MFA
+- Tabelas `user_mfa` (TOTP + QR), `system_settings`, `webhook_dlq`, `tenant_backups`.
+- Telas: `SecurityAdmin`, `ForecastAdmin`, `BackupAdmin`. `pg_cron` em health checks e retries de webhook.
+- Reorganização do menu admin em **10 grupos enterprise**.
+
+### 📊 Phase 4 — Operational Intelligence
+- `daily-digest` (8h BRT) + `citation-monitor` (9h BRT) via cron.
+- `CashflowAdmin` com projeção de saldo a 90 dias.
+- Criação automática de incidentes a partir de falhas de health check + retenção de auditoria configurável.
+
+### 💬 Phase 5 — Comunicação & AI Ops
+- **WhatsApp Business Inbox** (`/admin/whatsapp`) com Meta Cloud API.
+- **AI Ops Autônomo** (`/admin/ai-ops`) — lead scoring + draft de projetos via Gemini.
+- `/admin/restore` para recuperação seletiva de tabelas.
+
+### 💰 Phase 6 — Finance Enterprise & Marketplace
+- **Financeiro por Cliente** + **Conciliação Bancária CSV** (`bank_import_batches`, RPC `fn_client_finance_summary`).
+- **Marketplace público de Integrações** (`/integracoes`) com 100+ ferramentas.
+
+### 🎨 Phase 7 — Services CMS & Blog Editor
+- `LucideIconRender` + `LucideIconPicker` para ícones dinâmicos site-wide.
+- ServicesAdmin com `cover_image` + seletor visual. BlogPostEditor com markdown e bucket `blog-images`.
+
+### ⏱️ Phase 7.5 — Autonomous Operations
+- `/admin/cron` para gestão visual de jobs `pg_cron`.
+- 6 tarefas automatizadas (Health, Webhook retries, Digest, Citations, GSC sync, Retention).
+- `incident-notify` para alertas Discord/Slack em tempo real + export CSV/JSON de auditoria.
+
+### 🧠 Phase 8 — Brand Intelligence & Weekly Insights
+- **Brand Studio AI** (`/admin/brand-studio`) — varredura profunda de URL, extração de paleta, kit de favicon via Canvas.
+- **Weekly Intelligence Report** — e-mail HTML toda segunda 8h BRT com revenue, lead scores e incidentes.
+
+### ⚖️ Phase 9 — AI Legal & Brand Kit Export
+- **AI Contract Summarizer** (`ai-contract-summarize`) — análise de risco e extração de cláusulas.
+- **Brand Kit ZIP Export** — SVGs, PNGs multi-resolução, `favicon.ico`, `tokens.json`.
+
+### 🔌 Phase 10 — OAuth Real · Logo AI · Marketplace 1-click · Mobile Polish
+- **OAuth 2.0 com PKCE** para GitHub, Google, Slack e Notion (`oauth-start` + `oauth-callback` + `/admin/oauth`).
+- Tabelas `oauth_connections`, `logo_variations`, `marketplace_installs`.
+- **Logo AI Variations** via Gemini Flash Image — gera `iconmark`, `horizontal`, `vertical`, `monochrome` em 1 clique.
+- **Marketplace 1-click install** — admins instalam providers diretamente; users solicitam.
+- **Mobile Polish** em FinanceAdmin / WebhooksAdmin / Contact Center / AutomationFlowBuilder.
+
+---
+
+## 📂 Estrutura — Adições recentes
+
+```text
+src/
+├── pages/
+│   ├── OAuthCallback.tsx                    # 🔐 Landing OAuth (code+state)
+│   ├── IntegrationsMarketplace.tsx          # 🛒 Marketplace público (100+ tools)
+│   └── admin/
+│       ├── AiOpsAdmin.tsx                   # 🤖 Lead scoring + project draft (Gemini)
+│       ├── AutomationRunsAdmin.tsx          # ⚡ Replay de execuções
+│       ├── BackupAdmin.tsx                  # 💾 Snapshots de tenant
+│       ├── BlogAdmin.tsx + BlogPostEditor   # 📝 Editor markdown + cover image
+│       ├── BrandStudioAdmin.tsx             # 🎨 URL scan + palette + favicon kit
+│       ├── CashflowAdmin.tsx                # 💹 Projeção de saldo 90d
+│       ├── CitationsAdmin.tsx               # 📣 Monitor de citações IA
+│       ├── ClientsFinanceAdmin.tsx          # 👤 Financeiro por cliente
+│       ├── ContactCenterAdmin.tsx           # 📨 Central omnichannel
+│       ├── CronAdmin.tsx                    # ⏱️ Gestão visual pg_cron
+│       ├── DlqAdmin.tsx                     # ☠️ Dead Letter Queue
+│       ├── ForecastAdmin.tsx                # 📈 Projeções financeiras
+│       ├── IncidentsAdmin.tsx               # 🚨 Incidentes (auto-criados)
+│       ├── LogoLabAdmin.tsx                 # 🎨 Logo + Variações IA
+│       ├── LogsAdmin.tsx                    # 📜 Logs estruturados
+│       ├── MfaAdmin.tsx                     # 🔑 TOTP + QR
+│       ├── NotificationsAdmin.tsx           # 🔔 Caixa + preferências
+│       ├── NotificationPreferencesAdmin.tsx
+│       ├── OAuthAdmin.tsx                   # 🔐 GitHub/Google/Slack/Notion
+│       ├── ReconciliationAdmin.tsx          # 🧾 Conciliação bancária CSV
+│       ├── ResponseTemplatesAdmin.tsx       # 💬 Templates de resposta
+│       ├── RestoreAdmin.tsx                 # ♻️ Restore seletivo
+│       ├── SearchConsoleAdmin.tsx           # 🔍 GSC insights
+│       ├── SecurityAdmin.tsx                # 🛡️ MFA / IP allow / rate limits
+│       ├── SessionsAdmin.tsx                # 💻 Sessões ativas
+│       ├── SystemSettingsAdmin.tsx          # ⚙️ Config global + retenção
+│       └── WhatsAppInboxAdmin.tsx           # 💬 Meta Cloud API inbox
+│
+├── modules/
+│   ├── notifications/NotificationBell.tsx
+│   └── onboarding/OnboardingTour.tsx + OnboardingChecklist.tsx + tourSteps.ts
+│
+├── hooks/
+│   ├── useMfa.ts, useNotifications.ts, useOnboarding.ts
+│   └── useSystemSettings.ts
+│
+└── core/branding/
+    ├── brandKit.ts                          # 📦 ZIP export (SVG/PNG/ICO/tokens)
+    └── palette-engine/ (extractPalette, knownBrands, tokens)
+
+supabase/functions/                          # ☁️ === Edge Functions adicionadas ===
+├── 🤖 ai-contract-summarize                 # Resumo + risco de contratos
+├── 🤖 ai-ops-autonomous                     # Lead scoring + project draft
+├── 🤖 lead-score-ai                         # Scoring isolado
+├── 🎨 brand-scan                            # Varredura URL → paleta
+├── 🎨 logo-variations-ai                    # 4 variações via Gemini Image
+├── ⚡ automation-runner                     # Execução com payload interpolado
+├── ⏰ daily-digest                          # E-mail diário 8h BRT
+├── ⏰ weekly-intel-report                   # Report semanal segunda 8h BRT
+├── ❤️ health-collector                      # Health checks + auto-incident
+├── 🚨 incident-notify                       # Discord/Slack alerts
+├── ♻️ webhook-retry-worker                  # Reprocessa DLQ
+├── 🔐 mfa-enroll, mfa-verify, mfa-disable   # TOTP completo
+├── 🔐 oauth-start, oauth-callback           # OAuth 2.0 PKCE
+├── 💾 tenant-export, tenant-restore         # Backup seletivo
+├── 💬 whatsapp-send, whatsapp-webhook       # Meta Cloud API bidirecional
+└── 📍 session-geo                           # Geolocalização de sessões
+```
+
+---
+
 ## 🎨 Design System
 
 - **Tokens semânticos HSL** em `src/index.css` (zero `text-white`/`bg-black` em components)
