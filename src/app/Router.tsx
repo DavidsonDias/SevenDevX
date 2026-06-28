@@ -295,8 +295,10 @@ function AnimatedRoutes() {
             } />
             <Route path="/admin/brand-studio" element={
               <ProtectedRoute requiredRole="admin"><BrandStudioAdmin /></ProtectedRoute>
+            <Route path="/admin/oauth" element={
+              <ProtectedRoute requiredRole="admin"><OAuthAdmin /></ProtectedRoute>
             } />
-
+            <Route path="/oauth/callback" element={<OAuthCallback />} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
