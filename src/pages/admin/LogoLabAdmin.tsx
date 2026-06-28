@@ -3,7 +3,7 @@
  * Mostra preview real do card de Integração, Marketplace e Hero usando a paleta
  * multicor extraída automaticamente.
  */
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import GlassCard from "@/components/GlassCard";
 import LogoRenderer, { type LogoVariant } from "@/components/ui/logo/LogoRenderer";
@@ -11,9 +11,10 @@ import BrandHalo from "@/components/ui/BrandHalo";
 import BorderBeam from "@/components/ui/BorderBeam";
 import { PROVIDER_CATALOG, CATEGORY_LABEL, type ProviderCategory } from "@/modules/integrations/providerCatalog";
 import { useBrandPalette } from "@/hooks/useBrandPalette";
-import { Sparkles, Search, Plus, BookOpen, Settings, Download, Loader2 } from "lucide-react";
+import { Sparkles, Search, Plus, BookOpen, Settings, Download, Loader2, Wand2, ImageIcon } from "lucide-react";
 import { generateBrandKitZip, downloadBlob } from "@/core/branding/brandKit";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const VARIANTS: LogoVariant[] = ["xs", "sm", "md", "lg", "xl", "card", "marketplace", "hero", "inline"];
 
