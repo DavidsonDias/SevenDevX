@@ -98,6 +98,13 @@ export default function ContractVersionHistory({ entityType, entityId, contractT
           ))}
         </ul>
       )}
+
+      <ContractAiAnalysisModal
+        open={aiOpen}
+        onClose={() => setAiOpen(false)}
+        text={contractText || ""}
+        label={`${entityType === "client" ? "Cliente" : "Projeto"} · contrato atual`}
+      />
     </div>
   );
 }
