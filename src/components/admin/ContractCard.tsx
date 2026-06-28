@@ -409,7 +409,7 @@ export default function ContractCard({ entity, id, data, aiContext, entityName, 
           </p>
         )}
 
-        <ContractVersionHistory entityType={entity === "clients" ? "client" : "project"} entityId={id} />
+        <ContractVersionHistory entityType={entity === "clients" ? "client" : "project"} entityId={id} contractText={text} />
       </div>
 
       <PricingEngineModal

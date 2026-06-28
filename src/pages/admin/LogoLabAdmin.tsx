@@ -11,7 +11,9 @@ import BrandHalo from "@/components/ui/BrandHalo";
 import BorderBeam from "@/components/ui/BorderBeam";
 import { PROVIDER_CATALOG, CATEGORY_LABEL, type ProviderCategory } from "@/modules/integrations/providerCatalog";
 import { useBrandPalette } from "@/hooks/useBrandPalette";
-import { Sparkles, Search, Plus, BookOpen, Settings } from "lucide-react";
+import { Sparkles, Search, Plus, BookOpen, Settings, Download, Loader2 } from "lucide-react";
+import { generateBrandKitZip, downloadBlob } from "@/core/branding/brandKit";
+import { toast } from "@/hooks/use-toast";
 
 const VARIANTS: LogoVariant[] = ["xs", "sm", "md", "lg", "xl", "card", "marketplace", "hero", "inline"];
 
@@ -115,6 +117,20 @@ export default function LogoLabAdmin() {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<ProviderCategory | "all">("all");
   const [selectedSlug, setSelectedSlug] = useState<string>("google");
+  const [exporting, setExporting] = useState(false);
+
+  const exportKit = async () => {
+    setExporting(true);
+    try {
+      const { blob, filename } = await generateBrandKitZip({
+        name: selected.name, color: selected.color, slug: selected.slug,
+      });
+      downloadBlob(blob, filename);
+      toast({ title: "Brand kit exportado", description: filename });
+    } catch (e: any) {
+      toast({ title: "Falha ao exportar", description: e?.message, variant: "destructive" });
+    } finally { setExporting(false); }
+  };
 
   const filtered = useMemo(() => {
     return PROVIDER_CATALOG.filter((p) => {
@@ -131,9 +147,20 @@ export default function LogoLabAdmin() {
       title="LogoLab"
       subtitle="Playground do Dynamic Brand Palette Engine — paleta multicor, halo conic, beam contextual"
       actions={
-        <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/15 bg-white/5 text-[10px] uppercase tracking-[0.2em]">
-          <Sparkles className="w-3 h-3" /> {filtered.length} providers
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/15 bg-white/5 text-[10px] uppercase tracking-[0.2em]">
+            <Sparkles className="w-3 h-3" /> {filtered.length} providers
+          </span>
+          <button
+            onClick={exportKit}
+            disabled={exporting}
+            title={`Exportar brand kit (SVG + PNGs + favicon.ico + manifest) de ${selected.name}`}
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg bg-white text-black text-xs font-bold disabled:opacity-50"
+          >
+            {exporting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
+            {exporting ? "Gerando..." : `Brand Kit · ${selected.name}`}
+          </button>
+        </div>
       }
     >
       {/* Live preview do provider selecionado */}

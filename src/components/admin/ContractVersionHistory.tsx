@@ -1,32 +1,48 @@
 /**
- * 📜 ContractVersionHistory — timeline de versões do contrato com hash SHA256.
+ * 📜 ContractVersionHistory — timeline de versões do contrato com hash SHA256 + análise IA.
  */
-import { FileText, ExternalLink, Hash, User as UserIcon } from "lucide-react";
+import { useState } from "react";
+import { FileText, ExternalLink, Hash, User as UserIcon, Sparkles } from "lucide-react";
 import { useContractVersions } from "@/hooks/useContractVersions";
+import ContractAiAnalysisModal from "@/components/admin/ContractAiAnalysisModal";
 
 interface Props {
   entityType: "client" | "project";
   entityId?: string | null;
+  contractText?: string | null;
 }
 
 const fmtDate = (iso: string) =>
   new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
 
-export default function ContractVersionHistory({ entityType, entityId }: Props) {
+export default function ContractVersionHistory({ entityType, entityId, contractText }: Props) {
   const { data: versions = [], isLoading } = useContractVersions(entityType, entityId);
+  const [aiOpen, setAiOpen] = useState(false);
 
   if (!entityId) return null;
 
+  const canAnalyze = !!(contractText && contractText.length >= 80);
+
   return (
     <div className="border border-white/10 rounded-xl bg-white/[0.02] p-4">
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between mb-3 gap-2 flex-wrap">
         <h4 className="text-sm font-semibold flex items-center gap-2">
           <FileText className="w-4 h-4 text-blue-400" />
           Histórico de versões
         </h4>
-        <span className="text-[10px] uppercase tracking-wider text-white/40">
-          {versions.length} {versions.length === 1 ? "versão" : "versões"}
-        </span>
+        <div className="flex items-center gap-2">
+          <button
+            disabled={!canAnalyze}
+            onClick={() => setAiOpen(true)}
+            title={canAnalyze ? "Analisar contrato com IA" : "Cole o texto do contrato (≥ 80 chars) para habilitar"}
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-violet-500/40 bg-violet-500/10 text-violet-200 text-[11px] font-semibold uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed hover:bg-violet-500/20 transition-colors"
+          >
+            <Sparkles className="w-3 h-3" /> Analisar IA
+          </button>
+          <span className="text-[10px] uppercase tracking-wider text-white/40">
+            {versions.length} {versions.length === 1 ? "versão" : "versões"}
+          </span>
+        </div>
       </div>
 
       {isLoading ? (
@@ -82,6 +98,13 @@ export default function ContractVersionHistory({ entityType, entityId }: Props) 
           ))}
         </ul>
       )}
+
+      <ContractAiAnalysisModal
+        open={aiOpen}
+        onClose={() => setAiOpen(false)}
+        text={contractText || ""}
+        label={`${entityType === "client" ? "Cliente" : "Projeto"} · contrato atual`}
+      />
     </div>
   );
 }
