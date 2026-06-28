@@ -20,8 +20,41 @@ import { toast } from "@/hooks/use-toast";
 const CATS = Object.keys(CATEGORY_LABEL) as ProviderCategory[];
 
 export default function IntegrationsMarketplace() {
+  const { user, isAdmin } = useAuthContext();
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<ProviderCategory | "all">("all");
+  const [installing, setInstalling] = useState<string | null>(null);
+
+  const install = async (p: typeof PROVIDER_CATALOG[number]) => {
+    if (!user) { toast({ title: "Faça login para instalar", variant: "destructive" }); return; }
+    setInstalling(p.id);
+    try {
+      // Admins: cria registro real em integration_providers
+      if (isAdmin) {
+        const { error } = await supabase.from("integration_providers" as any).upsert({
+          id: p.id, name: p.name, category: p.category, description: p.description,
+          color: p.color, is_active: false, is_connected: false,
+          health_status: "unknown", required_secrets: p.secrets,
+        }, { onConflict: "id" });
+        if (error) throw error;
+        await supabase.from("marketplace_installs" as any).insert({
+          provider_slug: p.id, provider_name: p.name, installed_by: user.id,
+          requested_secrets: p.secrets, status: "installed",
+        });
+        toast({ title: `${p.name} instalado`, description: "Configure em /admin/integrations" });
+      } else {
+        // Não-admins: solicita instalação
+        await supabase.from("marketplace_installs" as any).insert({
+          provider_slug: p.id, provider_name: p.name, installed_by: user.id,
+          requested_secrets: p.secrets, status: "requested",
+        });
+        toast({ title: "Solicitação enviada", description: "Um admin será notificado." });
+      }
+    } catch (e: any) {
+      toast({ title: "Falha", description: e?.message, variant: "destructive" });
+    } finally { setInstalling(null); }
+  };
+
 
   const filtered = useMemo(() => {
     return PROVIDER_CATALOG.filter((p) => {
