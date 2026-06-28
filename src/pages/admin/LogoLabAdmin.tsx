@@ -117,6 +117,20 @@ export default function LogoLabAdmin() {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<ProviderCategory | "all">("all");
   const [selectedSlug, setSelectedSlug] = useState<string>("google");
+  const [exporting, setExporting] = useState(false);
+
+  const exportKit = async () => {
+    setExporting(true);
+    try {
+      const { blob, filename } = await generateBrandKitZip({
+        name: selected.name, color: selected.color, slug: selected.slug,
+      });
+      downloadBlob(blob, filename);
+      toast({ title: "Brand kit exportado", description: filename });
+    } catch (e: any) {
+      toast({ title: "Falha ao exportar", description: e?.message, variant: "destructive" });
+    } finally { setExporting(false); }
+  };
 
   const filtered = useMemo(() => {
     return PROVIDER_CATALOG.filter((p) => {
