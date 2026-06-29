@@ -109,6 +109,37 @@ export default defineConfig(({ mode }) => ({
 
         categories: ["business", "productivity", "development"],
 
+        shortcuts: [
+          {
+            name: "Dashboard SevenOS",
+            short_name: "Admin",
+            description: "Acessar painel administrativo",
+            url: "/admin",
+            icons: [{ src: "/icons/icon-192x192.png", sizes: "192x192" }],
+          },
+          {
+            name: "Pipeline de Vendas",
+            short_name: "Pipeline",
+            description: "Acompanhar funil de leads",
+            url: "/admin/pipeline",
+            icons: [{ src: "/icons/icon-192x192.png", sizes: "192x192" }],
+          },
+          {
+            name: "WhatsApp Inbox",
+            short_name: "WhatsApp",
+            description: "Conversas em tempo real",
+            url: "/admin/whatsapp",
+            icons: [{ src: "/icons/icon-192x192.png", sizes: "192x192" }],
+          },
+          {
+            name: "Logo Lab",
+            short_name: "Brand",
+            description: "Editor de marca e logos",
+            url: "/admin/logo-lab",
+            icons: [{ src: "/icons/icon-192x192.png", sizes: "192x192" }],
+          },
+        ],
+
         screenshots: [
           {
             src: "/screenshots/desktop-1920x1080.png",
