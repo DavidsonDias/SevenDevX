@@ -38,6 +38,7 @@ export default function App() {
     <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => { window.location.href = "/"; }}>
       <Providers>
         <Blocker />
+        <OfflineIndicator />
         <AppInstallerButton />
         <PWAUpdatePrompt />
         <AppRouter />
