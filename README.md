@@ -502,237 +502,270 @@ Tudo backend roda em **Supabase Edge Functions (Deno runtime)** distribuídas gl
 
 ## 📂 Estrutura Completa de Pastas
 
-> Árvore consolidada — inclui todas as adições recentes (Phases 1 → 10: SevenOS Enterprise, OAuth, Brand AI, WhatsApp Inbox, Cashflow, etc).
+> Árvore única e consolidada — site público + SevenOS Enterprise (Phases 1 → 10).
+> Cada arquivo recebe seu próprio ícone para leitura visual rápida.
 
 ```text
 sevendevx/
 │
-├── 📁 public/                              # Estáticos servidos pela CDN
-│   ├── 🤖 ai.txt                           # Diretivas para crawlers de IA
-│   ├── 🤖 llms.txt                         # Manifesto LLM-friendly
-│   ├── 🤖 llm-context.json                 # Dataset estruturado p/ RAG
-│   ├── 🤖 robots.txt                       # Libera GPTBot, ClaudeBot, etc
-│   ├── 🗺️ sitemap.xml                       # Sitemap dinâmico (cidades + cases + artigos)
-│   ├── 📱 manifest.json                    # PWA manifest
-│   ├── 📱 sw.js                            # Service Worker compilado
-│   ├── 📱 offline.html                     # Fallback offline
+├── 📁 public/                                  # 🌐 Estáticos servidos pela CDN
+│   ├── 🤖 ai.txt                               # Diretivas para crawlers de IA
+│   ├── 🤖 llms.txt                             # Manifesto LLM-friendly
+│   ├── 🤖 llm-context.json                     # Dataset estruturado p/ RAG
+│   ├── 🤖 robots.txt                           # Libera GPTBot, ClaudeBot, etc
+│   ├── 🗺️  sitemap.xml                         # Sitemap dinâmico (cidades + cases + artigos)
+│   ├── 📱 manifest.json                        # PWA manifest
+│   ├── 📱 sw.js                                # Service Worker compilado
+│   ├── 📱 offline.html                         # Fallback offline
 │   ├── 🎨 placeholder.svg
-│   └── 📁 icons/tech/                      # SVGs de tecnologias (docker, python, …)
+│   └── 📁 icons/tech/                          # 🧩 SVGs de tecnologias (docker, python, vite, redis…)
 │
 ├── 📁 src/
 │   │
-│   ├── 📁 app/                             # 🎯 Bootstrap da aplicação
-│   │   ├── Providers.tsx                   # QueryClient + Auth + Language + Tooltip
-│   │   └── Router.tsx                      # Rotas lazy + AnimatePresence
+│   ├── 📁 app/                                 # 🎯 Bootstrap da aplicação
+│   │   ├── 🧬 Providers.tsx                    # QueryClient + Auth + Language + Tooltip
+│   │   └── 🛣️  Router.tsx                       # Rotas lazy + AnimatePresence
 │   │
-│   ├── 📁 pages/                           # 🖼️ Páginas (site + admin)
-│   │   ├── 🏠 Home.tsx, About.tsx, Services.tsx
-│   │   ├── 💼 Projects.tsx, ProjectsHub.tsx, ProjectDetail.tsx
-│   │   ├── 📝 Blog.tsx, BlogPost.tsx
-│   │   ├── 🔐 Auth.tsx, Profile.tsx
-│   │   ├── 🛒 Store.tsx, Fornecedores.tsx
-│   │   ├── 🛒 IntegrationsMarketplace.tsx   # Marketplace público (100+ tools)
-│   │   ├── 🔐 OAuthCallback.tsx             # Landing OAuth (code+state)
-│   │   ├── 📄 PrivacyPolicy.tsx, NotFound.tsx, Index.tsx
+│   ├── 📁 pages/                               # 🖼️ Páginas (site + admin)
+│   │   ├── 🏠 Home.tsx                         # Landing principal
+│   │   ├── 👤 About.tsx                        # Quem somos / E-E-A-T
+│   │   ├── 🛎️  Services.tsx                    # Serviços (CMS-driven + LucideIcons)
+│   │   ├── 💼 Projects.tsx                     # Portfólio público
+│   │   ├── 🗂️  ProjectsHub.tsx                 # Hub de projetos
+│   │   ├── 🔎 ProjectDetail.tsx                # Detalhe do projeto
+│   │   ├── 📝 Blog.tsx                         # Listagem de posts
+│   │   ├── 📰 BlogPost.tsx                     # Post individual (markdown)
+│   │   ├── 🔐 Auth.tsx                         # Login / signup
+│   │   ├── 👤 Profile.tsx                      # Perfil enterprise (hero, badges, security)
+│   │   ├── 🛒 Store.tsx                        # Loja interna
+│   │   ├── 🏭 Fornecedores.tsx                 # Catálogo de fornecedores
+│   │   ├── 🛒 IntegrationsMarketplace.tsx      # Marketplace público (100+ tools)
+│   │   ├── 🔐 OAuthCallback.tsx                # Landing OAuth (code + state)
+│   │   ├── 📄 PrivacyPolicy.tsx                # LGPD / Privacidade
+│   │   ├── 🚫 NotFound.tsx                     # 404 glitch
+│   │   ├── 🏁 Index.tsx                        # Entrypoint
 │   │   │
-│   │   ├── 📁 admin/                       # 🛠️ === SevenOS (Enterprise OS) ===
-│   │   │   ├── 📊 AdminDashboard.tsx
+│   │   ├── 📁 admin/                           # 🛠️ === SevenOS · Enterprise OS ===
+│   │   │   ├── 📊 AdminDashboard.tsx           # KPIs, charts, atalhos
 │   │   │   │
 │   │   │   ├── 👥 CRM & Pipeline
-│   │   │   │   ├── ClientsAdmin.tsx, ClientsFinanceAdmin.tsx
-│   │   │   │   ├── PipelineAdmin.tsx, ContactCenterAdmin.tsx
-│   │   │   │   └── ResponseTemplatesAdmin.tsx
+│   │   │   │   ├── 👤 ClientsAdmin.tsx
+│   │   │   │   ├── 💳 ClientsFinanceAdmin.tsx
+│   │   │   │   ├── 🪜 PipelineAdmin.tsx
+│   │   │   │   ├── 📨 ContactCenterAdmin.tsx
+│   │   │   │   └── 💬 ResponseTemplatesAdmin.tsx
 │   │   │   │
 │   │   │   ├── 📂 Projetos & Processos
-│   │   │   │   ├── ProjectsAdmin.tsx, ProjectDetailAdmin.tsx, ProjectsDebug.tsx
-│   │   │   │   ├── ProcessAdmin.tsx, EventsAdmin.tsx
+│   │   │   │   ├── 💼 ProjectsAdmin.tsx
+│   │   │   │   ├── 🔍 ProjectDetailAdmin.tsx
+│   │   │   │   ├── 🐛 ProjectsDebug.tsx
+│   │   │   │   ├── 🔁 ProcessAdmin.tsx
+│   │   │   │   └── 📅 EventsAdmin.tsx
 │   │   │   │
 │   │   │   ├── 💰 Financeiro Enterprise
-│   │   │   │   ├── FinanceAdmin.tsx                # Receitas/despesas core
-│   │   │   │   ├── CashflowAdmin.tsx               # 💹 Projeção saldo 90d
-│   │   │   │   ├── ForecastAdmin.tsx               # 📈 Projeções financeiras
-│   │   │   │   └── ReconciliationAdmin.tsx         # 🧾 Conciliação bancária CSV
+│   │   │   │   ├── 💵 FinanceAdmin.tsx              # Receitas/despesas core
+│   │   │   │   ├── 💹 CashflowAdmin.tsx             # Projeção saldo 90d
+│   │   │   │   ├── 📈 ForecastAdmin.tsx             # Projeções financeiras
+│   │   │   │   └── 🧾 ReconciliationAdmin.tsx       # Conciliação bancária CSV
 │   │   │   │
 │   │   │   ├── 📝 Conteúdo & CMS
-│   │   │   │   ├── ServicesAdmin.tsx               # CMS de serviços + LucideIconPicker
-│   │   │   │   ├── BlogAdmin.tsx + BlogPostEditor  # Markdown + cover image
-│   │   │   │   ├── TechnologiesAdmin.tsx, TagsAdmin.tsx, FaqAdmin.tsx
+│   │   │   │   ├── 🛎️  ServicesAdmin.tsx            # CMS + LucideIconPicker + cover
+│   │   │   │   ├── ✍️  BlogAdmin.tsx + BlogPostEditor # Markdown + cover image
+│   │   │   │   ├── ⚛️  TechnologiesAdmin.tsx
+│   │   │   │   ├── 🏷️  TagsAdmin.tsx
+│   │   │   │   └── ❓ FaqAdmin.tsx
 │   │   │   │
 │   │   │   ├── 🎨 Brand & Logo Lab
-│   │   │   │   ├── LogoLabAdmin.tsx                # Logo Lab + Variações IA
-│   │   │   │   ├── LogoLibraryAdmin.tsx
-│   │   │   │   └── BrandStudioAdmin.tsx            # 🎨 URL scan → palette + favicon kit
+│   │   │   │   ├── 🧪 LogoLabAdmin.tsx              # Logo Lab + Variações IA
+│   │   │   │   ├── 📚 LogoLibraryAdmin.tsx
+│   │   │   │   └── 🎨 BrandStudioAdmin.tsx          # URL scan → palette + favicon kit
 │   │   │   │
 │   │   │   ├── 🔌 Integrações & Automações
-│   │   │   │   ├── IntegrationsAdmin.tsx
-│   │   │   │   ├── AutomationsAdmin.tsx, AutomationRunsAdmin.tsx
-│   │   │   │   ├── WebhooksAdmin.tsx, DlqAdmin.tsx
-│   │   │   │   ├── OAuthAdmin.tsx                  # 🔐 GitHub/Google/Slack/Notion
-│   │   │   │   └── CronAdmin.tsx                   # ⏱️ Gestão visual pg_cron
+│   │   │   │   ├── 🔌 IntegrationsAdmin.tsx
+│   │   │   │   ├── ⚡ AutomationsAdmin.tsx
+│   │   │   │   ├── 🎬 AutomationRunsAdmin.tsx       # Replay de execuções
+│   │   │   │   ├── 🪝 WebhooksAdmin.tsx
+│   │   │   │   ├── ☠️  DlqAdmin.tsx                 # Dead Letter Queue
+│   │   │   │   ├── 🔐 OAuthAdmin.tsx                # GitHub/Google/Slack/Notion
+│   │   │   │   └── ⏱️  CronAdmin.tsx                # Gestão visual pg_cron
 │   │   │   │
 │   │   │   ├── 🤖 IA & GEO
-│   │   │   │   ├── AiOpsAdmin.tsx                  # Lead scoring + project draft (Gemini)
-│   │   │   │   ├── CitationsAdmin.tsx              # Monitor citações IA
-│   │   │   │   ├── GeoAnalyticsAdmin.tsx
-│   │   │   │   └── SearchConsoleAdmin.tsx          # GSC insights
+│   │   │   │   ├── 🧠 AiOpsAdmin.tsx                # Lead scoring + draft (Gemini)
+│   │   │   │   ├── 📣 CitationsAdmin.tsx            # Monitor citações IA
+│   │   │   │   ├── 🌎 GeoAnalyticsAdmin.tsx
+│   │   │   │   └── 🔍 SearchConsoleAdmin.tsx        # GSC insights
 │   │   │   │
 │   │   │   ├── 💬 Comunicação
-│   │   │   │   ├── WhatsAppInboxAdmin.tsx          # Meta Cloud API inbox
-│   │   │   │   ├── NotificationsAdmin.tsx
-│   │   │   │   └── NotificationPreferencesAdmin.tsx
+│   │   │   │   ├── 💚 WhatsAppInboxAdmin.tsx        # Meta Cloud API inbox
+│   │   │   │   ├── 🔔 NotificationsAdmin.tsx
+│   │   │   │   └── 🎚️  NotificationPreferencesAdmin.tsx
 │   │   │   │
 │   │   │   ├── ❤️ Saúde & Operações
-│   │   │   │   ├── SystemHealthAdmin.tsx
-│   │   │   │   ├── IncidentsAdmin.tsx              # Auto-criados por health checks
-│   │   │   │   └── LogsAdmin.tsx
+│   │   │   │   ├── 🩺 SystemHealthAdmin.tsx
+│   │   │   │   ├── 🚨 IncidentsAdmin.tsx            # Auto-criados por health checks
+│   │   │   │   └── 📜 LogsAdmin.tsx
 │   │   │   │
 │   │   │   ├── 🛡️ Segurança & Acesso
-│   │   │   │   ├── SecurityAdmin.tsx               # MFA / IP allow / rate limits
-│   │   │   │   ├── MfaAdmin.tsx                    # TOTP + QR
-│   │   │   │   ├── UsersAdmin.tsx, SessionsAdmin.tsx
+│   │   │   │   ├── 🛡️  SecurityAdmin.tsx            # MFA / IP allow / rate limits
+│   │   │   │   ├── 🔑 MfaAdmin.tsx                  # TOTP + QR
+│   │   │   │   ├── 👥 UsersAdmin.tsx
+│   │   │   │   └── 💻 SessionsAdmin.tsx
 │   │   │   │
 │   │   │   └── 💾 Backup & Sistema
-│   │   │       ├── BackupAdmin.tsx                 # Snapshots de tenant
-│   │   │       ├── RestoreAdmin.tsx                # Restore seletivo de tabelas
-│   │   │       └── SystemSettingsAdmin.tsx         # Config global + retenção auditoria
+│   │   │       ├── 💾 BackupAdmin.tsx               # Snapshots de tenant
+│   │   │       ├── ♻️  RestoreAdmin.tsx             # Restore seletivo
+│   │   │       └── ⚙️  SystemSettingsAdmin.tsx      # Config global + retenção
 │   │   │
-│   │   └── 📁 geo/                         # 🤖 Páginas GEO (AI-first)
-│   │       ├── AIHub.tsx                   # Hub de respostas para IAs
-│   │       ├── WhySevenDevX.tsx            # Posicionamento E-E-A-T
-│   │       ├── CaseStudies.tsx             # 10 cases estruturados
-│   │       ├── ContentClusters.tsx         # Topic clusters
-│   │       ├── GeoArticle.tsx              # Template de artigo GEO
-│   │       ├── LocalSeoPage.tsx            # Template /local/:cidade (15 cidades)
-│   │       └── SolutionPage.tsx            # Template de solução
+│   │   └── 📁 geo/                             # 🤖 Páginas GEO (AI-first)
+│   │       ├── 🧠 AIHub.tsx                    # Hub de respostas p/ IAs
+│   │       ├── 🏆 WhySevenDevX.tsx             # Posicionamento E-E-A-T
+│   │       ├── 📚 CaseStudies.tsx              # 10 cases estruturados
+│   │       ├── 🧩 ContentClusters.tsx          # Topic clusters
+│   │       ├── 📰 GeoArticle.tsx               # Template de artigo GEO
+│   │       ├── 📍 LocalSeoPage.tsx             # Template /local/:cidade (15 cidades)
+│   │       └── 💡 SolutionPage.tsx             # Template de solução
 │   │
-│   ├── 📁 components/                      # 🧱 Componentes do site
-│   │   ├── 🏠 Hero, Header, Footer, ScrollToTop
-│   │   ├── 📬 Contact, ContactMultiStep, OrcamentoButton, OrcamentoModal
-│   │   ├── 💼 ProjectCard3D, ProjectModal, ProjectsPreview, PortfolioCarousel3D, PortfolioFilter, FeaturedProjects
-│   │   ├── 🛎️ ServiceCard3D, ServicesPreview
-│   │   ├── ⚛️ TechShowcase, TechIcon, TechIconCDN, TechModal, TechPreview, TagIcon
-│   │   ├── 💬 TestimonialsCarousel3D, Testimonials
-│   │   ├── 🤖 AIChatbot, WhatsAppButton, ExitIntentPopup
-│   │   ├── 🎨 GlassCard, PageTransition, SectionDivider, SkeletonLoader
-│   │   ├── 🔍 SEOHead, BreadcrumbSchema, EntityGraphSchema, GeoKnowledgeGraph
-│   │   ├── 📱 PWAUpdatePrompt, AppInstallerButton, LanguageSwitcher
+│   ├── 📁 components/                          # 🧱 Componentes do site
+│   │   ├── 🦸 Hero.tsx
+│   │   ├── 🧭 Header.tsx                       # Underline gradient nav
+│   │   ├── 🦶 Footer.tsx
+│   │   ├── ⬆️  ScrollToTop.tsx
+│   │   ├── 📬 Contact.tsx · ContactMultiStep.tsx
+│   │   ├── 💰 OrcamentoButton.tsx · OrcamentoModal.tsx
+│   │   ├── 🃏 ProjectCard3D.tsx · ProjectModal.tsx · ProjectsPreview.tsx
+│   │   ├── 🎠 PortfolioCarousel3D.tsx · PortfolioFilter.tsx · FeaturedProjects.tsx
+│   │   ├── 🛎️  ServiceCard3D.tsx · ServicesPreview.tsx
+│   │   ├── ⚛️  TechShowcase.tsx · TechIcon.tsx · TechIconCDN.tsx · TechModal.tsx · TechPreview.tsx
+│   │   ├── 🏷️  TagIcon.tsx
+│   │   ├── 💬 TestimonialsCarousel3D.tsx · Testimonials.tsx
+│   │   ├── 🤖 AIChatbot.tsx
+│   │   ├── 💚 WhatsAppButton.tsx
+│   │   ├── 🚪 ExitIntentPopup.tsx
+│   │   ├── 🪟 GlassCard.tsx
+│   │   ├── 🎞️  PageTransition.tsx
+│   │   ├── 〰️  SectionDivider.tsx (+ .css)
+│   │   ├── 💀 SkeletonLoader.tsx
+│   │   ├── 🔍 SEOHead.tsx · BreadcrumbSchema.tsx · EntityGraphSchema.tsx · GeoKnowledgeGraph.tsx
+│   │   ├── 📲 PWAUpdatePrompt.tsx · AppInstallerButton.tsx
+│   │   ├── 🌍 LanguageSwitcher.tsx
 │   │   │
-│   │   ├── 📁 admin/                       # 🛠️ Componentes do SevenOS
-│   │   │   ├── AdminMenu, AdminPageShell, AdminComingSoon, Breadcrumb
-│   │   │   ├── GlobalSearch (⌘K), KpiCards, ActivityFeed
-│   │   │   ├── SmartInsights, AiInsightsBlock, AiProjectGeneratorModal
-│   │   │   ├── CitationMonitorSettings  ⬅ pausa, queries, modelos
-│   │   │   ├── ContractCard, ContractVersionHistory, AuditDiffModal
-│   │   │   ├── AttachmentManager, FilePreview, IconUploader, LucideIconPicker, LucideIconRender
-│   │   │   ├── ClientPicker, TagMultiSelect, TechMultiSelect
-│   │   │   ├── PricingEngineModal, PushSubscribeButton, StageDocuments
-│   │   │   ├── 📁 finance/   ProjectFinanceBlock, TimeTrackerWidget
-│   │   │   └── 📁 integrations/   ProjectIntegrationsBlock
+│   │   ├── 📁 admin/                           # 🛠️ Componentes do SevenOS
+│   │   │   ├── 🧭 AdminMenu.tsx · 🪟 AdminPageShell.tsx · 🚧 AdminComingSoon.tsx · 🍞 Breadcrumb.tsx
+│   │   │   ├── 🔎 GlobalSearch.tsx (⌘K) · 📊 KpiCards.tsx · 📡 ActivityFeed.tsx
+│   │   │   ├── 💡 SmartInsights.tsx · 🧠 AiInsightsBlock.tsx · 🤖 AiProjectGeneratorModal.tsx
+│   │   │   ├── ⏸️  CitationMonitorSettings.tsx   # pausa, queries, modelos
+│   │   │   ├── 📄 ContractCard.tsx · 🕒 ContractVersionHistory.tsx · 🔀 AuditDiffModal.tsx
+│   │   │   ├── 📎 AttachmentManager.tsx · 👁️  FilePreview.tsx · 🖼️  IconUploader.tsx
+│   │   │   ├── 🎯 LucideIconPicker.tsx · 🖌️  LucideIconRender.tsx
+│   │   │   ├── 👤 ClientPicker.tsx · 🏷️  TagMultiSelect.tsx · ⚛️  TechMultiSelect.tsx
+│   │   │   ├── 💲 PricingEngineModal.tsx · 🔔 PushSubscribeButton.tsx · 📂 StageDocuments.tsx
+│   │   │   ├── 📁 finance/        💰 ProjectFinanceBlock · ⏱️  TimeTrackerWidget
+│   │   │   └── 📁 integrations/   🔌 ProjectIntegrationsBlock
 │   │   │
-│   │   ├── 📁 auth/ProtectedRoute.tsx      # Guard de role + redirect
-│   │   ├── 📁 layout/ Container, Section
-│   │   ├── 📁 security/Blocker.tsx         # Bloqueio anti-bot
-│   │   ├── 📁 services/ FAQSection, ProcessSection
-│   │   └── 📁 ui/                          # shadcn/ui (button, dialog, sheet, …)
+│   │   ├── 📁 auth/               🛡️  ProtectedRoute.tsx   # Guard de role + redirect
+│   │   ├── 📁 layout/             📦 Container.tsx · 📐 Section.tsx
+│   │   ├── 📁 security/           🚫 Blocker.tsx           # Bloqueio anti-bot
+│   │   ├── 📁 services/           ❓ FAQSection.tsx · 🔁 ProcessSection.tsx
+│   │   └── 📁 ui/                 🎨 shadcn/ui (button, dialog, sheet, …)
 │   │
-│   ├── 📁 modules/                         # 🧩 Features ricas do SevenOS
-│   │   ├── 📁 automations/   AutomationFlowBuilder, AutomationGuideDrawer, automationTemplates
-│   │   ├── 📁 branding/      LogoEditorModal
-│   │   ├── 📁 integrations/  Marketplace, ProviderConfig, Logs, TestPanel, ProviderLogo, providerCatalog, GuidedConnectionTest, SetupGuideDrawer
-│   │   ├── 📁 layout/        GlobalFAB, MobileBottomNav, RadialActionMenu
-│   │   ├── 📁 notifications/ NotificationBell           # 🔔 Realtime bell + badges
-│   │   ├── 📁 onboarding/    OnboardingTour, OnboardingChecklist, tourSteps
-│   │   ├── 📁 system-health/ HealthStatusGrid, RealtimeActivityFeed, AIRecommendationPanel
-│   │   ├── 📁 users/         UserDetailsModal
-│   │   └── 📁 webhooks/      WebhookDebugger, WebhookGuideDrawer, WebhookPayloadViewer
+│   ├── 📁 modules/                             # 🧩 Features ricas do SevenOS
+│   │   ├── 📁 automations/    ⚡ AutomationFlowBuilder · 📖 AutomationGuideDrawer · 🧰 automationTemplates
+│   │   ├── 📁 branding/       🎨 LogoEditorModal
+│   │   ├── 📁 integrations/   🛒 MarketplaceModal · ⚙️  ProviderConfig · 📜 Logs · 🧪 TestPanel · 🖼️  ProviderLogo · 🗂️  providerCatalog · 🧭 GuidedConnectionTest · 📖 SetupGuideDrawer · 📊 TestResultPanel · 🔍 IntegrationDetailsModal
+│   │   ├── 📁 layout/         🟢 GlobalFAB · 📱 MobileBottomNav · 🎯 RadialActionMenu
+│   │   ├── 📁 notifications/  🔔 NotificationBell          # Realtime + badges
+│   │   ├── 📁 onboarding/     🧭 OnboardingTour · ✅ OnboardingChecklist · 🪜 tourSteps
+│   │   ├── 📁 system-health/  🩺 HealthStatusGrid · 📡 RealtimeActivityFeed · 🧠 AIRecommendationPanel
+│   │   ├── 📁 users/          👤 UserDetailsModal
+│   │   └── 📁 webhooks/       🐞 WebhookDebugger · 📖 WebhookGuideDrawer · 📦 WebhookPayloadViewer
 │   │
-│   ├── 📁 hooks/                           # 🪝 Hooks customizados
-│   │   ├── useProjects, useFinance, useTimeTracking
-│   │   ├── useIntegrations, useIntegrationFavorites, useAttachments
-│   │   ├── useAuditLog, useSmartInsights, useAnalytics
-│   │   ├── useAiReferralTracker, usePushSubscription, useSessionTracker
-│   │   ├── useBrandPalette, useExtractedColor, useResolvedAccent, useLogoOverrides
-│   │   ├── useContacts, useContractVersions, useDocuments, useEcosystem
-│   │   ├── useRegistry, useScrollLock, useSmartBack
-│   │   ├── 🔐 useMfa                        # TOTP enroll/verify/disable
-│   │   ├── 🔔 useNotifications              # Realtime + read state
-│   │   ├── 🧭 useOnboarding                 # Progresso de tour/checklist
-│   │   ├── ⚙️ useSystemSettings             # Config global tipada
-│   │   ├── use-mobile, use-toast
+│   ├── 📁 hooks/                               # 🪝 Hooks customizados
+│   │   ├── 💼 useProjects · 💰 useFinance · ⏱️  useTimeTracking
+│   │   ├── 🔌 useIntegrations · ⭐ useIntegrationFavorites · 📎 useAttachments
+│   │   ├── 📋 useAuditLog · 💡 useSmartInsights · 📈 useAnalytics
+│   │   ├── 🤖 useAiReferralTracker · 🔔 usePushSubscription · 🧭 useSessionTracker
+│   │   ├── 🎨 useBrandPalette · 🌈 useExtractedColor · ✨ useResolvedAccent · 🖼️  useLogoOverrides
+│   │   ├── 👤 useContacts · 📄 useContractVersions · 📁 useDocuments · 🌐 useEcosystem
+│   │   ├── 🗂️  useRegistry · 🔒 useScrollLock · ↩️  useSmartBack
+│   │   ├── 🔐 useMfa                           # TOTP enroll/verify/disable
+│   │   ├── 🔔 useNotifications                 # Realtime + read state
+│   │   ├── 🧭 useOnboarding                    # Progresso de tour/checklist
+│   │   ├── ⚙️  useSystemSettings               # Config global tipada
+│   │   └── 📱 use-mobile · 🍞 use-toast
 │   │
-│   ├── 📁 contexts/AuthContext.tsx         # 🔐 Auth global (ÚNICO ponto)
-│   ├── 📁 i18n/                            # 🌍 PT/EN/ES (LanguageContext + translations)
-│   ├── 📁 integrations/supabase/           # 🔌 client + types (auto-gerados — NÃO editar)
+│   ├── 📁 contexts/        🔐 AuthContext.tsx       # Auth global (ÚNICO ponto)
+│   ├── 📁 i18n/            🌍 LanguageContext + translations (PT/EN/ES)
+│   ├── 📁 integrations/supabase/    🔌 client.ts + types.ts (auto-gerados — NÃO editar)
 │   │
-│   ├── 📁 core/branding/                   # 🎨 Brand core
-│   │   ├── brandKit.ts                     # 📦 ZIP export (SVG/PNG/ICO/tokens.json)
-│   │   └── 📁 palette-engine/              # extractPalette, knownBrands, tokens, index
+│   ├── 📁 core/branding/                       # 🎨 Brand core
+│   │   ├── 📦 brandKit.ts                      # ZIP export (SVG/PNG/ICO/tokens.json)
+│   │   └── 📁 palette-engine/                  # 🌈 extractPalette · knownBrands · tokens · index
 │   │
-│   ├── 📁 data/                            # 📊 projects, caseStudies, geoContent, contentClusters, entityGraph, projectImages
-│   ├── 📁 lib/                             # 🛠️ utils, storage, money, contractBuilder, colorExtract
-│   ├── 📁 utils/                           # 🛠️ authErrors, theme, safeStorage, pdfExport, browserStorageGuard, registerServiceWorker, techData
-│   ├── 📁 assets/                          # 🎨 logo.svg, icons, imagens otimizadas
-│   ├── App.tsx, main.tsx, sw.ts
-│   ├── index.css                           # 🎨 Design tokens (HSL semânticos)
-│   └── fonts.css
+│   ├── 📁 data/            📊 projects · caseStudies · geoContent · contentClusters · entityGraph · projectImages
+│   ├── 📁 lib/             🛠️  utils · storage · money · contractBuilder · colorExtract
+│   ├── 📁 utils/           🛠️  authErrors · theme · safeStorage · pdfExport · browserStorageGuard · registerServiceWorker · techData
+│   ├── 📁 assets/          🎨 logo.svg · icons/ · imagens otimizadas
+│   ├── 🚀 App.tsx · 🚀 main.tsx · 📱 sw.ts
+│   ├── 🎨 index.css                            # Design tokens (HSL semânticos)
+│   └── 🔤 fonts.css
 │
 ├── 📁 supabase/
-│   ├── config.toml
-│   ├── 📁 migrations/                      # 🗄️ Migrations versionadas (RLS + GRANTs)
-│   └── 📁 functions/                       # ☁️ === Edge Functions ===
+│   ├── ⚙️  config.toml
+│   ├── 📁 migrations/                          # 🗄️ Migrations versionadas (RLS + GRANTs)
+│   └── 📁 functions/                           # ☁️ === Edge Functions ===
 │       │
 │       ├── 🤖 IA & Análise
-│       │   ├── ai-chat, ai-engine, ai-ops
-│       │   ├── ai-ops-autonomous            # Lead scoring + project draft
-│       │   ├── ai-contract-summarize        # Risco + cláusulas (Gemini)
-│       │   ├── lead-score-ai                # Scoring isolado
-│       │   ├── project-generator
-│       │   └── citation-monitor             # ChatGPT/Gemini/Claude/Perplexity
+│       │   ├── 💬 ai-chat · 🧠 ai-engine · 🤖 ai-ops
+│       │   ├── 🚀 ai-ops-autonomous              # Lead scoring + draft de projeto
+│       │   ├── ⚖️  ai-contract-summarize         # Risco + cláusulas (Gemini)
+│       │   ├── 🎯 lead-score-ai                  # Scoring isolado
+│       │   ├── 🏗️  project-generator
+│       │   └── 📣 citation-monitor               # ChatGPT/Gemini/Claude/Perplexity
 │       │
 │       ├── 🎨 Brand & Logo
-│       │   ├── brand-scan                   # URL → paleta dominante
-│       │   └── logo-variations-ai           # iconmark/horizontal/vertical/mono (Gemini Image)
+│       │   ├── 🔬 brand-scan                     # URL → paleta dominante
+│       │   └── 🪄 logo-variations-ai             # iconmark/horizontal/vertical/mono (Gemini Image)
 │       │
 │       ├── ⚡ Automação & Scheduler
-│       │   ├── automation-runner            # Execução com payload interpolado
-│       │   ├── daily-digest                 # E-mail diário 8h BRT
-│       │   ├── weekly-intel-report          # Report semanal segunda 8h BRT
-│       │   └── webhook-retry-worker         # Reprocessa DLQ
+│       │   ├── ⚡ automation-runner              # Execução com payload interpolado
+│       │   ├── 📧 daily-digest                   # E-mail diário 8h BRT
+│       │   ├── 📰 weekly-intel-report            # Report semanal segunda 8h BRT
+│       │   └── ♻️  webhook-retry-worker          # Reprocessa DLQ
 │       │
 │       ├── 🔗 Webhooks & Integrações
-│       │   ├── webhook-dispatch
-│       │   ├── provider-secrets-check, provider-test
-│       │   ├── vercel-info, vercel-test, vercel-watch
-│       │   ├── github-info, github-test
-│       │   ├── figma-info, figma-test
-│       │   └── stripe-test, resend-test, slack-test, discord-test, openai-test, whatsapp-test
+│       │   ├── 📤 webhook-dispatch
+│       │   ├── 🔐 provider-secrets-check · 🧪 provider-test
+│       │   ├── ▲ vercel-info · vercel-test · 👀 vercel-watch
+│       │   ├── 🐙 github-info · github-test
+│       │   ├── 🎨 figma-info · figma-test
+│       │   └── 🧪 stripe-test · resend-test · slack-test · discord-test · openai-test · whatsapp-test
 │       │
 │       ├── 💬 Comunicação
-│       │   ├── whatsapp-send, whatsapp-webhook   # Meta Cloud API bidirecional
-│       │   ├── push-public-key, push-send
-│       │   └── incident-notify              # Discord/Slack alerts
+│       │   ├── 💚 whatsapp-send · whatsapp-webhook   # Meta Cloud API bidirecional
+│       │   ├── 🔔 push-public-key · push-send
+│       │   └── 🚨 incident-notify                # Discord/Slack alerts
 │       │
 │       ├── ❤️ Saúde & Observabilidade
-│       │   ├── health-collector             # Health + auto-incident
-│       │   ├── track-analytics
-│       │   └── session-geo                  # Geolocalização de sessões
+│       │   ├── 🩺 health-collector               # Health + auto-incident
+│       │   ├── 📈 track-analytics
+│       │   └── 📍 session-geo                    # Geolocalização de sessões
 │       │
 │       ├── 🔐 Segurança & Auth
-│       │   ├── admin-delete-user
-│       │   ├── mfa-enroll, mfa-verify, mfa-disable   # TOTP completo
-│       │   └── oauth-start, oauth-callback           # OAuth 2.0 PKCE
+│       │   ├── 🗑️  admin-delete-user
+│       │   ├── 🔑 mfa-enroll · mfa-verify · mfa-disable   # TOTP completo
+│       │   └── 🔐 oauth-start · oauth-callback           # OAuth 2.0 PKCE
 │       │
 │       ├── 🔍 SEO
-│       │   └── gsc-insights                 # Search Console
+│       │   └── 📊 gsc-insights                   # Search Console
 │       │
 │       └── 💾 Backup
-│           ├── tenant-export                # Snapshot seletivo
-│           └── tenant-restore               # Restore granular
+│           ├── 📤 tenant-export                  # Snapshot seletivo
+│           └── 📥 tenant-restore                 # Restore granular
 │
-├── 📁 scripts/   generate-pwa-icons.js
-├── ⚙️ tailwind.config.ts, vite.config.ts, vercel.json
-├── ⚙️ components.json (shadcn), eslint.config.js
-├── ⚙️ tsconfig.json, tsconfig.app.json, tsconfig.node.json
+├── 📁 scripts/             🧰 generate-pwa-icons.js
+├── ⚙️  tailwind.config.ts · vite.config.ts · vercel.json
+├── ⚙️  components.json (shadcn) · eslint.config.js
+├── ⚙️  tsconfig.json · tsconfig.app.json · tsconfig.node.json
 ├── 📄 index.html
 └── 📄 README.md
 ```
