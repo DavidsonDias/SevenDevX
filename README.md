@@ -502,6 +502,8 @@ Tudo backend roda em **Supabase Edge Functions (Deno runtime)** distribuídas gl
 
 ## 📂 Estrutura Completa de Pastas
 
+> Árvore consolidada — inclui todas as adições recentes (Phases 1 → 10: SevenOS Enterprise, OAuth, Brand AI, WhatsApp Inbox, Cashflow, etc).
+
 ```text
 sevendevx/
 │
@@ -524,22 +526,75 @@ sevendevx/
 │   │   └── Router.tsx                      # Rotas lazy + AnimatePresence
 │   │
 │   ├── 📁 pages/                           # 🖼️ Páginas (site + admin)
-│   │   ├── Home.tsx, About.tsx, Services.tsx
-│   │   ├── Projects.tsx, ProjectsHub.tsx, ProjectDetail.tsx
-│   │   ├── Blog.tsx, BlogPost.tsx
-│   │   ├── Auth.tsx, Profile.tsx, Fornecedores.tsx, Store.tsx
-│   │   ├── PrivacyPolicy.tsx, NotFound.tsx
+│   │   ├── 🏠 Home.tsx, About.tsx, Services.tsx
+│   │   ├── 💼 Projects.tsx, ProjectsHub.tsx, ProjectDetail.tsx
+│   │   ├── 📝 Blog.tsx, BlogPost.tsx
+│   │   ├── 🔐 Auth.tsx, Profile.tsx
+│   │   ├── 🛒 Store.tsx, Fornecedores.tsx
+│   │   ├── 🛒 IntegrationsMarketplace.tsx   # Marketplace público (100+ tools)
+│   │   ├── 🔐 OAuthCallback.tsx             # Landing OAuth (code+state)
+│   │   ├── 📄 PrivacyPolicy.tsx, NotFound.tsx, Index.tsx
 │   │   │
-│   │   ├── 📁 admin/                       # 🛠️ === SevenOS (28 telas) ===
-│   │   │   ├── AdminDashboard, ClientsAdmin, PipelineAdmin
-│   │   │   ├── ProjectsAdmin, ProjectDetailAdmin, ProcessAdmin
-│   │   │   ├── FinanceAdmin, ContactCenterAdmin, EventsAdmin
-│   │   │   ├── ServicesAdmin, TechnologiesAdmin, TagsAdmin, FaqAdmin
-│   │   │   ├── LogoLabAdmin, LogoLibraryAdmin
-│   │   │   ├── IntegrationsAdmin, AutomationsAdmin, WebhooksAdmin
-│   │   │   ├── AiOpsAdmin, GeoAnalyticsAdmin, CitationsAdmin, SearchConsoleAdmin
-│   │   │   ├── SystemHealthAdmin, IncidentsAdmin, LogsAdmin
-│   │   │   └── SecurityAdmin, UsersAdmin, SessionsAdmin
+│   │   ├── 📁 admin/                       # 🛠️ === SevenOS (Enterprise OS) ===
+│   │   │   ├── 📊 AdminDashboard.tsx
+│   │   │   │
+│   │   │   ├── 👥 CRM & Pipeline
+│   │   │   │   ├── ClientsAdmin.tsx, ClientsFinanceAdmin.tsx
+│   │   │   │   ├── PipelineAdmin.tsx, ContactCenterAdmin.tsx
+│   │   │   │   └── ResponseTemplatesAdmin.tsx
+│   │   │   │
+│   │   │   ├── 📂 Projetos & Processos
+│   │   │   │   ├── ProjectsAdmin.tsx, ProjectDetailAdmin.tsx, ProjectsDebug.tsx
+│   │   │   │   ├── ProcessAdmin.tsx, EventsAdmin.tsx
+│   │   │   │
+│   │   │   ├── 💰 Financeiro Enterprise
+│   │   │   │   ├── FinanceAdmin.tsx                # Receitas/despesas core
+│   │   │   │   ├── CashflowAdmin.tsx               # 💹 Projeção saldo 90d
+│   │   │   │   ├── ForecastAdmin.tsx               # 📈 Projeções financeiras
+│   │   │   │   └── ReconciliationAdmin.tsx         # 🧾 Conciliação bancária CSV
+│   │   │   │
+│   │   │   ├── 📝 Conteúdo & CMS
+│   │   │   │   ├── ServicesAdmin.tsx               # CMS de serviços + LucideIconPicker
+│   │   │   │   ├── BlogAdmin.tsx + BlogPostEditor  # Markdown + cover image
+│   │   │   │   ├── TechnologiesAdmin.tsx, TagsAdmin.tsx, FaqAdmin.tsx
+│   │   │   │
+│   │   │   ├── 🎨 Brand & Logo Lab
+│   │   │   │   ├── LogoLabAdmin.tsx                # Logo Lab + Variações IA
+│   │   │   │   ├── LogoLibraryAdmin.tsx
+│   │   │   │   └── BrandStudioAdmin.tsx            # 🎨 URL scan → palette + favicon kit
+│   │   │   │
+│   │   │   ├── 🔌 Integrações & Automações
+│   │   │   │   ├── IntegrationsAdmin.tsx
+│   │   │   │   ├── AutomationsAdmin.tsx, AutomationRunsAdmin.tsx
+│   │   │   │   ├── WebhooksAdmin.tsx, DlqAdmin.tsx
+│   │   │   │   ├── OAuthAdmin.tsx                  # 🔐 GitHub/Google/Slack/Notion
+│   │   │   │   └── CronAdmin.tsx                   # ⏱️ Gestão visual pg_cron
+│   │   │   │
+│   │   │   ├── 🤖 IA & GEO
+│   │   │   │   ├── AiOpsAdmin.tsx                  # Lead scoring + project draft (Gemini)
+│   │   │   │   ├── CitationsAdmin.tsx              # Monitor citações IA
+│   │   │   │   ├── GeoAnalyticsAdmin.tsx
+│   │   │   │   └── SearchConsoleAdmin.tsx          # GSC insights
+│   │   │   │
+│   │   │   ├── 💬 Comunicação
+│   │   │   │   ├── WhatsAppInboxAdmin.tsx          # Meta Cloud API inbox
+│   │   │   │   ├── NotificationsAdmin.tsx
+│   │   │   │   └── NotificationPreferencesAdmin.tsx
+│   │   │   │
+│   │   │   ├── ❤️ Saúde & Operações
+│   │   │   │   ├── SystemHealthAdmin.tsx
+│   │   │   │   ├── IncidentsAdmin.tsx              # Auto-criados por health checks
+│   │   │   │   └── LogsAdmin.tsx
+│   │   │   │
+│   │   │   ├── 🛡️ Segurança & Acesso
+│   │   │   │   ├── SecurityAdmin.tsx               # MFA / IP allow / rate limits
+│   │   │   │   ├── MfaAdmin.tsx                    # TOTP + QR
+│   │   │   │   ├── UsersAdmin.tsx, SessionsAdmin.tsx
+│   │   │   │
+│   │   │   └── 💾 Backup & Sistema
+│   │   │       ├── BackupAdmin.tsx                 # Snapshots de tenant
+│   │   │       ├── RestoreAdmin.tsx                # Restore seletivo de tabelas
+│   │   │       └── SystemSettingsAdmin.tsx         # Config global + retenção auditoria
 │   │   │
 │   │   └── 📁 geo/                         # 🤖 Páginas GEO (AI-first)
 │   │       ├── AIHub.tsx                   # Hub de respostas para IAs
@@ -568,7 +623,7 @@ sevendevx/
 │   │   │   ├── SmartInsights, AiInsightsBlock, AiProjectGeneratorModal
 │   │   │   ├── CitationMonitorSettings  ⬅ pausa, queries, modelos
 │   │   │   ├── ContractCard, ContractVersionHistory, AuditDiffModal
-│   │   │   ├── AttachmentManager, FilePreview, IconUploader
+│   │   │   ├── AttachmentManager, FilePreview, IconUploader, LucideIconPicker, LucideIconRender
 │   │   │   ├── ClientPicker, TagMultiSelect, TechMultiSelect
 │   │   │   ├── PricingEngineModal, PushSubscribeButton, StageDocuments
 │   │   │   ├── 📁 finance/   ProjectFinanceBlock, TimeTrackerWidget
@@ -581,10 +636,12 @@ sevendevx/
 │   │   └── 📁 ui/                          # shadcn/ui (button, dialog, sheet, …)
 │   │
 │   ├── 📁 modules/                         # 🧩 Features ricas do SevenOS
-│   │   ├── 📁 automations/   AutomationFlowBuilder, AutomationGuideDrawer
+│   │   ├── 📁 automations/   AutomationFlowBuilder, AutomationGuideDrawer, automationTemplates
 │   │   ├── 📁 branding/      LogoEditorModal
-│   │   ├── 📁 integrations/  Marketplace, ProviderConfig, Logs, TestPanel, ProviderLogo, providerCatalog
+│   │   ├── 📁 integrations/  Marketplace, ProviderConfig, Logs, TestPanel, ProviderLogo, providerCatalog, GuidedConnectionTest, SetupGuideDrawer
 │   │   ├── 📁 layout/        GlobalFAB, MobileBottomNav, RadialActionMenu
+│   │   ├── 📁 notifications/ NotificationBell           # 🔔 Realtime bell + badges
+│   │   ├── 📁 onboarding/    OnboardingTour, OnboardingChecklist, tourSteps
 │   │   ├── 📁 system-health/ HealthStatusGrid, RealtimeActivityFeed, AIRecommendationPanel
 │   │   ├── 📁 users/         UserDetailsModal
 │   │   └── 📁 webhooks/      WebhookDebugger, WebhookGuideDrawer, WebhookPayloadViewer
@@ -597,15 +654,23 @@ sevendevx/
 │   │   ├── useBrandPalette, useExtractedColor, useResolvedAccent, useLogoOverrides
 │   │   ├── useContacts, useContractVersions, useDocuments, useEcosystem
 │   │   ├── useRegistry, useScrollLock, useSmartBack
+│   │   ├── 🔐 useMfa                        # TOTP enroll/verify/disable
+│   │   ├── 🔔 useNotifications              # Realtime + read state
+│   │   ├── 🧭 useOnboarding                 # Progresso de tour/checklist
+│   │   ├── ⚙️ useSystemSettings             # Config global tipada
 │   │   ├── use-mobile, use-toast
 │   │
 │   ├── 📁 contexts/AuthContext.tsx         # 🔐 Auth global (ÚNICO ponto)
 │   ├── 📁 i18n/                            # 🌍 PT/EN/ES (LanguageContext + translations)
 │   ├── 📁 integrations/supabase/           # 🔌 client + types (auto-gerados — NÃO editar)
-│   ├── 📁 core/branding/palette-engine/    # 🎨 Extração de paleta dominante
-│   ├── 📁 data/                            # 📊 projects, caseStudies, geoContent, contentClusters, entityGraph
+│   │
+│   ├── 📁 core/branding/                   # 🎨 Brand core
+│   │   ├── brandKit.ts                     # 📦 ZIP export (SVG/PNG/ICO/tokens.json)
+│   │   └── 📁 palette-engine/              # extractPalette, knownBrands, tokens, index
+│   │
+│   ├── 📁 data/                            # 📊 projects, caseStudies, geoContent, contentClusters, entityGraph, projectImages
 │   ├── 📁 lib/                             # 🛠️ utils, storage, money, contractBuilder, colorExtract
-│   ├── 📁 utils/                           # 🛠️ authErrors, theme, safeStorage, pdfExport, browserStorageGuard, registerServiceWorker
+│   ├── 📁 utils/                           # 🛠️ authErrors, theme, safeStorage, pdfExport, browserStorageGuard, registerServiceWorker, techData
 │   ├── 📁 assets/                          # 🎨 logo.svg, icons, imagens otimizadas
 │   ├── App.tsx, main.tsx, sw.ts
 │   ├── index.css                           # 🎨 Design tokens (HSL semânticos)
@@ -613,21 +678,56 @@ sevendevx/
 │
 ├── 📁 supabase/
 │   ├── config.toml
-│   ├── 📁 migrations/                      # 🗄️ 46 migrations versionadas (RLS + GRANTs)
-│   └── 📁 functions/                       # ☁️ === 28 Edge Functions ===
-│       ├── 🤖 ai-chat, ai-engine, ai-ops
-│       ├── 🤖 citation-monitor, project-generator
-│       ├── 🔍 gsc-insights
-│       ├── 📈 track-analytics
-│       ├── 🔗 webhook-dispatch
-│       ├── 🔔 push-public-key, push-send
-│       ├── 🔐 admin-delete-user
-│       ├── 🔐 provider-secrets-check, provider-test
-│       ├── 🟢 vercel-info, vercel-test, vercel-watch
-│       ├── 🟢 github-info, github-test
-│       ├── 🟢 figma-info, figma-test
-│       ├── 🟢 stripe-test, resend-test, slack-test
-│       └── 🟢 discord-test, whatsapp-test, openai-test
+│   ├── 📁 migrations/                      # 🗄️ Migrations versionadas (RLS + GRANTs)
+│   └── 📁 functions/                       # ☁️ === Edge Functions ===
+│       │
+│       ├── 🤖 IA & Análise
+│       │   ├── ai-chat, ai-engine, ai-ops
+│       │   ├── ai-ops-autonomous            # Lead scoring + project draft
+│       │   ├── ai-contract-summarize        # Risco + cláusulas (Gemini)
+│       │   ├── lead-score-ai                # Scoring isolado
+│       │   ├── project-generator
+│       │   └── citation-monitor             # ChatGPT/Gemini/Claude/Perplexity
+│       │
+│       ├── 🎨 Brand & Logo
+│       │   ├── brand-scan                   # URL → paleta dominante
+│       │   └── logo-variations-ai           # iconmark/horizontal/vertical/mono (Gemini Image)
+│       │
+│       ├── ⚡ Automação & Scheduler
+│       │   ├── automation-runner            # Execução com payload interpolado
+│       │   ├── daily-digest                 # E-mail diário 8h BRT
+│       │   ├── weekly-intel-report          # Report semanal segunda 8h BRT
+│       │   └── webhook-retry-worker         # Reprocessa DLQ
+│       │
+│       ├── 🔗 Webhooks & Integrações
+│       │   ├── webhook-dispatch
+│       │   ├── provider-secrets-check, provider-test
+│       │   ├── vercel-info, vercel-test, vercel-watch
+│       │   ├── github-info, github-test
+│       │   ├── figma-info, figma-test
+│       │   └── stripe-test, resend-test, slack-test, discord-test, openai-test, whatsapp-test
+│       │
+│       ├── 💬 Comunicação
+│       │   ├── whatsapp-send, whatsapp-webhook   # Meta Cloud API bidirecional
+│       │   ├── push-public-key, push-send
+│       │   └── incident-notify              # Discord/Slack alerts
+│       │
+│       ├── ❤️ Saúde & Observabilidade
+│       │   ├── health-collector             # Health + auto-incident
+│       │   ├── track-analytics
+│       │   └── session-geo                  # Geolocalização de sessões
+│       │
+│       ├── 🔐 Segurança & Auth
+│       │   ├── admin-delete-user
+│       │   ├── mfa-enroll, mfa-verify, mfa-disable   # TOTP completo
+│       │   └── oauth-start, oauth-callback           # OAuth 2.0 PKCE
+│       │
+│       ├── 🔍 SEO
+│       │   └── gsc-insights                 # Search Console
+│       │
+│       └── 💾 Backup
+│           ├── tenant-export                # Snapshot seletivo
+│           └── tenant-restore               # Restore granular
 │
 ├── 📁 scripts/   generate-pwa-icons.js
 ├── ⚙️ tailwind.config.ts, vite.config.ts, vercel.json
