@@ -4,6 +4,7 @@ import AppRouter from "@/app/Router";
 import Blocker from "@/components/security/Blocker";
 import AppInstallerButton from "@/components/AppInstallerButton";
 import PWAUpdatePrompt from "@/components/PWAUpdatePrompt";
+import OfflineIndicator from "@/components/OfflineIndicator";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
 function ErrorFallback({ error, resetErrorBoundary }: any) {
