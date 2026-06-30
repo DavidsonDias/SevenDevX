@@ -22,6 +22,16 @@ export type ProviderCategory =
 
 export type ProviderBadge = "official" | "verified" | "popular" | "recommended" | "enterprise" | "beta" | "new" | "premium";
 
+/** Campo persistido em system_settings (gerenciável pelo próprio tenant, sem Lovable Cloud) */
+export interface TenantSettingField {
+  key: string;            // chave em system_settings (ex: whatsapp_token)
+  label: string;
+  placeholder?: string;
+  help?: string;
+  secret?: boolean;       // renderiza como password e mascara
+  required?: boolean;
+}
+
 export interface CatalogProvider {
   id: string;
   name: string;
@@ -36,6 +46,8 @@ export interface CatalogProvider {
   hasOAuth?: boolean;
   tagline?: string;
   badges?: ProviderBadge[];
+  /** Configurações persistidas em system_settings (não usam Lovable Cloud secrets) */
+  tenantSettings?: TenantSettingField[];
 }
 
 export const CATEGORY_LABEL: Record<ProviderCategory, string> = {
