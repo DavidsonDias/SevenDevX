@@ -35,20 +35,48 @@ export default function ProviderConfigModal({ provider, open, onClose, onOpenGui
     [provider, catalog],
   );
 
+  const tenantSettings = catalog?.tenantSettings ?? [];
+
   const [checking, setChecking] = useState(false);
   const [status, setStatus] = useState<SecretStatus>({});
   const [config, setConfig] = useState<Record<string, any>>({});
   const [saving, setSaving] = useState(false);
   const [showRaw, setShowRaw] = useState(false);
   const [rawDraft, setRawDraft] = useState("");
+  const [tenantValues, setTenantValues] = useState<Record<string, string>>({});
+  const [revealedKey, setRevealedKey] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open || !provider) return;
     setConfig(provider.config || {});
     setRawDraft(JSON.stringify(provider.config || {}, null, 2));
     void runCheck();
+    void loadTenantSettings();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, provider?.id]);
+
+  const loadTenantSettings = async () => {
+    if (!tenantSettings.length) return;
+    const keys = tenantSettings.map(s => s.key);
+    const { data } = await supabase.from("system_settings" as any).select("key, value").in("key", keys);
+    const map: Record<string, string> = {};
+    (data || []).forEach((r: any) => {
+      const v = r.value;
+      map[r.key] = typeof v === "string" ? v : v?.value ?? JSON.stringify(v ?? "");
+    });
+    setTenantValues(map);
+  };
+
+  const saveTenantSettings = async () => {
+    if (!tenantSettings.length) return true;
+    const rows = tenantSettings
+      .filter(s => tenantValues[s.key] !== undefined)
+      .map(s => ({ key: s.key, value: tenantValues[s.key] ?? "" }));
+    if (!rows.length) return true;
+    const { error } = await supabase.from("system_settings" as any).upsert(rows, { onConflict: "key" });
+    if (error) { toast.error("Erro salvando settings", { description: error.message }); return false; }
+    return true;
+  };
 
   const runCheck = async () => {
     if (!secret_refs.length) {
