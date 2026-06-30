@@ -2,6 +2,7 @@
  * 🎛️ AdminPageShell — consistent header + container for all admin pages
  * Voltar inteligente + breadcrumb dinâmico.
  */
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Home as HomeIcon, LogOut } from "lucide-react";
 import { useAuthContext as useAuth } from "@/contexts/AuthContext";
