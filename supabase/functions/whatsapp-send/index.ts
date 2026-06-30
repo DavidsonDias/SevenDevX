@@ -37,16 +37,24 @@ Deno.serve(async (req) => {
       }
     }
 
-    const { data: phoneIdRow } = await supa.from('system_settings').select('value').eq('key', 'whatsapp_business_phone_id').maybeSingle();
-    const phoneId = phoneIdRow?.value ? String(phoneIdRow.value).replace(/"/g, '') : '';
+    // 🔑 Prefer tenant-managed credentials (system_settings) over env secret
+    const { data: settingsRows } = await supa.from('system_settings').select('key, value')
+      .in('key', ['whatsapp_token', 'whatsapp_business_phone_id']);
+    const sm: Record<string, string> = {};
+    (settingsRows || []).forEach((r: any) => {
+      const v = r.value;
+      sm[r.key] = typeof v === 'string' ? v : v?.value ?? String(v ?? '').replace(/"/g, '');
+    });
+    const phoneId = sm.whatsapp_business_phone_id || '';
+    const token = sm.whatsapp_token || WA_TOKEN;
     let waId: string | null = null;
     let status = 'sent';
     let error: string | null = null;
 
-    if (phoneId && WA_TOKEN) {
+    if (phoneId && token) {
       const r = await fetch(`https://graph.facebook.com/v20.0/${phoneId}/messages`, {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${WA_TOKEN}`, 'Content-Type': 'application/json' },
+        headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ messaging_product: 'whatsapp', to: toPhone, type: 'text', text: { body } }),
       });
       const json = await r.json().catch(() => ({}));
@@ -54,7 +62,7 @@ Deno.serve(async (req) => {
       waId = json?.messages?.[0]?.id || null;
     } else {
       status = 'failed';
-      error = 'WHATSAPP_TOKEN ou whatsapp_business_phone_id ausentes';
+      error = 'Configure whatsapp_token e whatsapp_business_phone_id em /admin/integrations (WhatsApp Business)';
     }
 
     await supa.from('whatsapp_messages').insert({
