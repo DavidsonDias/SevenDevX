@@ -2,6 +2,7 @@
  * 🎛️ AdminPageShell — consistent header + container for all admin pages
  * Voltar inteligente + breadcrumb dinâmico.
  */
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Home as HomeIcon, LogOut } from "lucide-react";
 import { useAuthContext as useAuth } from "@/contexts/AuthContext";
@@ -26,6 +27,19 @@ export const AdminPageShell = ({ title, subtitle, actions, children, backFallbac
   const { user, signOut } = useAuth();
   const goBack = useSmartBack();
 
+  // 🪄 Auto-hide on scroll down, show on scroll up (mesma lógica do site público)
+  const [isVisible, setIsVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      setIsVisible(!(y > lastScrollY && y > 80));
+      setLastScrollY(y);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [lastScrollY]);
+
   const handleSignOut = async () => {
     await signOut();
     navigate("/");
@@ -34,7 +48,9 @@ export const AdminPageShell = ({ title, subtitle, actions, children, backFallbac
   return (
     <div className="min-h-screen bg-black text-white w-full overflow-x-hidden">
       <header
-        className="border-b border-white/10 sticky top-0 bg-black/95 backdrop-blur-lg z-50"
+        className={`border-b border-white/10 sticky top-0 bg-black/95 backdrop-blur-lg z-50 transition-transform duration-300 ${
+          isVisible ? "translate-y-0" : "-translate-y-full"
+        }`}
         style={{ paddingTop: "env(safe-area-inset-top)" }}
       >
         <div className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-3">

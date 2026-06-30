@@ -22,6 +22,16 @@ export type ProviderCategory =
 
 export type ProviderBadge = "official" | "verified" | "popular" | "recommended" | "enterprise" | "beta" | "new" | "premium";
 
+/** Campo persistido em system_settings (gerenciável pelo próprio tenant, sem Lovable Cloud) */
+export interface TenantSettingField {
+  key: string;            // chave em system_settings (ex: whatsapp_token)
+  label: string;
+  placeholder?: string;
+  help?: string;
+  secret?: boolean;       // renderiza como password e mascara
+  required?: boolean;
+}
+
 export interface CatalogProvider {
   id: string;
   name: string;
@@ -36,6 +46,8 @@ export interface CatalogProvider {
   hasOAuth?: boolean;
   tagline?: string;
   badges?: ProviderBadge[];
+  /** Configurações persistidas em system_settings (não usam Lovable Cloud secrets) */
+  tenantSettings?: TenantSettingField[];
 }
 
 export const CATEGORY_LABEL: Record<ProviderCategory, string> = {
@@ -139,7 +151,18 @@ export const PROVIDER_CATALOG: CatalogProvider[] = [
   P({ id: "postmark", name: "Postmark", slug: "postmark", category: "comunicacao", color: "#FFDE00", description: "Transactional email rápido.", secrets: ["POSTMARK_TOKEN"], docs: "https://postmarkapp.com/developer" }),
   P({ id: "slack", name: "Slack", slug: "slack", category: "comunicacao", color: "#4A154B", description: "Workspace messaging e bots.", secrets: ["SLACK_BOT_TOKEN", "SLACK_SIGNING_SECRET"], hasTest: true, docs: "https://api.slack.com/", hasWebhook: true, hasOAuth: true, badges: ["official", "popular"] }),
   P({ id: "discord", name: "Discord", slug: "discord", category: "comunicacao", color: "#5865F2", description: "Bots, webhooks e guild events.", secrets: ["DISCORD_BOT_TOKEN"], hasTest: true, docs: "https://discord.com/developers/docs", hasWebhook: true, hasOAuth: true, badges: ["popular"] }),
-  P({ id: "whatsapp", name: "WhatsApp Business", slug: "whatsapp", category: "comunicacao", color: "#25D366", description: "Cloud API da Meta para mensagens.", secrets: ["WHATSAPP_TOKEN", "WHATSAPP_PHONE_ID"], docs: "https://developers.facebook.com/docs/whatsapp", hasTest: true, hasWebhook: true, badges: ["official", "popular"] }),
+  P({
+    id: "whatsapp", name: "WhatsApp Business", slug: "whatsapp", category: "comunicacao", color: "#25D366",
+    description: "Cloud API da Meta para mensagens.", secrets: [],
+    docs: "https://developers.facebook.com/docs/whatsapp", hasTest: true, hasWebhook: true,
+    badges: ["official", "popular"],
+    tenantSettings: [
+      { key: "whatsapp_token", label: "Access Token (permanente)", placeholder: "EAAG...", secret: true, required: true, help: "Token permanente do app Meta (Business → System User)." },
+      { key: "whatsapp_business_phone_id", label: "Phone Number ID", placeholder: "123456789012345", required: true, help: "ID do número no WhatsApp Business." },
+      { key: "whatsapp_verify_token", label: "Verify Token (webhook)", placeholder: "string aleatória", secret: true, required: true, help: "Use o mesmo valor ao configurar o webhook no Meta." },
+      { key: "whatsapp_business_account_id", label: "Business Account ID (opcional)", placeholder: "WABA ID" },
+    ],
+  }),
   P({ id: "telegram", name: "Telegram", slug: "telegram", category: "comunicacao", color: "#26A5E4", description: "Bot API para mensagens, canais e grupos.", secrets: ["TELEGRAM_BOT_TOKEN"], docs: "https://core.telegram.org/bots/api", hasWebhook: true }),
   P({ id: "twilio", name: "Twilio", slug: "twilio", category: "comunicacao", color: "#F22F46", description: "SMS, voz e WhatsApp via API.", secrets: ["TWILIO_ACCOUNT_SID", "TWILIO_AUTH_TOKEN"], docs: "https://www.twilio.com/docs", hasWebhook: true, badges: ["enterprise"] }),
   P({ id: "zoom", name: "Zoom", slug: "zoom", category: "comunicacao", color: "#2D8CFF", description: "Meetings, webinars e recordings.", secrets: ["ZOOM_CLIENT_ID", "ZOOM_CLIENT_SECRET"], docs: "https://developers.zoom.us/", hasOAuth: true, hasWebhook: true }),

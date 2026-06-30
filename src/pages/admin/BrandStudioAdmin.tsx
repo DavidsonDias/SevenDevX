@@ -19,6 +19,13 @@ type ScanResult = {
   ogImage?: string;
   twitterImage?: string;
   icons: { href: string; sizes?: string; rel: string }[];
+  appleIcons?: string[];
+  manifest?: { name?: string; short_name?: string; theme_color?: string; background_color?: string; display?: string; start_url?: string } | null;
+  topCssColors?: string[];
+  cssVariables?: Record<string, string>;
+  fonts?: string[];
+  stylesheetsScanned?: number;
+  ai?: { summary?: string; suggestedPalette?: string[] } | null;
 };
 
 function downloadBlob(blob: Blob, filename: string) {
@@ -236,7 +243,80 @@ export default function BrandStudioAdmin() {
                 </div>
               </div>
 
-              {/* Favicon kit export */}
+              {/* 🤖 AI summary */}
+              {scan.ai?.summary && (
+                <div className="p-5 rounded-2xl border border-emerald-300/20 bg-emerald-300/[0.04]">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-emerald-300 mb-2 inline-flex items-center gap-1.5"><Sparkles className="w-3 h-3" /> AI · síntese de marca</p>
+                  <p className="text-sm text-white/80 leading-relaxed">{scan.ai.summary}</p>
+                  {scan.ai.suggestedPalette && scan.ai.suggestedPalette.length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {scan.ai.suggestedPalette.map((c) => (
+                        <span key={c} className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md border border-white/10 bg-black/40 text-[10px] font-mono">
+                          <span className="w-3 h-3 rounded" style={{ background: c }} /> {c}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* 🎨 Top colors de stylesheets */}
+              {scan.topCssColors && scan.topCssColors.length > 0 && (
+                <div>
+                  <h3 className="text-sm uppercase tracking-[0.2em] text-white/60 mb-3 flex items-center gap-2">
+                    <PaletteIcon className="w-4 h-4" /> Cores extraídas do CSS
+                    <span className="text-[9px] text-white/40 normal-case tracking-normal">({scan.stylesheetsScanned} stylesheets escaneados)</span>
+                  </h3>
+                  <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2">
+                    {scan.topCssColors.map((c) => <Swatch key={c} color={c} onCopy={() => {}} />)}
+                  </div>
+                </div>
+              )}
+
+              {/* 🧩 CSS variables (design tokens) */}
+              {scan.cssVariables && Object.keys(scan.cssVariables).length > 0 && (
+                <div className="p-5 rounded-2xl border border-white/10 bg-black/40">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-3">Design tokens (CSS variables)</p>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2 max-h-64 overflow-y-auto">
+                    {Object.entries(scan.cssVariables).slice(0, 60).map(([k, v]) => (
+                      <div key={k} className="flex items-center gap-2 px-2 py-1.5 rounded border border-white/5 bg-white/[0.02] text-[11px] font-mono">
+                        <span className="w-4 h-4 rounded shrink-0 border border-white/10" style={{ background: v }} />
+                        <span className="text-white/60 truncate">{k}</span>
+                        <span className="text-white/40 ml-auto truncate">{v}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 🔤 Fontes detectadas */}
+              {scan.fonts && scan.fonts.length > 0 && (
+                <div>
+                  <h3 className="text-sm uppercase tracking-[0.2em] text-white/60 mb-3">Tipografia detectada</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {scan.fonts.map((f) => (
+                      <span key={f} className="px-3 py-1.5 rounded-lg border border-white/15 bg-white/[0.03] text-sm" style={{ fontFamily: f }}>{f}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 📱 Manifest */}
+              {scan.manifest && (
+                <div className="p-5 rounded-2xl border border-white/10 bg-black/40">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-3">PWA manifest</p>
+                  <div className="grid sm:grid-cols-2 gap-3 text-xs">
+                    {Object.entries(scan.manifest).filter(([, v]) => v).map(([k, v]) => (
+                      <div key={k} className="flex justify-between gap-2 px-3 py-2 rounded border border-white/5 bg-white/[0.02]">
+                        <span className="text-white/40">{k}</span>
+                        <span className="text-white font-mono truncate">{String(v)}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+
               <div className="p-5 rounded-2xl border border-white/10 bg-black/40">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-3">Favicon kit — gerar a partir da melhor imagem</p>
                 <div className="flex flex-wrap gap-2">

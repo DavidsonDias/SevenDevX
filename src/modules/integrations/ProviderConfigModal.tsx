@@ -35,20 +35,48 @@ export default function ProviderConfigModal({ provider, open, onClose, onOpenGui
     [provider, catalog],
   );
 
+  const tenantSettings = catalog?.tenantSettings ?? [];
+
   const [checking, setChecking] = useState(false);
   const [status, setStatus] = useState<SecretStatus>({});
   const [config, setConfig] = useState<Record<string, any>>({});
   const [saving, setSaving] = useState(false);
   const [showRaw, setShowRaw] = useState(false);
   const [rawDraft, setRawDraft] = useState("");
+  const [tenantValues, setTenantValues] = useState<Record<string, string>>({});
+  const [revealedKey, setRevealedKey] = useState<string | null>(null);
 
   useEffect(() => {
     if (!open || !provider) return;
     setConfig(provider.config || {});
     setRawDraft(JSON.stringify(provider.config || {}, null, 2));
     void runCheck();
+    void loadTenantSettings();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, provider?.id]);
+
+  const loadTenantSettings = async () => {
+    if (!tenantSettings.length) return;
+    const keys = tenantSettings.map(s => s.key);
+    const { data } = await supabase.from("system_settings" as any).select("key, value").in("key", keys);
+    const map: Record<string, string> = {};
+    (data || []).forEach((r: any) => {
+      const v = r.value;
+      map[r.key] = typeof v === "string" ? v : v?.value ?? JSON.stringify(v ?? "");
+    });
+    setTenantValues(map);
+  };
+
+  const saveTenantSettings = async () => {
+    if (!tenantSettings.length) return true;
+    const rows = tenantSettings
+      .filter(s => tenantValues[s.key] !== undefined)
+      .map(s => ({ key: s.key, value: tenantValues[s.key] ?? "" }));
+    if (!rows.length) return true;
+    const { error } = await supabase.from("system_settings" as any).upsert(rows, { onConflict: "key" });
+    if (error) { toast.error("Erro salvando settings", { description: error.message }); return false; }
+    return true;
+  };
 
   const runCheck = async () => {
     if (!secret_refs.length) {
@@ -86,9 +114,11 @@ export default function ProviderConfigModal({ provider, open, onClose, onOpenGui
           return;
         }
       }
+      const ok = await saveTenantSettings();
+      if (!ok) { setSaving(false); return; }
       const { error } = await supabase
         .from("integration_providers" as any)
-        .update({ config: next, updated_at: new Date().toISOString() })
+        .update({ config: next, is_connected: tenantSettings.length ? tenantSettings.filter(s=>s.required).every(s=>!!tenantValues[s.key]) : provider.is_connected, updated_at: new Date().toISOString() })
         .eq("id", provider.id);
       if (error) throw error;
       toast.success("Configuração salva");
@@ -282,6 +312,57 @@ export default function ProviderConfigModal({ provider, open, onClose, onOpenGui
                 </div>
               )}
             </section>
+
+            {/* 🔑 Tenant settings — gerenciados in-app (system_settings) */}
+            {tenantSettings.length > 0 && (
+              <section>
+                <h4 className="text-[11px] uppercase tracking-[0.22em] text-white/60 mb-3 inline-flex items-center gap-2">
+                  <Key className="w-3.5 h-3.5 text-emerald-300" /> Credenciais in-app
+                  <span className="text-[9px] text-emerald-300/80 border border-emerald-300/30 rounded px-1.5 py-0.5 uppercase tracking-wider">sem Lovable</span>
+                </h4>
+                <div className="space-y-2.5">
+                  {tenantSettings.map((s) => {
+                    const val = tenantValues[s.key] ?? "";
+                    const reveal = revealedKey === s.key;
+                    const isSecret = !!s.secret;
+                    return (
+                      <label key={s.key} className="block">
+                        <span className="text-[10px] uppercase tracking-[0.18em] text-white/50 flex items-center gap-2">
+                          {s.label} {s.required && <span className="text-amber-300">*</span>}
+                          {val && <CheckCircle2 className="w-3 h-3 text-emerald-300" />}
+                        </span>
+                        <div className="mt-1 relative">
+                          <input
+                            type={isSecret && !reveal ? "password" : "text"}
+                            value={val}
+                            onChange={(e) => setTenantValues((v) => ({ ...v, [s.key]: e.target.value }))}
+                            placeholder={s.placeholder}
+                            className="w-full bg-black/40 border border-white/10 rounded-lg pl-3 pr-9 py-2 text-sm focus:outline-none focus:border-emerald-300/50 font-mono"
+                            autoComplete="off"
+                            spellCheck={false}
+                          />
+                          {isSecret && (
+                            <button
+                              type="button"
+                              onClick={() => setRevealedKey(reveal ? null : s.key)}
+                              className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded hover:bg-white/5 text-white/40"
+                              title={reveal ? "Ocultar" : "Mostrar"}
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </div>
+                        {s.help && <span className="text-[10px] text-white/40 mt-1 block">{s.help}</span>}
+                      </label>
+                    );
+                  })}
+                </div>
+                <p className="mt-3 text-[10px] text-white/40">
+                  Salvos em <code className="text-emerald-300">system_settings</code> · usados diretamente pelas edge functions sem precisar de secrets externos.
+                </p>
+              </section>
+            )}
+
 
             {/* Config fields */}
             <section>
