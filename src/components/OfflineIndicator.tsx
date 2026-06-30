@@ -31,9 +31,18 @@ export default function OfflineIndicator() {
     window.addEventListener("offline", onOffline);
     getQueueSize().then(setQueueSize);
     const unsub = subscribeQueue(setQueueSize);
+
+    const onSwMessage = (e: MessageEvent) => {
+      if (e.data?.type === "FLUSH_OFFLINE_QUEUE") {
+        flushQueue().then(() => getQueueSize().then(setQueueSize));
+      }
+    };
+    navigator.serviceWorker?.addEventListener("message", onSwMessage);
+
     return () => {
       window.removeEventListener("online", onOnline);
       window.removeEventListener("offline", onOffline);
+      navigator.serviceWorker?.removeEventListener("message", onSwMessage);
       unsub();
     };
   }, []);
