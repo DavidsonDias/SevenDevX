@@ -19,6 +19,13 @@ type ScanResult = {
   ogImage?: string;
   twitterImage?: string;
   icons: { href: string; sizes?: string; rel: string }[];
+  appleIcons?: string[];
+  manifest?: { name?: string; short_name?: string; theme_color?: string; background_color?: string; display?: string; start_url?: string } | null;
+  topCssColors?: string[];
+  cssVariables?: Record<string, string>;
+  fonts?: string[];
+  stylesheetsScanned?: number;
+  ai?: { summary?: string; suggestedPalette?: string[] } | null;
 };
 
 function downloadBlob(blob: Blob, filename: string) {
