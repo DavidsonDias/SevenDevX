@@ -512,4 +512,33 @@ self.addEventListener("notificationclick", (event: any) => {
   );
 });
 
-console.log(`${LOG_PREFIX} 🚀 CARREGADO — CacheFirst Agressivo para Imagens Externas`);
+/* ═══════════════════════════════════════════════════════════════════
+   🔁 BACKGROUND SYNC — Flush offline mutation queue
+   ═══════════════════════════════════════════════════════════════════ */
+self.addEventListener("sync" as any, (event: any) => {
+  if (event.tag === "sevendevx-flush-queue") {
+    console.log(`${LOG_PREFIX} 🔁 Background sync: flush queue`);
+    event.waitUntil(
+      (async () => {
+        const clients = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+        clients.forEach((c) => c.postMessage({ type: "FLUSH_OFFLINE_QUEUE" }));
+      })()
+    );
+  }
+});
+
+/* ═══════════════════════════════════════════════════════════════════
+   ⏱️ PERIODIC BACKGROUND SYNC (Chrome/Edge — opt-in pelo usuário)
+   ═══════════════════════════════════════════════════════════════════ */
+self.addEventListener("periodicsync" as any, (event: any) => {
+  if (event.tag === "sevendevx-refresh") {
+    event.waitUntil(
+      (async () => {
+        const clients = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+        clients.forEach((c) => c.postMessage({ type: "PERIODIC_REFRESH" }));
+      })()
+    );
+  }
+});
+
+console.log(`${LOG_PREFIX} 🚀 CARREGADO — Offline-First + Background Sync`);
