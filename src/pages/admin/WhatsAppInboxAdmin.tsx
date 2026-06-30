@@ -170,13 +170,10 @@ export default function WhatsAppInboxAdmin() {
         </div>
       </div>
 
-      <div className="mt-6 max-w-3xl text-xs text-white/50 border border-white/10 rounded-xl p-4 bg-black/30">
-        <p className="font-medium text-white/80 mb-2">⚙️ Setup necessário</p>
-        <ul className="space-y-1 list-disc list-inside">
-          <li>Adicione o secret <code className="text-emerald-400">WHATSAPP_TOKEN</code> (token permanente do app Meta).</li>
-          <li>Configure <code className="text-emerald-400">whatsapp_business_phone_id</code> e <code className="text-emerald-400">whatsapp_verify_token</code> em <a href="/admin/settings" className="underline">Configurações</a>.</li>
-          <li>Configure o webhook no Meta apontando para <code className="text-emerald-400">/functions/v1/whatsapp-webhook</code>.</li>
-        </ul>
+      <div className="mt-6 max-w-3xl text-xs text-white/60 border border-emerald-400/20 rounded-xl p-4 bg-emerald-400/[0.04]">
+        <p className="font-medium text-white mb-2">⚙️ Configuração 100% in-app</p>
+        <p className="mb-3">Token, Phone ID e Verify Token agora ficam em <a href="/admin/integrations" className="underline text-emerald-300">Integrações → WhatsApp Business</a>. Sem precisar mexer no Lovable Cloud.</p>
+        <p className="text-white/40">Webhook do Meta: <code className="text-emerald-300">/functions/v1/whatsapp-webhook</code></p>
       </div>
     </AdminPageShell>
   );
