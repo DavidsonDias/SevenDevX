@@ -114,9 +114,11 @@ export default function ProviderConfigModal({ provider, open, onClose, onOpenGui
           return;
         }
       }
+      const ok = await saveTenantSettings();
+      if (!ok) { setSaving(false); return; }
       const { error } = await supabase
         .from("integration_providers" as any)
-        .update({ config: next, updated_at: new Date().toISOString() })
+        .update({ config: next, is_connected: tenantSettings.length ? tenantSettings.filter(s=>s.required).every(s=>!!tenantValues[s.key]) : provider.is_connected, updated_at: new Date().toISOString() })
         .eq("id", provider.id);
       if (error) throw error;
       toast.success("Configuração salva");
