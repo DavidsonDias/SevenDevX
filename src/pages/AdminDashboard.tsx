@@ -27,6 +27,7 @@ import OnboardingTour from "@/modules/onboarding/OnboardingTour";
 import { ADMIN_TOUR } from "@/modules/onboarding/tourSteps";
 import { StatsCardSkeleton } from "@/components/SkeletonLoader";
 import { useToast } from "@/hooks/use-toast";
+import { useAutoHideOnScroll } from "@/hooks/useAutoHideOnScroll";
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, PieChart, Pie, Cell
@@ -235,7 +236,7 @@ const AdminDashboard = () => {
 
       <div className="min-h-screen bg-black text-white">
         {/* Header */}
-        <header className="border-b border-white/10 sticky top-0 bg-black/95 backdrop-blur-lg z-50">
+        <header className={`border-b border-white/10 sticky top-0 bg-black/95 backdrop-blur-lg z-50 transition-transform duration-300 ${headerVisible ? "translate-y-0" : "-translate-y-full"}`}>
           <div className="container mx-auto px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <AdminMenu />
