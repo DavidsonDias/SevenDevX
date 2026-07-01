@@ -15,6 +15,7 @@ import AdminMenu from "@/components/admin/AdminMenu";
 import GlassCard from "@/components/GlassCard";
 import SEOHead from "@/components/SEOHead";
 import CitationMonitorSettings from "@/components/admin/CitationMonitorSettings";
+import { useAutoHideOnScroll } from "@/hooks/useAutoHideOnScroll";
 import { toast } from "sonner";
 
 interface Citation {
@@ -41,6 +42,7 @@ const SOURCES = ["ChatGPT", "Perplexity", "Gemini", "Claude", "Copilot", "You.co
 
 export default function CitationsAdmin() {
   const { isAdmin } = useAuth();
+  const headerVisible = useAutoHideOnScroll();
   const [citations, setCitations] = useState<Citation[]>([]);
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [loading, setLoading] = useState(true);
@@ -118,7 +120,7 @@ export default function CitationsAdmin() {
     <>
       <SEOHead title="Citation Engine — Admin SevenDevX" description="Monitor de menções da SevenDevX em LLMs" />
       <div className="min-h-screen bg-background text-foreground">
-        <header className="sticky top-0 z-30 border-b border-white/10 backdrop-blur-xl bg-background/70">
+        <header className={`sticky top-0 z-30 border-b border-white/10 backdrop-blur-xl bg-background/70 transition-transform duration-300 ${headerVisible ? "translate-y-0" : "-translate-y-full"}`}>
           <div className="container mx-auto px-4 h-14 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <AdminMenu />

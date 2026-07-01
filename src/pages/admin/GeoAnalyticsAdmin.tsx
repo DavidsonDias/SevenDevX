@@ -14,6 +14,7 @@ import { useAuthContext as useAuth } from "@/contexts/AuthContext";
 import AdminMenu from "@/components/admin/AdminMenu";
 import GlassCard from "@/components/GlassCard";
 import SEOHead from "@/components/SEOHead";
+import { useAutoHideOnScroll } from "@/hooks/useAutoHideOnScroll";
 import { GEO_ARTICLES, GEO_PROGRAMMATIC } from "@/data/geoContent";
 
 const AI_BOTS = [
@@ -46,6 +47,7 @@ interface PageView {
 
 export default function GeoAnalyticsAdmin() {
   const { isAdmin } = useAuth();
+  const headerVisible = useAutoHideOnScroll();
   const [loading, setLoading] = useState(true);
   const [views, setViews] = useState<PageView[]>([]);
   const [days, setDays] = useState(30);
@@ -120,7 +122,7 @@ export default function GeoAnalyticsAdmin() {
     <div className="min-h-screen bg-black text-white">
       <SEOHead title="GEO Analytics — Discoverability em IA" description="Tráfego de bots de IA, top rotas GEO e checklist de indexação." />
 
-      <header className="sticky top-0 z-40 bg-black/80 backdrop-blur-xl border-b border-white/10">
+      <header className={`sticky top-0 z-40 bg-black/80 backdrop-blur-xl border-b border-white/10 transition-transform duration-300 ${headerVisible ? "translate-y-0" : "-translate-y-full"}`}>
         <div className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3 min-w-0">
             <AdminMenu />
