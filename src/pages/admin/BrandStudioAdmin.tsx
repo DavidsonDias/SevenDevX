@@ -23,9 +23,15 @@ type ScanResult = {
   manifest?: { name?: string; short_name?: string; theme_color?: string; background_color?: string; display?: string; start_url?: string } | null;
   topCssColors?: string[];
   cssVariables?: Record<string, string>;
+  gradients?: string[];
+  radii?: { value: string; count: number }[];
+  shadows?: { value: string; count: number }[];
+  spacing?: { value: string; count: number }[];
+  transitions?: { value: string; count: number }[];
   fonts?: string[];
+  fontFaces?: string[];
   stylesheetsScanned?: number;
-  ai?: { summary?: string; suggestedPalette?: string[] } | null;
+  ai?: { summary?: string; suggestedPalette?: string[]; personality?: string[] } | null;
 };
 
 function downloadBlob(blob: Blob, filename: string) {
@@ -300,6 +306,64 @@ export default function BrandStudioAdmin() {
                   </div>
                 </div>
               )}
+
+              {/* 🌈 Gradientes */}
+              {scan.gradients && scan.gradients.length > 0 && (
+                <div>
+                  <h3 className="text-sm uppercase tracking-[0.2em] text-white/60 mb-3">Gradientes detectados</h3>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-2">
+                    {scan.gradients.map((g, i) => (
+                      <div key={i} className="rounded-xl border border-white/10 overflow-hidden">
+                        <div className="h-16" style={{ background: g }} />
+                        <code className="block px-2 py-1.5 text-[9px] font-mono text-white/50 truncate bg-black/60">{g}</code>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 📐 Radii + Shadows + Spacing */}
+              <div className="grid md:grid-cols-3 gap-3">
+                {scan.radii && scan.radii.length > 0 && (
+                  <div className="p-4 rounded-2xl border border-white/10 bg-black/40">
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-3">Border-radius</p>
+                    <div className="space-y-1.5">
+                      {scan.radii.slice(0, 6).map((r, i) => (
+                        <div key={i} className="flex items-center gap-2 text-[11px] font-mono">
+                          <div className="w-8 h-8 bg-white/10 border border-white/20" style={{ borderRadius: r.value }} />
+                          <span className="text-white/70 flex-1 truncate">{r.value}</span>
+                          <span className="text-white/30">×{r.count}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {scan.shadows && scan.shadows.length > 0 && (
+                  <div className="p-4 rounded-2xl border border-white/10 bg-black/40">
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-3">Box-shadow</p>
+                    <div className="space-y-2">
+                      {scan.shadows.slice(0, 5).map((s, i) => (
+                        <div key={i}>
+                          <div className="w-full h-8 rounded-md bg-white/90 mb-1" style={{ boxShadow: s.value }} />
+                          <code className="text-[9px] font-mono text-white/50 truncate block">{s.value}</code>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {scan.spacing && scan.spacing.length > 0 && (
+                  <div className="p-4 rounded-2xl border border-white/10 bg-black/40">
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-3">Spacing scale</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {scan.spacing.slice(0, 8).map((s, i) => (
+                        <span key={i} className="px-2 py-1 rounded border border-white/10 bg-white/5 text-[10px] font-mono">
+                          {s.value}<span className="text-white/30 ml-1">×{s.count}</span>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
 
               {/* 📱 Manifest */}
               {scan.manifest && (

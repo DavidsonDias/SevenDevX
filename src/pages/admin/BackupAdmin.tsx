@@ -1,13 +1,14 @@
 /**
- * 📦 BackupAdmin v2 — backup completo (ZIP) ou por domínio.
+ * 📦 BackupAdmin v3 — backup completo (ZIP) ou por domínio + checksum SHA-256 + retenção.
  */
 import { useEffect, useState } from "react";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import { supabase } from "@/integrations/supabase/client";
-import { Database, Download, Trash2, Loader2, Plus, Package, FolderArchive } from "lucide-react";
+import { Database, Download, Trash2, Loader2, Package, FolderArchive, ShieldCheck } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "@/hooks/use-toast";
+import { useSystemSettings } from "@/hooks/useSystemSettings";
 
 const DOMAINS = [
   { id: "projects", label: "Projetos & Tech", icon: "📁" },
@@ -25,6 +26,8 @@ export default function BackupAdmin() {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState<string | null>(null);
+  const { settings, setSetting } = useSystemSettings();
+  const retention = Number(settings.backup_retention_days ?? 30);
 
   const load = async () => {
     const { data } = await supabase.from("tenant_backups").select("*").order("created_at", { ascending: false });
