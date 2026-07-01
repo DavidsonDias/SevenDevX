@@ -84,6 +84,20 @@ export default function BackupAdmin() {
         </div>
       </div>
 
+      {/* 🧹 Retenção automática */}
+      <div className="mb-6 flex flex-wrap items-center gap-3 p-4 rounded-xl border border-white/10 bg-white/[0.02]">
+        <ShieldCheck className="w-4 h-4 text-emerald-300" />
+        <span className="text-xs text-white/70 flex-1">Retenção automática · backups mais antigos são removidos após:</span>
+        <select value={retention} onChange={(e) => setSetting("backup_retention_days", Number(e.target.value))}
+          className="px-3 py-1.5 rounded-lg bg-black/60 border border-white/15 text-xs">
+          <option value={0}>Desativado</option>
+          <option value={7}>7 dias</option>
+          <option value={30}>30 dias</option>
+          <option value={90}>90 dias</option>
+          <option value={365}>1 ano</option>
+        </select>
+      </div>
+
       <p className="text-[11px] uppercase tracking-[0.2em] text-white/50 mb-3">Histórico</p>
       {loading ? <div className="py-20 text-center text-white/40">Carregando...</div> :
        items.length === 0 ? (
@@ -96,6 +110,7 @@ export default function BackupAdmin() {
           {items.map((b) => {
             const isZip = b.storage_path?.endsWith(".zip");
             const kind = String(b.triggered_kind || "").replace("manual:", "");
+            const checksum = (b.metadata as any)?.checksum_sha256 as string | undefined;
             return (
               <div key={b.id} className="flex items-center gap-3 p-3 rounded-xl border border-white/10 bg-white/[0.02]">
                 {isZip ? <FolderArchive className="w-4 h-4 text-emerald-300" /> : <Database className="w-4 h-4 text-white/40" />}
@@ -103,6 +118,7 @@ export default function BackupAdmin() {
                   <div className="text-sm font-mono truncate flex items-center gap-2">
                     {b.storage_path}
                     {kind && <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded border border-white/15 text-white/60">{kind}</span>}
+                    {checksum && <span title={`SHA-256: ${checksum}`} className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-emerald-400/10 border border-emerald-400/30 text-emerald-300">✓ {checksum.slice(0, 8)}</span>}
                   </div>
                   <div className="text-[10px] text-white/40 mt-0.5">
                     {formatDistanceToNow(new Date(b.created_at), { addSuffix: true, locale: ptBR })} ·
