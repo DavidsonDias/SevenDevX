@@ -1,0 +1,2 @@
+ALTER TABLE public.tenant_backups ADD COLUMN IF NOT EXISTS metadata jsonb DEFAULT '{}'::jsonb;
+INSERT INTO public.system_settings(key, value) VALUES ('backup_retention_days', '30'::jsonb) ON CONFLICT (key) DO NOTHING;

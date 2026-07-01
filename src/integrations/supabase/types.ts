@@ -2525,6 +2525,7 @@ export type Database = {
           created_at: string
           error: string | null
           id: string
+          metadata: Json | null
           size_bytes: number | null
           status: string | null
           storage_path: string
@@ -2536,6 +2537,7 @@ export type Database = {
           created_at?: string
           error?: string | null
           id?: string
+          metadata?: Json | null
           size_bytes?: number | null
           status?: string | null
           storage_path: string
@@ -2547,6 +2549,7 @@ export type Database = {
           created_at?: string
           error?: string | null
           id?: string
+          metadata?: Json | null
           size_bytes?: number | null
           status?: string | null
           storage_path?: string
