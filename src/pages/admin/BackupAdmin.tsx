@@ -110,6 +110,21 @@ export default function BackupAdmin() {
         </div>
       </div>
 
+      {/* 📄 Formatos incluídos */}
+      <div className="mb-3 p-4 rounded-xl border border-white/10 bg-white/[0.02]">
+        <p className="text-[11px] uppercase tracking-[0.2em] text-white/50 mb-2">Cada ZIP inclui</p>
+        <div className="flex flex-wrap gap-2 text-[11px]">
+          <span className="px-2 py-1 rounded bg-white/5 border border-white/10">📊 JSON</span>
+          <span className="px-2 py-1 rounded bg-white/5 border border-white/10">📝 Markdown</span>
+          <span className="px-2 py-1 rounded bg-white/5 border border-white/10">🖨️ HTML → PDF</span>
+          <span className="px-2 py-1 rounded bg-white/5 border border-white/10">🖼️ SVG / PNG / imagens</span>
+        </div>
+        <label className="flex items-center gap-2 mt-3 text-xs text-white/70 cursor-pointer">
+          <input type="checkbox" checked={includeFiles} onChange={(e) => setIncludeFiles(e.target.checked)} />
+          Incluir arquivos binários dos buckets (logos, ícones, imagens de projetos e blog)
+        </label>
+      </div>
+
       {/* 🧹 Retenção automática */}
       <div className="mb-6 flex flex-wrap items-center gap-3 p-4 rounded-xl border border-white/10 bg-white/[0.02]">
         <ShieldCheck className="w-4 h-4 text-emerald-300" />
