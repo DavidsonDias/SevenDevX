@@ -1,4 +1,4 @@
-// 📦 Tenant Export v3 — backup completo/domínio + SHA-256 + inventário de storage + catchall + retenção.
+// 📦 Tenant Export v4 — JSON + Markdown + HTML (imprimível em PDF) + arquivos reais de storage (SVG/PNG/imagens).
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
@@ -17,16 +17,20 @@ const DOMAINS: Record<string, string[]> = {
   automations: ['automations', 'automation_runs', 'response_templates', 'process_templates', 'process_template_stages'],
   security: ['system_settings', 'user_mfa', 'tenant_backups', 'restore_jobs', 'admin_sessions', 'push_subscriptions', 'contract_versions', 'attachments'],
 };
-const ALL_DOMAIN_TABLES = new Set(Object.values(DOMAINS).flat());
+
+// Buckets por domínio (só baixamos binários dos relevantes ao domínio)
+const DOMAIN_BUCKETS: Record<string, string[]> = {
+  projects: ['project-images'],
+  cms: ['blog-images'],
+  branding: ['tech-icons', 'branding-assets', 'logos'],
+  crm: ['attachments'],
+};
+const ALL_BUCKETS = ['blog-images', 'project-images', 'tech-icons', 'attachments', 'branding-assets', 'logos'];
 
 // CRC32
 const CRC_TABLE = (() => {
   const t = new Uint32Array(256);
-  for (let n = 0; n < 256; n++) {
-    let c = n;
-    for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
-    t[n] = c >>> 0;
-  }
+  for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); t[n] = c >>> 0; }
   return t;
 })();
 function crc32(buf: Uint8Array): number {
@@ -36,9 +40,7 @@ function crc32(buf: Uint8Array): number {
 }
 function buildZip(files: { name: string; data: Uint8Array }[]): Uint8Array {
   const enc = new TextEncoder();
-  const parts: Uint8Array[] = [];
-  const central: Uint8Array[] = [];
-  let offset = 0;
+  const parts: Uint8Array[] = []; const central: Uint8Array[] = []; let offset = 0;
   for (const f of files) {
     const nameBytes = enc.encode(f.name);
     const crc = crc32(f.data); const size = f.data.length;
@@ -80,6 +82,77 @@ async function sha256Hex(buf: Uint8Array): Promise<string> {
   return [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
+// ─────────── Markdown helpers ───────────
+function esc(v: any): string {
+  if (v === null || v === undefined) return '';
+  const s = typeof v === 'string' ? v : JSON.stringify(v);
+  return s.replace(/\|/g, '\\|').replace(/\n/g, ' ').slice(0, 200);
+}
+function rowsToMd(rows: any[]): string {
+  if (!rows?.length) return '_Sem registros._\n';
+  const cols = Object.keys(rows[0]).slice(0, 8);
+  const head = `| ${cols.join(' | ')} |\n|${cols.map(() => '---').join('|')}|\n`;
+  const body = rows.slice(0, 50).map(r => `| ${cols.map(c => esc(r[c])).join(' | ')} |`).join('\n');
+  const more = rows.length > 50 ? `\n\n_+ ${rows.length - 50} linhas omitidas — ver JSON completo._` : '';
+  return head + body + more + '\n';
+}
+function domainToMarkdown(domain: string, dump: Record<string, any>): string {
+  let md = `# 📦 Backup — ${domain.toUpperCase()}\n\nGerado em ${new Date().toLocaleString('pt-BR')}\n\n`;
+  for (const [table, rows] of Object.entries(dump)) {
+    md += `## \`${table}\`\n\n`;
+    if ((rows as any)?._error) { md += `⚠️ **Erro:** ${(rows as any)._error}\n\n`; continue; }
+    md += `**${(rows as any[]).length}** registros\n\n${rowsToMd(rows as any[])}\n`;
+  }
+  return md;
+}
+function domainToHtml(domain: string, dump: Record<string, any>): string {
+  let body = `<h1>📦 Backup — ${domain.toUpperCase()}</h1><p><em>Gerado em ${new Date().toLocaleString('pt-BR')}</em></p>`;
+  for (const [table, rows] of Object.entries(dump)) {
+    body += `<h2><code>${table}</code></h2>`;
+    if ((rows as any)?._error) { body += `<p style="color:#c00">Erro: ${(rows as any)._error}</p>`; continue; }
+    const r = rows as any[];
+    body += `<p><strong>${r.length}</strong> registros</p>`;
+    if (!r.length) { body += '<p><em>Sem dados</em></p>'; continue; }
+    const cols = Object.keys(r[0]).slice(0, 8);
+    body += '<table><thead><tr>' + cols.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>';
+    for (const row of r.slice(0, 100)) {
+      body += '<tr>' + cols.map(c => `<td>${esc(row[c])}</td>`).join('') + '</tr>';
+    }
+    body += '</tbody></table>';
+  }
+  return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Backup ${domain}</title>
+<style>body{font-family:-apple-system,Inter,sans-serif;padding:32px;color:#111;max-width:1100px;margin:auto}
+h1{border-bottom:2px solid #000;padding-bottom:8px}h2{margin-top:32px;color:#222;font-size:16px}
+table{width:100%;border-collapse:collapse;font-size:11px;margin:8px 0 24px}
+th,td{border:1px solid #ddd;padding:6px 8px;text-align:left;vertical-align:top}
+th{background:#f4f4f4;font-weight:600}code{background:#eee;padding:2px 6px;border-radius:4px}
+@media print{body{padding:0}}</style></head><body>${body}
+<footer style="margin-top:48px;font-size:10px;color:#888;border-top:1px solid #ddd;padding-top:8px">
+SevenOS Backup v4 · Abra este HTML no navegador e use "Imprimir → Salvar como PDF" para exportar.</footer></body></html>`;
+}
+
+// ─────────── Storage recursive download ───────────
+async function collectBucketFiles(supa: any, bucket: string, prefix = '', out: { name: string; data: Uint8Array }[] = [], depth = 0): Promise<void> {
+  if (depth > 4) return;
+  const { data: list } = await supa.storage.from(bucket).list(prefix, { limit: 200 });
+  if (!list) return;
+  for (const item of list) {
+    const p = prefix ? `${prefix}/${item.name}` : item.name;
+    if (item.id === null || item.metadata === null) {
+      // folder
+      await collectBucketFiles(supa, bucket, p, out, depth + 1);
+    } else {
+      try {
+        const { data: blob } = await supa.storage.from(bucket).download(p);
+        if (blob) {
+          const buf = new Uint8Array(await blob.arrayBuffer());
+          out.push({ name: `storage/${bucket}/${p}`, data: buf });
+        }
+      } catch { /* skip */ }
+    }
+  }
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   try {
@@ -92,6 +165,7 @@ Deno.serve(async (req) => {
 
     const body = await req.json().catch(() => ({}));
     const onlyDomain: string | undefined = body?.domain;
+    const includeFiles: boolean = body?.include_files !== false; // default true
 
     const supa = createClient(SUPABASE_URL, SERVICE_KEY);
     const enc = new TextEncoder();
@@ -116,46 +190,69 @@ Deno.serve(async (req) => {
         } catch (e: any) { domainDump[t] = { _error: e?.message || 'fail' }; counts[t] = 0; }
       }
       summary[domain] = { tables: counts, total: totalRows };
-      files.push({ name: `${domain}.json`, data: enc.encode(JSON.stringify(domainDump, null, 2)) });
+      // 📄 3 formatos por domínio: JSON, Markdown, HTML (imprimível em PDF)
+      files.push({ name: `${domain}/data.json`, data: enc.encode(JSON.stringify(domainDump, null, 2)) });
+      files.push({ name: `${domain}/report.md`, data: enc.encode(domainToMarkdown(domain, domainDump)) });
+      files.push({ name: `${domain}/report.html`, data: enc.encode(domainToHtml(domain, domainDump)) });
     }
 
-    // 📦 Storage buckets inventory (metadata + counts) — só em backup completo
-    if (!onlyDomain) {
+    // 🖼️ Arquivos reais dos buckets (SVG, PNG, logos, imagens de projetos, ícones tech, blog)
+    if (includeFiles) {
+      const bucketsToPull = onlyDomain
+        ? (DOMAIN_BUCKETS[onlyDomain] || [])
+        : ALL_BUCKETS;
       const storageInv: Record<string, any> = {};
-      const buckets = ['blog-images', 'project-images', 'tech-icons', 'attachments', 'backups'];
-      for (const b of buckets) {
+      for (const b of bucketsToPull) {
+        const before = files.length;
         try {
-          const { data } = await supa.storage.from(b).list('', { limit: 1000 });
-          storageInv[b] = {
-            file_count: data?.length ?? 0,
-            files: (data ?? []).slice(0, 500).map((f: any) => ({
-              name: f.name, size: f.metadata?.size ?? null, mime: f.metadata?.mimetype ?? null, updated: f.updated_at,
-            })),
-          };
-        } catch { storageInv[b] = { _error: 'list_failed' }; }
+          await collectBucketFiles(supa, b, '', files);
+          storageInv[b] = { downloaded: files.length - before };
+        } catch (e: any) {
+          storageInv[b] = { _error: e?.message || 'fail' };
+        }
       }
       files.push({ name: 'storage-inventory.json', data: enc.encode(JSON.stringify(storageInv, null, 2)) });
       summary['storage'] = {
-        tables: Object.fromEntries(Object.entries(storageInv).map(([k, v]: any) => [k, v.file_count ?? 0])),
-        total: Object.values(storageInv).reduce((s: number, v: any) => s + (v.file_count ?? 0), 0),
+        tables: Object.fromEntries(Object.entries(storageInv).map(([k, v]: any) => [k, v.downloaded ?? 0])),
+        total: Object.values(storageInv).reduce((s: number, v: any) => s + (v.downloaded ?? 0), 0),
       };
     }
 
-    // Manifest + README
     const manifest = {
-      exported_at: new Date().toISOString(), by: user.email, version: 3,
+      exported_at: new Date().toISOString(), by: user.email, version: 4,
       domains: Object.keys(domainsToRun), summary,
+      formats: ['json', 'markdown', 'html'], includes_binaries: includeFiles,
     };
     files.push({ name: 'manifest.json', data: enc.encode(JSON.stringify(manifest, null, 2)) });
     files.push({
-      name: 'README.txt',
-      data: enc.encode(`SevenOS Backup v3
-Exportado em: ${manifest.exported_at}
-Por: ${user.email}
+      name: 'README.md',
+      data: enc.encode(`# 📦 SevenOS Backup v4
 
-Cada arquivo .json contém um domínio completo do sistema.
-storage-inventory.json lista metadados de todos os buckets.
-Restaure via /admin/restore selecionando o ZIP.\n`),
+**Exportado:** ${manifest.exported_at}
+**Por:** ${user.email}
+**Domínios:** ${Object.keys(domainsToRun).join(', ')}
+
+## Estrutura
+
+Cada domínio tem sua pasta com **3 formatos**:
+
+- \`<dominio>/data.json\` → dados brutos completos (reimportáveis).
+- \`<dominio>/report.md\` → relatório legível (GitHub/Obsidian/VS Code).
+- \`<dominio>/report.html\` → relatório imprimível (abra → **Imprimir → Salvar como PDF**).
+
+## Arquivos binários
+
+Pasta \`storage/\` contém os arquivos reais dos buckets:
+- \`storage/tech-icons/\` — ícones SVG das tecnologias
+- \`storage/project-images/\` — imagens dos projetos
+- \`storage/blog-images/\` — imagens do blog
+- \`storage/branding-assets/\` / \`storage/logos/\` — logos
+- \`storage/attachments/\` — anexos de contratos e CRM
+
+## Restaurar
+
+Suba o ZIP em **/admin/restore** e selecione quais tabelas restaurar.
+`),
     });
 
     const zip = buildZip(files);
@@ -175,7 +272,7 @@ Restaure via /admin/restore selecionando o ZIP.\n`),
       tables_included: allTables, triggered_by: user.id,
       triggered_kind: onlyDomain ? `manual:${onlyDomain}` : 'manual:full',
       status: 'completed',
-      metadata: { checksum_sha256: checksum, version: 3, domains: Object.keys(domainsToRun) },
+      metadata: { checksum_sha256: checksum, version: 4, domains: Object.keys(domainsToRun), files: files.length, includes_binaries: includeFiles },
     } as any);
 
     // 🧹 Retenção automática
@@ -192,7 +289,7 @@ Restaure via /admin/restore selecionando o ZIP.\n`),
       }
     } catch { /* ignore */ }
 
-    return new Response(JSON.stringify({ ok: true, path, size: zip.byteLength, checksum, url: signed?.signedUrl, summary }), {
+    return new Response(JSON.stringify({ ok: true, path, size: zip.byteLength, checksum, url: signed?.signedUrl, file_count: files.length, summary }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e: any) {

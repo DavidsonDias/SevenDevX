@@ -26,6 +26,7 @@ export default function BackupAdmin() {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState<string | null>(null);
+  const [includeFiles, setIncludeFiles] = useState(true);
   const { settings, setSetting } = useSystemSettings();
   const retention = Number(settings.backup_retention_days ?? 30);
 
@@ -36,12 +37,27 @@ export default function BackupAdmin() {
 
   useEffect(() => { load(); }, []);
 
+  const triggerBrowserDownload = (url: string, filename: string) => {
+    const a = document.createElement("a");
+    a.href = url; a.download = filename; a.rel = "noopener";
+    document.body.appendChild(a); a.click();
+    setTimeout(() => document.body.removeChild(a), 100);
+  };
+
   const create = async (domain?: string) => {
     setRunning(domain || "full");
     try {
-      const { data, error } = await supabase.functions.invoke("tenant-export", { body: domain ? { domain } : {} });
+      const { data, error } = await supabase.functions.invoke("tenant-export", {
+        body: { ...(domain ? { domain } : {}), include_files: includeFiles },
+      });
       if (error) throw error;
-      toast({ title: `Backup ${domain || "completo"} gerado`, description: `${((data as any).size / 1024).toFixed(1)} KB` });
+      const d = data as any;
+      toast({
+        title: `Backup ${domain || "completo"} gerado`,
+        description: `${(d.size / 1024).toFixed(1)} KB · ${d.file_count} arquivos · iniciando download...`,
+      });
+      // ⬇️ Download automático imediato
+      if (d.url) triggerBrowserDownload(d.url, d.path.split("/").pop() || "sevenos-backup.zip");
       await load();
     } catch (e: any) {
       toast({ title: "Erro", description: e?.message, variant: "destructive" });
@@ -49,8 +65,18 @@ export default function BackupAdmin() {
   };
 
   const download = async (path: string) => {
-    const { data } = await supabase.storage.from("backups").createSignedUrl(path, 60);
-    if (data?.signedUrl) window.open(data.signedUrl, "_blank");
+    try {
+      const { data, error } = await supabase.storage.from("backups").createSignedUrl(path, 300);
+      if (error || !data?.signedUrl) throw error || new Error("URL não gerada");
+      // fetch → blob → anchor download (funciona em iOS/Android/PWA sem popup blocker)
+      const res = await fetch(data.signedUrl);
+      const blob = await res.blob();
+      const objUrl = URL.createObjectURL(blob);
+      triggerBrowserDownload(objUrl, path.split("/").pop() || "backup.zip");
+      setTimeout(() => URL.revokeObjectURL(objUrl), 5000);
+    } catch (e: any) {
+      toast({ title: "Falha no download", description: e?.message, variant: "destructive" });
+    }
   };
 
   const remove = async (b: any) => {
