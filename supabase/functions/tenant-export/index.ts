@@ -1,4 +1,7 @@
-// 📦 Tenant Export v4 — JSON + Markdown + HTML (imprimível em PDF) + arquivos reais de storage (SVG/PNG/imagens).
+// 📦 Tenant Export v5 — Backup INTELIGENTE E COMPLETO do SevenOS
+// Descobre TODAS as tabelas dinamicamente, exporta em JSON+CSV+MD+HTML+DOC,
+// baixa arquivos de TODOS os buckets, gera pastas dedicadas por projeto,
+// inclui schema, resumo executivo e índice de busca.
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
@@ -6,19 +9,19 @@ const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
+// ⚙️ Mapeamento domínio → tabelas conhecidas (fallback quando `domain` é passado)
 const DOMAINS: Record<string, string[]> = {
   projects: ['projects', 'project_budgets', 'project_stages', 'stage_checklist_items', 'stage_documents', 'pipeline_stage_log', 'tech_registry', 'tag_registry', 'team_members'],
   crm: ['clients', 'contacts', 'contact_messages', 'client_interactions', 'chat_conversations', 'chat_messages', 'whatsapp_threads', 'whatsapp_messages'],
-  finance: ['transactions', 'time_entries', 'bank_import_batches', 'fx_rates'],
+  finance: ['transactions', 'time_entries', 'bank_import_batches', 'fx_rates', 'project_budgets'],
   cms: ['services_cms', 'faq_items', 'faq_categories', 'blog_posts', 'blog_categories'],
   ops: ['events', 'notifications', 'notification_preferences', 'audit_log', 'incidents', 'incident_timeline', 'service_health_snapshots', 'analytics_events', 'page_views', 'ai_referrals', 'ai_citations', 'ai_usage', 'ai_ops_actions'],
   branding: ['logo_variations', 'branding_assets'],
   integrations: ['integration_providers', 'integration_logs', 'oauth_connections', 'webhooks', 'webhook_deliveries', 'webhook_dlq', 'marketplace_installs', 'user_integration_favorites', 'citation_monitor_settings', 'vercel_deploy_alerts'],
   automations: ['automations', 'automation_runs', 'response_templates', 'process_templates', 'process_template_stages'],
-  security: ['system_settings', 'user_mfa', 'tenant_backups', 'restore_jobs', 'admin_sessions', 'push_subscriptions', 'contract_versions', 'attachments'],
+  security: ['system_settings', 'user_mfa', 'user_roles', 'profiles', 'tenant_backups', 'restore_jobs', 'admin_sessions', 'push_subscriptions', 'contract_versions', 'attachments'],
 };
 
-// Buckets por domínio (só baixamos binários dos relevantes ao domínio)
 const DOMAIN_BUCKETS: Record<string, string[]> = {
   projects: ['project-images'],
   cms: ['blog-images'],
@@ -27,7 +30,7 @@ const DOMAIN_BUCKETS: Record<string, string[]> = {
 };
 const ALL_BUCKETS = ['blog-images', 'project-images', 'tech-icons', 'attachments', 'branding-assets', 'logos'];
 
-// CRC32
+// ─── CRC32 + ZIP builder ───
 const CRC_TABLE = (() => {
   const t = new Uint32Array(256);
   for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); t[n] = c >>> 0; }
@@ -82,22 +85,33 @@ async function sha256Hex(buf: Uint8Array): Promise<string> {
   return [...new Uint8Array(h)].map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-// ─────────── Markdown helpers ───────────
-function esc(v: any): string {
+// ─── Formatters ───
+function escCell(v: any): string {
+  if (v === null || v === undefined) return '';
+  return (typeof v === 'string' ? v : JSON.stringify(v)).replace(/\|/g, '\\|').replace(/\n/g, ' ').slice(0, 300);
+}
+function csvCell(v: any): string {
   if (v === null || v === undefined) return '';
   const s = typeof v === 'string' ? v : JSON.stringify(v);
-  return s.replace(/\|/g, '\\|').replace(/\n/g, ' ').slice(0, 200);
+  return `"${s.replace(/"/g, '""')}"`;
+}
+function toCsv(rows: any[]): string {
+  if (!rows?.length) return '';
+  const cols = Array.from(new Set(rows.flatMap(r => Object.keys(r ?? {}))));
+  const head = cols.join(',');
+  const body = rows.map(r => cols.map(c => csvCell(r[c])).join(',')).join('\n');
+  return head + '\n' + body + '\n';
 }
 function rowsToMd(rows: any[]): string {
   if (!rows?.length) return '_Sem registros._\n';
   const cols = Object.keys(rows[0]).slice(0, 8);
   const head = `| ${cols.join(' | ')} |\n|${cols.map(() => '---').join('|')}|\n`;
-  const body = rows.slice(0, 50).map(r => `| ${cols.map(c => esc(r[c])).join(' | ')} |`).join('\n');
-  const more = rows.length > 50 ? `\n\n_+ ${rows.length - 50} linhas omitidas — ver JSON completo._` : '';
+  const body = rows.slice(0, 100).map(r => `| ${cols.map(c => escCell(r[c])).join(' | ')} |`).join('\n');
+  const more = rows.length > 100 ? `\n\n_+ ${rows.length - 100} linhas — ver data.json completo._` : '';
   return head + body + more + '\n';
 }
 function domainToMarkdown(domain: string, dump: Record<string, any>): string {
-  let md = `# 📦 Backup — ${domain.toUpperCase()}\n\nGerado em ${new Date().toLocaleString('pt-BR')}\n\n`;
+  let md = `# 📦 SevenOS Backup — ${domain.toUpperCase()}\n\nGerado em ${new Date().toLocaleString('pt-BR')}\n\n---\n\n`;
   for (const [table, rows] of Object.entries(dump)) {
     md += `## \`${table}\`\n\n`;
     if ((rows as any)?._error) { md += `⚠️ **Erro:** ${(rows as any)._error}\n\n`; continue; }
@@ -106,51 +120,77 @@ function domainToMarkdown(domain: string, dump: Record<string, any>): string {
   return md;
 }
 function domainToHtml(domain: string, dump: Record<string, any>): string {
-  let body = `<h1>📦 Backup — ${domain.toUpperCase()}</h1><p><em>Gerado em ${new Date().toLocaleString('pt-BR')}</em></p>`;
+  let body = `<h1>📦 SevenOS Backup — ${domain.toUpperCase()}</h1><p class="meta">Gerado em ${new Date().toLocaleString('pt-BR')}</p>`;
   for (const [table, rows] of Object.entries(dump)) {
     body += `<h2><code>${table}</code></h2>`;
-    if ((rows as any)?._error) { body += `<p style="color:#c00">Erro: ${(rows as any)._error}</p>`; continue; }
+    if ((rows as any)?._error) { body += `<p class="err">Erro: ${(rows as any)._error}</p>`; continue; }
     const r = rows as any[];
-    body += `<p><strong>${r.length}</strong> registros</p>`;
-    if (!r.length) { body += '<p><em>Sem dados</em></p>'; continue; }
-    const cols = Object.keys(r[0]).slice(0, 8);
-    body += '<table><thead><tr>' + cols.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>';
-    for (const row of r.slice(0, 100)) {
-      body += '<tr>' + cols.map(c => `<td>${esc(row[c])}</td>`).join('') + '</tr>';
+    body += `<p class="count"><strong>${r.length}</strong> registros</p>`;
+    if (!r.length) { body += '<p class="empty">Sem dados</p>'; continue; }
+    const cols = Object.keys(r[0]).slice(0, 10);
+    body += '<div class="tbl-wrap"><table><thead><tr>' + cols.map(c => `<th>${c}</th>`).join('') + '</tr></thead><tbody>';
+    for (const row of r.slice(0, 200)) {
+      body += '<tr>' + cols.map(c => `<td>${escCell(row[c])}</td>`).join('') + '</tr>';
     }
-    body += '</tbody></table>';
+    body += '</tbody></table></div>';
   }
-  return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Backup ${domain}</title>
-<style>body{font-family:-apple-system,Inter,sans-serif;padding:32px;color:#111;max-width:1100px;margin:auto}
-h1{border-bottom:2px solid #000;padding-bottom:8px}h2{margin-top:32px;color:#222;font-size:16px}
-table{width:100%;border-collapse:collapse;font-size:11px;margin:8px 0 24px}
-th,td{border:1px solid #ddd;padding:6px 8px;text-align:left;vertical-align:top}
-th{background:#f4f4f4;font-weight:600}code{background:#eee;padding:2px 6px;border-radius:4px}
-@media print{body{padding:0}}</style></head><body>${body}
-<footer style="margin-top:48px;font-size:10px;color:#888;border-top:1px solid #ddd;padding-top:8px">
-SevenOS Backup v4 · Abra este HTML no navegador e use "Imprimir → Salvar como PDF" para exportar.</footer></body></html>`;
+  return htmlShell(`Backup ${domain}`, body);
+}
+function htmlShell(title: string, body: string): string {
+  return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>${title}</title>
+<style>
+:root{--fg:#111;--muted:#666;--line:#e5e5e5;--bg:#fff;--accent:#0a0a0a}
+*{box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,sans-serif;padding:40px;color:var(--fg);max-width:1200px;margin:auto;background:var(--bg);line-height:1.5}
+h1{border-bottom:3px solid var(--accent);padding-bottom:12px;font-size:28px;margin:0 0 8px}
+h2{margin-top:40px;color:#222;font-size:18px;border-left:4px solid var(--accent);padding-left:12px}
+h3{font-size:14px;color:#444;margin-top:24px}
+.meta{color:var(--muted);font-size:12px;margin:0 0 32px}
+.count{font-size:12px;color:var(--muted);margin:4px 0 8px}
+.empty{color:#aaa;font-style:italic;font-size:12px}
+.err{color:#c00;font-size:12px}
+.tbl-wrap{overflow-x:auto;margin:8px 0 24px;border:1px solid var(--line);border-radius:6px}
+table{width:100%;border-collapse:collapse;font-size:11px}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top;max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+th{background:#fafafa;font-weight:600;position:sticky;top:0;text-transform:uppercase;font-size:10px;letter-spacing:.5px;color:#555}
+tbody tr:nth-child(even){background:#fbfbfb}
+code{background:#f4f4f4;padding:2px 6px;border-radius:4px;font-size:12px;color:#000}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:12px;margin:16px 0 32px}
+.kpi{border:1px solid var(--line);border-radius:8px;padding:14px;background:#fafafa}
+.kpi .label{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+.kpi .value{font-size:22px;font-weight:700;margin-top:4px}
+.badge{display:inline-block;padding:2px 8px;border-radius:99px;background:#eee;font-size:10px;text-transform:uppercase;letter-spacing:.5px;margin-right:4px}
+footer{margin-top:60px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:11px}
+@media print{body{padding:0;max-width:none}h2{page-break-after:avoid}.tbl-wrap{page-break-inside:avoid;overflow:visible}th{position:static}}
+</style></head><body>${body}
+<footer>SevenOS Backup v5 · ${new Date().toISOString()} · Imprimível como PDF (Ctrl/Cmd+P → Salvar como PDF) · Abre no Word (.doc)</footer>
+</body></html>`;
 }
 
-// ─────────── Storage recursive download ───────────
-async function collectBucketFiles(supa: any, bucket: string, prefix = '', out: { name: string; data: Uint8Array }[] = [], depth = 0): Promise<void> {
-  if (depth > 4) return;
-  const { data: list } = await supa.storage.from(bucket).list(prefix, { limit: 200 });
-  if (!list) return;
+// Recursive bucket download
+async function collectBucketFiles(supa: any, bucket: string, prefix = '', out: { name: string; data: Uint8Array }[] = [], depth = 0): Promise<number> {
+  if (depth > 5) return 0;
+  const { data: list } = await supa.storage.from(bucket).list(prefix, { limit: 1000 });
+  if (!list) return 0;
+  let n = 0;
   for (const item of list) {
     const p = prefix ? `${prefix}/${item.name}` : item.name;
     if (item.id === null || item.metadata === null) {
-      // folder
-      await collectBucketFiles(supa, bucket, p, out, depth + 1);
+      n += await collectBucketFiles(supa, bucket, p, out, depth + 1);
     } else {
       try {
         const { data: blob } = await supa.storage.from(bucket).download(p);
         if (blob) {
-          const buf = new Uint8Array(await blob.arrayBuffer());
-          out.push({ name: `storage/${bucket}/${p}`, data: buf });
+          out.push({ name: `storage/${bucket}/${p}`, data: new Uint8Array(await blob.arrayBuffer()) });
+          n++;
         }
       } catch { /* skip */ }
     }
   }
+  return n;
+}
+
+function safeSlug(s: string): string {
+  return String(s || 'sem-titulo').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80) || 'sem-titulo';
 }
 
 Deno.serve(async (req) => {
@@ -165,93 +205,218 @@ Deno.serve(async (req) => {
 
     const body = await req.json().catch(() => ({}));
     const onlyDomain: string | undefined = body?.domain;
-    const includeFiles: boolean = body?.include_files !== false; // default true
+    const includeFiles: boolean = body?.include_files !== false;
 
     const supa = createClient(SUPABASE_URL, SERVICE_KEY);
     const enc = new TextEncoder();
     const files: { name: string; data: Uint8Array }[] = [];
     const summary: Record<string, { tables: Record<string, number>; total: number }> = {};
     const allTables: string[] = [];
+    const fullDump: Record<string, any[]> = {};
+    const searchIndex: any[] = [];
 
-    const domainsToRun = onlyDomain ? { [onlyDomain]: DOMAINS[onlyDomain] || [] } : DOMAINS;
+    // 🧠 Descoberta dinâmica: quando é backup FULL, pega TODAS as tabelas do schema public
+    let domainsToRun: Record<string, string[]>;
+    if (onlyDomain) {
+      domainsToRun = { [onlyDomain]: DOMAINS[onlyDomain] || [] };
+    } else {
+      // Junta todas as tabelas conhecidas + descobre extras via RPC (fallback: DOMAINS ∪ hardcoded)
+      const knownTables = new Set<string>(Object.values(DOMAINS).flat());
+      // Adiciona tabelas descobertas dinamicamente (best effort)
+      try {
+        const { data: schemaTables } = await supa
+          .from('pg_tables' as any)
+          .select('tablename')
+          .eq('schemaname', 'public');
+        for (const t of (schemaTables as any[]) ?? []) knownTables.add(t.tablename);
+      } catch { /* pg_tables pode não estar exposto — segue com DOMAINS */ }
 
+      domainsToRun = { ...DOMAINS };
+      // Sobra: tabelas conhecidas que não estão em nenhum domínio ⇒ vão pra "misc"
+      const covered = new Set<string>(Object.values(DOMAINS).flat());
+      const misc = Array.from(knownTables).filter(t => !covered.has(t));
+      if (misc.length) domainsToRun.misc = misc;
+    }
+
+    // 📊 Dump por domínio
     for (const [domain, tables] of Object.entries(domainsToRun)) {
       const domainDump: Record<string, any> = {};
       const counts: Record<string, number> = {};
       let totalRows = 0;
       for (const t of tables) {
         try {
-          const { data, error } = await supa.from(t).select('*').limit(50000);
+          const { data, error } = await supa.from(t).select('*').limit(100000);
           if (error) { domainDump[t] = { _error: error.message }; counts[t] = 0; continue; }
-          domainDump[t] = data ?? [];
-          counts[t] = (data ?? []).length;
-          totalRows += counts[t];
+          const rows = data ?? [];
+          domainDump[t] = rows;
+          fullDump[t] = rows;
+          counts[t] = rows.length;
+          totalRows += rows.length;
           allTables.push(t);
+          // CSV por tabela
+          if (rows.length) files.push({ name: `${domain}/csv/${t}.csv`, data: enc.encode(toCsv(rows)) });
         } catch (e: any) { domainDump[t] = { _error: e?.message || 'fail' }; counts[t] = 0; }
       }
       summary[domain] = { tables: counts, total: totalRows };
-      // 📄 3 formatos por domínio: JSON, Markdown, HTML (imprimível em PDF)
       files.push({ name: `${domain}/data.json`, data: enc.encode(JSON.stringify(domainDump, null, 2)) });
       files.push({ name: `${domain}/report.md`, data: enc.encode(domainToMarkdown(domain, domainDump)) });
-      files.push({ name: `${domain}/report.html`, data: enc.encode(domainToHtml(domain, domainDump)) });
+      const html = domainToHtml(domain, domainDump);
+      files.push({ name: `${domain}/report.html`, data: enc.encode(html) });
+      // .doc = HTML servido como Word (Word abre nativamente)
+      files.push({ name: `${domain}/report.doc`, data: enc.encode(html) });
     }
 
-    // 🖼️ Arquivos reais dos buckets (SVG, PNG, logos, imagens de projetos, ícones tech, blog)
+    // 📁 Pastas dedicadas POR PROJETO (crown jewel) — só no backup full
+    if (!onlyDomain && fullDump.projects?.length) {
+      for (const p of fullDump.projects) {
+        const slug = safeSlug(p.slug || p.title || p.id);
+        const folder = `by-project/${slug}`;
+        const related: any = {
+          project: p,
+          budget: fullDump.project_budgets?.filter((x: any) => x.project_id === p.id) ?? [],
+          stages: fullDump.project_stages?.filter((x: any) => x.project_id === p.id) ?? [],
+          transactions: fullDump.transactions?.filter((x: any) => x.project_id === p.id) ?? [],
+          time_entries: fullDump.time_entries?.filter((x: any) => x.project_id === p.id) ?? [],
+          attachments: fullDump.attachments?.filter((x: any) => x.entity_id === p.id) ?? [],
+          contract_versions: fullDump.contract_versions?.filter((x: any) => x.entity_id === p.id) ?? [],
+        };
+        files.push({ name: `${folder}/project.json`, data: enc.encode(JSON.stringify(related, null, 2)) });
+        const md = `# ${p.title || 'Projeto'}\n\n**Cliente:** ${p.client_name ?? '—'}\n**Stage:** ${p.pipeline_stage ?? '—'}\n**Status:** ${p.status ?? '—'}\n\n${p.description ? `## Descrição\n\n${p.description}\n\n` : ''}${p.subtitle ? `> ${p.subtitle}\n\n` : ''}\n## Orçamento\n\n${JSON.stringify(related.budget, null, 2)}\n\n## Estágios (${related.stages.length})\n\n${related.stages.map((s: any) => `- **${s.name || s.title || s.id}** — ${s.status ?? ''}`).join('\n')}\n\n## Transações (${related.transactions.length})\n\n${related.transactions.map((t: any) => `- ${t.occurred_at?.slice(0, 10)} · ${t.kind} · R$ ${t.amount_brl} · ${t.description ?? ''}`).join('\n')}\n\n## Horas (${related.time_entries.length})\n\nTotal: ${related.time_entries.reduce((a: number, e: any) => a + (e.duration_minutes || 0), 0) / 60}h\n\n## Anexos (${related.attachments.length})\n\n${related.attachments.map((a: any) => `- ${a.file_name} · ${a.metadata?.storage_path ?? a.file_url}`).join('\n')}\n`;
+        files.push({ name: `${folder}/README.md`, data: enc.encode(md) });
+      }
+    }
+
+    // 🔎 Índice de busca global
+    for (const [table, rows] of Object.entries(fullDump)) {
+      for (const r of rows.slice(0, 500)) {
+        const title = r.title || r.name || r.subject || r.email || r.id;
+        if (!title) continue;
+        searchIndex.push({ table, id: r.id, title: String(title).slice(0, 120), created_at: r.created_at });
+      }
+    }
+    files.push({ name: 'search-index.json', data: enc.encode(JSON.stringify(searchIndex, null, 2)) });
+
+    // 🖼️ Buckets (arquivos reais)
+    const storageInv: Record<string, any> = {};
     if (includeFiles) {
-      const bucketsToPull = onlyDomain
-        ? (DOMAIN_BUCKETS[onlyDomain] || [])
-        : ALL_BUCKETS;
-      const storageInv: Record<string, any> = {};
+      const bucketsToPull = onlyDomain ? (DOMAIN_BUCKETS[onlyDomain] || []) : ALL_BUCKETS;
       for (const b of bucketsToPull) {
-        const before = files.length;
         try {
-          await collectBucketFiles(supa, b, '', files);
-          storageInv[b] = { downloaded: files.length - before };
-        } catch (e: any) {
-          storageInv[b] = { _error: e?.message || 'fail' };
-        }
+          const n = await collectBucketFiles(supa, b, '', files);
+          storageInv[b] = { downloaded: n };
+        } catch (e: any) { storageInv[b] = { _error: e?.message || 'fail' }; }
       }
       files.push({ name: 'storage-inventory.json', data: enc.encode(JSON.stringify(storageInv, null, 2)) });
-      summary['storage'] = {
+      summary.storage = {
         tables: Object.fromEntries(Object.entries(storageInv).map(([k, v]: any) => [k, v.downloaded ?? 0])),
         total: Object.values(storageInv).reduce((s: number, v: any) => s + (v.downloaded ?? 0), 0),
       };
     }
 
+    // 📊 Executive Dashboard HTML (com KPIs)
+    const totalRows = Object.values(summary).reduce((s, d) => s + d.total, 0);
+    const totalFiles = summary.storage?.total ?? 0;
+    const kpis = `
+      <div class="kpi-grid">
+        <div class="kpi"><div class="label">Tabelas</div><div class="value">${allTables.length}</div></div>
+        <div class="kpi"><div class="label">Registros totais</div><div class="value">${totalRows.toLocaleString('pt-BR')}</div></div>
+        <div class="kpi"><div class="label">Domínios</div><div class="value">${Object.keys(domainsToRun).length}</div></div>
+        <div class="kpi"><div class="label">Arquivos binários</div><div class="value">${totalFiles}</div></div>
+        <div class="kpi"><div class="label">Projetos</div><div class="value">${fullDump.projects?.length ?? 0}</div></div>
+        <div class="kpi"><div class="label">Clientes</div><div class="value">${fullDump.clients?.length ?? 0}</div></div>
+        <div class="kpi"><div class="label">Transações</div><div class="value">${fullDump.transactions?.length ?? 0}</div></div>
+        <div class="kpi"><div class="label">Posts blog</div><div class="value">${fullDump.blog_posts?.length ?? 0}</div></div>
+      </div>`;
+    const domainsHtml = Object.entries(summary).map(([d, s]) => `
+      <h3>${d} <span class="badge">${s.total} registros</span></h3>
+      <div class="tbl-wrap"><table><thead><tr><th>Tabela / Bucket</th><th>Qtd</th></tr></thead><tbody>
+        ${Object.entries(s.tables).map(([t, n]) => `<tr><td><code>${t}</code></td><td>${n}</td></tr>`).join('')}
+      </tbody></table></div>`).join('');
+    const dashHtml = htmlShell('SevenOS Backup — Executivo', `
+      <h1>📊 SevenOS · Snapshot Executivo</h1>
+      <p class="meta">Gerado em ${new Date().toLocaleString('pt-BR')} por <strong>${user.email}</strong></p>
+      ${kpis}
+      <h2>Cobertura por domínio</h2>
+      ${domainsHtml}
+      <h2>Como navegar este backup</h2>
+      <ul>
+        <li><code>&lt;dominio&gt;/data.json</code> — dados brutos (reimportáveis)</li>
+        <li><code>&lt;dominio&gt;/csv/&lt;tabela&gt;.csv</code> — abrir no Excel/Sheets</li>
+        <li><code>&lt;dominio&gt;/report.html</code> / <code>.doc</code> — legível, imprimível como PDF</li>
+        <li><code>&lt;dominio&gt;/report.md</code> — legível em qualquer editor</li>
+        <li><code>by-project/&lt;slug&gt;/</code> — pasta dedicada por projeto</li>
+        <li><code>storage/&lt;bucket&gt;/</code> — arquivos reais (SVGs, logos, imagens)</li>
+        <li><code>search-index.json</code> — índice de busca global</li>
+      </ul>`);
+    files.push({ name: 'dashboard.html', data: enc.encode(dashHtml) });
+    files.push({ name: 'dashboard.doc', data: enc.encode(dashHtml) });
+
     const manifest = {
-      exported_at: new Date().toISOString(), by: user.email, version: 4,
+      exported_at: new Date().toISOString(), by: user.email, version: 5,
       domains: Object.keys(domainsToRun), summary,
-      formats: ['json', 'markdown', 'html'], includes_binaries: includeFiles,
+      totals: { tables: allTables.length, rows: totalRows, files: totalFiles },
+      formats: ['json', 'csv', 'markdown', 'html', 'doc'], includes_binaries: includeFiles,
     };
     files.push({ name: 'manifest.json', data: enc.encode(JSON.stringify(manifest, null, 2)) });
     files.push({
       name: 'README.md',
-      data: enc.encode(`# 📦 SevenOS Backup v4
+      data: enc.encode(`# 📦 SevenOS Backup v5 — Backup Inteligente Completo
 
 **Exportado:** ${manifest.exported_at}
 **Por:** ${user.email}
-**Domínios:** ${Object.keys(domainsToRun).join(', ')}
+**Escopo:** ${onlyDomain ? `Domínio \`${onlyDomain}\`` : 'SISTEMA COMPLETO'}
 
-## Estrutura
+## 📊 Números
+- **${allTables.length}** tabelas
+- **${totalRows.toLocaleString('pt-BR')}** registros
+- **${totalFiles}** arquivos binários
+- **${Object.keys(domainsToRun).length}** domínios
 
-Cada domínio tem sua pasta com **3 formatos**:
+## 📂 Estrutura
 
-- \`<dominio>/data.json\` → dados brutos completos (reimportáveis).
-- \`<dominio>/report.md\` → relatório legível (GitHub/Obsidian/VS Code).
-- \`<dominio>/report.html\` → relatório imprimível (abra → **Imprimir → Salvar como PDF**).
+\`\`\`
+📦 backup.zip
+├── dashboard.html            ← 🎯 comece por aqui (executivo com KPIs)
+├── dashboard.doc             ← Word/Pages
+├── manifest.json             ← metadados
+├── search-index.json         ← índice global de busca
+├── storage-inventory.json    ← inventário dos buckets
+├── README.md                 ← este arquivo
+│
+├── <dominio>/                (projects, crm, finance, cms, ops, branding, integrations, automations, security, misc)
+│   ├── data.json             ← dados brutos completos (reimportáveis)
+│   ├── report.md             ← Markdown legível (GitHub/Obsidian)
+│   ├── report.html           ← imprimível → "Salvar como PDF"
+│   ├── report.doc            ← abre no Word/Pages
+│   └── csv/<tabela>.csv      ← 1 CSV por tabela (Excel/Sheets)
+│
+├── by-project/<slug>/        ← pasta dedicada POR PROJETO
+│   ├── project.json          ← dados + orçamento + estágios + tx + horas + anexos + contratos
+│   └── README.md             ← ficha legível do projeto
+│
+└── storage/                  ← arquivos reais dos buckets
+    ├── tech-icons/           ← SVGs das tecnologias
+    ├── project-images/       ← imagens dos projetos
+    ├── blog-images/          ← imagens do blog
+    ├── branding-assets/      ← logos e branding
+    ├── logos/                ← library de logos
+    └── attachments/          ← anexos privados de contratos/CRM
+\`\`\`
 
-## Arquivos binários
+## 💡 Formatos incluídos
 
-Pasta \`storage/\` contém os arquivos reais dos buckets:
-- \`storage/tech-icons/\` — ícones SVG das tecnologias
-- \`storage/project-images/\` — imagens dos projetos
-- \`storage/blog-images/\` — imagens do blog
-- \`storage/branding-assets/\` / \`storage/logos/\` — logos
-- \`storage/attachments/\` — anexos de contratos e CRM
+| Formato | Uso |
+|---------|-----|
+| JSON    | Reimportação, integração, scripts |
+| CSV     | Excel, Google Sheets, análise |
+| Markdown| GitHub, Obsidian, VS Code, docs |
+| HTML    | Navegador → **Imprimir → PDF** |
+| DOC     | Microsoft Word, Pages, LibreOffice |
+| SVG/PNG | Logos, ícones, imagens (originais) |
 
-## Restaurar
+## ♻️ Restaurar
 
-Suba o ZIP em **/admin/restore** e selecione quais tabelas restaurar.
+Suba o ZIP em **/admin/restore** e selecione o que restaurar.
 `),
     });
 
@@ -272,10 +437,10 @@ Suba o ZIP em **/admin/restore** e selecione quais tabelas restaurar.
       tables_included: allTables, triggered_by: user.id,
       triggered_kind: onlyDomain ? `manual:${onlyDomain}` : 'manual:full',
       status: 'completed',
-      metadata: { checksum_sha256: checksum, version: 4, domains: Object.keys(domainsToRun), files: files.length, includes_binaries: includeFiles },
+      metadata: { checksum_sha256: checksum, version: 5, domains: Object.keys(domainsToRun), files: files.length, includes_binaries: includeFiles, totals: manifest.totals },
     } as any);
 
-    // 🧹 Retenção automática
+    // 🧹 Retenção
     try {
       const { data: retSetting } = await supa.from('system_settings').select('value').eq('key', 'backup_retention_days').maybeSingle();
       const days = Number((retSetting?.value as any)) || 0;
@@ -289,9 +454,10 @@ Suba o ZIP em **/admin/restore** e selecione quais tabelas restaurar.
       }
     } catch { /* ignore */ }
 
-    return new Response(JSON.stringify({ ok: true, path, size: zip.byteLength, checksum, url: signed?.signedUrl, file_count: files.length, summary }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return new Response(JSON.stringify({
+      ok: true, path, size: zip.byteLength, checksum, url: signed?.signedUrl,
+      file_count: files.length, summary, totals: manifest.totals,
+    }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   } catch (e: any) {
     return new Response(JSON.stringify({ error: e?.message || 'error' }), { status: 500, headers: corsHeaders });
   }
