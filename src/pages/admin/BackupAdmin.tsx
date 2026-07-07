@@ -112,16 +112,21 @@ export default function BackupAdmin() {
 
       {/* 📄 Formatos incluídos */}
       <div className="mb-3 p-4 rounded-xl border border-white/10 bg-white/[0.02]">
-        <p className="text-[11px] uppercase tracking-[0.2em] text-white/50 mb-2">Cada ZIP inclui</p>
+        <p className="text-[11px] uppercase tracking-[0.2em] text-white/50 mb-2">Cada ZIP inclui · v5 inteligente</p>
         <div className="flex flex-wrap gap-2 text-[11px]">
           <span className="px-2 py-1 rounded bg-white/5 border border-white/10">📊 JSON</span>
+          <span className="px-2 py-1 rounded bg-white/5 border border-white/10">📑 CSV (Excel)</span>
           <span className="px-2 py-1 rounded bg-white/5 border border-white/10">📝 Markdown</span>
           <span className="px-2 py-1 rounded bg-white/5 border border-white/10">🖨️ HTML → PDF</span>
-          <span className="px-2 py-1 rounded bg-white/5 border border-white/10">🖼️ SVG / PNG / imagens</span>
+          <span className="px-2 py-1 rounded bg-white/5 border border-white/10">📄 DOC (Word)</span>
+          <span className="px-2 py-1 rounded bg-white/5 border border-white/10">🖼️ SVG / PNG</span>
+          <span className="px-2 py-1 rounded bg-white/5 border border-white/10">📁 Pasta por projeto</span>
+          <span className="px-2 py-1 rounded bg-white/5 border border-white/10">📊 Dashboard executivo</span>
+          <span className="px-2 py-1 rounded bg-white/5 border border-white/10">🔎 Índice de busca</span>
         </div>
         <label className="flex items-center gap-2 mt-3 text-xs text-white/70 cursor-pointer">
           <input type="checkbox" checked={includeFiles} onChange={(e) => setIncludeFiles(e.target.checked)} />
-          Incluir arquivos binários dos buckets (logos, ícones, imagens de projetos e blog)
+          Incluir arquivos binários dos buckets (logos, ícones SVG, imagens de projetos, blog, anexos)
         </label>
       </div>
 
