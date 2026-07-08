@@ -316,8 +316,14 @@ function extractStorageRef(raw: any): { bucket: string; path: string } | null {
 }
 
 function isDownloadableUrl(v: string): boolean {
-  if (!/^https?:\/\//i.test(v)) return false;
-  return /\/storage\/v1\/object\//.test(v) || /\/__l5e\/assets-v1\//.test(v) || ASSET_EXT_RE.test(v.split('?')[0]);
+  try {
+    const u = new URL(v);
+    if (!['http:', 'https:'].includes(u.protocol)) return false;
+    const h = u.hostname.toLowerCase();
+    if (h === 'localhost' || h === '127.0.0.1' || h === '0.0.0.0' || h.endsWith('.local')) return false;
+    if (/^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[0-1])\.)/.test(h)) return false;
+    return /\/storage\/v1\/object\//.test(u.pathname) || /\/__l5e\/assets-v1\//.test(u.pathname) || ASSET_EXT_RE.test(u.pathname);
+  } catch { return false; }
 }
 
 function collectUrls(value: any, out: { field: string; url: string }[], field = 'root') {
