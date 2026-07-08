@@ -1,7 +1,6 @@
-// 📦 Tenant Export v5 — Backup INTELIGENTE E COMPLETO do SevenOS
-// Descobre TODAS as tabelas dinamicamente, exporta em JSON+CSV+MD+HTML+DOC,
-// baixa arquivos de TODOS os buckets, gera pastas dedicadas por projeto,
-// inclui schema, resumo executivo e índice de busca.
+// 📦 Tenant Export v6 — Backup DEFINITIVO, inteligente e reaproveitável do SevenOS
+// Exporta TODAS as seções conhecidas, pagina 100% dos registros, resolve assets
+// linkados (logos, SVGs, imagens, PDFs), cria catálogos navegáveis e pastas por entidade.
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
@@ -9,9 +8,28 @@ const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
-// ⚙️ Mapeamento domínio → tabelas conhecidas (fallback quando `domain` é passado)
+// ⚙️ Inventário público conhecido do SevenOS.
+// Mantemos esta lista explícita porque catálogos do Postgres nem sempre são expostos pelo Data API.
+const PUBLIC_TABLES = [
+  'admin_sessions', 'ai_citations', 'ai_ops_actions', 'ai_referrals', 'ai_usage', 'analytics_events',
+  'attachments', 'audit_log', 'automation_runs', 'automations', 'bank_import_batches', 'blog_categories',
+  'blog_posts', 'branding_assets', 'chat_conversations', 'chat_messages', 'citation_monitor_settings',
+  'client_interactions', 'clients', 'contact_messages', 'contacts', 'contract_versions', 'events',
+  'faq_categories', 'faq_items', 'fx_rates', 'incident_timeline', 'incidents', 'integration_logs',
+  'integration_providers', 'logo_variations', 'marketplace_installs', 'notification_preferences',
+  'notifications', 'oauth_connections', 'onboarding_progress', 'page_views', 'pipeline_stage_log',
+  'process_template_stages', 'process_templates', 'profiles', 'project_budgets', 'project_stages',
+  'projects', 'push_subscriptions', 'response_templates', 'restore_jobs', 'service_health_snapshots',
+  'services_cms', 'stage_checklist_items', 'stage_documents', 'system_settings', 'tag_registry',
+  'team_members', 'tech_registry', 'tenant_backups', 'time_entries', 'transactions',
+  'user_integration_favorites', 'user_mfa', 'user_roles', 'vercel_deploy_alerts', 'webhook_deliveries',
+  'webhook_dlq', 'webhooks', 'whatsapp_messages', 'whatsapp_threads'
+];
+
+// ⚙️ Mapeamento domínio → tabelas conhecidas
 const DOMAINS: Record<string, string[]> = {
-  projects: ['projects', 'project_budgets', 'project_stages', 'stage_checklist_items', 'stage_documents', 'pipeline_stage_log', 'tech_registry', 'tag_registry', 'team_members'],
+  projects: ['projects', 'project_budgets', 'project_stages', 'stage_checklist_items', 'stage_documents', 'pipeline_stage_log', 'team_members'],
+  registry: ['tech_registry', 'tag_registry'],
   crm: ['clients', 'contacts', 'contact_messages', 'client_interactions', 'chat_conversations', 'chat_messages', 'whatsapp_threads', 'whatsapp_messages'],
   finance: ['transactions', 'time_entries', 'bank_import_batches', 'fx_rates', 'project_budgets'],
   cms: ['services_cms', 'faq_items', 'faq_categories', 'blog_posts', 'blog_categories'],
@@ -19,16 +37,19 @@ const DOMAINS: Record<string, string[]> = {
   branding: ['logo_variations', 'branding_assets'],
   integrations: ['integration_providers', 'integration_logs', 'oauth_connections', 'webhooks', 'webhook_deliveries', 'webhook_dlq', 'marketplace_installs', 'user_integration_favorites', 'citation_monitor_settings', 'vercel_deploy_alerts'],
   automations: ['automations', 'automation_runs', 'response_templates', 'process_templates', 'process_template_stages'],
-  security: ['system_settings', 'user_mfa', 'user_roles', 'profiles', 'tenant_backups', 'restore_jobs', 'admin_sessions', 'push_subscriptions', 'contract_versions', 'attachments'],
+  security: ['system_settings', 'user_mfa', 'user_roles', 'profiles', 'tenant_backups', 'restore_jobs', 'admin_sessions', 'push_subscriptions', 'contract_versions', 'attachments', 'onboarding_progress'],
 };
 
 const DOMAIN_BUCKETS: Record<string, string[]> = {
-  projects: ['project-images'],
+  projects: ['project-images', 'attachments'],
+  registry: ['tech-icons'],
   cms: ['blog-images'],
-  branding: ['tech-icons', 'branding-assets', 'logos'],
+  branding: ['project-images', 'tech-icons'],
   crm: ['attachments'],
 };
-const ALL_BUCKETS = ['blog-images', 'project-images', 'tech-icons', 'attachments', 'branding-assets', 'logos'];
+const ALL_BUCKETS = ['blog-images', 'project-images', 'tech-icons', 'attachments'];
+const ASSET_EXT_RE = /\.(svg|png|jpe?g|webp|gif|ico|avif|bmp|pdf|docx?|xlsx?|pptx?|csv|md|txt|json|mp4|webm|mov|mp3|wav|ogg|glb|gltf|zip)$/i;
+const MAX_LINKED_ASSET_BYTES = 35 * 1024 * 1024;
 
 // ─── CRC32 + ZIP builder ───
 const CRC_TABLE = (() => {
