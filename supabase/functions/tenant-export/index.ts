@@ -356,6 +356,95 @@ async function fetchAllRows(supa: any, table: string): Promise<any[]> {
   return out;
 }
 
+async function addStorageAsset(
+  supa: any,
+  files: { name: string; data: Uint8Array }[],
+  bucket: string,
+  path: string,
+  targetFolder: string,
+  seen: Set<string>,
+  preferredName?: string,
+): Promise<boolean> {
+  const key = `storage:${bucket}/${path}`;
+  if (!bucket || !path || seen.has(key)) return false;
+  seen.add(key);
+  try {
+    const { data: blob, error } = await supa.storage.from(bucket).download(path);
+    if (error || !blob) return false;
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+    const name = safeFileName(preferredName || path, 'asset.bin');
+    files.push({ name: `${targetFolder}/${name}`, data: bytes });
+    return true;
+  } catch { return false; }
+}
+
+async function addUrlAsset(
+  supa: any,
+  files: { name: string; data: Uint8Array }[],
+  url: string | null | undefined,
+  targetFolder: string,
+  seen: Set<string>,
+  preferredName?: string,
+): Promise<boolean> {
+  if (!url || typeof url !== 'string' || seen.has(url)) return false;
+  const ref = extractStorageRef(url);
+  if (ref) return addStorageAsset(supa, files, ref.bucket, ref.path, targetFolder, seen, preferredName || ref.path);
+  if (!isDownloadableUrl(url)) return false;
+  seen.add(url);
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return false;
+    const len = Number(res.headers.get('content-length') || 0);
+    if (len > MAX_LINKED_ASSET_BYTES) return false;
+    const bytes = new Uint8Array(await res.arrayBuffer());
+    if (bytes.byteLength > MAX_LINKED_ASSET_BYTES) return false;
+    let name = safeFileName(preferredName || url, 'asset');
+    if (!ASSET_EXT_RE.test(name)) name += `.${guessExtFromContentType(res.headers.get('content-type'))}`;
+    files.push({ name: `${targetFolder}/${name}`, data: bytes });
+    return true;
+  } catch { return false; }
+}
+
+function techToMarkdown(t: any): string {
+  return `# ${t.name || t.slug || 'Tecnologia'}\n\n- **Slug:** ${t.slug ?? '—'}\n- **Categoria:** ${t.category ?? '—'}\n- **Cor:** ${t.color ?? '—'}\n- **Ativa:** ${t.is_active ? 'sim' : 'não'}\n- **Uso:** ${t.usage_count ?? 0}\n\n${t.description ?? ''}\n`;
+}
+
+function tagToMarkdown(t: any): string {
+  return `# ${t.name || t.slug || 'Tag'}\n\n- **Slug:** ${t.slug ?? '—'}\n- **Cor:** ${t.color ?? '—'}\n- **Ativa:** ${t.is_active ? 'sim' : 'não'}\n- **Uso:** ${t.usage_count ?? 0}\n\n${t.description ?? ''}\n`;
+}
+
+function projectToHtml(p: any, related: any): string {
+  const techs = Array.isArray(p.technologies) ? p.technologies : [];
+  const tags = Array.isArray(p.tags) ? p.tags : [];
+  return htmlShell(`Projeto — ${p.title || p.slug}`, `
+    <h1>${escapeHtml(p.title || 'Projeto')}</h1>
+    <p class="meta">${escapeHtml(p.client_name || 'Sem cliente')} · ${escapeHtml(p.pipeline_stage || p.status || '')}</p>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="label">Estágios</div><div class="value">${related.stages.length}</div></div>
+      <div class="kpi"><div class="label">Transações</div><div class="value">${related.transactions.length}</div></div>
+      <div class="kpi"><div class="label">Horas</div><div class="value">${(related.time_entries.reduce((a: number, e: any) => a + (e.duration_minutes || 0), 0) / 60).toFixed(1)}h</div></div>
+      <div class="kpi"><div class="label">Anexos</div><div class="value">${related.attachments.length}</div></div>
+    </div>
+    <h2>Descrição</h2><p>${escapeHtml(p.description || '')}</p>
+    ${p.long_description ? `<h2>Descrição completa</h2><p>${escapeHtml(p.long_description)}</p>` : ''}
+    <h2>Tecnologias</h2><p>${techs.map((t: any) => `<span class="badge">${escapeHtml(typeof t === 'string' ? t : t?.name || t?.slug)}</span>`).join(' ') || '—'}</p>
+    <h2>Tags</h2><p>${tags.map((t: any) => `<span class="badge">${escapeHtml(t)}</span>`).join(' ') || '—'}</p>
+    <h2>Dados relacionados</h2>
+    <h3>Orçamento</h3><pre>${escapeHtml(JSON.stringify(related.budget, null, 2))}</pre>
+    <h3>Estágios</h3>${rowsToHtmlTable(related.stages)}
+    <h3>Transações</h3>${rowsToHtmlTable(related.transactions)}
+    <h3>Horas</h3>${rowsToHtmlTable(related.time_entries)}
+  `);
+}
+
+function rowsToHtmlTable(rows: any[]): string {
+  if (!rows?.length) return '<p class="empty">Sem registros</p>';
+  const cols = Object.keys(rows[0]).slice(0, 8);
+  return '<div class="tbl-wrap"><table><thead><tr>' + cols.map(c => `<th>${escapeHtml(c)}</th>`).join('') + '</tr></thead><tbody>' +
+    rows.slice(0, 100).map(r => '<tr>' + cols.map(c => `<td>${escapeHtml(escCell(r[c]))}</td>`).join('') + '</tr>').join('') +
+    '</tbody></table></div>';
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   try {
