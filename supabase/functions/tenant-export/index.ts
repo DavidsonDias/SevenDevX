@@ -574,15 +574,19 @@ Deno.serve(async (req) => {
       }
     }
 
-    // 📁 Pastas dedicadas POR PROJETO (crown jewel) — só no backup full
-    if (!onlyDomain && fullDump.projects?.length) {
+    // 📁 Pastas dedicadas POR PROJETO (crown jewel)
+    if ((!onlyDomain || onlyDomain === 'projects') && fullDump.projects?.length) {
       for (const p of fullDump.projects) {
         const slug = safeSlug(p.slug || p.title || p.id);
         const folder = `by-project/${slug}`;
         const related: any = {
           project: p,
+          client: fullDump.clients?.find((x: any) => x.id === p.client_id || x.name === p.client_name) ?? null,
           budget: fullDump.project_budgets?.filter((x: any) => x.project_id === p.id) ?? [],
           stages: fullDump.project_stages?.filter((x: any) => x.project_id === p.id) ?? [],
+          checklist_items: fullDump.stage_checklist_items?.filter((x: any) => (fullDump.project_stages ?? []).some((s: any) => s.project_id === p.id && s.id === x.stage_id)) ?? [],
+          documents: fullDump.stage_documents?.filter((x: any) => (fullDump.project_stages ?? []).some((s: any) => s.project_id === p.id && s.id === x.stage_id) || x.project_id === p.id) ?? [],
+          pipeline_log: fullDump.pipeline_stage_log?.filter((x: any) => x.project_id === p.id) ?? [],
           transactions: fullDump.transactions?.filter((x: any) => x.project_id === p.id) ?? [],
           time_entries: fullDump.time_entries?.filter((x: any) => x.project_id === p.id) ?? [],
           attachments: fullDump.attachments?.filter((x: any) => x.entity_id === p.id) ?? [],
