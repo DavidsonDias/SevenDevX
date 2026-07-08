@@ -666,12 +666,16 @@ Deno.serve(async (req) => {
       summary.linked_assets = { tables: { downloaded: linkedAssets.length }, total: linkedAssets.length };
     }
 
-    // 🔎 Índice de busca global
+    // 🔎 Índice de busca global completo
     for (const [table, rows] of Object.entries(fullDump)) {
-      for (const r of rows.slice(0, 500)) {
+      for (const r of rows) {
         const title = r.title || r.name || r.subject || r.email || r.id;
         if (!title) continue;
-        searchIndex.push({ table, id: r.id, title: String(title).slice(0, 120), created_at: r.created_at });
+        searchIndex.push({
+          table, id: r.id, title: String(title).slice(0, 140),
+          subtitle: String(r.subtitle || r.description || r.company || r.client_name || r.slug || '').slice(0, 240),
+          created_at: r.created_at, updated_at: r.updated_at,
+        });
       }
     }
     files.push({ name: 'search-index.json', data: enc.encode(JSON.stringify(searchIndex, null, 2)) });
@@ -694,15 +698,18 @@ Deno.serve(async (req) => {
     }
 
     // 📊 Executive Dashboard HTML (com KPIs)
-    const totalRows = Object.values(summary).reduce((s, d) => s + d.total, 0);
-    const totalFiles = summary.storage?.total ?? 0;
+    const totalRows = Object.entries(summary).filter(([k]) => !['storage', 'linked_assets'].includes(k)).reduce((s, [, d]) => s + d.total, 0);
+    const totalFiles = (summary.storage?.total ?? 0) + (summary.linked_assets?.total ?? 0);
     const kpis = `
       <div class="kpi-grid">
         <div class="kpi"><div class="label">Tabelas</div><div class="value">${allTables.length}</div></div>
         <div class="kpi"><div class="label">Registros totais</div><div class="value">${totalRows.toLocaleString('pt-BR')}</div></div>
         <div class="kpi"><div class="label">Domínios</div><div class="value">${Object.keys(domainsToRun).length}</div></div>
-        <div class="kpi"><div class="label">Arquivos binários</div><div class="value">${totalFiles}</div></div>
+        <div class="kpi"><div class="label">Arquivos/Assets</div><div class="value">${totalFiles}</div></div>
         <div class="kpi"><div class="label">Projetos</div><div class="value">${fullDump.projects?.length ?? 0}</div></div>
+        <div class="kpi"><div class="label">Tecnologias</div><div class="value">${fullDump.tech_registry?.length ?? 0}</div></div>
+        <div class="kpi"><div class="label">Tags</div><div class="value">${fullDump.tag_registry?.length ?? 0}</div></div>
+        <div class="kpi"><div class="label">Logo Lab</div><div class="value">${fullDump.branding_assets?.length ?? 0}</div></div>
         <div class="kpi"><div class="label">Clientes</div><div class="value">${fullDump.clients?.length ?? 0}</div></div>
         <div class="kpi"><div class="label">Transações</div><div class="value">${fullDump.transactions?.length ?? 0}</div></div>
         <div class="kpi"><div class="label">Posts blog</div><div class="value">${fullDump.blog_posts?.length ?? 0}</div></div>
@@ -722,25 +729,42 @@ Deno.serve(async (req) => {
       <ul>
         <li><code>&lt;dominio&gt;/data.json</code> — dados brutos (reimportáveis)</li>
         <li><code>&lt;dominio&gt;/csv/&lt;tabela&gt;.csv</code> — abrir no Excel/Sheets</li>
-        <li><code>&lt;dominio&gt;/report.html</code> / <code>.doc</code> — legível, imprimível como PDF</li>
+        <li><code>&lt;dominio&gt;/report.html</code> / <code>.doc</code> / <code>.pdf</code> — leitura executiva</li>
         <li><code>&lt;dominio&gt;/report.md</code> — legível em qualquer editor</li>
         <li><code>by-project/&lt;slug&gt;/</code> — pasta dedicada por projeto</li>
+        <li><code>registry/technologies</code> e <code>registry/tags</code> — catálogos com SVGs e assets</li>
+        <li><code>branding/logo-lab</code> — Logo Lab, SVG inline, variações IA e paletas</li>
+        <li><code>linked-assets/</code> — todo asset encontrado em campos do banco</li>
         <li><code>storage/&lt;bucket&gt;/</code> — arquivos reais (SVGs, logos, imagens)</li>
         <li><code>search-index.json</code> — índice de busca global</li>
       </ul>`);
     files.push({ name: 'dashboard.html', data: enc.encode(dashHtml) });
     files.push({ name: 'dashboard.doc', data: enc.encode(dashHtml) });
+    files.push({ name: 'dashboard.pdf', data: buildSimplePdf('SevenOS Backup — Snapshot Executivo', [
+      `Gerado em ${new Date().toLocaleString('pt-BR')}`,
+      `Tabelas: ${allTables.length}`,
+      `Registros: ${totalRows}`,
+      `Arquivos/assets: ${totalFiles}`,
+      `Projetos: ${fullDump.projects?.length ?? 0}`,
+      `Tecnologias: ${fullDump.tech_registry?.length ?? 0}`,
+      `Tags: ${fullDump.tag_registry?.length ?? 0}`,
+      `Logo Lab: ${fullDump.branding_assets?.length ?? 0}`,
+      '',
+      ...Object.entries(summary).flatMap(([d, s]) => [`${d}: ${s.total}`, ...Object.entries(s.tables).slice(0, 12).map(([t, n]) => `  - ${t}: ${n}`)]),
+    ]) });
 
     const manifest = {
-      exported_at: new Date().toISOString(), by: user.email, version: 5,
+      exported_at: new Date().toISOString(), by: user.email, version: 6,
       domains: Object.keys(domainsToRun), summary,
-      totals: { tables: allTables.length, rows: totalRows, files: totalFiles },
-      formats: ['json', 'csv', 'markdown', 'html', 'doc'], includes_binaries: includeFiles,
+      totals: { tables: allTables.length, rows: totalRows, files: totalFiles, zip_entries: files.length },
+      formats: ['json', 'csv', 'markdown', 'html', 'doc', 'pdf', 'svg', 'original-assets'],
+      includes_binaries: includeFiles,
+      warnings: exportWarnings,
     };
     files.push({ name: 'manifest.json', data: enc.encode(JSON.stringify(manifest, null, 2)) });
     files.push({
       name: 'README.md',
-      data: enc.encode(`# 📦 SevenOS Backup v5 — Backup Inteligente Completo
+      data: enc.encode(`# 📦 SevenOS Backup v6 — Backup Definitivo SevenOS
 
 **Exportado:** ${manifest.exported_at}
 **Por:** ${user.email}
@@ -749,8 +773,11 @@ Deno.serve(async (req) => {
 ## 📊 Números
 - **${allTables.length}** tabelas
 - **${totalRows.toLocaleString('pt-BR')}** registros
-- **${totalFiles}** arquivos binários
+- **${totalFiles}** arquivos/assets resolvidos
 - **${Object.keys(domainsToRun).length}** domínios
+- **${fullDump.tech_registry?.length ?? 0}** tecnologias
+- **${fullDump.tag_registry?.length ?? 0}** tags
+- **${fullDump.branding_assets?.length ?? 0}** itens do Logo Lab
 
 ## 📂 Estrutura
 
@@ -758,6 +785,7 @@ Deno.serve(async (req) => {
 📦 backup.zip
 ├── dashboard.html            ← 🎯 comece por aqui (executivo com KPIs)
 ├── dashboard.doc             ← Word/Pages
+├── dashboard.pdf             ← PDF executivo real
 ├── manifest.json             ← metadados
 ├── search-index.json         ← índice global de busca
 ├── storage-inventory.json    ← inventário dos buckets
@@ -766,20 +794,34 @@ Deno.serve(async (req) => {
 ├── <dominio>/                (projects, crm, finance, cms, ops, branding, integrations, automations, security, misc)
 │   ├── data.json             ← dados brutos completos (reimportáveis)
 │   ├── report.md             ← Markdown legível (GitHub/Obsidian)
-│   ├── report.html           ← imprimível → "Salvar como PDF"
+│   ├── report.html           ← navegável/imprimível
 │   ├── report.doc            ← abre no Word/Pages
+│   ├── report.pdf            ← PDF resumo do domínio
 │   └── csv/<tabela>.csv      ← 1 CSV por tabela (Excel/Sheets)
 │
 ├── by-project/<slug>/        ← pasta dedicada POR PROJETO
 │   ├── project.json          ← dados + orçamento + estágios + tx + horas + anexos + contratos
-│   └── README.md             ← ficha legível do projeto
+│   ├── README.md             ← ficha legível do projeto
+│   ├── report.html/.doc      ← ficha visual reaproveitável
+│   ├── summary.pdf           ← PDF do projeto
+│   ├── assets/               ← capa/galeria/tecnologias linkadas
+│   ├── attachments/          ← anexos privados
+│   └── documents/            ← documentos de etapas
+│
+├── registry/
+│   ├── technologies/         ← cada tecnologia com JSON + MD + badge.svg + ícone original
+│   └── tags/                 ← cada tag com JSON + MD + badge.svg + ícone original
+│
+├── branding/
+│   ├── logo-lab/             ← overrides, SVG inline, paletas e URLs customizadas
+│   └── logo-variations/      ← variações IA do Logo Lab
+│
+├── linked-assets/            ← assets encontrados em qualquer campo do banco
 │
 └── storage/                  ← arquivos reais dos buckets
     ├── tech-icons/           ← SVGs das tecnologias
     ├── project-images/       ← imagens dos projetos
     ├── blog-images/          ← imagens do blog
-    ├── branding-assets/      ← logos e branding
-    ├── logos/                ← library de logos
     └── attachments/          ← anexos privados de contratos/CRM
 \`\`\`
 
@@ -790,8 +832,9 @@ Deno.serve(async (req) => {
 | JSON    | Reimportação, integração, scripts |
 | CSV     | Excel, Google Sheets, análise |
 | Markdown| GitHub, Obsidian, VS Code, docs |
-| HTML    | Navegador → **Imprimir → PDF** |
+| HTML    | Navegador, preview visual, impressão |
 | DOC     | Microsoft Word, Pages, LibreOffice |
+| PDF     | Resumos executivos reais |
 | SVG/PNG | Logos, ícones, imagens (originais) |
 
 ## ♻️ Restaurar
