@@ -593,9 +593,77 @@ Deno.serve(async (req) => {
           contract_versions: fullDump.contract_versions?.filter((x: any) => x.entity_id === p.id) ?? [],
         };
         files.push({ name: `${folder}/project.json`, data: enc.encode(JSON.stringify(related, null, 2)) });
-        const md = `# ${p.title || 'Projeto'}\n\n**Cliente:** ${p.client_name ?? '—'}\n**Stage:** ${p.pipeline_stage ?? '—'}\n**Status:** ${p.status ?? '—'}\n\n${p.description ? `## Descrição\n\n${p.description}\n\n` : ''}${p.subtitle ? `> ${p.subtitle}\n\n` : ''}\n## Orçamento\n\n${JSON.stringify(related.budget, null, 2)}\n\n## Estágios (${related.stages.length})\n\n${related.stages.map((s: any) => `- **${s.name || s.title || s.id}** — ${s.status ?? ''}`).join('\n')}\n\n## Transações (${related.transactions.length})\n\n${related.transactions.map((t: any) => `- ${t.occurred_at?.slice(0, 10)} · ${t.kind} · R$ ${t.amount_brl} · ${t.description ?? ''}`).join('\n')}\n\n## Horas (${related.time_entries.length})\n\nTotal: ${related.time_entries.reduce((a: number, e: any) => a + (e.duration_minutes || 0), 0) / 60}h\n\n## Anexos (${related.attachments.length})\n\n${related.attachments.map((a: any) => `- ${a.file_name} · ${a.metadata?.storage_path ?? a.file_url}`).join('\n')}\n`;
+        const techLines = (Array.isArray(p.technologies) ? p.technologies : []).map((t: any) => `- ${typeof t === 'string' ? t : `${t?.name ?? t?.slug ?? 'Tech'} ${t?.color ? `(${t.color})` : ''}`}`).join('\n') || '—';
+        const tagLines = (Array.isArray(p.tags) ? p.tags : []).map((t: any) => `- ${t}`).join('\n') || '—';
+        const md = [
+          `# ${p.title || 'Projeto'}`,
+          '',
+          `**Cliente:** ${p.client_name ?? related.client?.name ?? '—'}`,
+          `**Stage:** ${p.pipeline_stage ?? '—'}`,
+          `**Status:** ${p.status ?? '—'}`,
+          `**Publicado:** ${p.is_published_on_site ? 'sim' : 'não'}`,
+          `**URL:** ${p.live_url ?? '—'}`,
+          '',
+          p.description ? `## Descrição\n\n${p.description}` : '',
+          p.long_description ? `## Descrição completa\n\n${p.long_description}` : '',
+          p.subtitle ? `> ${p.subtitle}` : '',
+          '## Tecnologias', techLines,
+          '## Tags', tagLines,
+          '## Orçamento', JSON.stringify(related.budget, null, 2),
+          `## Estágios (${related.stages.length})`, related.stages.map((s: any) => `- **${s.name || s.title || s.id}** — ${s.status ?? ''}`).join('\n') || '—',
+          `## Checklist (${related.checklist_items.length})`, related.checklist_items.map((i: any) => `- [${i.completed ? 'x' : ' '}] ${i.title || i.name || i.id}`).join('\n') || '—',
+          `## Documentos (${related.documents.length})`, related.documents.map((d: any) => `- ${d.title || d.file_name || d.name || d.id} · ${d.storage_path ?? d.file_url ?? d.url ?? ''}`).join('\n') || '—',
+          `## Transações (${related.transactions.length})`, related.transactions.map((t: any) => `- ${t.occurred_at?.slice(0, 10)} · ${t.kind} · R$ ${t.amount_brl} · ${t.description ?? ''}`).join('\n') || '—',
+          `## Horas (${related.time_entries.length})`, `Total: ${related.time_entries.reduce((a: number, e: any) => a + (e.duration_minutes || 0), 0) / 60}h`,
+          `## Anexos (${related.attachments.length})`, related.attachments.map((a: any) => `- ${a.file_name} · ${a.metadata?.storage_path ?? a.file_url}`).join('\n') || '—',
+        ].filter(Boolean).join('\n\n');
         files.push({ name: `${folder}/README.md`, data: enc.encode(md) });
+        const html = projectToHtml(p, related);
+        files.push({ name: `${folder}/report.html`, data: enc.encode(html) });
+        files.push({ name: `${folder}/report.doc`, data: enc.encode(html) });
+        files.push({ name: `${folder}/summary.pdf`, data: buildSimplePdf(`Projeto — ${p.title || slug}`, md.split('\n')) });
+        if (includeFiles) {
+          await addUrlAsset(supa, files, p.cover_image, `${folder}/assets`, seenAssets, `${slug}-cover`);
+          const urls: { field: string; url: string }[] = [];
+          collectUrls(p.gallery, urls, 'gallery');
+          collectUrls(p.technologies, urls, 'technologies');
+          for (const u of urls) await addUrlAsset(supa, files, u.url, `${folder}/assets`, seenAssets, `${slug}-${u.field}`);
+          for (const a of related.attachments) {
+            const storagePath = a?.metadata?.storage_path || a?.storage_path;
+            if (storagePath) await addStorageAsset(supa, files, 'attachments', storagePath, `${folder}/attachments`, seenAssets, a.file_name || storagePath);
+            await addUrlAsset(supa, files, a?.file_url, `${folder}/attachments`, seenAssets, a.file_name || 'attachment');
+          }
+          for (const d of related.documents) {
+            const storagePath = d?.metadata?.storage_path || d?.storage_path;
+            if (storagePath) await addStorageAsset(supa, files, 'attachments', storagePath, `${folder}/documents`, seenAssets, d.file_name || d.title || storagePath);
+            await addUrlAsset(supa, files, d?.file_url || d?.url, `${folder}/documents`, seenAssets, d.file_name || d.title || 'document');
+          }
+        }
       }
+    }
+
+    // 🔗 Assets linkados em qualquer campo do banco (cover_image, icon_url, image_url, file_url, custom_url etc.)
+    const linkedAssets: any[] = [];
+    if (includeFiles) {
+      for (const [table, rows] of Object.entries(fullDump)) {
+        for (const r of rows) {
+          const base = `linked-assets/${table}/${safeSlug(r.id || r.slug || r.name || r.title || 'row')}`;
+          const urls: { field: string; url: string }[] = [];
+          collectUrls(r, urls, table);
+          for (const u of urls) {
+            const ok = await addUrlAsset(supa, files, u.url, base, seenAssets, `${safeSlug(u.field)}-${safeFileName(u.url)}`);
+            if (ok) linkedAssets.push({ table, id: r.id, field: u.field, url: u.url, folder: base });
+          }
+          const storagePath = r?.storage_path || r?.metadata?.storage_path;
+          const bucket = r?.bucket || r?.bucket_id || (['attachments', 'stage_documents'].includes(table) ? 'attachments' : null);
+          if (typeof storagePath === 'string' && bucket && !/^https?:\/\//i.test(storagePath)) {
+            const ok = await addStorageAsset(supa, files, bucket, storagePath, base, seenAssets, safeFileName(r.file_name || r.name || storagePath));
+            if (ok) linkedAssets.push({ table, id: r.id, field: 'storage_path', bucket, path: storagePath, folder: base });
+          }
+        }
+      }
+      files.push({ name: 'linked-assets/index.json', data: enc.encode(JSON.stringify(linkedAssets, null, 2)) });
+      summary.linked_assets = { tables: { downloaded: linkedAssets.length }, total: linkedAssets.length };
     }
 
     // 🔎 Índice de busca global
