@@ -860,7 +860,7 @@ Suba o ZIP em **/admin/restore** e selecione o que restaurar.
       tables_included: allTables, triggered_by: user.id,
       triggered_kind: onlyDomain ? `manual:${onlyDomain}` : 'manual:full',
       status: 'completed',
-      metadata: { checksum_sha256: checksum, version: 5, domains: Object.keys(domainsToRun), files: files.length, includes_binaries: includeFiles, totals: manifest.totals },
+      metadata: { checksum_sha256: checksum, version: 6, domains: Object.keys(domainsToRun), files: files.length, includes_binaries: includeFiles, totals: manifest.totals, warnings: exportWarnings },
     } as any);
 
     // 🧹 Retenção
