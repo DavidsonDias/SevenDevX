@@ -157,6 +157,75 @@ function domainToHtml(domain: string, dump: Record<string, any>): string {
   }
   return htmlShell(`Backup ${domain}`, body);
 }
+
+function domainToPdf(domain: string, dump: Record<string, any>): Uint8Array {
+  const lines: string[] = [`SevenOS Backup — ${domain.toUpperCase()}`, `Gerado em ${new Date().toLocaleString('pt-BR')}`, ''];
+  for (const [table, rows] of Object.entries(dump)) {
+    if ((rows as any)?._error) {
+      lines.push(`${table}: ERRO — ${(rows as any)._error}`);
+      continue;
+    }
+    const r = rows as any[];
+    lines.push(`${table}: ${r.length} registros`);
+    for (const row of r.slice(0, 8)) {
+      const title = row.title || row.name || row.slug || row.email || row.subject || row.id || '';
+      if (title) lines.push(`  • ${String(title).slice(0, 90)}`);
+    }
+    if (r.length > 8) lines.push(`  … +${r.length - 8} registros no JSON/CSV completo`);
+    lines.push('');
+  }
+  return buildSimplePdf(`SevenOS Backup — ${domain}`, lines);
+}
+
+function pdfEscape(s: string): string {
+  return String(s ?? '').replace(/[\\()]/g, '\\$&').replace(/[\r\n\t]/g, ' ').slice(0, 130);
+}
+function wrapPdfLine(s: string, max = 96): string[] {
+  const clean = String(s ?? '').replace(/\s+/g, ' ').trim();
+  if (!clean) return [''];
+  const out: string[] = [];
+  let cur = '';
+  for (const word of clean.split(' ')) {
+    if ((cur + ' ' + word).trim().length > max) { out.push(cur); cur = word; }
+    else cur = (cur + ' ' + word).trim();
+  }
+  if (cur) out.push(cur);
+  return out;
+}
+function buildSimplePdf(title: string, lines: string[]): Uint8Array {
+  const enc = new TextEncoder();
+  const bodyLines = lines.flatMap(l => wrapPdfLine(l));
+  const pages: string[][] = [];
+  for (let i = 0; i < bodyLines.length; i += 42) pages.push(bodyLines.slice(i, i + 42));
+  if (!pages.length) pages.push(['Sem conteúdo.']);
+
+  const objs: string[] = [];
+  objs[1] = '<< /Type /Catalog /Pages 2 0 R >>';
+  objs[2] = '';
+  objs[3] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>';
+  const pageNums: number[] = [];
+  pages.forEach((page, idx) => {
+    const stream = `BT\n/F1 16 Tf\n40 800 Td\n(${pdfEscape(idx === 0 ? title : `${title} — continuação`)}) Tj\n/F1 10 Tf\n0 -24 Td\n14 TL\n${page.map(l => `(${pdfEscape(l)}) Tj T*`).join('\n')}\nET`;
+    const contentNum = objs.length;
+    objs[contentNum] = `<< /Length ${enc.encode(stream).length} >>\nstream\n${stream}\nendstream`;
+    const pageNum = objs.length;
+    objs[pageNum] = `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents ${contentNum} 0 R >>`;
+    pageNums.push(pageNum);
+  });
+  objs[2] = `<< /Type /Pages /Kids [${pageNums.map(n => `${n} 0 R`).join(' ')}] /Count ${pageNums.length} >>`;
+
+  let pdf = '%PDF-1.4\n%SevenOS\n';
+  const offsets = [0];
+  for (let i = 1; i < objs.length; i++) {
+    offsets[i] = enc.encode(pdf).length;
+    pdf += `${i} 0 obj\n${objs[i]}\nendobj\n`;
+  }
+  const xrefAt = enc.encode(pdf).length;
+  pdf += `xref\n0 ${objs.length}\n0000000000 65535 f \n`;
+  for (let i = 1; i < objs.length; i++) pdf += `${String(offsets[i]).padStart(10, '0')} 00000 n \n`;
+  pdf += `trailer\n<< /Size ${objs.length} /Root 1 0 R >>\nstartxref\n${xrefAt}\n%%EOF`;
+  return enc.encode(pdf);
+}
 function htmlShell(title: string, body: string): string {
   return `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>${title}</title>
 <style>
@@ -189,29 +258,102 @@ footer{margin-top:60px;padding-top:16px;border-top:1px solid var(--line);color:v
 
 // Recursive bucket download
 async function collectBucketFiles(supa: any, bucket: string, prefix = '', out: { name: string; data: Uint8Array }[] = [], depth = 0): Promise<number> {
-  if (depth > 5) return 0;
-  const { data: list } = await supa.storage.from(bucket).list(prefix, { limit: 1000 });
-  if (!list) return 0;
+  if (depth > 10) return 0;
   let n = 0;
-  for (const item of list) {
-    const p = prefix ? `${prefix}/${item.name}` : item.name;
-    if (item.id === null || item.metadata === null) {
-      n += await collectBucketFiles(supa, bucket, p, out, depth + 1);
-    } else {
-      try {
-        const { data: blob } = await supa.storage.from(bucket).download(p);
-        if (blob) {
-          out.push({ name: `storage/${bucket}/${p}`, data: new Uint8Array(await blob.arrayBuffer()) });
-          n++;
-        }
-      } catch { /* skip */ }
+  for (let offset = 0; ; offset += 1000) {
+    const { data: list, error } = await supa.storage.from(bucket).list(prefix, { limit: 1000, offset, sortBy: { column: 'name', order: 'asc' } });
+    if (error || !list?.length) break;
+    for (const item of list) {
+      const p = prefix ? `${prefix}/${item.name}` : item.name;
+      const isFolder = item.id === null || item.metadata === null || (!ASSET_EXT_RE.test(item.name) && !item.metadata?.size);
+      if (isFolder) {
+        n += await collectBucketFiles(supa, bucket, p, out, depth + 1);
+      } else {
+        try {
+          const { data: blob } = await supa.storage.from(bucket).download(p);
+          if (blob) {
+            out.push({ name: `storage/${bucket}/${p}`, data: new Uint8Array(await blob.arrayBuffer()) });
+            n++;
+          }
+        } catch { /* skip */ }
+      }
     }
+    if (list.length < 1000) break;
   }
   return n;
 }
 
 function safeSlug(s: string): string {
   return String(s || 'sem-titulo').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80) || 'sem-titulo';
+}
+
+function safeFileName(s: string, fallback = 'arquivo'): string {
+  const clean = String(s || fallback).split('?')[0].split('#')[0].split('/').pop() || fallback;
+  return clean.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9._-]+/g, '-').replace(/^-|-$/g, '').slice(0, 120) || fallback;
+}
+
+function escapeHtml(v: any): string {
+  return String(v ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function guessExtFromContentType(ct?: string | null): string {
+  const t = (ct || '').split(';')[0].trim().toLowerCase();
+  const map: Record<string, string> = {
+    'image/svg+xml': 'svg', 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp',
+    'image/gif': 'gif', 'application/pdf': 'pdf', 'text/markdown': 'md', 'text/plain': 'txt',
+    'application/json': 'json', 'text/csv': 'csv', 'application/zip': 'zip',
+  };
+  return map[t] || 'bin';
+}
+
+function extractStorageRef(raw: any): { bucket: string; path: string } | null {
+  if (typeof raw !== 'string' || !raw) return null;
+  const decoded = decodeURIComponent(raw);
+  const m = decoded.match(/\/storage\/v1\/object\/(?:public|sign)\/([^/?#]+)\/([^?#]+)/)
+    || decoded.match(/\/object\/(?:public|sign)\/([^/?#]+)\/([^?#]+)/);
+  if (!m) return null;
+  return { bucket: m[1], path: m[2] };
+}
+
+function isDownloadableUrl(v: string): boolean {
+  if (!/^https?:\/\//i.test(v)) return false;
+  return /\/storage\/v1\/object\//.test(v) || /\/__l5e\/assets-v1\//.test(v) || ASSET_EXT_RE.test(v.split('?')[0]);
+}
+
+function collectUrls(value: any, out: { field: string; url: string }[], field = 'root') {
+  if (typeof value === 'string') {
+    if (isDownloadableUrl(value)) out.push({ field, url: value });
+    return;
+  }
+  if (Array.isArray(value)) value.forEach((x, i) => collectUrls(x, out, `${field}-${i}`));
+  else if (value && typeof value === 'object') Object.entries(value).forEach(([k, v]) => collectUrls(v, out, `${field}-${k}`));
+}
+
+function colorOrDefault(c: any, fallback = '#22d3ee'): string {
+  return typeof c === 'string' && /^#[0-9a-f]{3,8}$/i.test(c) ? c : fallback;
+}
+
+function iconBadgeSvg(label: string, color: string, subtitle?: string): string {
+  const initials = String(label || '7').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '7';
+  const bg = colorOrDefault(color);
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="${escapeHtml(label)}">
+  <defs><radialGradient id="g" cx="30%" cy="20%" r="80%"><stop offset="0" stop-color="#fff" stop-opacity=".32"/><stop offset=".45" stop-color="${bg}"/><stop offset="1" stop-color="#050505"/></radialGradient></defs>
+  <rect width="512" height="512" rx="112" fill="url(#g)"/>
+  <rect x="18" y="18" width="476" height="476" rx="96" fill="none" stroke="#fff" stroke-opacity=".18" stroke-width="3"/>
+  <text x="256" y="285" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="138" font-weight="800" fill="#fff">${escapeHtml(initials)}</text>
+  ${subtitle ? `<text x="256" y="366" text-anchor="middle" font-family="Inter,Arial,sans-serif" font-size="30" font-weight="600" fill="#fff" opacity=".78">${escapeHtml(subtitle).slice(0, 28)}</text>` : ''}
+</svg>`;
+}
+
+async function fetchAllRows(supa: any, table: string): Promise<any[]> {
+  const out: any[] = [];
+  for (let offset = 0; ; offset += 1000) {
+    const { data, error } = await supa.from(table).select('*').range(offset, offset + 999);
+    if (error) throw error;
+    out.push(...(data ?? []));
+    if (!data || data.length < 1000) break;
+  }
+  return out;
 }
 
 Deno.serve(async (req) => {
