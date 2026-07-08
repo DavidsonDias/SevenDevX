@@ -466,25 +466,24 @@ Deno.serve(async (req) => {
     const allTables: string[] = [];
     const fullDump: Record<string, any[]> = {};
     const searchIndex: any[] = [];
+    const seenAssets = new Set<string>();
+    const exportWarnings: string[] = [];
 
-    // 🧠 Descoberta dinâmica: quando é backup FULL, pega TODAS as tabelas do schema public
+    // 🧠 Inventário definitivo: usa todas as seções conhecidas + tenta descobrir extras.
     let domainsToRun: Record<string, string[]>;
     if (onlyDomain) {
       domainsToRun = { [onlyDomain]: DOMAINS[onlyDomain] || [] };
     } else {
-      // Junta todas as tabelas conhecidas + descobre extras via RPC (fallback: DOMAINS ∪ hardcoded)
-      const knownTables = new Set<string>(Object.values(DOMAINS).flat());
-      // Adiciona tabelas descobertas dinamicamente (best effort)
+      const knownTables = new Set<string>(PUBLIC_TABLES);
       try {
         const { data: schemaTables } = await supa
           .from('pg_tables' as any)
           .select('tablename')
           .eq('schemaname', 'public');
         for (const t of (schemaTables as any[]) ?? []) knownTables.add(t.tablename);
-      } catch { /* pg_tables pode não estar exposto — segue com DOMAINS */ }
+      } catch { /* pg_tables pode não estar exposto — segue com inventário SevenOS */ }
 
       domainsToRun = { ...DOMAINS };
-      // Sobra: tabelas conhecidas que não estão em nenhum domínio ⇒ vão pra "misc"
       const covered = new Set<string>(Object.values(DOMAINS).flat());
       const misc = Array.from(knownTables).filter(t => !covered.has(t));
       if (misc.length) domainsToRun.misc = misc;
@@ -497,17 +496,18 @@ Deno.serve(async (req) => {
       let totalRows = 0;
       for (const t of tables) {
         try {
-          const { data, error } = await supa.from(t).select('*').limit(100000);
-          if (error) { domainDump[t] = { _error: error.message }; counts[t] = 0; continue; }
-          const rows = data ?? [];
+          const rows = await fetchAllRows(supa, t);
           domainDump[t] = rows;
           fullDump[t] = rows;
           counts[t] = rows.length;
           totalRows += rows.length;
-          allTables.push(t);
+          if (!allTables.includes(t)) allTables.push(t);
           // CSV por tabela
           if (rows.length) files.push({ name: `${domain}/csv/${t}.csv`, data: enc.encode(toCsv(rows)) });
-        } catch (e: any) { domainDump[t] = { _error: e?.message || 'fail' }; counts[t] = 0; }
+        } catch (e: any) {
+          const msg = e?.message || 'fail';
+          domainDump[t] = { _error: msg }; counts[t] = 0; exportWarnings.push(`${domain}/${t}: ${msg}`);
+        }
       }
       summary[domain] = { tables: counts, total: totalRows };
       files.push({ name: `${domain}/data.json`, data: enc.encode(JSON.stringify(domainDump, null, 2)) });
@@ -516,6 +516,56 @@ Deno.serve(async (req) => {
       files.push({ name: `${domain}/report.html`, data: enc.encode(html) });
       // .doc = HTML servido como Word (Word abre nativamente)
       files.push({ name: `${domain}/report.doc`, data: enc.encode(html) });
+      files.push({ name: `${domain}/report.pdf`, data: domainToPdf(domain, domainDump) });
+    }
+
+    // 🧬 Catálogo reaproveitável de tecnologias e tags — inclui SVG fallback para tudo.
+    if (!onlyDomain || onlyDomain === 'registry' || onlyDomain === 'projects') {
+      const techRows = fullDump.tech_registry ?? [];
+      const tagRows = fullDump.tag_registry ?? [];
+      const techIndex = techRows.map((t: any) => ({
+        slug: t.slug, name: t.name, category: t.category, color: t.color, icon_url: t.icon_url,
+        files: [`registry/technologies/${safeSlug(t.slug || t.name)}/data.json`, `registry/technologies/${safeSlug(t.slug || t.name)}/README.md`, `registry/technologies/${safeSlug(t.slug || t.name)}/badge.svg`],
+      }));
+      const tagIndex = tagRows.map((t: any) => ({
+        slug: t.slug, name: t.name, color: t.color, icon_url: t.icon_url,
+        files: [`registry/tags/${safeSlug(t.slug || t.name)}/data.json`, `registry/tags/${safeSlug(t.slug || t.name)}/README.md`, `registry/tags/${safeSlug(t.slug || t.name)}/badge.svg`],
+      }));
+      files.push({ name: 'registry/technologies/index.json', data: enc.encode(JSON.stringify(techIndex, null, 2)) });
+      files.push({ name: 'registry/tags/index.json', data: enc.encode(JSON.stringify(tagIndex, null, 2)) });
+      files.push({ name: 'registry/technologies/catalog.csv', data: enc.encode(toCsv(techRows)) });
+      files.push({ name: 'registry/tags/catalog.csv', data: enc.encode(toCsv(tagRows)) });
+      for (const t of techRows) {
+        const folder = `registry/technologies/${safeSlug(t.slug || t.name || t.id)}`;
+        files.push({ name: `${folder}/data.json`, data: enc.encode(JSON.stringify(t, null, 2)) });
+        files.push({ name: `${folder}/README.md`, data: enc.encode(techToMarkdown(t)) });
+        files.push({ name: `${folder}/badge.svg`, data: enc.encode(iconBadgeSvg(t.name || t.slug, t.color, t.slug)) });
+        if (includeFiles) await addUrlAsset(supa, files, t.icon_url, `${folder}/assets`, seenAssets, `${safeSlug(t.slug || t.name)}-icon`);
+      }
+      for (const t of tagRows) {
+        const folder = `registry/tags/${safeSlug(t.slug || t.name || t.id)}`;
+        files.push({ name: `${folder}/data.json`, data: enc.encode(JSON.stringify(t, null, 2)) });
+        files.push({ name: `${folder}/README.md`, data: enc.encode(tagToMarkdown(t)) });
+        files.push({ name: `${folder}/badge.svg`, data: enc.encode(iconBadgeSvg(t.name || t.slug, t.color, 'TAG')) });
+        if (includeFiles) await addUrlAsset(supa, files, t.icon_url, `${folder}/assets`, seenAssets, `${safeSlug(t.slug || t.name)}-icon`);
+      }
+    }
+
+    // 🎨 Logo Lab / Branding — materializa SVG inline, URLs e paletas em pastas próprias.
+    if (!onlyDomain || onlyDomain === 'branding') {
+      for (const b of fullDump.branding_assets ?? []) {
+        const folder = `branding/logo-lab/${safeSlug(b.slug || b.id)}`;
+        files.push({ name: `${folder}/data.json`, data: enc.encode(JSON.stringify(b, null, 2)) });
+        files.push({ name: `${folder}/palette.json`, data: enc.encode(JSON.stringify({ slug: b.slug, color: b.color, palette: b.palette ?? [] }, null, 2)) });
+        if (b.custom_svg) files.push({ name: `${folder}/custom.svg`, data: enc.encode(String(b.custom_svg)) });
+        else files.push({ name: `${folder}/badge.svg`, data: enc.encode(iconBadgeSvg(b.slug || 'Logo', b.color || '#ffffff', 'LOGO')) });
+        if (includeFiles) await addUrlAsset(supa, files, b.custom_url, `${folder}/assets`, seenAssets, `${safeSlug(b.slug)}-logo`);
+      }
+      for (const v of fullDump.logo_variations ?? []) {
+        const folder = `branding/logo-variations/${safeSlug(v.slug || v.name || v.id)}/${safeSlug(v.variant_kind || 'variation')}`;
+        files.push({ name: `${folder}/data.json`, data: enc.encode(JSON.stringify(v, null, 2)) });
+        if (includeFiles) await addUrlAsset(supa, files, v.image_url, `${folder}/assets`, seenAssets, `${safeSlug(v.slug || v.name)}-${safeSlug(v.variant_kind || 'variation')}`);
+      }
     }
 
     // 📁 Pastas dedicadas POR PROJETO (crown jewel) — só no backup full
