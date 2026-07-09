@@ -1,115 +1,134 @@
 /**
- * PWAUpdatePrompt — Detects SW updates via registration events (injectManifest compatible)
+ * 🔄 PWAUpdatePrompt v2 — SevenDevX Enterprise
+ * ─────────────────────────────────────────────
+ * Só aparece quando existe SW `waiting` de fato (nova versão pronta).
+ * Aplica a atualização SOMENTE quando o usuário clica em "Atualizar".
+ * Estilo monocromático glass, coerente com o instalador PWA.
  */
-import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Download, X } from 'lucide-react';
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Sparkles, X, ArrowUpRight } from "lucide-react";
+
+const isPreview = () => {
+  try { if (window.self !== window.top) return true; } catch { return true; }
+  const h = window.location.hostname;
+  return (
+    h.includes("id-preview--") ||
+    h.includes("lovableproject.com") ||
+    h.includes("lovable.app")
+  );
+};
 
 const PWAUpdatePrompt = () => {
-  const [needRefresh, setNeedRefresh] = useState(false);
-  const [waitingSW, setWaitingSW] = useState<ServiceWorker | null>(null);
+  const [show, setShow] = useState(false);
+  const [waiting, setWaiting] = useState<ServiceWorker | null>(null);
 
   useEffect(() => {
-    if (!('serviceWorker' in navigator)) return;
+    if (!("serviceWorker" in navigator)) return;
+    if (isPreview()) return;
 
-    // Don't run in iframe/preview
-    try {
-      if (window.self !== window.top) return;
-    } catch { return; }
-    if (
-      window.location.hostname.includes('id-preview--') ||
-      window.location.hostname.includes('lovableproject.com') ||
-      window.location.hostname.includes('lovable.app')
-    ) return;
+    let refreshing = false;
+    const onControllerChange = () => {
+      if (refreshing) return;
+      refreshing = true;
+      window.location.reload();
+    };
+    navigator.serviceWorker.addEventListener("controllerchange", onControllerChange);
 
-    const handleRegistration = (registration: ServiceWorkerRegistration) => {
-      // If there's already a waiting SW
-      if (registration.waiting) {
-        setWaitingSW(registration.waiting);
-        setNeedRefresh(true);
+    const attach = (reg: ServiceWorkerRegistration) => {
+      // Só sinaliza update se existe SW controlando (não é a primeira instalação)
+      const alreadyControlled = !!navigator.serviceWorker.controller;
+
+      if (reg.waiting && alreadyControlled) {
+        setWaiting(reg.waiting);
+        setShow(true);
       }
 
-      // Listen for new SW installing
-      registration.addEventListener('updatefound', () => {
-        const newSW = registration.installing;
-        if (!newSW) return;
-
-        newSW.addEventListener('statechange', () => {
-          if (newSW.state === 'installed' && navigator.serviceWorker.controller) {
-            setWaitingSW(newSW);
-            setNeedRefresh(true);
+      reg.addEventListener("updatefound", () => {
+        const nw = reg.installing;
+        if (!nw) return;
+        nw.addEventListener("statechange", () => {
+          if (nw.state === "installed" && navigator.serviceWorker.controller) {
+            setWaiting(nw);
+            setShow(true);
           }
         });
       });
     };
 
-    // Check existing registration
-    navigator.serviceWorker.getRegistration().then((reg) => {
-      if (reg) handleRegistration(reg);
-    });
+    navigator.serviceWorker.getRegistration().then((reg) => reg && attach(reg));
 
-    // Listen for controller change (another tab triggered skipWaiting)
-    let refreshing = false;
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (refreshing) return;
-      refreshing = true;
-      window.location.reload();
-    });
+    return () => {
+      navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange);
+    };
   }, []);
 
-  const close = () => setNeedRefresh(false);
-
-  const update = () => {
-    if (waitingSW) {
-      waitingSW.postMessage({ type: 'SKIP_WAITING' });
-    }
-    setNeedRefresh(false);
+  const apply = () => {
+    if (waiting) waiting.postMessage({ type: "SKIP_WAITING" });
+    // Não fecha o card: aguardamos controllerchange → reload
   };
+
+  const later = () => setShow(false);
 
   return (
     <AnimatePresence>
-      {needRefresh && (
+      {show && (
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 50 }}
-          className="fixed bottom-4 right-4 z-50 max-w-md"
+          initial={{ opacity: 0, y: 20, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 12, scale: 0.98 }}
+          transition={{ type: "spring", stiffness: 320, damping: 28 }}
+          role="status"
+          className="fixed z-[9999] w-[calc(100%-1.5rem)] max-w-[420px] left-0 right-0 mx-auto sm:left-auto sm:right-6 sm:mx-0"
+          style={{ bottom: `calc(env(safe-area-inset-bottom) + 1.25rem)` }}
         >
-          <div className="bg-card text-card-foreground p-6 rounded-xl shadow-2xl border border-border/30 backdrop-blur-sm">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <Download size={20} className="text-primary" />
+          <div className="absolute -inset-[1px] rounded-[22px] bg-gradient-to-br from-white/25 via-white/5 to-white/20 opacity-60 blur-md pointer-events-none" />
+          <div className="relative overflow-hidden rounded-[20px] border border-white/12 bg-[#050505]/95 backdrop-blur-2xl shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)]">
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
+
+            <div className="relative p-5">
+              <div className="flex items-start gap-3.5">
+                <div className="relative shrink-0">
+                  <div className="absolute inset-0 rounded-xl bg-emerald-400/10 blur-lg" />
+                  <div className="relative w-11 h-11 rounded-xl border border-white/12 bg-gradient-to-br from-white/10 to-white/[0.02] flex items-center justify-center">
+                    <Sparkles className="w-4 h-4 text-emerald-300" />
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-bold text-base">Nova Versão Disponível</h3>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Atualize para aproveitar as melhorias
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] uppercase tracking-[0.25em] text-emerald-300/80 font-semibold">
+                    Nova versão · SevenDevX
+                  </p>
+                  <h3 className="mt-1 font-orbitron text-[15px] font-bold text-white leading-tight">
+                    Atualização disponível
+                  </h3>
+                  <p className="mt-1 text-[12px] text-white/60 leading-relaxed">
+                    Novos recursos, melhorias e correções prontos para instalar.
                   </p>
                 </div>
+                <button
+                  onClick={later}
+                  aria-label="Depois"
+                  className="shrink-0 p-1.5 rounded-lg text-white/50 hover:text-white hover:bg-white/5 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
               </div>
-              <button
-                onClick={close}
-                className="text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="Fechar"
-              >
-                <X size={18} />
-              </button>
-            </div>
-            
-            <div className="flex space-x-3">
-              <button
-                onClick={update}
-                className="flex-1 bg-primary text-primary-foreground px-4 py-2.5 rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity"
-              >
-                Atualizar Agora
-              </button>
-              <button
-                onClick={close}
-                className="px-4 py-2.5 border border-border rounded-lg text-sm font-semibold hover:bg-muted/20 transition-colors"
-              >
-                Depois
-              </button>
+
+              <div className="mt-4 flex gap-2.5">
+                <button
+                  onClick={apply}
+                  className="flex-1 px-4 py-3 rounded-xl bg-white text-black text-[12px] font-bold uppercase tracking-[0.18em] hover:bg-white/90 transition-colors flex items-center justify-center gap-2"
+                >
+                  Atualizar agora
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={later}
+                  className="px-4 py-3 rounded-xl border border-white/15 text-white/70 hover:text-white hover:bg-white/5 text-[12px] font-semibold uppercase tracking-[0.18em] transition-colors"
+                >
+                  Depois
+                </button>
+              </div>
             </div>
           </div>
         </motion.div>

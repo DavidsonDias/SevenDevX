@@ -316,6 +316,9 @@ function extractStorageRef(raw: any): { bucket: string; path: string } | null {
 }
 
 function isDownloadableUrl(v: string): boolean {
+  if (typeof v !== 'string') return false;
+  if (v.startsWith('data:')) return /^data:(image|application|text)\//i.test(v);
+  if (v.trim().startsWith('<svg')) return true;
   try {
     const u = new URL(v);
     if (!['http:', 'https:'].includes(u.protocol)) return false;
@@ -324,6 +327,23 @@ function isDownloadableUrl(v: string): boolean {
     if (/^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[0-1])\.)/.test(h)) return false;
     return /\/storage\/v1\/object\//.test(u.pathname) || /\/__l5e\/assets-v1\//.test(u.pathname) || ASSET_EXT_RE.test(u.pathname);
   } catch { return false; }
+}
+
+// Extrai bytes de data: URL (base64 ou URL-encoded)
+function decodeDataUrl(v: string): { bytes: Uint8Array; ext: string } | null {
+  const m = v.match(/^data:([^;,]+)(;base64)?,(.*)$/i);
+  if (!m) return null;
+  const ct = m[1]; const isB64 = !!m[2]; const raw = m[3];
+  const ext = guessExtFromContentType(ct);
+  try {
+    if (isB64) {
+      const bin = atob(raw);
+      const out = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+      return { bytes: out, ext };
+    }
+    return { bytes: new TextEncoder().encode(decodeURIComponent(raw)), ext };
+  } catch { return null; }
 }
 
 function collectUrls(value: any, out: { field: string; url: string }[], field = 'root') {
@@ -393,6 +413,26 @@ async function addUrlAsset(
   preferredName?: string,
 ): Promise<boolean> {
   if (!url || typeof url !== 'string' || seen.has(url)) return false;
+
+  // ─── inline SVG string (<svg …>) ───
+  if (url.trim().startsWith('<svg')) {
+    seen.add(url);
+    const name = safeFileName(preferredName || 'icon', 'icon') + (/(\.svg)$/i.test(preferredName || '') ? '' : '.svg');
+    files.push({ name: `${targetFolder}/${name}`, data: new TextEncoder().encode(url) });
+    return true;
+  }
+
+  // ─── data: URL (base64 svg/png/etc — comum em tech icons) ───
+  if (url.startsWith('data:')) {
+    seen.add(url);
+    const dec = decodeDataUrl(url);
+    if (!dec) return false;
+    let name = safeFileName(preferredName || 'asset', 'asset');
+    if (!ASSET_EXT_RE.test(name)) name += `.${dec.ext}`;
+    files.push({ name: `${targetFolder}/${name}`, data: dec.bytes });
+    return true;
+  }
+
   const ref = extractStorageRef(url);
   if (ref) return addStorageAsset(supa, files, ref.bucket, ref.path, targetFolder, seen, preferredName || ref.path);
   if (!isDownloadableUrl(url)) return false;
