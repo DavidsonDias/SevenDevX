@@ -27,7 +27,7 @@ import OnboardingTour from "@/modules/onboarding/OnboardingTour";
 import { ADMIN_TOUR } from "@/modules/onboarding/tourSteps";
 import { StatsCardSkeleton } from "@/components/SkeletonLoader";
 import { useToast } from "@/hooks/use-toast";
-import { useAutoHideOnScroll } from "@/hooks/useAutoHideOnScroll";
+
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, PieChart, Pie, Cell
