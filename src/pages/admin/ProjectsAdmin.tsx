@@ -16,7 +16,7 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { useAutoHideOnScroll } from "@/hooks/useAutoHideOnScroll";
+import AdminPageShell from "@/components/admin/AdminPageShell";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -92,7 +92,6 @@ const slugify = (s: string) =>
 
 const ProjectsAdmin = () => {
   const navigate = useNavigate();
-  const headerVisible = useAutoHideOnScroll();
   const goBack = useSmartBack();
   const { isAdmin, isLoading: authLoading } = useAuthContext();
   const { toast } = useToast();
@@ -279,47 +278,32 @@ const ProjectsAdmin = () => {
     <>
       <SEOHead title="CMS de Projetos | SevenDevX Admin" description="Gerenciar projetos do site" />
 
-      <div className="min-h-screen bg-background text-foreground">
-        {/* Header */}
-        <header className={`border-b border-border sticky top-0 z-40 bg-background/95 backdrop-blur-lg transition-transform duration-300 ${headerVisible ? "translate-y-0" : "-translate-y-full"}`}>
-          <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <Button variant="ghost" size="sm" onClick={() => goBack("/admin")}>
-                <ArrowLeft className="w-4 h-4 mr-2" /> Voltar
-              </Button>
-              <Link to="/" aria-label="Ir para o site SevenDevX" className="hidden md:block hover:opacity-80 transition-opacity">
-                <h1 className="text-lg font-orbitron font-bold tracking-tight">
-                  SEVEN<span className="text-muted-foreground">DEVX</span>
-                </h1>
-              </Link>
-              <div className="hidden lg:block border-l border-border pl-3">
-                <h2 className="text-sm font-orbitron font-semibold">Projetos</h2>
-                <p className="text-xs text-muted-foreground">CMS</p>
-              </div>
-              <h2 className="lg:hidden text-base font-orbitron font-bold">Projetos</h2>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex" title="Abrir site em nova aba">
-                <a href="/" target="_blank" rel="noopener noreferrer">
-                  <HomeIcon className="w-4 h-4 mr-2" />
-                  Ver site
-                </a>
-              </Button>
-              <Button onClick={() => setAiGenOpen(true)} variant="outline" size="sm" className="shrink-0 border-purple-500/40 hover:bg-purple-500/10" title="Gerar projeto completo com IA">
-                <Sparkles className="w-4 h-4 mr-2 text-purple-400" />
-                <span className="hidden sm:inline">Gerar com IA</span>
-                <span className="sm:hidden">IA</span>
-              </Button>
-              <Button onClick={openCreate} className="shrink-0">
-                <Plus className="w-4 h-4 mr-2" />
-                <span className="hidden sm:inline">Novo projeto</span>
-                <span className="sm:hidden">Novo</span>
-              </Button>
-            </div>
-          </div>
-        </header>
-
-        <main className="max-w-[1400px] mx-auto px-4 sm:px-6 py-6 sm:py-10">
+      <AdminPageShell
+        title="Projetos"
+        subtitle="CMS"
+        backFallback="/admin"
+        actions={
+          <>
+            <Button asChild variant="outline" size="sm" className="hidden sm:inline-flex" title="Abrir site em nova aba">
+              <a href="/" target="_blank" rel="noopener noreferrer">
+                <HomeIcon className="w-4 h-4 mr-2" />
+                Ver site
+              </a>
+            </Button>
+            <Button onClick={() => setAiGenOpen(true)} variant="outline" size="sm" className="shrink-0 border-purple-500/40 hover:bg-purple-500/10" title="Gerar projeto completo com IA">
+              <Sparkles className="w-4 h-4 mr-2 text-purple-400" />
+              <span className="hidden sm:inline">Gerar com IA</span>
+              <span className="sm:hidden">IA</span>
+            </Button>
+            <Button onClick={openCreate} className="shrink-0">
+              <Plus className="w-4 h-4 mr-2" />
+              <span className="hidden sm:inline">Novo projeto</span>
+              <span className="sm:hidden">Novo</span>
+            </Button>
+          </>
+        }
+      >
+        <div>
           <Breadcrumb />
           {/* Filters */}
           <div className="flex flex-col sm:flex-row gap-3 mb-6">
@@ -490,8 +474,8 @@ const ProjectsAdmin = () => {
               </AnimatePresence>
             </div>
           )}
-        </main>
-      </div>
+        </div>
+      </AdminPageShell>
 
       {/* Edit/Create Dialog */}
       <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>

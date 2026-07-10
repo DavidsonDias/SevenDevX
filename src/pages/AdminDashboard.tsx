@@ -16,7 +16,7 @@ import { useAuthContext as useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import SEOHead from "@/components/SEOHead";
 import AiInsightsBlock from "@/components/admin/AiInsightsBlock";
-import AdminMenu from "@/components/admin/AdminMenu";
+import AdminPageShell from "@/components/admin/AdminPageShell";
 import GlobalSearch from "@/components/admin/GlobalSearch";
 import KpiCards from "@/components/admin/KpiCards";
 import GlassCard from "@/components/GlassCard";
@@ -27,7 +27,7 @@ import OnboardingTour from "@/modules/onboarding/OnboardingTour";
 import { ADMIN_TOUR } from "@/modules/onboarding/tourSteps";
 import { StatsCardSkeleton } from "@/components/SkeletonLoader";
 import { useToast } from "@/hooks/use-toast";
-import { useAutoHideOnScroll } from "@/hooks/useAutoHideOnScroll";
+
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, PieChart, Pie, Cell
@@ -60,7 +60,7 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const { user, isAdmin, isLoading: authLoading, signOut } = useAuth();
   const { toast } = useToast();
-  const headerVisible = useAutoHideOnScroll();
+  
   
   
   const [isLoading, setIsLoading] = useState(true);
@@ -236,62 +236,51 @@ const AdminDashboard = () => {
         url="https://www.sevendevx.com/admin"
       />
 
-      <div className="min-h-screen bg-black text-white">
-        {/* Header */}
-        <header className={`border-b border-white/10 sticky top-0 bg-black/95 backdrop-blur-lg z-50 transition-transform duration-300 ${headerVisible ? "translate-y-0" : "-translate-y-full"}`}>
-          <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <AdminMenu />
-              <Link to="/" aria-label="Ir para o site SevenDevX" className="hover:opacity-80 transition-opacity">
-                <h1 className="text-xl font-bold font-orbitron">
-                  SEVEN<span className="text-white/60">DEVX</span>
-                </h1>
-              </Link>
-              <span className="text-xs uppercase tracking-wider text-white/40 border border-white/20 px-2 py-1 rounded">
-                Admin
-              </span>
-            </div>
-            <div className="flex items-center gap-2 sm:gap-3">
-              <GlobalSearch />
-              <Link
-                to="/"
-                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-xs uppercase tracking-wider"
-                title="Abrir site"
-              >
-                <HomeIcon className="w-3.5 h-3.5" />
-                Ver site
-              </Link>
-              <button
-                onClick={() => navigate("/admin/projects")}
-                className="px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-xs uppercase tracking-wider"
-              >
-                Projetos
-              </button>
-              <button
-                onClick={() => navigate("/admin/technologies")}
-                className="hidden sm:inline-flex px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-xs uppercase tracking-wider"
-              >
-                Tech
-              </button>
-              <button
-                onClick={() => navigate("/admin/tags")}
-                className="hidden sm:inline-flex px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-xs uppercase tracking-wider"
-              >
-                Tags
-              </button>
-              <span className="text-sm text-white/60 hidden md:inline">{user?.email}</span>
-              <button
-                onClick={handleSignOut}
-                className="flex items-center gap-2 px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-sm"
-              >
-                <LogOut className="w-4 h-4" />
-                <span className="hidden sm:inline">Sair</span>
-              </button>
-            </div>
-          </div>
-        </header>
-
-        <main className="container mx-auto px-6 py-8">
+      <AdminPageShell
+        title="Dashboard"
+        subtitle="Painel Administrativo"
+        backFallback="/"
+        actions={
+          <>
+            <GlobalSearch />
+            <Link
+              to="/"
+              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-xs uppercase tracking-wider"
+              title="Abrir site"
+            >
+              <HomeIcon className="w-3.5 h-3.5" />
+              Ver site
+            </Link>
+            <button
+              onClick={() => navigate("/admin/projects")}
+              className="px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-xs uppercase tracking-wider"
+            >
+              Projetos
+            </button>
+            <button
+              onClick={() => navigate("/admin/technologies")}
+              className="hidden sm:inline-flex px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-xs uppercase tracking-wider"
+            >
+              Tech
+            </button>
+            <button
+              onClick={() => navigate("/admin/tags")}
+              className="hidden sm:inline-flex px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-xs uppercase tracking-wider"
+            >
+              Tags
+            </button>
+            <span className="text-sm text-white/60 hidden md:inline">{user?.email}</span>
+            <button
+              onClick={handleSignOut}
+              className="flex items-center gap-2 px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-sm"
+            >
+              <LogOut className="w-4 h-4" />
+              <span className="hidden sm:inline">Sair</span>
+            </button>
+          </>
+        }
+      >
+        <div>
           <OnboardingChecklist />
           <OnboardingTour tourKey="admin_dashboard" steps={ADMIN_TOUR} />
           {/* KPIs avançados (#6) */}
@@ -553,8 +542,8 @@ const AdminDashboard = () => {
               )}
             </div>
           </GlassCard>
-        </main>
-      </div>
+        </div>
+      </AdminPageShell>
     </>
   );
 };

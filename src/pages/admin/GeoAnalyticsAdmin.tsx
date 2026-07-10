@@ -11,10 +11,9 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthContext as useAuth } from "@/contexts/AuthContext";
-import AdminMenu from "@/components/admin/AdminMenu";
+import AdminPageShell from "@/components/admin/AdminPageShell";
 import GlassCard from "@/components/GlassCard";
 import SEOHead from "@/components/SEOHead";
-import { useAutoHideOnScroll } from "@/hooks/useAutoHideOnScroll";
 import { GEO_ARTICLES, GEO_PROGRAMMATIC } from "@/data/geoContent";
 
 const AI_BOTS = [
@@ -47,7 +46,6 @@ interface PageView {
 
 export default function GeoAnalyticsAdmin() {
   const { isAdmin } = useAuth();
-  const headerVisible = useAutoHideOnScroll();
   const [loading, setLoading] = useState(true);
   const [views, setViews] = useState<PageView[]>([]);
   const [days, setDays] = useState(30);
@@ -119,21 +117,13 @@ export default function GeoAnalyticsAdmin() {
   if (!isAdmin) return null;
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <>
       <SEOHead title="GEO Analytics — Discoverability em IA" description="Tráfego de bots de IA, top rotas GEO e checklist de indexação." />
-
-      <header className={`sticky top-0 z-40 bg-black/80 backdrop-blur-xl border-b border-white/10 transition-transform duration-300 ${headerVisible ? "translate-y-0" : "-translate-y-full"}`}>
-        <div className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3 min-w-0">
-            <AdminMenu />
-            <div className="min-w-0">
-              <h1 className="text-base sm:text-lg font-bold font-orbitron truncate flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-emerald-400" /> GEO Analytics
-              </h1>
-              <p className="text-[10px] uppercase tracking-wider text-white/40">Generative Engine Optimization</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
+      <AdminPageShell
+        title="GEO Analytics"
+        subtitle="Generative Engine Optimization"
+        actions={
+          <>
             <select
               value={days}
               onChange={(e) => setDays(Number(e.target.value))}
@@ -146,11 +136,10 @@ export default function GeoAnalyticsAdmin() {
             <button onClick={load} className="p-2 border border-white/10 rounded-lg hover:bg-white/5">
               <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
             </button>
-          </div>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 sm:px-6 py-8 max-w-7xl space-y-6">
+          </>
+        }
+      >
+        <div className="space-y-6">
         {/* KPIs */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
@@ -327,7 +316,8 @@ export default function GeoAnalyticsAdmin() {
             ))}
           </div>
         </GlassCard>
-      </main>
-    </div>
+        </div>
+      </AdminPageShell>
+    </>
   );
 }

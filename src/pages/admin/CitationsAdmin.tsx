@@ -11,11 +11,10 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthContext as useAuth } from "@/contexts/AuthContext";
-import AdminMenu from "@/components/admin/AdminMenu";
+import AdminPageShell from "@/components/admin/AdminPageShell";
 import GlassCard from "@/components/GlassCard";
 import SEOHead from "@/components/SEOHead";
 import CitationMonitorSettings from "@/components/admin/CitationMonitorSettings";
-import { useAutoHideOnScroll } from "@/hooks/useAutoHideOnScroll";
 import { toast } from "sonner";
 
 interface Citation {
@@ -42,7 +41,6 @@ const SOURCES = ["ChatGPT", "Perplexity", "Gemini", "Claude", "Copilot", "You.co
 
 export default function CitationsAdmin() {
   const { isAdmin } = useAuth();
-  const headerVisible = useAutoHideOnScroll();
   const [citations, setCitations] = useState<Citation[]>([]);
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [loading, setLoading] = useState(true);
@@ -119,53 +117,46 @@ export default function CitationsAdmin() {
   return (
     <>
       <SEOHead title="Citation Engine — Admin SevenDevX" description="Monitor de menções da SevenDevX em LLMs" />
-      <div className="min-h-screen bg-background text-foreground">
-        <header className={`sticky top-0 z-30 border-b border-white/10 backdrop-blur-xl bg-background/70 transition-transform duration-300 ${headerVisible ? "translate-y-0" : "-translate-y-full"}`}>
-          <div className="container mx-auto px-4 h-14 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <AdminMenu />
-              <div className="flex items-center gap-2">
-                <Megaphone className="w-4 h-4 text-primary" />
-                <h1 className="text-sm font-semibold tracking-wide">Citation Engine</h1>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <button onClick={load} className="p-2 rounded-lg border border-white/10 hover:bg-white/5">
-                <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-              </button>
-              <button
-                onClick={async () => {
-                  const t = toast.loading("Consultando IAs sobre a SevenDevX...");
-                  const { data, error } = await supabase.functions.invoke("citation-monitor", { body: { onlyMentions: false } });
-                  toast.dismiss(t);
-                  if (error) { toast.error("Falhou: " + error.message); return; }
-                  if ((data as any)?.paused) { toast.warning("Monitor está pausado. Reative em Configurações."); return; }
-                  toast.success(`Monitor: ${data?.summary?.mentions ?? 0}/${data?.summary?.total ?? 0} menções`);
-                  load();
-                }}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-white/10 hover:bg-white/5 text-sm"
-              >
-                <Bot className="w-4 h-4" /> Rodar monitor
-              </button>
-              <button
-                onClick={() => setShowSettings((v) => !v)}
-                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border text-sm ${
-                  showSettings ? "border-primary/40 bg-primary/10 text-primary" : "border-white/10 hover:bg-white/5"
-                }`}
-              >
-                <Settings2 className="w-4 h-4" /> Configurar
-              </button>
-              <button
-                onClick={() => setShowForm((v) => !v)}
-                className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-sm"
-              >
-                <Plus className="w-4 h-4" /> Nova citação
-              </button>
-            </div>
-          </div>
-        </header>
-
-        <main className="container mx-auto px-4 py-6 space-y-6">
+      <AdminPageShell
+        title="Citation Engine"
+        subtitle="Monitor de menções em LLMs"
+        actions={
+          <>
+            <button onClick={load} className="p-2 rounded-lg border border-white/10 hover:bg-white/5">
+              <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+            </button>
+            <button
+              onClick={async () => {
+                const t = toast.loading("Consultando IAs sobre a SevenDevX...");
+                const { data, error } = await supabase.functions.invoke("citation-monitor", { body: { onlyMentions: false } });
+                toast.dismiss(t);
+                if (error) { toast.error("Falhou: " + error.message); return; }
+                if ((data as any)?.paused) { toast.warning("Monitor está pausado. Reative em Configurações."); return; }
+                toast.success(`Monitor: ${data?.summary?.mentions ?? 0}/${data?.summary?.total ?? 0} menções`);
+                load();
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-white/10 hover:bg-white/5 text-sm"
+            >
+              <Bot className="w-4 h-4" /> Rodar monitor
+            </button>
+            <button
+              onClick={() => setShowSettings((v) => !v)}
+              className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border text-sm ${
+                showSettings ? "border-primary/40 bg-primary/10 text-primary" : "border-white/10 hover:bg-white/5"
+              }`}
+            >
+              <Settings2 className="w-4 h-4" /> Configurar
+            </button>
+            <button
+              onClick={() => setShowForm((v) => !v)}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-primary-foreground text-sm"
+            >
+              <Plus className="w-4 h-4" /> Nova citação
+            </button>
+          </>
+        }
+      >
+        <div className="space-y-6">
           {showSettings && <CitationMonitorSettings />}
 
           {/* KPIs */}
@@ -333,8 +324,8 @@ export default function CitationsAdmin() {
               </div>
             )}
           </GlassCard>
-        </main>
-      </div>
+        </div>
+      </AdminPageShell>
     </>
   );
 }
