@@ -542,8 +542,8 @@ const AdminDashboard = () => {
               )}
             </div>
           </GlassCard>
-        </main>
-      </div>
+        </div>
+      </AdminPageShell>
     </>
   );
 };
