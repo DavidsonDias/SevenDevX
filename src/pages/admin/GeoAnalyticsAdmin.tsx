@@ -11,10 +11,9 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthContext as useAuth } from "@/contexts/AuthContext";
-import AdminMenu from "@/components/admin/AdminMenu";
+import AdminPageShell from "@/components/admin/AdminPageShell";
 import GlassCard from "@/components/GlassCard";
 import SEOHead from "@/components/SEOHead";
-import { useAutoHideOnScroll } from "@/hooks/useAutoHideOnScroll";
 import { GEO_ARTICLES, GEO_PROGRAMMATIC } from "@/data/geoContent";
 
 const AI_BOTS = [
