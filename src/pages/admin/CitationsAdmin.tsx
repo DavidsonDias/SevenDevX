@@ -41,7 +41,6 @@ const SOURCES = ["ChatGPT", "Perplexity", "Gemini", "Claude", "Copilot", "You.co
 
 export default function CitationsAdmin() {
   const { isAdmin } = useAuth();
-  const headerVisible = useAutoHideOnScroll();
   const [citations, setCitations] = useState<Citation[]>([]);
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [loading, setLoading] = useState(true);
