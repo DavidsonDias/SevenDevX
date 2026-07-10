@@ -474,8 +474,8 @@ const ProjectsAdmin = () => {
               </AnimatePresence>
             </div>
           )}
-        </main>
-      </div>
+        </div>
+      </AdminPageShell>
 
       {/* Edit/Create Dialog */}
       <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
