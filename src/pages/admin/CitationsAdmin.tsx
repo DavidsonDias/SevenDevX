@@ -120,7 +120,6 @@ export default function CitationsAdmin() {
       <AdminPageShell
         title="Citation Engine"
         subtitle="Monitor de menções em LLMs"
-        icon={<Megaphone className="w-4 h-4 text-primary" />}
         actions={
           <>
             <button onClick={load} className="p-2 rounded-lg border border-white/10 hover:bg-white/5">
