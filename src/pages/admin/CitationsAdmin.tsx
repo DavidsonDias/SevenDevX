@@ -325,8 +325,8 @@ export default function CitationsAdmin() {
               </div>
             )}
           </GlassCard>
-        </main>
-      </div>
+        </div>
+      </AdminPageShell>
     </>
   );
 }
