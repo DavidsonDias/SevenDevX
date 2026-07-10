@@ -178,8 +178,8 @@ export default function AppInstallerButton() {
                   {/* Logo mark */}
                   <div className="relative shrink-0">
                     <div className="absolute inset-0 rounded-xl bg-white/10 blur-lg" />
-                    <div className="relative w-12 h-12 rounded-xl border border-white/15 bg-gradient-to-br from-white/10 to-white/[0.02] flex items-center justify-center">
-                      <span className="font-orbitron text-lg font-black text-white leading-none">7</span>
+                    <div className="relative w-12 h-12 rounded-xl border border-white/15 bg-gradient-to-br from-white/10 to-white/[0.02] flex items-center justify-center overflow-hidden">
+                      <img src={logoSevenDevX} alt="SevenDevX" className="w-8 h-8 object-contain" />
                     </div>
                   </div>
 
