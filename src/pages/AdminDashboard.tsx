@@ -60,7 +60,7 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const { user, isAdmin, isLoading: authLoading, signOut } = useAuth();
   const { toast } = useToast();
-  const headerVisible = useAutoHideOnScroll();
+  
   
   
   const [isLoading, setIsLoading] = useState(true);
