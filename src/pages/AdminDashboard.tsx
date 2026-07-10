@@ -16,7 +16,7 @@ import { useAuthContext as useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import SEOHead from "@/components/SEOHead";
 import AiInsightsBlock from "@/components/admin/AiInsightsBlock";
-import AdminMenu from "@/components/admin/AdminMenu";
+import AdminPageShell from "@/components/admin/AdminPageShell";
 import GlobalSearch from "@/components/admin/GlobalSearch";
 import KpiCards from "@/components/admin/KpiCards";
 import GlassCard from "@/components/GlassCard";
