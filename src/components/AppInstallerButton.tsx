@@ -8,6 +8,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ArrowUpRight, Share, PlusSquare } from "lucide-react";
+import logoSevenDevX from "@/assets/logo.svg";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
