@@ -137,7 +137,7 @@ export default function AppInstallerButton() {
             exit={{ opacity: 0, y: 10, scale: 0.9 }}
             transition={{ type: "spring", stiffness: 300, damping: 26 }}
             onClick={() => { setOpen(true); setDock(false); }}
-            className="fixed bottom-6 right-6 z-[9998] group"
+            className="fixed bottom-6 left-6 z-[9998] group"
             aria-label="Instalar SevenDevX"
           >
             <span className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 via-white/5 to-transparent blur-xl opacity-70 group-hover:opacity-100 transition-opacity" />
