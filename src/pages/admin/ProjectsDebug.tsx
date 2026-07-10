@@ -16,8 +16,6 @@ import AdminPageShell from "@/components/admin/AdminPageShell";
 
 const ProjectsDebug = () => {
   const navigate = useNavigate();
-  const goBack = useSmartBack();
-  const headerVisible = useAutoHideOnScroll();
   const { isAdmin, isLoading: authLoading } = useAuthContext();
 
   if (!authLoading && !isAdmin) {
