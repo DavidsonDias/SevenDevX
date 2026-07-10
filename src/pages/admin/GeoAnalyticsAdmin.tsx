@@ -46,7 +46,6 @@ interface PageView {
 
 export default function GeoAnalyticsAdmin() {
   const { isAdmin } = useAuth();
-  const headerVisible = useAutoHideOnScroll();
   const [loading, setLoading] = useState(true);
   const [views, setViews] = useState<PageView[]>([]);
   const [days, setDays] = useState(30);
