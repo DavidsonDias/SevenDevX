@@ -9,6 +9,7 @@ import { AlertTriangle, CheckCircle2, Loader2 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { Badge } from "@/components/ui/badge";
 import SEOHead from "@/components/SEOHead";
 import type { DbProject } from "@/hooks/useProjects";
 import AdminPageShell from "@/components/admin/AdminPageShell";
