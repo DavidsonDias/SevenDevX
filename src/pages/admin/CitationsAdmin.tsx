@@ -11,11 +11,10 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthContext as useAuth } from "@/contexts/AuthContext";
-import AdminMenu from "@/components/admin/AdminMenu";
+import AdminPageShell from "@/components/admin/AdminPageShell";
 import GlassCard from "@/components/GlassCard";
 import SEOHead from "@/components/SEOHead";
 import CitationMonitorSettings from "@/components/admin/CitationMonitorSettings";
-import { useAutoHideOnScroll } from "@/hooks/useAutoHideOnScroll";
 import { toast } from "sonner";
 
 interface Citation {
