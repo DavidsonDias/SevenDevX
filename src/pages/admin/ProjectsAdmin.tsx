@@ -16,7 +16,7 @@ import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
-import { useAutoHideOnScroll } from "@/hooks/useAutoHideOnScroll";
+import AdminPageShell from "@/components/admin/AdminPageShell";
 import SEOHead from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
