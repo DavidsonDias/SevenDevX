@@ -316,7 +316,8 @@ export default function GeoAnalyticsAdmin() {
             ))}
           </div>
         </GlassCard>
-      </main>
-    </div>
+        </div>
+      </AdminPageShell>
+    </>
   );
 }
