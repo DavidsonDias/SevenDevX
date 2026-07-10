@@ -5,17 +5,13 @@
 
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, AlertTriangle, CheckCircle2, Loader2 } from "lucide-react";
+import { AlertTriangle, CheckCircle2, Loader2 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import SEOHead from "@/components/SEOHead";
 import type { DbProject } from "@/hooks/useProjects";
-import Breadcrumb from "@/components/admin/Breadcrumb";
-import { useSmartBack } from "@/hooks/useSmartBack";
-import { useAutoHideOnScroll } from "@/hooks/useAutoHideOnScroll";
+import AdminPageShell from "@/components/admin/AdminPageShell";
 
 const ProjectsDebug = () => {
   const navigate = useNavigate();
