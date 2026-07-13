@@ -9,6 +9,24 @@ const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')!;
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   try {
+    // Auth: require internal service secret OR admin JWT
+    const authHeader = req.headers.get('Authorization') || '';
+    const token = authHeader.replace(/^Bearer\s+/i, '');
+    let authorized = false;
+    if (token && token === SERVICE_KEY) {
+      authorized = true;
+    } else if (token) {
+      const admin = createClient(SUPABASE_URL, SERVICE_KEY);
+      const { data: userData } = await admin.auth.getUser(token);
+      if (userData?.user) {
+        const { data: r } = await admin.from('user_roles').select('role').eq('user_id', userData.user.id).eq('role', 'admin').maybeSingle();
+        if (r) authorized = true;
+      }
+    }
+    if (!authorized) {
+      return new Response(JSON.stringify({ error: 'unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+
     const { contact_id } = await req.json();
     if (!contact_id) return new Response(JSON.stringify({ error: 'contact_id_required' }), { status: 400, headers: corsHeaders });
 

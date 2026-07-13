@@ -9,6 +9,22 @@ const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   const sb = createClient(SUPABASE_URL, SERVICE_ROLE);
+  // Auth: require internal service secret OR admin JWT
+  const authHeader = req.headers.get("Authorization") || "";
+  const token = authHeader.replace(/^Bearer\s+/i, "");
+  let authorized = false;
+  if (token && token === SERVICE_ROLE) {
+    authorized = true;
+  } else if (token) {
+    const { data: u } = await sb.auth.getUser(token);
+    if (u?.user) {
+      const { data: r } = await sb.from("user_roles").select("role").eq("user_id", u.user.id).eq("role", "admin").maybeSingle();
+      if (r) authorized = true;
+    }
+  }
+  if (!authorized) {
+    return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  }
   try {
     const { data: settings } = await sb.from("system_settings").select("key,value");
     const map = Object.fromEntries((settings || []).map((s: any) => [s.key, s.value]));
@@ -108,7 +124,7 @@ Deno.serve(async (req) => {
         if (r.ok) sent++;
       }
     }
-    return new Response(JSON.stringify({ ok: true, sent, recipients: emails.length, leads: leads?.length || 0, income, projectedRevenue }),
+    return new Response(JSON.stringify({ ok: true, sent, recipients: emails.length }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
     return new Response(JSON.stringify({ error: (e as Error).message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });

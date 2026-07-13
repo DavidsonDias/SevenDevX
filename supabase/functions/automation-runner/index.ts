@@ -122,6 +122,26 @@ async function runAction(act: any, payload: any, sb: any): Promise<any> {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
+    // Auth: require internal service secret OR admin JWT
+    const authHeader = req.headers.get("Authorization") || "";
+    const token = authHeader.replace(/^Bearer\s+/i, "");
+    let authorized = false;
+    if (token && token === SERVICE_KEY) {
+      authorized = true;
+    } else if (token) {
+      const userClient = createClient(SUPABASE_URL, Deno.env.get("SUPABASE_ANON_KEY") ?? "", {
+        global: { headers: { Authorization: `Bearer ${token}` } },
+      });
+      const { data: userData } = await userClient.auth.getUser(token);
+      if (userData?.user) {
+        const admin = createClient(SUPABASE_URL, SERVICE_KEY);
+        const { data: roles } = await admin.from("user_roles").select("role").eq("user_id", userData.user.id).eq("role", "admin").maybeSingle();
+        if (roles) authorized = true;
+      }
+    }
+    if (!authorized) {
+      return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
     const sb = createClient(SUPABASE_URL, SERVICE_KEY);
     const { trigger_event, payload = {}, event_id, automation_id } = await req.json();
 

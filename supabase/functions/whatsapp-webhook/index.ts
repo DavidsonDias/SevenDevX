@@ -26,7 +26,30 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const payload = await req.json();
+    // Verify Meta X-Hub-Signature-256 HMAC before trusting the payload
+    const rawBody = await req.text();
+    const sigHeader = req.headers.get('x-hub-signature-256') || '';
+    const { data: appSecretRow } = await supa.from('system_settings').select('value').eq('key', 'whatsapp_app_secret').maybeSingle();
+    const appSecret = appSecretRow?.value ? String(appSecretRow.value).replace(/"/g, '') : (Deno.env.get('WHATSAPP_APP_SECRET') ?? '');
+    if (!appSecret || !sigHeader.startsWith('sha256=')) {
+      return new Response(JSON.stringify({ error: 'signature_required' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+    const key = await crypto.subtle.importKey(
+      'raw', new TextEncoder().encode(appSecret),
+      { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+    );
+    const macBuf = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(rawBody));
+    const expected = Array.from(new Uint8Array(macBuf)).map((b) => b.toString(16).padStart(2, '0')).join('');
+    const provided = sigHeader.slice('sha256='.length).toLowerCase();
+    if (expected.length !== provided.length) {
+      return new Response(JSON.stringify({ error: 'invalid_signature' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+    let diff = 0;
+    for (let i = 0; i < expected.length; i++) diff |= expected.charCodeAt(i) ^ provided.charCodeAt(i);
+    if (diff !== 0) {
+      return new Response(JSON.stringify({ error: 'invalid_signature' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+    const payload = JSON.parse(rawBody);
     const entries = payload?.entry || [];
     for (const entry of entries) {
       for (const change of entry.changes || []) {
