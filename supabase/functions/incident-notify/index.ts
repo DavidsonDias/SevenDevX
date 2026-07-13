@@ -10,9 +10,33 @@ const SEV_COLOR: Record<string, number> = { critical: 0xef4444, high: 0xf97316, 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   try {
+    // Auth: require internal service secret OR admin JWT
+    const authHeader = req.headers.get('Authorization') || '';
+    const token = authHeader.replace(/^Bearer\s+/i, '');
+    let authorized = false;
+    const supa = createClient(SUPABASE_URL, SERVICE_KEY);
+    if (token && token === SERVICE_KEY) {
+      authorized = true;
+    } else if (token) {
+      const { data: u } = await supa.auth.getUser(token);
+      if (u?.user) {
+        const { data: r } = await supa.from('user_roles').select('role').eq('user_id', u.user.id).eq('role', 'admin').maybeSingle();
+        if (r) authorized = true;
+      }
+    }
+    if (!authorized) {
+      return new Response(JSON.stringify({ error: 'unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+
     const body = await req.json();
     const inc = body.incident || body;
-    const supa = createClient(SUPABASE_URL, SERVICE_KEY);
+    // Sanitize incident fields to prevent chat injection
+    const sanitize = (s: any, max = 500) => String(s ?? '').replace(/[\r\n]+/g, ' ').slice(0, max);
+    inc.title = sanitize(inc.title, 200);
+    inc.description = sanitize(inc.description, 1000);
+    inc.impact = sanitize(inc.impact, 500);
+    inc.severity = sanitize(inc.severity, 20);
+    inc.status = sanitize(inc.status, 20);
     const { data: settings } = await supa.from('system_settings').select('key,value').in('key', ['discord_webhook_url', 'slack_webhook_url']);
     const map: Record<string, string> = {};
     for (const r of settings || []) map[r.key] = typeof r.value === 'string' ? r.value : (r.value?.url ?? '');
