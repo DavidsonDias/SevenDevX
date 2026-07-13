@@ -82,7 +82,7 @@ Deno.serve(async (req) => {
         if (r.ok) sent++;
       }
     }
-    return new Response(JSON.stringify({ ok: true, sent, recipients: emails.length, leads: leads?.length || 0, income, expense }),
+    return new Response(JSON.stringify({ ok: true, sent, recipients: emails.length }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
     return new Response(JSON.stringify({ error: (e as Error).message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
