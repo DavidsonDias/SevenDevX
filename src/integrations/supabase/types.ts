@@ -3073,6 +3073,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_list_mfa_status: {
+        Args: never
+        Returns: {
+          enabled_at: string
+          has_backup_codes: boolean
+          last_used_at: string
+          user_id: string
+        }[]
+      }
       admin_list_users: {
         Args: never
         Returns: {
