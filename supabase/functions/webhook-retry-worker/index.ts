@@ -15,6 +15,14 @@ async function sign(secret: string, body: string): Promise<string> {
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  const auth = req.headers.get('Authorization') || '';
+  const provided = auth.replace(/^Bearer\s+/i, '');
+  const okAuth = (CRON_SECRET && provided === CRON_SECRET) || (SERVICE_KEY && provided === SERVICE_KEY);
+  if (!okAuth) {
+    return new Response(JSON.stringify({ error: 'unauthorized' }), {
+      status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
   try {
     const supa = createClient(SUPABASE_URL, SERVICE_KEY);
     const { data: pending } = await supa
