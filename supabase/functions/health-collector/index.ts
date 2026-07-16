@@ -5,6 +5,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+const CRON_SECRET = Deno.env.get('CRON_SECRET') ?? '';
 
 async function check(name: string, fn: () => Promise<boolean>): Promise<any> {
   const t0 = Date.now();
@@ -21,6 +22,14 @@ async function check(name: string, fn: () => Promise<boolean>): Promise<any> {
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  const auth = req.headers.get('Authorization') || '';
+  const provided = auth.replace(/^Bearer\s+/i, '');
+  const okAuth = (CRON_SECRET && provided === CRON_SECRET) || (SERVICE_KEY && provided === SERVICE_KEY);
+  if (!okAuth) {
+    return new Response(JSON.stringify({ error: 'unauthorized' }), {
+      status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
   try {
     const supa = createClient(SUPABASE_URL, SERVICE_KEY);
 
