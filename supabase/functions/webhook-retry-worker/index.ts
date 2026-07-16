@@ -4,6 +4,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const CRON_SECRET = Deno.env.get('CRON_SECRET') ?? '';
 
 async function sign(secret: string, body: string): Promise<string> {
   const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(secret),
