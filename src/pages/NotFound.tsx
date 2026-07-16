@@ -133,7 +133,7 @@ const NotFound = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.6 }}
-          className="text-sm text-muted-foreground/60 mb-12 max-w-md mx-auto"
+          className="text-sm text-muted-foreground mb-12 max-w-md mx-auto"
         >
           O destino que você procura não existe neste servidor. Verifique o endereço ou retorne à base.
         </motion.p>
