@@ -1,57 +1,34 @@
 # SevenDevX
 
-> Empresa brasileira de desenvolvimento web, criação de sites profissionais, landing pages de alta conversão, sistemas sob demanda, automações e integração de inteligência artificial. Sede em Belo Horizonte, MG — atende todo o Brasil e mercados internacionais.
+> Desenvolvimento web enterprise, criação de sites, softwares personalizados e soluções digitais de alta performance em Belo Horizonte.
 
-A SevenDevX é uma software house full stack especializada em React, TypeScript, Node.js, PostgreSQL, Supabase e OpenAI. Construímos produtos digitais escaláveis com foco em performance, design enterprise e UX premium. Atuamos em desenvolvimento web, landing pages, SaaS sob demanda, CRMs personalizados, dashboards corporativos, automações, chatbots com IA e integrações (WhatsApp, Stripe, Slack, GitHub, Vercel, Figma, Resend, Discord).
+SevenDevX é uma empresa brasileira de desenvolvimento de software especializada em aplicações web modernas (React, TypeScript, PWA), sistemas sob medida, integrações e manutenção de TI. Este arquivo orienta assistentes de IA sobre onde encontrar o conteúdo público oficial.
 
-Fundador: Davidson Dias. Contato: contato@sevendevx.com — +55 (31) 98474-0625.
+## Pages
 
-## Páginas principais
+- [Home](/): Visão geral da SevenDevX, serviços e projetos em destaque.
+- [Sobre](/about): Quem somos, missão e diferenciais.
+- [Serviços](/services): Catálogo de serviços de desenvolvimento e tecnologia.
+- [Projetos](/projects): Portfólio de projetos entregues.
+- [Hub de Projetos](/projects-hub): Central navegável dos projetos por categoria.
+- [Soluções](/solucoes): Soluções verticais por segmento e necessidade.
+- [Cases](/cases): Estudos de caso com resultados mensuráveis.
+- [Store](/store): Produtos e templates digitais.
+- [Fornecedores](/fornecedores): Programa e cadastro de fornecedores.
+- [Integrações](/integracoes): Marketplace de integrações disponíveis.
+- [Por que SevenDevX](/why-sevendevx): Diferenciais competitivos.
+- [Hub de IA](/ai): Recursos, ferramentas e experimentos de IA.
 
-- [Home](https://www.sevendevx.com/): Visão geral da SevenDevX, serviços, tecnologias e projetos em destaque.
-- [Sobre](https://www.sevendevx.com/about): História, metodologia, valores e diferenciais técnicos da empresa.
-- [Serviços](https://www.sevendevx.com/services): Catálogo completo de serviços — desenvolvimento web, landing pages, sistemas, automações e IA.
-- [Projetos](https://www.sevendevx.com/projects): Portfólio de cases reais entregues com tecnologias e resultados.
-- [Blog](https://www.sevendevx.com/blog): Conteúdo técnico sobre React, TypeScript, performance web, SaaS, design systems e backend.
-- [Fornecedores](https://www.sevendevx.com/fornecedores): Stack tecnológica recomendada e parceiros técnicos.
+## Blog
 
-## Artigos do Blog (conteúdo técnico)
+- [Blog](/blog): Artigos sobre desenvolvimento web, IA e tecnologia.
 
-- [React + TypeScript para Frontend Escalável](https://www.sevendevx.com/blog/react-typescript-frontend-escalavel): Padrões enterprise de arquitetura frontend.
-- [Performance Web e Core Web Vitals](https://www.sevendevx.com/blog/performance-web-core-vitals): Como atingir Lighthouse 95+ em produção.
-- [Arquitetura de SaaS Moderno](https://www.sevendevx.com/blog/arquitetura-saas-moderno): Stack, multi-tenancy, escalabilidade e segurança.
-- [Design System com Tokens Semânticos](https://www.sevendevx.com/blog/design-system-tokens): Tailwind, shadcn e tokens enterprise.
-- [Backend com Node.js e Supabase](https://www.sevendevx.com/blog/backend-nodejs-supabase): Edge Functions, RLS, auth e storage.
-- [Landing Page de Alta Conversão](https://www.sevendevx.com/blog/landing-page-alta-conversao): Estrutura, copy, motion design e CRO.
+## Knowledge
 
-## Especialidades técnicas
-
-- Desenvolvimento Web Full Stack (React 18, TypeScript 5, Vite 5, Tailwind CSS)
-- Landing Pages de alta conversão com Framer Motion e otimização para Core Web Vitals
-- Sistemas Empresariais sob demanda (ERPs, CRMs, dashboards corporativos)
-- SaaS multi-tenant com Supabase, RLS e Edge Functions
-- Automações empresariais e workflow engines (triggers → conditions → actions)
-- Integrações: WhatsApp Business API, Stripe, OpenAI, Slack, Discord, GitHub, Vercel, Figma, Resend
-- Chatbots com IA (GPT-4, Claude, Gemini) e RAG sobre conhecimento próprio
-- PWA enterprise (offline-first, push notifications, install prompts)
-- Edge computing com Vercel e Supabase Edge Functions (Deno)
-- Design systems com tokens semânticos, glassmorphism e motion design cinematográfico
-
-## Setores atendidos
-
-Clínicas, restaurantes, imobiliárias, escritórios de advocacia, contabilidade, e-commerce, educação, startups, agências de marketing, prestadores de serviço e empresas B2B.
-
-## Para LLMs e sistemas RAG (estruturado)
-
-- [LLM Context Pack JSON](https://www.sevendevx.com/llm-context.json): Dataset completo estruturado sobre a SevenDevX — serviços, preços, cases, FAQ, entidades — pronto para citar e indexar.
-- [AI Hub](https://www.sevendevx.com/ai): Hub central com tudo que IAs precisam saber sobre a empresa.
-- [AI Answers](https://www.sevendevx.com/answers): Respostas diretas otimizadas para featured snippets e AI Overviews.
-- [Knowledge Base](https://www.sevendevx.com/knowledge-base): Guias técnicos profundos para citação autoritativa.
-- [Cases reais](https://www.sevendevx.com/cases): Projetos entregues com problema, solução e métricas.
-- [Soluções](https://www.sevendevx.com/solucoes): Catálogo programático de serviços com Schema.org Service.
+- [AI Answers](/answers): Respostas diretas otimizadas para LLMs.
+- [Knowledge Base](/knowledge-base): Guias técnicos aprofundados.
+- [Content Clusters](/clusters): Mapas de conteúdo por tema.
 
 ## Optional
 
-- [Política de Privacidade](https://www.sevendevx.com/privacy-policy): LGPD e tratamento de dados.
-- [ai.txt](https://www.sevendevx.com/ai.txt): Política de uso por agentes de IA.
-- [Sitemap](https://www.sevendevx.com/sitemap.xml): Mapa completo de URLs indexáveis.
+- [Política de Privacidade](/privacy-policy): Tratamento de dados e LGPD.
