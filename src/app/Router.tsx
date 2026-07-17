@@ -143,6 +143,7 @@ function AnimatedRoutes() {
             <Route path="/cases/:slug" element={<CaseStudyPage />} />
             <Route path="/clusters" element={<ContentClusters />} />
             <Route path="/integracoes" element={<IntegrationsMarketplace />} />
+            <Route path="/criacao-de-sites-profissionais" element={<CriacaoSitesProfissionais />} />
 
 
             {/* Protected Routes */}
