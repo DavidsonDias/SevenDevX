@@ -85,6 +85,7 @@ const CronAdmin = lazy(() => import("@/pages/admin/CronAdmin"));
 const BrandStudioAdmin = lazy(() => import("@/pages/admin/BrandStudioAdmin"));
 const OAuthAdmin = lazy(() => import("@/pages/admin/OAuthAdmin"));
 const OAuthCallback = lazy(() => import("@/pages/OAuthCallback"));
+const CriacaoSitesProfissionais = lazy(() => import("@/pages/geo/CriacaoSitesProfissionais"));
 
 const pageTransition = {
   initial: { opacity: 0, y: 12, scale: 0.99 },
@@ -142,6 +143,7 @@ function AnimatedRoutes() {
             <Route path="/cases/:slug" element={<CaseStudyPage />} />
             <Route path="/clusters" element={<ContentClusters />} />
             <Route path="/integracoes" element={<IntegrationsMarketplace />} />
+            <Route path="/criacao-de-sites-profissionais" element={<CriacaoSitesProfissionais />} />
 
 
             {/* Protected Routes */}
