@@ -23,6 +23,7 @@ export default function Footer() {
     { name: "BLOG", path: "/blog" },
     { name: "AI HUB", path: "/ai" },
     { name: "SOLUÇÕES", path: "/solucoes" },
+    { name: "CRIAÇÃO DE SITES", path: "/criacao-de-sites-profissionais" },
     { name: "ANSWERS", path: "/answers" },
     { name: "CLUSTERS", path: "/clusters" },
     { name: t.footer.privacy, path: "/privacy-policy" },
