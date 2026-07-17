@@ -193,7 +193,7 @@ export default function CriacaoSitesProfissionais() {
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-white/[0.03] mb-6">
                   <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                   <span className="text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
-                    Aceitando 3 novos projetos · 2026
+                    Aceitando Novos Projetos · 2026
                   </span>
                 </div>
                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 leading-[1.02]">
@@ -233,7 +233,7 @@ export default function CriacaoSitesProfissionais() {
                 {/* Mini stats */}
                 <div className="grid grid-cols-3 gap-6 max-w-md">
                   {[
-                    { n: 47, s: "+", label: "Projetos entregues" },
+                    { n: 17, s: "+", label: "Projetos entregues" },
                     { n: 98, s: "", label: "Lighthouse médio" },
                     { n: 7, s: "d", label: "Prazo mínimo" },
                   ].map((s) => (
