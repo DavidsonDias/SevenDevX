@@ -34,6 +34,7 @@ const NAV: { label: string; to: string; icon: any; group: string }[] = [
 
   // Conteúdo
   { group: "Conteúdo", label: "Serviços",      to: "/admin/services",   icon: Sparkles },
+  { group: "Conteúdo", label: "Criação de Sites", to: "/admin/site-creation", icon: Sparkles },
   { group: "Conteúdo", label: "Processo",      to: "/admin/process",    icon: Workflow },
   { group: "Conteúdo", label: "FAQ",           to: "/admin/faq",        icon: FileQuestion },
   { group: "Conteúdo", label: "Blog",          to: "/admin/blog",       icon: ListTodo },
