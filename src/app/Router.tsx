@@ -32,6 +32,7 @@ const PipelineAdmin = lazy(() => import("@/pages/admin/PipelineAdmin"));
 const ProcessAdmin = lazy(() => import("@/pages/admin/ProcessAdmin"));
 const FaqAdmin = lazy(() => import("@/pages/admin/FaqAdmin"));
 const ServicesAdmin = lazy(() => import("@/pages/admin/ServicesAdmin"));
+const SiteCreationAdmin = lazy(() => import("@/pages/admin/SiteCreationAdmin"));
 const FinanceAdmin = lazy(() => import("@/pages/admin/FinanceAdmin"));
 const IntegrationsAdmin = lazy(() => import("@/pages/admin/IntegrationsAdmin"));
 const UsersAdmin = lazy(() => import("@/pages/admin/UsersAdmin"));
