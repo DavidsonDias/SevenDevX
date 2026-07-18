@@ -1,124 +1,94 @@
-# SevenOS — Fase 3 Enterprise Security & Reliability
+# Módulo Criação de Sites — SevenOS
 
-Sem i18n. Foco em segurança, confiabilidade e profundidade operacional. Quatro frentes integradas.
+Transformar a página `/criacao-de-sites-profissionais` em CMS-driven, preservando 100% o layout, animações e identidade atuais. Reutilizar módulos existentes (Projetos, Tecnologias, FAQ, Contacts) — sem duplicar dados.
 
----
+## Escopo
 
-## 1. Segurança Avançada (2FA + Sessões Geo + Alertas)
+Rota admin: `/admin/site-creation` com 13 abas (Visão geral, Hero, Tecnologias, Diferenciais, Projetos, Processo, Comparativo, ROI, FAQ, CTA, Diagnóstico, SEO/GEO, Config).
 
-**2FA TOTP obrigatório para admins:**
-- Tabela `user_mfa` (user_id, secret_encrypted, enabled_at, backup_codes[], last_used_at).
-- Edge function `mfa-enroll` — gera secret TOTP + QR code (otpauth://) + 10 backup codes.
-- Edge function `mfa-verify` — valida código de 6 dígitos (lib `otpauth` via esm.sh).
-- Flag `mfa_required_for_admins` em `system_settings` (nova tabela).
-- Guard no `ProtectedRoute`: se admin sem MFA e flag ligada → redirect `/admin/security/mfa/enroll`.
-- Página `/admin/security/mfa` — enroll wizard (QR + verificar + baixar backup codes) + reset.
+Cada seção: status, ordem, edição, preview, publicação (draft/published), histórico, ocultar sem excluir, restaurar.
 
-**Geolocalização de sessões:**
-- Trigger `fn_enrich_session()` em `user_sessions` INSERT chama edge function `session-geo` que consulta `ipapi.co` (free tier, sem key) e preenche `country`, `city`, `lat`, `lng`, `isp`.
-- `SessionsAdmin` ganha mapa (Leaflet via CDN dinâmico) + lista com bandeira do país + badge "Suspeito" quando IP muda de país em < 1h.
-- Edge function `session-anomaly-check` roda no INSERT → se anômalo, chama `fn_emit_notification` com severity=error + dispara `automation-runner` com event `session.suspicious`.
+## Arquitetura de dados
 
-**Política de senhas configurável:**
-- `system_settings`: `password_min_length`, `password_require_special`, `password_require_number`, `password_max_age_days`.
-- Validação no client (Auth + Profile) lendo as flags.
-
-## 2. Webhooks Enterprise (Retry + DLQ + HMAC verificado)
-
-- `webhooks`: adicionar `retry_policy jsonb` (`{max_attempts, backoff_seconds, multiplier}`), `dead_letter_after int`, `verify_signature boolean`.
-- `webhook_deliveries`: já tem `attempt` — adicionar `next_retry_at`, `is_dead_letter`, `signature_verified`.
-- Nova tabela `webhook_dlq` (delivery_id ref, payload, error, moved_at).
-- Edge function `webhook-dispatch` (já existe) — adicionar lógica de retry exponencial + verificação HMAC bidirecional (assina saída + valida `X-SevenOS-Signature` em respostas se configurado).
-- Edge function `webhook-retry-worker` invocada por `pg_cron` a cada minuto — varre `webhook_deliveries` com `next_retry_at <= now()` e re-dispara; após `max_attempts` move para DLQ.
-- `WebhooksAdmin`: aba "Dead Letter Queue" com replay em massa (checkbox + botão "Reenfileirar selecionados") e botão "Replay all failed in last 24h".
-- `WebhookDebugger` (já existe): mostrar histórico completo de tentativas com signature status.
-
-## 3. CRM Inteligente (Lead Scoring IA + Forecast + Templates)
-
-- `contacts`: adicionar `lead_score int default 0`, `score_reasons jsonb`, `assigned_to uuid ref auth.users`, `sla_due_at timestamptz`, `last_contacted_at`.
-- Edge function `lead-score-ai` — recebe contact, chama Lovable AI (gemini-2.5-flash) com prompt estruturado (email domain, empresa, mensagem, fonte) → retorna `{score, reasons[], priority}`. Trigger em `contacts INSERT` dispara.
-- `projects`: adicionar `probability int` (0-100), `expected_close_date`, `forecast_value numeric`. RPC `fn_pipeline_forecast()` retorna receita ponderada por mês (próximos 6 meses).
-- Nova tabela `response_templates` (id, name, subject, body, variables[], category, usage_count).
-- `ContactCenterAdmin`: 
-  - Seletor de responsável + SLA timer visual (verde/amarelo/vermelho).
-  - Botão "Converter em projeto" (pré-popula form com dados do lead).
-  - Drawer de templates de resposta com merge tags `{{name}}`, `{{company}}`.
-  - Badge de score + tooltip com razões da IA.
-- Nova página `/admin/forecast` — gráfico de receita prevista (Recharts) + breakdown por estágio + top deals.
-
-## 4. Observabilidade Pro (Uptime Histórico + Backup + Alertas)
-
-**Histórico de uptime:**
-- Nova tabela `service_health_snapshots` (service_name, status, latency_ms, checked_at, error).
-- Edge function `health-collector` chamada por `pg_cron` a cada 5min — pinga services (DB, Edge, AI Gateway, Resend, Stripe) e grava snapshot.
-- `SystemHealthAdmin` ganha gráfico de uptime (últimos 7/30 dias) por serviço + cálculo de SLO (99.9% target) + lista de incidentes inferidos.
-- Tabela `incidents`: já existe? se sim, ligar snapshots → auto-criar incident em downtime > 2min consecutivos.
-
-**Backup/Export:**
-- Edge function `tenant-export` — admin only, gera ZIP com JSON de todas as tabelas relevantes (projects, contacts, transactions, etc), upload para bucket `backups` (privado), retorna signed URL.
-- Página `/admin/backup` — botão "Gerar snapshot agora", lista de snapshots anteriores (download + delete), opção "Agendar diário" (pg_cron).
-- Retenção configurável em `system_settings` (default 30 dias).
-
-**Alertas críticos:**
-- Trigger em `user_roles INSERT/UPDATE` (role change) → notification severity=warning + automation event `security.role_changed`.
-- Trigger em `audit_log` para eventos críticos (secret rotation, MFA disable, mass delete) → notification + email via Resend.
-
----
-
-## Migration (uma só, ordenada)
+Uma tabela mãe `site_page_sections` com JSON por seção + rascunho/publicado. Referências (não cópias) para módulos existentes:
 
 ```text
-- user_mfa (RLS: user_id = auth.uid())
-- system_settings (RLS: admin only) + seed defaults
-- service_health_snapshots (RLS: admin only)
-- webhook_dlq (RLS: admin only)
-- response_templates (RLS: admin only)
-- ALTER user_sessions: country, city, lat, lng, isp, is_suspicious
-- ALTER webhooks: retry_policy, dead_letter_after, verify_signature
-- ALTER webhook_deliveries: next_retry_at, is_dead_letter, signature_verified
-- ALTER contacts: lead_score, score_reasons, assigned_to, sla_due_at, last_contacted_at
-- ALTER projects: probability, expected_close_date, forecast_value
-- RPC fn_pipeline_forecast()
-- Triggers: fn_enrich_session, fn_score_lead, fn_alert_role_change, fn_alert_critical_audit
-- pg_cron: health-collector (5min), webhook-retry-worker (1min), tenant-export-scheduled (diário se ligado)
-- Bucket "backups" privado
+site_page_config           singleton (settings, SEO, GEO, local, diagnóstico)
+site_page_sections         hero, tech, differentials, process, comparison, roi, cta (JSONB draft + published)
+site_page_metrics          métricas do hero (valor, prefixo, sufixo, fonte auto/manual, ordem)
+site_page_differentials    cards (título, desc, ícone lucide, ordem, status, destaque)
+site_page_process_steps    etapas (número, título, desc, ícone, prazo, entregáveis)
+site_page_comparison_rows  linhas (critério, coluna A, coluna B, ícones, ordem)
+site_page_roi_metrics      indicadores (valor, sufixo, título, desc, fonte, url)
+site_page_projects         FK -> projects.id (ordem, destaque, is_hero, overrides opcionais)
+site_page_tech             FK -> tech_registry.id (ordem, status, velocidade marquee global no config)
+site_page_faqs             FK -> faq_items.id (ordem, override_answer opcional)
+site_page_versions         snapshots JSON (rollback + histórico por usuário)
+site_page_diagnostics      leads do fluxo (FK contacts.id, respostas JSONB, utm, consentimento)
 ```
 
-## Edge Functions novas
+Todas com RLS admin-only para escrita; leitura pública apenas do "published" via view `v_site_page_public`.
 
-- `mfa-enroll`, `mfa-verify`, `mfa-disable`
-- `session-geo`, `session-anomaly-check`
-- `webhook-retry-worker`
-- `lead-score-ai`
-- `health-collector`
-- `tenant-export`
+## Preservação da página
 
-## Páginas novas
+- **Não** recriar `CriacaoSitesProfissionais.tsx`. Refatorar para consumir hook `useSitePageData()` (React Query) que devolve tudo já resolvido (com joins para projects/tech/faqs).
+- Fallback: se DB vazio, mantém defaults atuais hardcoded como seed inicial (migration popula tabelas com o conteúdo de hoje).
+- Zero mudanças em Hero, mockup PsicoOne, marquee, cards, timeline, tabela, ROI, FAQ, CTA — só troca fonte dos dados.
 
-- `/admin/security/mfa` — enroll/manage 2FA
-- `/admin/forecast` — receita prevista
-- `/admin/backup` — snapshots & export
-- `/admin/webhooks/dlq` — dead letter queue (ou aba dentro de WebhooksAdmin)
+## Diagnóstico gratuito
 
-## Editados
+- Componente `DiagnosticoModal` reutilizado nos dois CTAs (Hero + CTA final).
+- Multi-step (config no admin: campos, ordem, obrigatoriedade).
+- Ao enviar: cria `contacts` (source=diagnostico, utm capturado), `site_page_diagnostics`, dispara notificação admin + evento `lead.created` (já existente), sem duplicar por email/telefone.
 
-- `ProtectedRoute.tsx` — guard MFA
-- `Auth.tsx` — challenge MFA pós-login
-- `SessionsAdmin.tsx` — mapa + flags + suspicious badge
-- `SystemHealthAdmin.tsx` — gráficos históricos + SLO
-- `WebhooksAdmin.tsx` — tab DLQ + retry config
-- `ContactCenterAdmin.tsx` — assignee, SLA, templates, score
-- `AdminMenu.tsx` — entradas: Segurança/2FA, Forecast, Backup
-- `system_settings` hook + tela em `/admin/system-health` ou nova
+## SEO/GEO
 
-## Ordem de execução
+- Aba edita: title, description, canonical, OG, robots, keywords.
+- GEO: resumo, área atendimento, bairros, JSON-LD Service + ProfessionalService + FAQPage + BreadcrumbList gerados dinamicamente a partir das seções visíveis.
+- Aviso ao trocar slug + gerar redirect 301 registrado em tabela `redirects`.
 
-1. Migration completa (tabelas + alters + triggers + cron + bucket).
-2. Edge functions de segurança (mfa-*, session-geo, anomaly).
-3. UI 2FA (enroll + guard + Auth challenge).
-4. Webhook retry worker + DLQ UI.
-5. Lead scoring + forecast + templates + ContactCenter v2.
-6. Health collector + SystemHealth gráficos + backup/export.
-7. Trigger alertas críticos.
+## Preview & Publicação
 
-Vou começar disparando a migration. Aprova para seguir?
+- Toggle Draft/Published por seção.
+- Preview isolado em `/admin/site-creation/preview` (mesma página consumindo `?preview=1` que carrega draft).
+- Botões: Salvar rascunho, Publicar tudo, Publicar seção, Restaurar versão N, Despublicar.
+- Autosave a cada 30s em rascunho.
+- Viewports: desktop / notebook / tablet / mobile via iframe.
+
+## Visão geral (dashboard)
+
+Cards: status, projeto principal, contagens (projetos/tech/diferenciais visíveis), diagnósticos totais/mês, taxa conversão (diag/pageviews via analytics_events já existente), SEO score placeholder, última publicação, mudanças pendentes.
+
+## Navegação
+
+Adicionar em `AdminMenu.tsx` grupo Conteúdo → "Criação de Sites" (`/admin/site-creation`).
+
+## Entregáveis (ordem de implementação)
+
+1. **Migration** — 12 tabelas + view pública + RLS + seed com conteúdo atual da página.
+2. **Hooks** — `useSitePage*` para cada seção + `useSitePagePublish`.
+3. **Refatorar** `CriacaoSitesProfissionais.tsx` para consumir hooks (mantendo JSX/animações).
+4. **Admin shell** `/admin/site-creation` com tabs shadcn.
+5. **Editores por aba** — forms + drag-and-drop (dnd-kit já no projeto) + seletor de projetos/tech/faq via Combobox.
+6. **DiagnosticoModal** + integração com contacts.
+7. **Preview iframe multi-device** + publicação/versionamento.
+8. **JSON-LD dinâmico** substituindo o estático atual.
+
+## Detalhes técnicos
+
+- Ícones dos diferenciais/processo: `LucideIconPicker` já existente.
+- Drag-and-drop: `@dnd-kit/core` (já usado em outros admins).
+- Estado: React Query + optimistic updates.
+- Sanitização: DOMPurify em campos de texto rico.
+- Validação: Zod schemas por seção.
+- Realtime opcional: canal `site_page` para preview colaborativo (fase futura).
+- Compat: mantém todas as rotas indexadas, canonical, sitemap.
+- Tipagem: enum `site_section_kind` + tipos gerados via `supabase gen types`.
+
+## Não incluso (fica para depois)
+
+- A/B testing por seção.
+- Multi-idioma da página (i18n).
+- Editor WYSIWYG rich-text (usa markdown + preview).
+
+Pronto para implementar. Confirma?
