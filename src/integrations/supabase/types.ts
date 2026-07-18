@@ -2284,6 +2284,494 @@ export type Database = {
         }
         Relationships: []
       }
+      site_page_comparison_rows: {
+        Row: {
+          created_at: string
+          criterion: string
+          icon_a: string | null
+          icon_b: string | null
+          id: string
+          is_active: boolean
+          is_highlighted: boolean
+          sort_order: number
+          updated_at: string
+          value_a: string
+          value_b: string
+        }
+        Insert: {
+          created_at?: string
+          criterion: string
+          icon_a?: string | null
+          icon_b?: string | null
+          id?: string
+          is_active?: boolean
+          is_highlighted?: boolean
+          sort_order?: number
+          updated_at?: string
+          value_a: string
+          value_b: string
+        }
+        Update: {
+          created_at?: string
+          criterion?: string
+          icon_a?: string | null
+          icon_b?: string | null
+          id?: string
+          is_active?: boolean
+          is_highlighted?: boolean
+          sort_order?: number
+          updated_at?: string
+          value_a?: string
+          value_b?: string
+        }
+        Relationships: []
+      }
+      site_page_config: {
+        Row: {
+          comparison_config: Json
+          created_at: string
+          cta_config: Json
+          diagnostico: Json
+          faq_config: Json
+          geo: Json
+          hero_config: Json
+          id: string
+          last_published_at: string | null
+          last_published_by: string | null
+          local: Json
+          page_slug: string
+          page_status: string
+          roi_config: Json
+          seo: Json
+          singleton: boolean
+          tech_config: Json
+          updated_at: string
+        }
+        Insert: {
+          comparison_config?: Json
+          created_at?: string
+          cta_config?: Json
+          diagnostico?: Json
+          faq_config?: Json
+          geo?: Json
+          hero_config?: Json
+          id?: string
+          last_published_at?: string | null
+          last_published_by?: string | null
+          local?: Json
+          page_slug?: string
+          page_status?: string
+          roi_config?: Json
+          seo?: Json
+          singleton?: boolean
+          tech_config?: Json
+          updated_at?: string
+        }
+        Update: {
+          comparison_config?: Json
+          created_at?: string
+          cta_config?: Json
+          diagnostico?: Json
+          faq_config?: Json
+          geo?: Json
+          hero_config?: Json
+          id?: string
+          last_published_at?: string | null
+          last_published_by?: string | null
+          local?: Json
+          page_slug?: string
+          page_status?: string
+          roi_config?: Json
+          seo?: Json
+          singleton?: boolean
+          tech_config?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      site_page_diagnostics: {
+        Row: {
+          answers: Json
+          consent_at: string | null
+          consent_lgpd: boolean
+          contact_id: string | null
+          created_at: string
+          id: string
+          source_url: string | null
+          utm: Json | null
+        }
+        Insert: {
+          answers?: Json
+          consent_at?: string | null
+          consent_lgpd?: boolean
+          contact_id?: string | null
+          created_at?: string
+          id?: string
+          source_url?: string | null
+          utm?: Json | null
+        }
+        Update: {
+          answers?: Json
+          consent_at?: string | null
+          consent_lgpd?: boolean
+          contact_id?: string | null
+          created_at?: string
+          id?: string
+          source_url?: string | null
+          utm?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_page_diagnostics_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      site_page_differentials: {
+        Row: {
+          created_at: string
+          description: string
+          icon: string
+          id: string
+          is_active: boolean
+          is_highlighted: boolean
+          link_url: string | null
+          sort_order: number
+          title: string
+          updated_at: string
+          variant: string | null
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          icon?: string
+          id?: string
+          is_active?: boolean
+          is_highlighted?: boolean
+          link_url?: string | null
+          sort_order?: number
+          title: string
+          updated_at?: string
+          variant?: string | null
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          is_active?: boolean
+          is_highlighted?: boolean
+          link_url?: string | null
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          variant?: string | null
+        }
+        Relationships: []
+      }
+      site_page_faqs: {
+        Row: {
+          created_at: string
+          faq_id: string
+          id: string
+          is_active: boolean
+          override_answer: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          faq_id: string
+          id?: string
+          is_active?: boolean
+          override_answer?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          faq_id?: string
+          id?: string
+          is_active?: boolean
+          override_answer?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_page_faqs_faq_id_fkey"
+            columns: ["faq_id"]
+            isOneToOne: true
+            referencedRelation: "faq_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      site_page_metrics: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          label: string
+          prefix: string | null
+          sort_order: number
+          source_kind: string
+          suffix: string | null
+          updated_at: string
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          label: string
+          prefix?: string | null
+          sort_order?: number
+          source_kind?: string
+          suffix?: string | null
+          updated_at?: string
+          value?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          label?: string
+          prefix?: string | null
+          sort_order?: number
+          source_kind?: string
+          suffix?: string | null
+          updated_at?: string
+          value?: number
+        }
+        Relationships: []
+      }
+      site_page_process_steps: {
+        Row: {
+          created_at: string
+          deliverables: string[] | null
+          description: string
+          estimated_time: string | null
+          icon: string | null
+          id: string
+          is_active: boolean
+          is_highlighted: boolean
+          sort_order: number
+          step_number: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          deliverables?: string[] | null
+          description: string
+          estimated_time?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          is_highlighted?: boolean
+          sort_order?: number
+          step_number: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          deliverables?: string[] | null
+          description?: string
+          estimated_time?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          is_highlighted?: boolean
+          sort_order?: number
+          step_number?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      site_page_projects: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          is_featured: boolean
+          is_hero: boolean
+          open_new_tab: boolean
+          override_cta_label: string | null
+          override_cta_url: string | null
+          override_description: string | null
+          override_image_url: string | null
+          override_title: string | null
+          project_id: string
+          sort_order: number
+          updated_at: string
+          visible_tech_ids: string[] | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          is_featured?: boolean
+          is_hero?: boolean
+          open_new_tab?: boolean
+          override_cta_label?: string | null
+          override_cta_url?: string | null
+          override_description?: string | null
+          override_image_url?: string | null
+          override_title?: string | null
+          project_id: string
+          sort_order?: number
+          updated_at?: string
+          visible_tech_ids?: string[] | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          is_featured?: boolean
+          is_hero?: boolean
+          open_new_tab?: boolean
+          override_cta_label?: string | null
+          override_cta_url?: string | null
+          override_description?: string | null
+          override_image_url?: string | null
+          override_title?: string | null
+          project_id?: string
+          sort_order?: number
+          updated_at?: string
+          visible_tech_ids?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_page_projects_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      site_page_roi_metrics: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          prefix: string | null
+          sort_order: number
+          source_label: string | null
+          source_url: string | null
+          suffix: string | null
+          title: string
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          prefix?: string | null
+          sort_order?: number
+          source_label?: string | null
+          source_url?: string | null
+          suffix?: string | null
+          title: string
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          prefix?: string | null
+          sort_order?: number
+          source_label?: string | null
+          source_url?: string | null
+          suffix?: string | null
+          title?: string
+          updated_at?: string
+          value?: string
+        }
+        Relationships: []
+      }
+      site_page_tech: {
+        Row: {
+          created_at: string
+          custom_label: string | null
+          id: string
+          is_active: boolean
+          link_url: string | null
+          sort_order: number
+          tech_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          custom_label?: string | null
+          id?: string
+          is_active?: boolean
+          link_url?: string | null
+          sort_order?: number
+          tech_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          custom_label?: string | null
+          id?: string
+          is_active?: boolean
+          link_url?: string | null
+          sort_order?: number
+          tech_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_page_tech_tech_id_fkey"
+            columns: ["tech_id"]
+            isOneToOne: false
+            referencedRelation: "tech_registry"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      site_page_versions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          created_by_email: string | null
+          id: string
+          label: string | null
+          snapshot: Json
+          version_number: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          created_by_email?: string | null
+          id?: string
+          label?: string | null
+          snapshot: Json
+          version_number: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          created_by_email?: string | null
+          id?: string
+          label?: string | null
+          snapshot?: Json
+          version_number?: number
+        }
+        Relationships: []
+      }
       stage_checklist_items: {
         Row: {
           created_at: string
