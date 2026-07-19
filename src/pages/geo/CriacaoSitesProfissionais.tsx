@@ -344,25 +344,75 @@ export default function CriacaoSitesProfissionais() {
                 const p = sp.project || sp;
                 const title = sp.override_title || p.title;
                 const desc = sp.override_description || p.description;
-                const image = sp.override_image_url || p.image || p.cover_url;
-                const url = sp.override_cta_url || p.liveUrl || p.live_url || "#";
-                const openInTab = sp.open_new_tab !== false;
+                const image = sp.override_image_url || p.image || p.cover_image || p.cover_url;
+                const url = sp.override_cta_url || p.liveUrl || p.live_url || p.case_study_url || (p.slug ? `/projects/${p.slug}` : "#");
+                const openInTab = sp.open_new_tab !== false && /^https?:/.test(url);
+                const category = p.category;
+                const tags: string[] = Array.isArray(p.tags) ? p.tags : [];
+                const techs: any[] = Array.isArray(p.technologies) ? p.technologies : (p.tech || []);
+                const isHighlight = sp.is_featured;
                 return (
                   <motion.a
                     key={sp.id || p.id}
                     href={url}
-                    target={openInTab && url !== "#" ? "_blank" : undefined}
+                    target={openInTab ? "_blank" : undefined}
                     rel="noopener noreferrer"
                     initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ delay: i * 0.08, duration: 0.6 }} whileHover={{ y: -8 }}
-                    className="group block rounded-2xl border border-border bg-card overflow-hidden hover:border-foreground/40 transition-colors"
+                    className={`group block rounded-2xl border ${isHighlight ? "border-primary/40" : "border-border"} bg-card overflow-hidden hover:border-foreground/40 transition-colors relative`}
                   >
+                    {isHighlight && (
+                      <span className="absolute top-3 right-3 z-10 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider bg-primary/90 text-primary-foreground font-bold">Destaque</span>
+                    )}
                     <div className="relative aspect-[16/10] overflow-hidden bg-black">
-                      <img src={image} alt={title} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-70" />
+                      {image && (
+                        <img src={image} alt={title} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
+                      {(category || tags.length > 0) && (
+                        <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 max-w-[80%]">
+                          {category && (
+                            <span className="px-2 py-0.5 rounded-md text-[10px] uppercase tracking-wider bg-black/60 backdrop-blur border border-white/20 text-white font-semibold">
+                              {category}
+                            </span>
+                          )}
+                          {tags.slice(0, 3).map((t) => (
+                            <span key={t} className="px-2 py-0.5 rounded-md text-[10px] uppercase tracking-wider bg-white/10 backdrop-blur border border-white/20 text-white/90 font-medium">
+                              {t}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                     </div>
                     <div className="p-5">
-                      <h3 className="text-lg font-bold mb-1.5">{title}</h3>
-                      <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed">{desc}</p>
+                      <h3 className="text-lg font-bold mb-1.5 group-hover:text-primary transition-colors">{title}</h3>
+                      <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed mb-4">{desc}</p>
+                      {techs.length > 0 && (
+                        <div className="pt-4 border-t border-border flex flex-wrap gap-2">
+                          {techs.slice(0, 5).map((t: any, ti: number) => {
+                            const name = typeof t === "string" ? t : (t.name || t.label);
+                            const color = typeof t === "object" ? t.color : undefined;
+                            const iconUrl = typeof t === "object" ? (t.iconUrl || t.icon_url) : undefined;
+                            return (
+                              <span key={`${name}-${ti}`} title={name} className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-[11px] font-medium bg-white/[0.04] border border-border">
+                                {iconUrl ? (
+                                  <img src={iconUrl} alt="" width={14} height={14} loading="lazy" className="w-3.5 h-3.5 object-contain" />
+                                ) : color ? (
+                                  <span className="w-2 h-2 rounded-full" style={{ background: color }} />
+                                ) : null}
+                                <span className="text-foreground/80">{name}</span>
+                              </span>
+                            );
+                          })}
+                          {techs.length > 5 && (
+                            <span className="inline-flex items-center px-2 py-1 rounded-md text-[11px] font-medium text-muted-foreground">
+                              +{techs.length - 5}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      <div className="mt-4 inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.2em] text-muted-foreground group-hover:text-foreground transition-colors">
+                        Ver projeto <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                      </div>
                     </div>
                   </motion.a>
                 );

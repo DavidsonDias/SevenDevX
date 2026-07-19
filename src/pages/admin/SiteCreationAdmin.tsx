@@ -8,11 +8,12 @@ import { useSitePage, updateSitePageConfig, createSitePageVersion } from "@/hook
 import { useToast } from "@/hooks/use-toast";
 import { Save, ExternalLink, History, Eye, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import SiteCreationProjectsTab from "@/components/admin/SiteCreationProjectsTab";
 
 export default function SiteCreationAdmin() {
   const { data, loading, reload } = useSitePage();
   const { toast } = useToast();
-  const [tab, setTab] = useState<"hero" | "seo" | "diag" | "counts">("hero");
+  const [tab, setTab] = useState<"hero" | "projects" | "seo" | "diag" | "counts">("hero");
   const [saving, setSaving] = useState(false);
   const [hero, setHero] = useState<any>({});
   const [seo, setSeo] = useState<any>({});
@@ -80,6 +81,7 @@ export default function SiteCreationAdmin() {
           <div className="flex gap-2 flex-wrap border-b border-white/10">
             {[
               { id: "hero", label: "Hero" },
+              { id: "projects", label: "Projetos" },
               { id: "seo", label: "SEO" },
               { id: "diag", label: "Diagnóstico" },
               { id: "counts", label: "Conteúdo" },
@@ -118,6 +120,10 @@ export default function SiteCreationAdmin() {
               </button>
             </div>
           )}
+
+          {tab === "projects" && <SiteCreationProjectsTab />}
+
+
 
           {tab === "seo" && (
             <div className="space-y-4">
