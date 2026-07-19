@@ -81,6 +81,7 @@ export default function SiteCreationAdmin() {
           <div className="flex gap-2 flex-wrap border-b border-white/10">
             {[
               { id: "hero", label: "Hero" },
+              { id: "projects", label: "Projetos" },
               { id: "seo", label: "SEO" },
               { id: "diag", label: "Diagnóstico" },
               { id: "counts", label: "Conteúdo" },
