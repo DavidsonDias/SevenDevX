@@ -8,6 +8,7 @@ import { useSitePage, updateSitePageConfig, createSitePageVersion } from "@/hook
 import { useToast } from "@/hooks/use-toast";
 import { Save, ExternalLink, History, Eye, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import SiteCreationProjectsTab from "@/components/admin/SiteCreationProjectsTab";
 
 export default function SiteCreationAdmin() {
   const { data, loading, reload } = useSitePage();
