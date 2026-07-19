@@ -121,6 +121,10 @@ export default function SiteCreationAdmin() {
             </div>
           )}
 
+          {tab === "projects" && <SiteCreationProjectsTab />}
+
+
+
           {tab === "seo" && (
             <div className="space-y-4">
               <Field label="Title" value={seo.title} onChange={(v: string) => setSeo({ ...seo, title: v })} />
