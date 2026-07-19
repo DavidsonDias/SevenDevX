@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 export default function SiteCreationAdmin() {
   const { data, loading, reload } = useSitePage();
   const { toast } = useToast();
-  const [tab, setTab] = useState<"hero" | "seo" | "diag" | "counts">("hero");
+  const [tab, setTab] = useState<"hero" | "projects" | "seo" | "diag" | "counts">("hero");
   const [saving, setSaving] = useState(false);
   const [hero, setHero] = useState<any>({});
   const [seo, setSeo] = useState<any>({});
