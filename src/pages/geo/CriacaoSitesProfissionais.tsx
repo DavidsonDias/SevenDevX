@@ -15,6 +15,7 @@ import LucideIconRender from "@/components/ui/LucideIconRender";
 import DiagnosticoModal from "@/components/DiagnosticoModal";
 import { useSitePage } from "@/hooks/useSitePage";
 import { projects as fallbackProjects } from "@/data/projects";
+import { resolveProjectImage } from "@/data/projectImages";
 
 const CANONICAL = "https://www.sevendevx.com/criacao-de-sites-profissionais";
 
