@@ -11,6 +11,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Plus, Trash2, Star, StarOff, Loader2, ExternalLink, Eye, EyeOff, ImageOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { resolveProjectImage } from "@/data/projectImages";
 import ProjectPickerModal from "./ProjectPickerModal";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sb = supabase as any;
@@ -37,7 +38,7 @@ function SortableCard({ row, onToggle, onDelete }: {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: row.id });
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1, zIndex: isDragging ? 10 : 1 };
   const p = row.project || {};
-  const image = p.cover_image;
+  const image = resolveProjectImage(p.cover_image);
   const techs = Array.isArray(p.technologies) ? p.technologies : [];
 
   return (
