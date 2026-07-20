@@ -178,7 +178,7 @@ export default function ProjectPickerModal({ open, onClose, alreadySelectedIds, 
                         )}
                         <div className="aspect-[16/10] bg-black/60 overflow-hidden">
                           {p.cover_image ? (
-                            <img src={p.cover_image} alt={p.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            <img src={resolveProjectImage(p.cover_image)} alt={p.title} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center text-white/20"><ImageOff className="w-8 h-8" /></div>
                           )}
