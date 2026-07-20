@@ -11,6 +11,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, Plus, Trash2, Star, StarOff, Loader2, ExternalLink, Eye, EyeOff, ImageOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { resolveProjectImage } from "@/data/projectImages";
 import ProjectPickerModal from "./ProjectPickerModal";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sb = supabase as any;
