@@ -44,7 +44,7 @@ function SortableRow({ row, onToggle, onDelete }: {
       </button>
       <div className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
         style={{ background: `${color}15`, border: `1px solid ${color}40` }}>
-        {t?.slug ? <TechIconCDN name={t.slug} className="w-5 h-5" /> : <span className="w-2 h-2 rounded-full" style={{ background: color }} />}
+        {t?.slug ? <TechIconCDN slug={t.slug} name={t.name} color={color} iconUrl={t.icon_url} className="w-5 h-5" /> : <span className="w-2 h-2 rounded-full" style={{ background: color }} />}
       </div>
       <div className="flex-1 min-w-0">
         <div className="font-semibold text-sm truncate">{name}</div>
