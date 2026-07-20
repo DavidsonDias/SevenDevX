@@ -344,7 +344,7 @@ export default function CriacaoSitesProfissionais() {
                 const p = sp.project || sp;
                 const title = sp.override_title || p.title;
                 const desc = sp.override_description || p.description;
-                const image = sp.override_image_url || p.image || p.cover_image || p.cover_url;
+                const image = sp.override_image_url || p.image || resolveProjectImage(p.cover_image || p.cover_url);
                 const url = sp.override_cta_url || p.liveUrl || p.live_url || p.case_study_url || (p.slug ? `/projects/${p.slug}` : "#");
                 const openInTab = sp.open_new_tab !== false && /^https?:/.test(url);
                 const category = p.category;

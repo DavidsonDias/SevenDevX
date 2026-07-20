@@ -38,7 +38,7 @@ function SortableCard({ row, onToggle, onDelete }: {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: row.id });
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1, zIndex: isDragging ? 10 : 1 };
   const p = row.project || {};
-  const image = p.cover_image;
+  const image = resolveProjectImage(p.cover_image);
   const techs = Array.isArray(p.technologies) ? p.technologies : [];
 
   return (
