@@ -61,7 +61,7 @@ export default function Footer() {
             </p>
           </motion.div>
 
-          {/* Site Links */}
+          {/* Site Links — 2 colunas para acomodar todos os itens */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -71,15 +71,15 @@ export default function Footer() {
             <h3 className="text-xs uppercase tracking-[0.3em] font-semibold text-foreground mb-6">
               Navegação
             </h3>
-            <ul className="space-y-3">
+            <ul className="grid grid-cols-2 gap-x-6 gap-y-3">
               {siteLinks.map(link => (
                 <li key={link.path}>
                   <Link
                     to={link.path}
                     className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1 group"
                   >
-                    {link.name}
-                    <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <span className="truncate">{link.name}</span>
+                    <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
                   </Link>
                 </li>
               ))}
