@@ -409,15 +409,12 @@ export default function CriacaoSitesProfissionais() {
                         <div className="pt-4 border-t border-border flex flex-wrap gap-2">
                           {techs.slice(0, 5).map((t: any, ti: number) => {
                             const name = typeof t === "string" ? t : (t.name || t.label);
+                            const slug = typeof t === "object" ? (t.slug || String(name).toLowerCase().replace(/[^a-z0-9]/g, "")) : String(name).toLowerCase().replace(/[^a-z0-9]/g, "");
                             const color = typeof t === "object" ? t.color : undefined;
                             const iconUrl = typeof t === "object" ? (t.iconUrl || t.icon_url) : undefined;
                             return (
                               <span key={`${name}-${ti}`} title={name} className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-[11px] font-medium bg-white/[0.04] border border-border">
-                                {iconUrl ? (
-                                  <img src={iconUrl} alt="" width={14} height={14} loading="lazy" className="w-3.5 h-3.5 object-contain" />
-                                ) : color ? (
-                                  <span className="w-2 h-2 rounded-full" style={{ background: color }} />
-                                ) : null}
+                                <TechIconCDN slug={slug} name={name} color={color} iconUrl={iconUrl} size={14} />
                                 <span className="text-foreground/80">{name}</span>
                               </span>
                             );
