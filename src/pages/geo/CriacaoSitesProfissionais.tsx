@@ -304,12 +304,14 @@ export default function CriacaoSitesProfissionais() {
           </Container>
         </Section>
 
-        {/* MARQUEE STACK */}
+        {/* MARQUEE STACK — ícones oficiais coloridos */}
         <section aria-label="Stack tecnológico" className="border-y border-border py-6 bg-white/[0.02] overflow-hidden">
-          <div className="flex gap-12 whitespace-nowrap" style={{ animation: `marquee ${techSpeed}s linear infinite` }}>
-            {[...tech, ...tech].map((t, i) => (
-              <span key={i} className="text-sm uppercase tracking-[0.3em] text-muted-foreground/60 flex items-center gap-12">
-                {t} <span className="text-primary">{techSep}</span>
+          <div className="flex gap-10 whitespace-nowrap" style={{ animation: `marquee ${techSpeed}s linear infinite` }}>
+            {[...techItems, ...techItems].map((t, i) => (
+              <span key={i} className="inline-flex items-center gap-2.5 text-sm uppercase tracking-[0.28em] text-muted-foreground/80">
+                <TechIconCDN slug={t.slug || t.name.toLowerCase().replace(/[^a-z0-9]/g, "")} name={t.name} color={t.color} iconUrl={t.iconUrl} size={20} />
+                <span>{t.name}</span>
+                <span className="text-primary/60 ml-8">◆</span>
               </span>
             ))}
           </div>
