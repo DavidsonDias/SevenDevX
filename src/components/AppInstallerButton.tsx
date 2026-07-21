@@ -1,13 +1,15 @@
 /**
- * 📦 AppInstallerButton v3 — SevenDevX Enterprise
+ * 📦 AppInstallerButton v4 — SevenDevX Enterprise
  * ─────────────────────────────────────────────────
- * Card premium monocromático (glass + hairline + ring gradient),
- * copy SevenDevX, contador discreto, corner-dock em desktop, safe-area em mobile.
- * API pública preservada: <AppInstallerButton />.
+ * - Detecta instalação de forma confiável (display-mode, navigator.standalone,
+ *   getInstalledRelatedApps, flag persistente) — nunca mostra em app já instalado.
+ * - Corner-dock discreto (canto inferior esquerdo) em TODAS as telas (mobile, tablet,
+ *   desktop) enquanto o app não estiver instalado.
+ * - Card premium abre ao clicar no dock ou automaticamente após scroll (uma vez por dia).
  */
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ArrowUpRight, Share, PlusSquare } from "lucide-react";
+import { X, ArrowUpRight, Share, PlusSquare, Download } from "lucide-react";
 import logoSevenDevX from "@/assets/logo.svg";
 
 interface BeforeInstallPromptEvent extends Event {
@@ -16,9 +18,9 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 const KEYS = {
-  DISMISSED: "sdx_pwa_dismissed_v3",
-  INSTALLED: "sdx_pwa_installed_v3",
-  LAST: "sdx_pwa_last_v3",
+  DISMISSED: "sdx_pwa_dismissed_v4",
+  INSTALLED: "sdx_pwa_installed_v4",
+  LAST: "sdx_pwa_last_v4",
 };
 const COOLDOWN_MS = 24 * 60 * 60 * 1000;
 const SCROLL_TRIGGER = 60;
@@ -32,8 +34,12 @@ const store = {
 
 const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent);
 const isStandalone = () =>
-  window.matchMedia("(display-mode: standalone)").matches ||
-  (navigator as any).standalone === true;
+  window.matchMedia?.("(display-mode: standalone)").matches ||
+  window.matchMedia?.("(display-mode: fullscreen)").matches ||
+  window.matchMedia?.("(display-mode: minimal-ui)").matches ||
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (navigator as any).standalone === true ||
+  document.referrer.startsWith("android-app://");
 const isWebView = () => {
   const ua = navigator.userAgent.toLowerCase();
   return /instagram|fbav|facebook|twitter|tiktok|wechat|pinterest|linkedin/.test(ua);
@@ -50,49 +56,87 @@ export default function AppInstallerButton() {
   const [dock, setDock] = useState(false);
   const [installed, setInstalled] = useState(false);
   const [countdown, setCountdown] = useState(Math.round(AUTO_HIDE / 1000));
-  const armed = useRef(false);
+  const autoOpened = useRef(false);
   const timers = useRef<number[]>([]);
 
   const clearTimers = () => { timers.current.forEach(clearTimeout); timers.current = []; };
 
+  // Robust install detection (initial + async related-apps)
+  const checkInstalled = useCallback(async () => {
+    if (isStandalone() || store.get(KEYS.INSTALLED) === "1") return true;
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const nav = navigator as any;
+      if (typeof nav.getInstalledRelatedApps === "function") {
+        const apps = await nav.getInstalledRelatedApps();
+        if (Array.isArray(apps) && apps.length > 0) {
+          store.set(KEYS.INSTALLED, "1");
+          return true;
+        }
+      }
+    } catch { /* noop */ }
+    return false;
+  }, []);
+
   useEffect(() => {
     if (isPreview() || isWebView()) return;
-    if (isStandalone() || store.get(KEYS.INSTALLED) === "1") { setInstalled(true); return; }
 
-    const last = Number(store.get(KEYS.LAST) || 0);
-    if (Date.now() - last < COOLDOWN_MS && store.get(KEYS.DISMISSED) === "1") return;
+    let cancelled = false;
+    (async () => {
+      const inst = await checkInstalled();
+      if (cancelled) return;
+      if (inst) { setInstalled(true); return; }
 
-    const onBIP = (e: Event) => { e.preventDefault(); setPrompt(e as BeforeInstallPromptEvent); };
-    const onInstalled = () => { setInstalled(true); setOpen(false); setDock(false); store.set(KEYS.INSTALLED, "1"); };
+      const onBIP = (e: Event) => { e.preventDefault(); setPrompt(e as BeforeInstallPromptEvent); };
+      const onInstalled = () => {
+        setInstalled(true); setOpen(false); setDock(false);
+        store.set(KEYS.INSTALLED, "1");
+      };
+      const onDisplayChange = (ev: MediaQueryListEvent) => {
+        if (ev.matches) { setInstalled(true); store.set(KEYS.INSTALLED, "1"); }
+      };
 
-    window.addEventListener("beforeinstallprompt", onBIP);
-    window.addEventListener("appinstalled", onInstalled);
+      window.addEventListener("beforeinstallprompt", onBIP);
+      window.addEventListener("appinstalled", onInstalled);
+      const mql = window.matchMedia("(display-mode: standalone)");
+      mql.addEventListener?.("change", onDisplayChange);
 
-    const trigger = () => {
-      if (armed.current) return;
-      if (window.scrollY < SCROLL_TRIGGER) return;
-      armed.current = true;
-      window.removeEventListener("scroll", trigger);
+      // Corner-dock: mostra sempre (mobile/tablet/desktop) após pequeno scroll
+      const showDock = () => { if (!isStandalone()) setDock(true); };
+      timers.current.push(window.setTimeout(showDock, 1800));
+      const onScroll = () => { if (window.scrollY > 20) showDock(); };
+      window.addEventListener("scroll", onScroll, { passive: true });
 
-      const isDesktop = window.innerWidth >= 900;
-      timers.current.push(window.setTimeout(() => {
-        if (isDesktop && prompt) { setDock(true); }
-        else { setOpen(true); store.set(KEYS.LAST, String(Date.now())); }
-      }, SHOW_DELAY));
-    };
-    window.addEventListener("scroll", trigger, { passive: true });
-    // Fallback: se ninguém rolar
-    timers.current.push(window.setTimeout(trigger, 12000));
+      // Auto-open card uma única vez por cooldown, após scroll significativo
+      const maybeAutoOpen = () => {
+        if (autoOpened.current) return;
+        if (window.scrollY < SCROLL_TRIGGER) return;
+        const last = Number(store.get(KEYS.LAST) || 0);
+        if (Date.now() - last < COOLDOWN_MS && store.get(KEYS.DISMISSED) === "1") return;
+        autoOpened.current = true;
+        window.removeEventListener("scroll", maybeAutoOpen);
+        timers.current.push(window.setTimeout(() => {
+          setOpen(true);
+          store.set(KEYS.LAST, String(Date.now()));
+        }, SHOW_DELAY));
+      };
+      window.addEventListener("scroll", maybeAutoOpen, { passive: true });
 
-    return () => {
-      window.removeEventListener("scroll", trigger);
-      window.removeEventListener("beforeinstallprompt", onBIP);
-      window.removeEventListener("appinstalled", onInstalled);
-      clearTimers();
-    };
-  }, [prompt]);
+      return () => {
+        cancelled = true;
+        window.removeEventListener("beforeinstallprompt", onBIP);
+        window.removeEventListener("appinstalled", onInstalled);
+        window.removeEventListener("scroll", onScroll);
+        window.removeEventListener("scroll", maybeAutoOpen);
+        mql.removeEventListener?.("change", onDisplayChange);
+        clearTimers();
+      };
+    })();
 
-  // countdown enquanto o card estiver aberto
+    return () => { cancelled = true; clearTimers(); };
+  }, [checkInstalled]);
+
+  // Countdown enquanto o card estiver aberto
   useEffect(() => {
     if (!open) return;
     setCountdown(Math.round(AUTO_HIDE / 1000));
@@ -117,11 +161,13 @@ export default function AppInstallerButton() {
     setOpen(false); setDock(false);
   };
 
-  const dismiss = () => {
-    setOpen(false); setDock(false);
+  const dismissCard = () => {
+    setOpen(false);
     store.set(KEYS.DISMISSED, "1");
     store.set(KEYS.LAST, String(Date.now()));
   };
+
+  const dismissDock = () => { setDock(false); store.set(KEYS.DISMISSED, "1"); };
 
   if (installed || isPreview()) return null;
 
@@ -129,25 +175,40 @@ export default function AppInstallerButton() {
 
   return (
     <>
-      {/* ─── Corner Dock (desktop) ─────────────────────────────── */}
+      {/* ─── Corner Dock (mobile + tablet + desktop, canto inferior esquerdo) ─ */}
       <AnimatePresence>
         {dock && !open && (
-          <motion.button
+          <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.9 }}
             transition={{ type: "spring", stiffness: 300, damping: 26 }}
-            onClick={() => { setOpen(true); setDock(false); }}
-            className="fixed bottom-6 left-6 z-[9998] group"
-            aria-label="Instalar SevenDevX"
+            className="fixed z-[9998] flex items-center gap-1"
+            style={{
+              left: `calc(env(safe-area-inset-left) + 1rem)`,
+              bottom: `calc(env(safe-area-inset-bottom) + 1rem)`,
+            }}
           >
-            <span className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/20 via-white/5 to-transparent blur-xl opacity-70 group-hover:opacity-100 transition-opacity" />
-            <span className="relative flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-black/80 backdrop-blur-xl border border-white/15 text-white text-xs uppercase tracking-[0.18em] font-semibold shadow-2xl hover:bg-white hover:text-black transition-colors">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              Instalar app
-              <ArrowUpRight className="w-3.5 h-3.5" />
-            </span>
-          </motion.button>
+            <button
+              onClick={() => setOpen(true)}
+              aria-label="Instalar SevenDevX"
+              className="group relative"
+            >
+              <span className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/25 via-white/5 to-transparent blur-xl opacity-70 group-hover:opacity-100 transition-opacity" />
+              <span className="relative flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-black/85 backdrop-blur-xl border border-white/15 text-white text-[11px] uppercase tracking-[0.18em] font-semibold shadow-2xl hover:bg-white hover:text-black transition-colors">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <Download className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Instalar app</span>
+              </span>
+            </button>
+            <button
+              onClick={dismissDock}
+              aria-label="Ocultar"
+              className="w-6 h-6 rounded-full bg-black/70 border border-white/10 text-white/50 hover:text-white flex items-center justify-center"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          </motion.div>
         )}
       </AnimatePresence>
 
@@ -164,25 +225,19 @@ export default function AppInstallerButton() {
             className="fixed left-0 right-0 mx-auto z-[9999] w-[calc(100%-1.5rem)] max-w-[440px]"
             style={{ bottom: `calc(env(safe-area-inset-bottom) + 1.25rem)` }}
           >
-            {/* halo */}
             <div className="absolute -inset-[1px] rounded-[22px] bg-gradient-to-br from-white/25 via-white/5 to-white/20 opacity-60 blur-md pointer-events-none" />
-            {/* card */}
             <div className="relative overflow-hidden rounded-[20px] border border-white/12 bg-[#050505]/95 backdrop-blur-2xl shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)]">
-              {/* ring gradient hairline */}
               <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
-              {/* scanline sutil */}
               <div className="absolute inset-0 opacity-[0.03] pointer-events-none [background-image:linear-gradient(0deg,rgba(255,255,255,0.5)_1px,transparent_1px)] [background-size:100%_3px]" />
 
               <div className="relative p-5 sm:p-6">
                 <div className="flex items-start gap-4">
-                  {/* Logo mark */}
                   <div className="relative shrink-0">
                     <div className="absolute inset-0 rounded-xl bg-white/10 blur-lg" />
                     <div className="relative w-12 h-12 rounded-xl border border-white/15 bg-gradient-to-br from-white/10 to-white/[0.02] flex items-center justify-center overflow-hidden">
                       <img src={logoSevenDevX} alt="SevenDevX" className="w-8 h-8 object-contain" />
                     </div>
                   </div>
-
                   <div className="flex-1 min-w-0">
                     <p className="text-[10px] uppercase tracking-[0.25em] text-white/45 font-semibold">
                       SevenDevX · Progressive App
@@ -196,9 +251,8 @@ export default function AppInstallerButton() {
                         : "Modo offline, atualizações silenciosas e ícone na sua tela — em segundos."}
                     </p>
                   </div>
-
                   <button
-                    onClick={dismiss}
+                    onClick={dismissCard}
                     aria-label="Dispensar"
                     className="shrink-0 p-1.5 rounded-lg text-white/50 hover:text-white hover:bg-white/5 transition-colors"
                   >
@@ -206,7 +260,6 @@ export default function AppInstallerButton() {
                   </button>
                 </div>
 
-                {/* iOS steps */}
                 {iosMode ? (
                   <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-3 space-y-2">
                     <div className="flex items-center gap-2.5 text-[12px] text-white/80">
@@ -234,7 +287,7 @@ export default function AppInstallerButton() {
                       </span>
                     </button>
                     <button
-                      onClick={dismiss}
+                      onClick={dismissCard}
                       className="px-4 py-3 rounded-xl border border-white/15 text-white/70 hover:text-white hover:bg-white/5 text-[12px] font-semibold uppercase tracking-[0.18em] transition-colors"
                     >
                       Depois
@@ -242,7 +295,6 @@ export default function AppInstallerButton() {
                   </div>
                 )}
 
-                {/* progress + countdown */}
                 <div className="mt-4 flex items-center justify-between text-[10px] uppercase tracking-[0.25em] text-white/35">
                   <span>Fecha em {countdown}s</span>
                   <span>#instalar</span>

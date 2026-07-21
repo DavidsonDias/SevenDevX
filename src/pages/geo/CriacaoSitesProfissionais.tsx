@@ -16,6 +16,7 @@ import DiagnosticoModal from "@/components/DiagnosticoModal";
 import { useSitePage } from "@/hooks/useSitePage";
 import { projects as fallbackProjects } from "@/data/projects";
 import { resolveProjectImage } from "@/data/projectImages";
+import { TechIconCDN } from "@/components/TechIconCDN";
 
 const CANONICAL = "https://www.sevendevx.com/criacao-de-sites-profissionais";
 
@@ -155,12 +156,17 @@ export default function CriacaoSitesProfissionais() {
   const faqs: { question: string; answer: string }[] = data.faqs.length
     ? data.faqs.map(f => ({ question: f.faq?.question ?? "", answer: f.override_answer || f.faq?.answer || "" }))
     : FB_FAQ;
-  // Tech
-  const tech = data.tech.length
-    ? data.tech.map(t => t.custom_label || t.tech?.name || "").filter(Boolean)
-    : FB_STACK;
+  // Tech (marquee) — mantém objeto completo p/ ícone oficial colorido
+  const techItems: { name: string; slug?: string; color?: string; iconUrl?: string | null }[] =
+    data.tech.length
+      ? data.tech.map(t => ({
+          name: t.custom_label || t.tech?.name || "",
+          slug: t.tech?.slug,
+          color: t.tech?.color,
+          iconUrl: t.tech?.icon_url,
+        })).filter(x => x.name)
+      : FB_STACK.map(name => ({ name, slug: name.toLowerCase().replace(/[^a-z0-9]/g, "") }));
   const techSpeed = data.config?.tech_config?.speed || 40;
-  const techSep = data.config?.tech_config?.separator || "◆";
   // Projetos: hero + showcase
   const heroSpProject = data.projects.find(p => p.is_hero);
   const heroProject = heroSpProject?.project ||
@@ -269,31 +275,43 @@ export default function CriacaoSitesProfissionais() {
                 )}
               </motion.div>
 
-              {showProject && (
-                <motion.div initial={{ opacity: 0, scale: 0.95, y: 30 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.2 }} className="relative">
-                  <div className="absolute -inset-10 bg-gradient-to-tr from-primary/20 via-transparent to-primary/10 blur-3xl opacity-60 -z-10" />
-                  <BrowserMockup3D
-                    src={heroSpProject?.override_image_url || heroProject.image || heroProject.cover_url}
-                    alt={heroSpProject?.override_title || heroProject.title}
-                    url={(heroProject.liveUrl || heroProject.live_url || "seudominio.com").replace(/^https?:\/\//, "")}
-                  />
-                  {(heroProject.liveUrl || heroProject.live_url) && (
-                    <a href={heroProject.liveUrl || heroProject.live_url} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground transition">
-                      Ver projeto ao vivo <ExternalLink className="w-3 h-3" />
-                    </a>
-                  )}
-                </motion.div>
-              )}
+              {showProject && (() => {
+                const heroImg = heroSpProject?.override_image_url
+                  || resolveProjectImage((heroProject as any).cover_image)
+                  || (heroProject as any).image
+                  || (heroProject as any).cover_url;
+                const heroLive = heroSpProject?.override_cta_url
+                  || (heroProject as any).liveUrl
+                  || (heroProject as any).live_url;
+                const heroUrl = (heroLive || "seudominio.com").replace(/^https?:\/\//, "");
+                return (
+                  <motion.div initial={{ opacity: 0, scale: 0.95, y: 30 }} animate={{ opacity: 1, scale: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.2 }} className="relative">
+                    <div className="absolute -inset-10 bg-gradient-to-tr from-primary/20 via-transparent to-primary/10 blur-3xl opacity-60 -z-10" />
+                    <BrowserMockup3D
+                      src={heroImg}
+                      alt={heroSpProject?.override_title || heroProject.title}
+                      url={heroUrl}
+                    />
+                    {heroLive && (
+                      <a href={heroLive} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground transition">
+                        Ver projeto ao vivo <ExternalLink className="w-3 h-3" />
+                      </a>
+                    )}
+                  </motion.div>
+                );
+              })()}
             </div>
           </Container>
         </Section>
 
-        {/* MARQUEE STACK */}
+        {/* MARQUEE STACK — ícones oficiais coloridos */}
         <section aria-label="Stack tecnológico" className="border-y border-border py-6 bg-white/[0.02] overflow-hidden">
-          <div className="flex gap-12 whitespace-nowrap" style={{ animation: `marquee ${techSpeed}s linear infinite` }}>
-            {[...tech, ...tech].map((t, i) => (
-              <span key={i} className="text-sm uppercase tracking-[0.3em] text-muted-foreground/60 flex items-center gap-12">
-                {t} <span className="text-primary">{techSep}</span>
+          <div className="flex gap-10 whitespace-nowrap" style={{ animation: `marquee ${techSpeed}s linear infinite` }}>
+            {[...techItems, ...techItems].map((t, i) => (
+              <span key={i} className="inline-flex items-center gap-2.5 text-sm uppercase tracking-[0.28em] text-muted-foreground/80">
+                <TechIconCDN slug={t.slug || t.name.toLowerCase().replace(/[^a-z0-9]/g, "")} name={t.name} color={t.color} iconUrl={t.iconUrl} size={20} />
+                <span>{t.name}</span>
+                <span className="text-primary/60 ml-8">◆</span>
               </span>
             ))}
           </div>
@@ -391,15 +409,12 @@ export default function CriacaoSitesProfissionais() {
                         <div className="pt-4 border-t border-border flex flex-wrap gap-2">
                           {techs.slice(0, 5).map((t: any, ti: number) => {
                             const name = typeof t === "string" ? t : (t.name || t.label);
+                            const slug = typeof t === "object" ? (t.slug || String(name).toLowerCase().replace(/[^a-z0-9]/g, "")) : String(name).toLowerCase().replace(/[^a-z0-9]/g, "");
                             const color = typeof t === "object" ? t.color : undefined;
                             const iconUrl = typeof t === "object" ? (t.iconUrl || t.icon_url) : undefined;
                             return (
                               <span key={`${name}-${ti}`} title={name} className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-[11px] font-medium bg-white/[0.04] border border-border">
-                                {iconUrl ? (
-                                  <img src={iconUrl} alt="" width={14} height={14} loading="lazy" className="w-3.5 h-3.5 object-contain" />
-                                ) : color ? (
-                                  <span className="w-2 h-2 rounded-full" style={{ background: color }} />
-                                ) : null}
+                                <TechIconCDN slug={slug} name={name} color={color} iconUrl={iconUrl} size={14} />
                                 <span className="text-foreground/80">{name}</span>
                               </span>
                             );
