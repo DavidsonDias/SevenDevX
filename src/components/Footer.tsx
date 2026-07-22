@@ -36,53 +36,65 @@ export default function Footer() {
     name: "SevenDevX",
     url: "https://sevendevx.com",
     logo: "https://sevendevx.com/assets/img/logo.svg",
-    sameAs: socialLinks.map(l => l.url),
+    sameAs: socialLinks.map((link) => link.url),
   };
 
   return (
-    <footer role="contentinfo" aria-label="Footer" className="relative bg-background border-t border-border">
-      <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
+    <footer
+      role="contentinfo"
+      aria-label="Footer"
+      className="relative border-t border-border bg-background"
+    >
+      <script type="application/ld+json">
+        {JSON.stringify(structuredData)}
+      </script>
 
-      <div className="max-w-7xl mx-auto px-6 py-16 md:py-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-16">
+      <div className="mx-auto max-w-7xl px-6 py-16 md:py-20">
+        <div className="mb-16 grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-12 lg:gap-8">
           {/* Brand */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="lg:col-span-1"
+            className="lg:col-span-3"
           >
-            <Link to="/" className="inline-block mb-6">
+            <Link to="/" className="mb-6 inline-block">
               <img src={logo} alt="SevenDevX" className="h-10 w-auto" />
             </Link>
-            <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
-              Desenvolvimento web com inovação, design e performance. Transformamos visões em experiências digitais.
+
+            <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
+              Desenvolvimento web com inovação, design e performance.
+              Transformamos visões em experiências digitais.
             </p>
-            <p className="text-sm text-muted-foreground leading-relaxed max-w-xs mt-2">
-              ☕️ • Codificando o amanhã, hoje! ⚡
+
+            <p className="mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground">
+              • Codificando o amanhã, hoje!
             </p>
           </motion.div>
 
-          {/* Site Links — 2 colunas para acomodar todos os itens */}
+          {/* Navigation */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
+            className="lg:col-span-4"
           >
-            <h3 className="text-xs uppercase tracking-[0.3em] font-semibold text-foreground mb-6">
+            <h3 className="mb-6 text-xs font-semibold uppercase tracking-[0.3em] text-foreground">
               Navegação
             </h3>
-            <ul className="grid grid-cols-2 gap-x-6 gap-y-3">
-              {siteLinks.map(link => (
+
+            <ul className="grid grid-cols-1 gap-x-8 gap-y-3 lg:grid-cols-2">
+              {siteLinks.map((link) => (
                 <li key={link.path}>
                   <Link
                     to={link.path}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1 group"
+                    className="group inline-flex items-start gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
-                    <span className="truncate">{link.name}</span>
-                    <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+                    <span>{link.name}</span>
+
+                    <ArrowUpRight className="mt-0.5 h-3 w-3 shrink-0 opacity-0 transition-opacity group-hover:opacity-100" />
                   </Link>
                 </li>
               ))}
@@ -95,21 +107,24 @@ export default function Footer() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
+            className="lg:col-span-2"
           >
-            <h3 className="text-xs uppercase tracking-[0.3em] font-semibold text-foreground mb-6">
+            <h3 className="mb-6 text-xs font-semibold uppercase tracking-[0.3em] text-foreground">
               Social
             </h3>
+
             <ul className="space-y-3">
-              {socialLinks.map(link => (
+              {socialLinks.map((link) => (
                 <li key={link.name}>
                   <a
                     href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors inline-flex items-center gap-1 group"
+                    className="group inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {link.name}
-                    <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                    <ArrowUpRight className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" />
                   </a>
                 </li>
               ))}
@@ -122,25 +137,38 @@ export default function Footer() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.3 }}
+            className="lg:col-span-3"
           >
-            <h3 className="text-xs uppercase tracking-[0.3em] font-semibold text-foreground mb-6">
+            <h3 className="mb-6 text-xs font-semibold uppercase tracking-[0.3em] text-foreground">
               Contato
             </h3>
+
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
-                <Mail className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                <a href="mailto:contato@sevendevx.com" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Mail className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+
+                <a
+                  href="mailto:contato@sevendevx.com"
+                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                >
                   contato@sevendevx.com
                 </a>
               </li>
+
               <li className="flex items-start gap-3">
-                <Phone className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                <a href="tel:+5531984740625" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <Phone className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+
+                <a
+                  href="tel:+5531984740625"
+                  className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                >
                   +55 (31) 98474-0625
                 </a>
               </li>
+
               <li className="flex items-start gap-3">
-                <MapPin className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+
                 <span className="text-sm text-muted-foreground">
                   Belo Horizonte, MG — Brasil
                 </span>
@@ -149,12 +177,13 @@ export default function Footer() {
           </motion.div>
         </div>
 
-        {/* Bottom bar */}
-        <div className="border-t border-border pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-muted-foreground/60 tracking-wider uppercase">
+        {/* Bottom Bar */}
+        <div className="flex flex-col items-center justify-between gap-4 border-t border-border pt-8 sm:flex-row">
+          <p className="text-xs uppercase tracking-wider text-muted-foreground/60">
             {t.footer.copyright} © {currentYear}
           </p>
-          <p className="text-[10px] text-muted-foreground/30 tracking-[0.3em] uppercase font-mono">
+
+          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground/30">
             DESIGNED & BUILT WITH PRECISION
           </p>
         </div>
