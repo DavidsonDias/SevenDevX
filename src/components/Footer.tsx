@@ -57,7 +57,7 @@ export default function Footer() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="col-span-2 lg:col-span-3"
+            className="col-span-2 md:col-span-1 lg:col-span-3"
           >
             <Link to="/" className="mb-6 inline-block">
               <img src={logo} alt="SevenDevX" className="h-10 w-auto" />
@@ -79,13 +79,13 @@ export default function Footer() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="col-span-2 lg:col-span-4"
+            className="col-span-2 md:col-span-1 lg:col-span-4"
           >
             <h3 className="mb-6 text-xs font-semibold uppercase tracking-[0.3em] text-foreground">
               Navegação
             </h3>
-
-            <ul className="grid grid-cols-2 sm:grid-cols-2 gap-x-8 gap-y-3">
+            {/* Links */}
+            <ul className="grid grid-cols-2 gap-x-8 gap-y-3">
               {siteLinks.map((link) => (
                 <li key={link.path}>
                   <Link
