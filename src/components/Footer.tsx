@@ -57,7 +57,10 @@ export default function Footer() {
               <img src={logo} alt="SevenDevX" className="h-10 w-auto" />
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
-              Desenvolvimento web com inovação, design e performance. Transformamos visões em experiências digitais. ☕️ • Codificando o amanhã, hoje! ⚡
+              Desenvolvimento web com inovação, design e performance. Transformamos visões em experiências digitais.
+            </p>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-xs mt-2">
+              ☕️ • Codificando o amanhã, hoje! ⚡
             </p>
           </motion.div>
 
