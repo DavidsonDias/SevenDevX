@@ -57,18 +57,21 @@ export default function Footer() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="col-span-2 md:col-span-1 lg:col-span-3"
+            className="col-span-2 text-center md:col-span-1 md:text-left lg:col-span-3"
           >
             <Link to="/" className="mb-6 inline-block">
-              <img src={logo} alt="SevenDevX" className="h-10 w-auto" />
+              <img 
+                src={logo} 
+                alt="SevenDevX" 
+                className="mx-auto h-10 w-auto md:mx-0" />
             </Link>
 
-            <p className="max-w-xs text-sm leading-relaxed text-muted-foreground">
+            <p className="mx-auto max-w-xs text-sm leading-relaxed text-muted-foreground md:mx-0">
               Desenvolvimento web com inovação, design e performance.
               Transformamos visões em experiências digitais.
             </p>
 
-            <p className="mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground">
+            <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground md:mx-0">
               • Codificando o amanhã, hoje!
             </p>
           </motion.div>
