@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X, Search, CheckCircle2, Loader2, ImageOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { resolveProjectImage } from "@/data/projectImages";
+import TechIconCDN from "@/components/TechIconCDN";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sb = supabase as any;
 
