@@ -194,13 +194,16 @@ export default function ProjectPickerModal({ open, onClose, alreadySelectedIds, 
                           <h3 className="font-semibold text-sm truncate">{p.title}</h3>
                           <p className="text-xs text-white/50 line-clamp-2 mt-1">{p.description}</p>
                           {techs.length > 0 && (
-                            <div className="flex gap-1 mt-2 flex-wrap">
-                              {techs.slice(0, 4).map((t: any, i: number) => (
-                                <span key={i} className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-white/[0.04]">
-                                  {t.color && <span className="w-1.5 h-1.5 rounded-full" style={{ background: t.color }} />}
-                                  {t.name}
-                                </span>
-                              ))}
+                            <div className="flex gap-1.5 mt-2 flex-wrap">
+                              {techs.slice(0, 6).map((t: any, i: number) => {
+                                const slug = t.slug || String(t.name || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+                                return (
+                                  <span key={i} className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/5">
+                                    <TechIconCDN slug={slug} name={t.name} color={t.color} iconUrl={t.iconUrl || t.icon_url} size={12} />
+                                    {t.name}
+                                  </span>
+                                );
+                              })}
                             </div>
                           )}
                           {already && <p className="text-[10px] text-white/40 mt-2 uppercase tracking-wider">Já selecionado</p>}
