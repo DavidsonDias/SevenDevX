@@ -37,6 +37,8 @@ Deno.serve(async (req) => {
     const uc = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { global: { headers: { Authorization: auth } } });
     const { data: u } = await uc.auth.getUser();
     if (!u?.user) return new Response(JSON.stringify({ error: 'unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    const { data: isAdmin } = await uc.rpc('has_role', { _user_id: u.user.id, _role: 'admin' });
+    if (!isAdmin) return new Response(JSON.stringify({ error: 'forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
     const { provider, code, state, redirect_uri } = await req.json();
     const tep = TOKEN_ENDPOINTS[provider];
@@ -48,14 +50,18 @@ Deno.serve(async (req) => {
     }
 
     const supa = createClient(SUPABASE_URL, SERVICE_KEY);
-    // Retrieve pending connection
+    // Require a matching pending row started by this admin (state binding is mandatory)
     const { data: pending } = await supa.from('oauth_connections')
       .select('*').eq('user_id', u.user.id).eq('provider', provider).eq('status', 'pending')
       .order('created_at', { ascending: false }).limit(1).maybeSingle();
+    if (!pending) {
+      return new Response(JSON.stringify({ error: 'no_pending_request' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
     const codeVerifier = pending?.raw_profile?.code_verifier;
-    if (pending?.raw_profile?.state && pending.raw_profile.state !== state) {
+    if (!pending?.raw_profile?.state || pending.raw_profile.state !== state) {
       return new Response(JSON.stringify({ error: 'state_mismatch' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
+
 
     const body = new URLSearchParams({
       client_id: clientId,
