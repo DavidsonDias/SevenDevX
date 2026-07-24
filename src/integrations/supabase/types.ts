@@ -3600,6 +3600,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      contact_id_by_email: { Args: { _email: string }; Returns: string }
       emit_event: {
         Args: {
           _correlation_id?: string

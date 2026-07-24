@@ -83,8 +83,8 @@ export default function DiagnosticoModal({ open, onClose, config }: Props) {
     setSubmitting(true);
     try {
       // 1. Cria/atualiza contact (evita duplicidade por email)
-      const { data: existing } = await sb.from("contacts").select("id").eq("email", form.email).maybeSingle();
-      let contactId = existing?.id;
+      const { data: existing } = await sb.rpc("contact_id_by_email" as any, { _email: form.email });
+      let contactId: string | undefined = typeof existing === "string" ? existing : (existing as any) ?? undefined;
       if (!contactId) {
         const { data: created, error: cErr } = await sb.from("contacts").insert({
           name: form.name, email: form.email, phone: form.phone || null,
