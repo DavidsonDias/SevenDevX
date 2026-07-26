@@ -62,18 +62,26 @@ const Hero = () => {
     >
       {/* Background */}
       <div className="absolute inset-0 z-0">
-        {shouldLoadVideo && !videoFailed ? (
+        <img
+          src={heroBackground}
+          alt="SevenDevX"
+          width={1920}
+          height={1080}
+          className="absolute inset-0 w-full h-full object-cover"
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+        />
+        {shouldLoadVideo && !videoFailed && (
           <video
             ref={videoRef}
-            muted loop playsInline autoPlay preload="metadata"
+            muted loop playsInline autoPlay preload="none"
             poster={heroBackground}
-            className="w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover"
             onError={() => setVideoFailed(true)}
           >
-            <source src={heroVideo} type="video/mp4" />
+            <source src={isMobile ? heroVideoMobile : heroVideo} type="video/mp4" />
           </video>
-        ) : (
-          <img src={heroBackground} alt="SevenDevX" width={1920} height={1080} className="w-full h-full object-cover" loading="eager" fetchPriority="high" decoding="async" />
         )}
         <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/65 to-background/90" />
       </div>
