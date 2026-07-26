@@ -159,11 +159,25 @@ export default defineConfig(({ mode }) => ({
       },
 
       injectManifest: {
+        // Precache apenas o app shell + fontes + ícones leves.
+        // Imagens pesadas (webp/jpg/png de projetos) são servidas pelo
+        // runtime cache do sw.ts (CacheFirst same-origin), evitando um
+        // download de ~11MB no primeiro acesso.
         globPatterns: [
-          "**/*.{js,css,html,ico,png,svg,webp,jpg,jpeg,woff,woff2,ttf,eot}",
+          "**/*.{js,css,html,ico,svg,woff,woff2}",
+          "logo-*.png",
+          "favicon*.png",
+          "apple-touch-icon.png",
         ],
-        globIgnores: ["**/node_modules/**/*", "**/sw.ts", "**/workbox-*.js"],
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+        globIgnores: [
+          "**/node_modules/**/*",
+          "**/sw.ts",
+          "**/workbox-*.js",
+          "**/*.mp4",
+          "**/screenshots/**",
+          "**/splashscreens/**",
+        ],
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
       },
 
       registerType: "prompt",
