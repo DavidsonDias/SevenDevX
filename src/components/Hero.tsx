@@ -8,6 +8,7 @@ import { useLanguage } from "@/i18n/LanguageContext";
 const Hero = () => {
   const { t } = useLanguage();
   const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
   const [videoFailed, setVideoFailed] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
