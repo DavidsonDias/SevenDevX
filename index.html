@@ -312,40 +312,35 @@
          ═════════════════════════════════════════════════════════ -->
 
     <!-- Preconnect (establish early connections) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-
     <link
       rel="preconnect"
-      href="https://fonts.gstatic.com"
+      href="https://phdmdnopdlfywymptimy.supabase.co"
+      crossorigin
+    />
+
+    <!-- DNS Prefetch (fallback for older browsers) -->
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+
+    <!--
+      Fontes são LOCAIS (public/fonts + src/fonts.css).
+      Preload apenas das duas famílias críticas usadas above-the-fold.
+    -->
+    <link
+      rel="preload"
+      as="font"
+      type="font/woff2"
+      href="/fonts/Orbitron-VariableFont_wght.woff2"
       crossorigin
     />
 
     <link
-      rel="preconnect"
-      href="https://phdmdnopdlfywymptimy.supabase.co"
-    />
-
-    <link rel="preconnect" href="https://images.unsplash.com" />
-
-    <!-- DNS Prefetch (fallback for older browsers) -->
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-
-    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
-
-    <!-- Font Preload (critical fonts for LCP) -->
-    <link
       rel="preload"
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap"
-      as="style"
+      as="font"
+      type="font/woff2"
+      href="/fonts/poppins-v24-latin-regular.woff2"
+      crossorigin
     />
 
-    <link
-      rel="preload"
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-      as="style"
-    />
 
     <!-- hreflang (multilingual SEO) -->
     <link
