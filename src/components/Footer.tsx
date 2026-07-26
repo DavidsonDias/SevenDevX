@@ -63,6 +63,8 @@ export default function Footer() {
               <img 
                 src={logo} 
                 alt="SevenDevX" 
+                loading="lazy"
+                decoding="async"
                 className="mx-auto h-10 w-auto md:mx-0" />
             </Link>
 

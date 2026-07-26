@@ -2,11 +2,13 @@ import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import heroBackground from "@/assets/images/hero-tech-workspace.webp";
 import heroVideo from "@/assets/videos/hero-bg.mp4";
+import heroVideoMobile from "@/assets/videos/hero-bg-mobile.mp4";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 const Hero = () => {
   const { t } = useLanguage();
   const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
   const [videoFailed, setVideoFailed] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
@@ -17,10 +19,26 @@ const Hero = () => {
 
   useEffect(() => {
     if (!sectionRef.current) return;
+
+    // Respeita economia de dados / conexões lentas / reduced motion:
+    // nesses casos mantemos o poster (mesma imagem de fundo), sem baixar vídeo.
+    const conn = (navigator as any).connection;
+    const slow =
+      conn?.saveData === true ||
+      /2g|slow-2g|3g/.test(conn?.effectiveType || "") ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (slow) return;
+
+    const start = () => {
+      // adia para depois do first paint / idle, liberando a main thread do LCP
+      const idle = (window as any).requestIdleCallback || ((cb: any) => setTimeout(cb, 1200));
+      idle(() => setShouldLoadVideo(true));
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) { setShouldLoadVideo(true); observer.disconnect(); }
+          if (entry.isIntersecting) { start(); observer.disconnect(); }
         });
       },
       { rootMargin: "50px", threshold: 0.1 }
@@ -45,18 +63,26 @@ const Hero = () => {
     >
       {/* Background */}
       <div className="absolute inset-0 z-0">
-        {shouldLoadVideo && !videoFailed ? (
+        <img
+          src={heroBackground}
+          alt="SevenDevX"
+          width={1920}
+          height={1080}
+          className="absolute inset-0 w-full h-full object-cover"
+          loading="eager"
+          fetchPriority="high"
+          decoding="async"
+        />
+        {shouldLoadVideo && !videoFailed && (
           <video
             ref={videoRef}
-            muted loop playsInline autoPlay preload="metadata"
+            muted loop playsInline autoPlay preload="none"
             poster={heroBackground}
-            className="w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-cover"
             onError={() => setVideoFailed(true)}
           >
-            <source src={heroVideo} type="video/mp4" />
+            <source src={isMobile ? heroVideoMobile : heroVideo} type="video/mp4" />
           </video>
-        ) : (
-          <img src={heroBackground} alt="SevenDevX" width={1920} height={1080} className="w-full h-full object-cover" loading="eager" fetchPriority="high" decoding="async" />
         )}
         <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/65 to-background/90" />
       </div>
