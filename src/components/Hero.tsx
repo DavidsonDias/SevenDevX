@@ -18,10 +18,26 @@ const Hero = () => {
 
   useEffect(() => {
     if (!sectionRef.current) return;
+
+    // Respeita economia de dados / conexões lentas / reduced motion:
+    // nesses casos mantemos o poster (mesma imagem de fundo), sem baixar vídeo.
+    const conn = (navigator as any).connection;
+    const slow =
+      conn?.saveData === true ||
+      /2g|slow-2g|3g/.test(conn?.effectiveType || "") ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (slow) return;
+
+    const start = () => {
+      // adia para depois do first paint / idle, liberando a main thread do LCP
+      const idle = (window as any).requestIdleCallback || ((cb: any) => setTimeout(cb, 1200));
+      idle(() => setShouldLoadVideo(true));
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) { setShouldLoadVideo(true); observer.disconnect(); }
+          if (entry.isIntersecting) { start(); observer.disconnect(); }
         });
       },
       { rootMargin: "50px", threshold: 0.1 }
