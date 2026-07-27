@@ -177,10 +177,9 @@ export default defineConfig(({ mode }) => ({
           "**/screenshots/**",
           "**/splashscreens/**",
         ],
-        // Builds de desenvolvimento geram bundles não minificados grandes;
-        // limite alto evita falha do workbox no `build:dev`.
-        maximumFileSizeToCacheInBytes:
-          mode === "development" ? 12 * 1024 * 1024 : 3 * 1024 * 1024,
+        // Bundles grandes (dev não minificado e chunk principal do admin)
+        // exigem um limite alto; caso contrário o Workbox aborta o build.
+        maximumFileSizeToCacheInBytes: 12 * 1024 * 1024,
       },
 
       registerType: "prompt",
