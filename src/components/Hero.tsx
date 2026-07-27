@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import heroBackground from "@/assets/images/hero-tech-workspace.webp";
-import heroVideoAsset from "@/assets/videos/hero-bg.mp4.asset.json";
-import heroVideoMobileAsset from "@/assets/videos/hero-bg-mobile.mp4.asset.json";
+const HERO_VIDEO_DESKTOP = "/videos/hero-bg.mp4";
+const HERO_VIDEO_MOBILE = "/videos/hero-bg-mobile.mp4";
+
 
 import { useLanguage } from "@/i18n/LanguageContext";
 
