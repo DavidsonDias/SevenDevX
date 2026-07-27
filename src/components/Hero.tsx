@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import heroBackground from "@/assets/images/hero-tech-workspace.webp";
-import heroVideo from "@/assets/videos/hero-bg.mp4";
-import heroVideoMobile from "@/assets/videos/hero-bg-mobile.mp4";
+import heroVideoAsset from "@/assets/videos/hero-bg.mp4.asset.json";
+import heroVideoMobileAsset from "@/assets/videos/hero-bg-mobile.mp4.asset.json";
+
 import { useLanguage } from "@/i18n/LanguageContext";
 
 const Hero = () => {
