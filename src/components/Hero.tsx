@@ -83,7 +83,7 @@ const Hero = () => {
             className="absolute inset-0 w-full h-full object-cover"
             onError={() => setVideoFailed(true)}
           >
-            <source src={isMobile ? heroVideoMobileAsset.url : heroVideoAsset.url} type="video/mp4" />
+            <source src={isMobile ? HERO_VIDEO_MOBILE : HERO_VIDEO_DESKTOP} type="video/mp4" />
           </video>
         )}
         <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/65 to-background/90" />
