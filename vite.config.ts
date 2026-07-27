@@ -177,7 +177,10 @@ export default defineConfig(({ mode }) => ({
           "**/screenshots/**",
           "**/splashscreens/**",
         ],
-        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+        // Builds de desenvolvimento geram bundles não minificados grandes;
+        // limite alto evita falha do workbox no `build:dev`.
+        maximumFileSizeToCacheInBytes:
+          mode === "development" ? 12 * 1024 * 1024 : 3 * 1024 * 1024,
       },
 
       registerType: "prompt",
