@@ -1,3 +1,37 @@
+/**
+ * 🚀 App.tsx — SevenDevX Enterprise Platform
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file App.tsx
+ * @module App/Composition
+ *
+ * @description
+ * Raiz da aplicação: envolve o roteador nos providers globais, instala o
+ * error boundary de última instância e monta as camadas transversais
+ * (PWA, indicador offline e bloqueio de interação).
+ *
+ * @architecture
+ *   App
+ *     ├── ErrorBoundary (fallback de falha não tratada)
+ *     └── Providers
+ *         ├── AppRouter
+ *         ├── Blocker · AppInstallerButton
+ *         ├── PWAUpdatePrompt · OfflineIndicator
+ *         └── SpeedInsights
+ *
+ * @responsibilities
+ *   - Impedir tela branca em erro não capturado
+ *   - Disponibilizar as camadas globais em todas as rotas
+ *
+ * @dependencies react-error-boundary · @vercel/speed-insights
+ *
+ * @performance
+ *   Nada custoso deve ser adicionado aqui: renderiza em toda navegação.
+ *
+ * @see src/app/Providers.tsx · src/app/Router.tsx
+ * ═══════════════════════════════════════════════════════════════════════
+ */
+
 import { ErrorBoundary } from "react-error-boundary";
 import Providers from "@/app/Providers";
 import AppRouter from "@/app/Router";
