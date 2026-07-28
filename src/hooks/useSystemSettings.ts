@@ -1,5 +1,22 @@
 /**
- * ⚙️ useSystemSettings — lê/escreve configurações globais (admin only para escrita).
+ * ⚙️ useSystemSettings.ts — SevenOS
+ *
+ * @file useSystemSettings.ts
+ * @module Platform/Settings
+ *
+ * @description
+ * Leitura e escrita das configurações globais (`system_settings`),
+ * expostas como um mapa `chave → valor`.
+ *
+ * @security
+ *   A tabela é restrita a administradores por RLS. Uma escrita feita por
+ *   usuário sem papel admin falha no banco — o retorno booleano do
+ *   `setSetting` reflete esse resultado; não presuma sucesso.
+ *
+ * @sideEffects
+ *   `setSetting` faz upsert com `onConflict: "key"` e atualiza o estado local.
+ *
+ * @see docs/database/TABLES.md
  */
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
