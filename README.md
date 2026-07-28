@@ -60,7 +60,7 @@
 - [🌐 SevenDevX — Site Público](#-sevendevx--site-público)
 - [🛠️ SevenOS — ERP/CRM Interno](#️-sevenos--erpcrm-interno)
 - [☁️ O que é Serverless aqui?](#️-o-que-é-serverless-aqui)
-- [⚡ Edge Functions (28 funções)](#️-edge-functions-28-funções)
+- [⚡ Edge Functions (47 funções)](#️-edge-functions-47-funções)
 - [🗄️ Banco de Dados — RLS + GRANTs](#️-banco-de-dados--rls--grants)
 - [📂 Estrutura Completa de Pastas](#-estrutura-completa-de-pastas)
 - [🎨 Design System](#-design-system)
@@ -444,7 +444,7 @@ Na SevenDevX isso se traduz em:
 
 ---
 
-## ⚡️ Edge Functions (28 funções)
+## ⚡️ Edge Functions (47 funções)
 
 Tudo backend roda em **Supabase Edge Functions (Deno runtime)** distribuídas globalmente.
 
