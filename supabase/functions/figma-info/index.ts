@@ -1,3 +1,26 @@
+/**
+ * ⚡ figma-info/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/figma-info/index.ts
+ * @module Integrations
+ *
+ * @description
+ * Retorna dados da conta Figma conectada.
+ *
+ * @security
+ * JWT + role admin. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * Figma
+ *
+ * @remarks
+ * O token permanece no ambiente da função.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {

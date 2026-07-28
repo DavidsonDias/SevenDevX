@@ -1,5 +1,24 @@
 /**
- * 🧠 useSmartInsights — leads parados + previsão de receita ponderada.
+ * 🧠 useSmartInsights.ts — SevenOS
+ *
+ * @file useSmartInsights.ts
+ * @module Pipeline/Insights
+ *
+ * @description
+ * Insights comerciais derivados do pipeline: leads sem movimentação e
+ * previsão de receita ponderada por estágio. O cálculo acontece no banco
+ * (RPCs `fn_stale_leads` e `fn_pipeline_forecast`) para evitar trazer o
+ * pipeline inteiro ao cliente.
+ *
+ * @dependencies React Query · Supabase RPC
+ *
+ * @performance
+ *   `staleTime` de 60s: são dados de apoio à decisão, não tempo real.
+ *
+ * @security
+ *   As RPCs aplicam as políticas do banco; a UI apenas apresenta.
+ *
+ * @see docs/database/RPC_FUNCTIONS.md
  */
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";

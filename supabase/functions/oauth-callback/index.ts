@@ -1,3 +1,26 @@
+/**
+ * ⚡ oauth-callback/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/oauth-callback/index.ts
+ * @module Integrations/OAuth
+ *
+ * @description
+ * Conclui o fluxo OAuth PKCE e persiste a conexão.
+ *
+ * @security
+ * JWT + role admin. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * Providers OAuth
+ *
+ * @remarks
+ * Valida o state/verifier antes de trocar o código por token.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // 🔐 oauth-callback — finaliza fluxo OAuth: troca code por token e persiste.
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';

@@ -1,3 +1,26 @@
+/**
+ * ⚡ lead-score-ai/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/lead-score-ai/index.ts
+ * @module Pipeline
+ *
+ * @description
+ * Calcula a pontuação de qualificação de leads.
+ *
+ * @security
+ * JWT + role admin / job. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * AI Gateway
+ *
+ * @remarks
+ * Score é apoio à decisão, não classificação definitiva.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // 🤖 Lead Score AI — pontua leads de 0-100 via Lovable AI Gateway.
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';

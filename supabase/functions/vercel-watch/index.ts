@@ -1,3 +1,26 @@
+/**
+ * ⚡ vercel-watch/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/vercel-watch/index.ts
+ * @module Observabilidade
+ *
+ * @description
+ * Observa deploys e gera alertas de falha.
+ *
+ * @security
+ * Token de job. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * Vercel
+ *
+ * @remarks
+ * Alertas persistidos em vercel_deploy_alerts.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // Vercel watch cron — protected by service role key OR CRON_SECRET shared header.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 

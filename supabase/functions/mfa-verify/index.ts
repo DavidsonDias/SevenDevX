@@ -1,3 +1,26 @@
+/**
+ * ⚡ mfa-verify/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/mfa-verify/index.ts
+ * @module Security/MFA
+ *
+ * @description
+ * Valida o código TOTP e ativa o MFA do usuário.
+ *
+ * @security
+ * JWT do usuário. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * —
+ *
+ * @remarks
+ * Backup codes são de uso único.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // 🔐 MFA Verify — valida código TOTP de 6 dígitos. Habilita MFA na primeira verificação válida.
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';

@@ -1,4 +1,31 @@
-// src/main.tsx
+/**
+ * 🚀 main.tsx — SevenDevX Enterprise Platform
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file main.tsx
+ * @module App/Bootstrap
+ *
+ * @description
+ * Ponto de entrada da aplicação. Instala a guarda de storage do browser,
+ * neutraliza o Service Worker em contextos de preview/iframe e monta a
+ * árvore React.
+ *
+ * @responsibilities
+ *   - Importar a guarda de storage antes de qualquer código de app
+ *   - Desregistrar Service Workers em iframe e hosts de preview
+ *   - Renderizar <App /> em StrictMode
+ *
+ * @security
+ *   Nenhuma credencial é manipulada aqui.
+ *
+ * @performance
+ *   Manter este arquivo mínimo: tudo que roda antes do primeiro render
+ *   atrasa o LCP.
+ *
+ * @see src/utils/browserStorageGuard.ts · docs/architecture/PWA_ARCHITECTURE.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './utils/browserStorageGuard';

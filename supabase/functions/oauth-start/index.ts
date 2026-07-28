@@ -1,3 +1,26 @@
+/**
+ * ⚡ oauth-start/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/oauth-start/index.ts
+ * @module Integrations/OAuth
+ *
+ * @description
+ * Inicia o fluxo OAuth PKCE e devolve a URL de autorização.
+ *
+ * @security
+ * JWT + role admin. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * Providers OAuth
+ *
+ * @remarks
+ * O redirect é sempre same-origin público, nunca rota protegida.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // 🔐 oauth-start — inicia fluxo OAuth 2.0 (PKCE) genérico
 // Suporta: github, google, slack, notion. Retorna URL para redirect.
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';

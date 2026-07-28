@@ -60,7 +60,7 @@
 - [🌐 SevenDevX — Site Público](#-sevendevx--site-público)
 - [🛠️ SevenOS — ERP/CRM Interno](#️-sevenos--erpcrm-interno)
 - [☁️ O que é Serverless aqui?](#️-o-que-é-serverless-aqui)
-- [⚡ Edge Functions (28 funções)](#️-edge-functions-28-funções)
+- [⚡ Edge Functions (47 funções)](#️-edge-functions-47-funções)
 - [🗄️ Banco de Dados — RLS + GRANTs](#️-banco-de-dados--rls--grants)
 - [📂 Estrutura Completa de Pastas](#-estrutura-completa-de-pastas)
 - [🎨 Design System](#-design-system)
@@ -72,6 +72,7 @@
 - [🧰 Ferramentas & Integrações](#-ferramentas--integrações)
 - [🎯 Performance & SEO](#-performance--seo)
 - [📊 Status do Projeto](#-status-do-projeto)
+- [📚 Documentação de Engenharia](#-documentação-de-engenharia)
 - [🗺️ Roadmap](#️-roadmap)
 - [💬 Contato](#-contato)
 - [🏆 Créditos](#-créditos)
@@ -139,22 +140,31 @@ Entre os recursos implementados estão:
 
 ---
 
-## 📊 Métricas Reais
+## 📊 Números do Projeto
 
-> Snapshot consolidado do projeto — atualizado a cada release.
+> Contagens verificáveis diretamente no repositório. **Nenhuma métrica de performance é declarada sem medição** — abaixo, o que é meta está marcado como `Target`.
 
 | Categoria | Métrica | Valor |
 |-----------|---------|-------|
-| ⚡ **Lighthouse** | Performance · Acessibilidade · Best Practices · SEO | **98 / 100 / 100 / 100** |
-| 🎯 **Core Web Vitals** | LCP · INP · CLS | **< 1.2s · < 80ms · < 0.05** |
-| 📦 **Bundle** | Initial JS (gzip) · CSS (gzip) | **~ 142 KB · ~ 18 KB** |
-| 🧭 **Rotas** | Públicas · Admin (SevenOS) · GEO Hub | **18 · 28 · 7** |
-| 🧩 **Componentes** | UI atômicos · Admin · Módulos | **45+ · 60+ · 25+** |
-| ⚙️ **Edge Functions** | Serverless deploys ativos | **28** |
-| 🗄️ **Database** | Migrations · Tabelas · Policies RLS | **46 · 38 · 120+** |
-| 🌍 **i18n** | Idiomas suportados | **PT · EN · ES** |
-| 📱 **PWA** | Instalável · Offline · Push | **✅ · ✅ · ✅** |
-| 🔐 **Segurança** | RBAC roles · Linter Supabase | **3 · 0 issues** |
+| 🧭 **Rotas** | Declaradas em `src/app/Router.tsx` (sendo 48 em `/admin`) | **77** |
+| 🧩 **Componentes** | Design System · Admin · Módulos | **53 · 33 · 24** |
+| 📄 **Páginas** | Arquivos em `src/pages` | **73** |
+| 🪝 **Hooks** | Arquivos em `src/hooks` | **32** |
+| ⚙️ **Edge Functions** | Diretórios em `supabase/functions` | **47** |
+| 🗄️ **Database** | Migrations versionadas · Tabelas no schema `public` | **67 · 72** |
+| 🌍 **i18n** | Idiomas do site público | **PT · EN · ES** |
+| 📱 **PWA** | Instalável · Fallback offline · Push | **✅ · ✅ · ✅** |
+| 🔐 **Segurança** | Papéis RBAC (`app_role`) | **3** |
+
+### Targets de qualidade (não medidos automaticamente)
+
+```txt
+Target: LCP < 2.5s na home em 4G
+Target: CLS < 0.1
+Target: acessibilidade WCAG 2.1 AA
+Target: nenhuma resposta de API servida a partir do cache do Service Worker
+```
+
 
 ---
 
@@ -435,7 +445,7 @@ Na SevenDevX isso se traduz em:
 
 ---
 
-## ⚡️ Edge Functions (28 funções)
+## ⚡️ Edge Functions (47 funções)
 
 Tudo backend roda em **Supabase Edge Functions (Deno runtime)** distribuídas globalmente.
 
@@ -942,42 +952,75 @@ bun dev            # → http://localhost:5173
 
 ## 🎯 Performance & SEO
 
-### ⚡ Lighthouse Scores
+### ⚡ Otimizações aplicadas
 
-<div align="center">
+- Vídeo do Hero servido pelo próprio domínio, com versão 720p para mobile e dimensões explícitas para estabilizar o LCP.
+- Assets de imagem comprimidos e mídia pesada excluída do precache do Service Worker.
+- Carregamento condicional de vídeo em `saveData` e conexões lentas.
+- Rotas pesadas sob lazy loading.
+- Metadados, JSON-LD e `llms.txt` para buscadores e LLMs.
 
-| Métrica | Desktop | Mobile |
-|:-------:|:-------:|:------:|
-| 🎨 **Performance** | 95+ | 90+ |
-| ♿ **Accessibility** | 100 | 100 |
-| ✅ **Best Practices** | 95+ | 95+ |
-| 🔍 **SEO** | 100 | 100 |
+### 📏 Targets
 
-</div>
+```txt
+Target: LCP < 2.5s na home em 4G
+Target: CLS < 0.1
+Target: acessibilidade WCAG 2.1 AA
+```
+
+> Scores de Lighthouse não são publicados aqui: variam por dispositivo, rede e execução. Meça em produção antes de reportar qualquer número.
 
 ---
 
 ## 📊 Status do Projeto
 
-| Métrica | Estado |
+| Item | Estado |
 |---|---|
-| 🟢 **Deploy** | Online em Vercel + Lovable |
-| 🟢 **PWA** | Instalável, offline fallback ativo |
-| 🟢 **GEO Health Score** | 68/100 (Sólido) |
-| 🟢 **Indexação técnica** | 9/9 checklist OK |
-| 🟢 **Artigos GEO publicados** | 13 |
-| 🟢 **Páginas locais ativas** | 15 cidades |
-| 🟢 **Search Console** | Conectado (`sc-domain:sevendevx.com`) |
-| 🟢 **Bots únicos detectados** | Bingbot / Copilot ativos |
+| 🟢 **Deploy** | Online em Vercel |
+| 🟢 **PWA** | Instalável, fallback offline ativo, fila offline com Background Sync |
+| 🟢 **Search Console** | Conectado via integração `gsc-insights` |
 | 🟢 **Citation Monitor** | Operacional, pausável, queries/modelos editáveis |
-| 🟢 **Edge Functions** | 28 deployadas |
-| 🟢 **Migrations** | 46 versionadas |
-| 🟢 **Lighthouse Performance** | 90+ mobile |
-| 🟢 **Acessibilidade** | WCAG AA |
+| 🟢 **Edge Functions** | 47 no repositório |
+| 🟢 **Migrations** | 67 versionadas |
+| 🟡 **Testes automatizados** | Ausentes — ver [TD-006](docs/technical-debt/README.md) |
+| 🟡 **Bundle de produção** | Chunk principal acima de 4 MB — ver [TD-001](docs/technical-debt/README.md) |
+
+
+---
+
+## 📚 Documentação de Engenharia
+
+A documentação técnica completa vive em [`/docs`](docs/README.md), organizada segundo o **SevenDevX Enterprise Code Documentation Standard v1.0**.
+
+| Área | Documento |
+|---|---|
+| 🧭 Portal | [docs/README.md](docs/README.md) |
+| 📐 Padrão de documentação | [code-standards/](docs/code-standards/README.md) |
+| 🏛️ Arquitetura | [SYSTEM_OVERVIEW](docs/architecture/SYSTEM_OVERVIEW.md) · [MODULE_MAP](docs/architecture/MODULE_MAP.md) · [DATA_FLOW](docs/architecture/DATA_FLOW.md) |
+| 🔐 Autenticação | [AUTHENTICATION](docs/architecture/AUTHENTICATION.md) · [AUTHORIZATION](docs/security/AUTHORIZATION.md) |
+| 🗄️ Banco de dados | [TABLES](docs/database/TABLES.md) · [RLS](docs/database/RLS.md) · [RPC_FUNCTIONS](docs/database/RPC_FUNCTIONS.md) · [TRIGGERS](docs/database/TRIGGERS.md) · [MIGRATIONS](docs/database/MIGRATIONS.md) |
+| ⚡ Edge Functions | [supabase/functions/README.md](supabase/functions/README.md) · [EDGE_FUNCTION_SECURITY](docs/security/EDGE_FUNCTION_SECURITY.md) |
+| 🛡️ Segurança | [security/](docs/security/README.md) · [SECRETS](docs/security/SECRETS.md) · [AUDIT_LOG](docs/security/AUDIT_LOG.md) |
+| 📱 PWA | [PWA_ARCHITECTURE](docs/architecture/PWA_ARCHITECTURE.md) |
+| 🤖 IA | [AI_ARCHITECTURE](docs/architecture/AI_ARCHITECTURE.md) |
+| 🧾 Decisões | [ADRs](docs/adr/ADR-001-logo-renderer.md) |
+| 🧯 Dívida técnica | [technical-debt](docs/technical-debt/README.md) |
+| 🗒️ Changelog da doc | [docs/CHANGELOG.md](docs/CHANGELOG.md) |
+
+Cada diretório relevante de `src/` possui seu próprio `README.md` (ver [src/README.md](src/README.md)).
+
+### Verificação da documentação
+
+```bash
+npm run docs:check
+```
+
+Emite avisos (sem bloquear o build) para arquivos críticos sem cabeçalho, diretórios sem README e links Markdown quebrados.
 
 ---
 
 ## 🗺️ Roadmap
+
 
 - [ ] Multi-tenant **opcional** do SevenOS para clientes selecionados
 - [ ] App mobile nativo (React Native compartilhando hooks)

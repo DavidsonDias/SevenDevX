@@ -1,3 +1,26 @@
+/**
+ * ⚡ health-collector/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/health-collector/index.ts
+ * @module System Health
+ *
+ * @description
+ * Coleta amostras de saúde dos serviços monitorados.
+ *
+ * @security
+ * Token de job. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * Serviços monitorados
+ *
+ * @remarks
+ * Grava em service_health_snapshots; ausência de amostra não significa saudável.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // 🩺 Health Collector — pinga serviços críticos e salva snapshot.
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';

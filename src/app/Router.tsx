@@ -1,3 +1,43 @@
+/**
+ * 🧭 Router.tsx — SevenDevX Enterprise Platform
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file Router.tsx
+ * @module App/Routing
+ *
+ * @description
+ * Mapa de rotas das duas superfícies do produto: o site público SevenDevX
+ * (institucional, portfólio, blog e páginas GEO) e o ERP/CRM interno
+ * SevenOS, sob `/admin`. Também instala as camadas presentes em toda
+ * navegação (scroll, transição, navegação mobile, FAB e chatbot).
+ *
+ * @architecture
+ *   BrowserRouter
+ *     ├── ScrollToTop · trackers de navegação e referral de IA
+ *     ├── AnimatePresence (transição entre páginas)
+ *     ├── Rotas públicas · GEO · autenticadas
+ *     ├── Rotas /admin envolvidas por ProtectedRoute (role admin)
+ *     └── MobileBottomNav · GlobalFAB · AIChatbot
+ *
+ * @responsibilities
+ *   - Declarar cada URL da aplicação e sua página
+ *   - Aplicar a guarda de rota nas áreas restritas
+ *   - Manter páginas pesadas sob lazy loading com fallback de carregamento
+ *
+ * @dependencies React Router · Framer Motion · React.lazy/Suspense
+ *
+ * @security
+ *   `ProtectedRoute` protege apenas a navegação. A autorização efetiva é
+ *   o RLS do banco e a verificação de papel nas Edge Functions.
+ *
+ * @performance
+ *   Toda página nova deve entrar via `lazy()` — imports diretos aumentam
+ *   o chunk inicial (ver docs/technical-debt TD-001).
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
+
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";

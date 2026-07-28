@@ -1,3 +1,26 @@
+/**
+ * ⚡ logo-variations-ai/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/logo-variations-ai/index.ts
+ * @module Branding
+ *
+ * @description
+ * Gera variações de logo a partir do ativo base.
+ *
+ * @security
+ * JWT + role admin. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * AI Gateway
+ *
+ * @remarks
+ * Ativos grandes em base64 impactam backup e export.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // 🎨 logo-variations-ai — gera variações de logo via Lovable AI (Gemini image)
 // Variantes: iconmark, horizontal, vertical, monochrome
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';

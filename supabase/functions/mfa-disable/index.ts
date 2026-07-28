@@ -1,3 +1,26 @@
+/**
+ * ⚡ mfa-disable/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/mfa-disable/index.ts
+ * @module Security/MFA
+ *
+ * @description
+ * Remove o MFA do próprio usuário autenticado.
+ *
+ * @security
+ * JWT do usuário. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * —
+ *
+ * @remarks
+ * Opera exclusivamente sobre auth.uid(); não permite alvo arbitrário.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // 🔐 MFA Disable — remove MFA do próprio usuário.
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';

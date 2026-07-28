@@ -1,3 +1,26 @@
+/**
+ * ⚡ daily-digest/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/daily-digest/index.ts
+ * @module Observabilidade
+ *
+ * @description
+ * Resumo diário operacional enviado à equipe.
+ *
+ * @security
+ * Token de job. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * Canais de notificação
+ *
+ * @remarks
+ * Agendada por pg_cron; não deve expor dados de clientes fora do destinatário.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // Daily digest — envia resumo 8h BRT (leads, projetos parados, MRR, alertas) para admins via Resend.
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { createClient } from "npm:@supabase/supabase-js@2";

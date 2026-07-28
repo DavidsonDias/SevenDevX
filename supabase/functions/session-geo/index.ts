@@ -1,3 +1,26 @@
+/**
+ * ⚡ session-geo/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/session-geo/index.ts
+ * @module Security/Sessions
+ *
+ * @description
+ * Enriquece a sessão administrativa com dados geográficos.
+ *
+ * @security
+ * JWT do usuário. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * Geo IP
+ *
+ * @remarks
+ * IP é dado pessoal: armazenar apenas o necessário para auditoria.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // 🌍 Session Geo — enriquece sessão atual com país/cidade/ISP via ipapi.co.
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';

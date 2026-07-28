@@ -1,3 +1,26 @@
+/**
+ * ⚡ incident-notify/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/incident-notify/index.ts
+ * @module System Health
+ *
+ * @description
+ * Notifica a equipe sobre incidentes abertos ou agravados.
+ *
+ * @security
+ * Token de job. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * Canais de notificação
+ *
+ * @remarks
+ * Evitar tempestade de alertas: respeitar deduplicação por incidente.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // Incident notifier — posts incident summary to Discord/Slack webhooks stored in system_settings.
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';

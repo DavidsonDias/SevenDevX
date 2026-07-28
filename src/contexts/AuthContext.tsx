@@ -1,3 +1,44 @@
+/**
+ * 🔐 AuthContext.tsx — SevenDevX Enterprise Platform
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file AuthContext.tsx
+ * @module Core/Auth
+ *
+ * @description
+ * Fonte única de verdade da sessão autenticada e do papel administrativo.
+ * Todo consumo de autenticação no projeto passa por `useAuthContext()`.
+ *
+ * @architecture
+ *   AuthProvider
+ *     ├── supabase.auth.onAuthStateChange   (registrado primeiro)
+ *     ├── supabase.auth.getSession          (hidratação inicial)
+ *     └── rpc has_role(user, 'admin')       (papel administrativo)
+ *
+ * @responsibilities
+ *   - Expor user, session, isLoading e isAdmin
+ *   - Prover signIn, signUp, signOut e resetPassword
+ *   - Rastrear sessão administrativa via useSessionTracker
+ *
+ * @dependencies Supabase Auth · React Context
+ *
+ * @security
+ *   `isAdmin` deriva exclusivamente da RPC `has_role` (SECURITY DEFINER)
+ *   sobre `user_roles` — nunca de storage local ou claim editável.
+ *   Serve para decidir *exibição* de UI; a autorização real é RLS.
+ *
+ * @performance
+ *   A checagem de papel é agendada fora do callback do listener
+ *   (`setTimeout 0`) para evitar deadlock do cliente Supabase.
+ *
+ * @sideEffects
+ *   Assina eventos de auth e registra sessões administrativas.
+ *
+ * @see src/components/auth/ProtectedRoute.tsx
+ * @see docs/architecture/AUTHENTICATION.md · docs/adr/ADR-003-supabase-auth.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
+
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";

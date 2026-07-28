@@ -1,3 +1,26 @@
+/**
+ * ⚡ tenant-export/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/tenant-export/index.ts
+ * @module Backup
+ *
+ * @description
+ * Exporta os dados operacionais para backup.
+ *
+ * @security
+ * JWT + role admin. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * —
+ *
+ * @remarks
+ * Segredos e credenciais nunca entram no pacote exportado.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // 📦 Tenant Export v6 — Backup DEFINITIVO, inteligente e reaproveitável do SevenOS
 // Exporta TODAS as seções conhecidas, pagina 100% dos registros, resolve assets
 // linkados (logos, SVGs, imagens, PDFs), cria catálogos navegáveis e pastas por entidade.

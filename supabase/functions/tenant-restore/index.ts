@@ -1,3 +1,26 @@
+/**
+ * ⚡ tenant-restore/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/tenant-restore/index.ts
+ * @module Restore
+ *
+ * @description
+ * Restaura dados a partir de um backup.
+ *
+ * @security
+ * JWT + role admin. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * —
+ *
+ * @remarks
+ * Operação destrutiva: exige confirmação explícita e é auditada.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // Selective tenant restore. Admin only. Reads JSON snapshot, upserts selected tables.
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';

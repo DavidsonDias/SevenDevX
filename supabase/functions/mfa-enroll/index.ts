@@ -1,3 +1,26 @@
+/**
+ * ⚡ mfa-enroll/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/mfa-enroll/index.ts
+ * @module Security/MFA
+ *
+ * @description
+ * Gera segredo TOTP, URI otpauth e backup codes.
+ *
+ * @security
+ * JWT do usuário. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * —
+ *
+ * @remarks
+ * O segredo é retornado uma única vez ao próprio usuário; nunca a terceiros.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // 🔐 MFA Enroll — gera secret TOTP + QR (otpauth) + backup codes.
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';

@@ -1,3 +1,26 @@
+/**
+ * ⚡ github-test/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/github-test/index.ts
+ * @module Integrations
+ *
+ * @description
+ * Diagnóstico da integração GitHub.
+ *
+ * @security
+ * JWT + role admin. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * GitHub
+ *
+ * @remarks
+ * Reporta apenas resultado dos checks.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {

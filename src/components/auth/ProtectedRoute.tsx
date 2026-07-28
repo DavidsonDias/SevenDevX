@@ -1,3 +1,29 @@
+/**
+ * 🛡️ ProtectedRoute.tsx — SevenDevX Enterprise Platform
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file ProtectedRoute.tsx
+ * @module Core/Auth
+ *
+ * @description
+ * Guarda de navegação: exige sessão ativa e, opcionalmente, papel
+ * administrativo antes de renderizar a rota. Preserva o destino original
+ * no parâmetro `redirect` para retomar o fluxo após o login.
+ *
+ * @responsibilities
+ *   - Exibir estado de carregamento enquanto a sessão hidrata
+ *   - Redirecionar visitantes anônimos para /auth
+ *   - Exibir tela de acesso restrito quando faltar o papel exigido
+ *
+ * @security
+ *   Este componente é **UX, não autorização**. A autoridade efetiva é o
+ *   RLS do banco e a verificação de papel nas Edge Functions. Nunca
+ *   assuma que ocultar a rota protege o dado.
+ *
+ * @see src/contexts/AuthContext.tsx · docs/security/AUTHORIZATION.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
+
 import { Navigate, useLocation } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { useAuthContext } from "@/contexts/AuthContext";
