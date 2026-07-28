@@ -72,6 +72,7 @@
 - [🧰 Ferramentas & Integrações](#-ferramentas--integrações)
 - [🎯 Performance & SEO](#-performance--seo)
 - [📊 Status do Projeto](#-status-do-projeto)
+- [📚 Documentação de Engenharia](#-documentação-de-engenharia)
 - [🗺️ Roadmap](#️-roadmap)
 - [💬 Contato](#-contato)
 - [🏆 Créditos](#-créditos)
@@ -987,7 +988,39 @@ Target: acessibilidade WCAG 2.1 AA
 
 ---
 
+## 📚 Documentação de Engenharia
+
+A documentação técnica completa vive em [`/docs`](docs/README.md), organizada segundo o **SevenDevX Enterprise Code Documentation Standard v1.0**.
+
+| Área | Documento |
+|---|---|
+| 🧭 Portal | [docs/README.md](docs/README.md) |
+| 📐 Padrão de documentação | [code-standards/](docs/code-standards/README.md) |
+| 🏛️ Arquitetura | [SYSTEM_OVERVIEW](docs/architecture/SYSTEM_OVERVIEW.md) · [MODULE_MAP](docs/architecture/MODULE_MAP.md) · [DATA_FLOW](docs/architecture/DATA_FLOW.md) |
+| 🔐 Autenticação | [AUTHENTICATION](docs/architecture/AUTHENTICATION.md) · [AUTHORIZATION](docs/security/AUTHORIZATION.md) |
+| 🗄️ Banco de dados | [TABLES](docs/database/TABLES.md) · [RLS](docs/database/RLS.md) · [RPC_FUNCTIONS](docs/database/RPC_FUNCTIONS.md) · [TRIGGERS](docs/database/TRIGGERS.md) · [MIGRATIONS](docs/database/MIGRATIONS.md) |
+| ⚡ Edge Functions | [supabase/functions/README.md](supabase/functions/README.md) · [EDGE_FUNCTION_SECURITY](docs/security/EDGE_FUNCTION_SECURITY.md) |
+| 🛡️ Segurança | [security/](docs/security/README.md) · [SECRETS](docs/security/SECRETS.md) · [AUDIT_LOG](docs/security/AUDIT_LOG.md) |
+| 📱 PWA | [PWA_ARCHITECTURE](docs/architecture/PWA_ARCHITECTURE.md) |
+| 🤖 IA | [AI_ARCHITECTURE](docs/architecture/AI_ARCHITECTURE.md) |
+| 🧾 Decisões | [ADRs](docs/adr/ADR-001-logo-renderer.md) |
+| 🧯 Dívida técnica | [technical-debt](docs/technical-debt/README.md) |
+| 🗒️ Changelog da doc | [docs/CHANGELOG.md](docs/CHANGELOG.md) |
+
+Cada diretório relevante de `src/` possui seu próprio `README.md` (ver [src/README.md](src/README.md)).
+
+### Verificação da documentação
+
+```bash
+npm run docs:check
+```
+
+Emite avisos (sem bloquear o build) para arquivos críticos sem cabeçalho, diretórios sem README e links Markdown quebrados.
+
+---
+
 ## 🗺️ Roadmap
+
 
 - [ ] Multi-tenant **opcional** do SevenOS para clientes selecionados
 - [ ] App mobile nativo (React Native compartilhando hooks)
