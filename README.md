@@ -951,38 +951,39 @@ bun dev            # → http://localhost:5173
 
 ## 🎯 Performance & SEO
 
-### ⚡ Lighthouse Scores
+### ⚡ Otimizações aplicadas
 
-<div align="center">
+- Vídeo do Hero servido pelo próprio domínio, com versão 720p para mobile e dimensões explícitas para estabilizar o LCP.
+- Assets de imagem comprimidos e mídia pesada excluída do precache do Service Worker.
+- Carregamento condicional de vídeo em `saveData` e conexões lentas.
+- Rotas pesadas sob lazy loading.
+- Metadados, JSON-LD e `llms.txt` para buscadores e LLMs.
 
-| Métrica | Desktop | Mobile |
-|:-------:|:-------:|:------:|
-| 🎨 **Performance** | 95+ | 90+ |
-| ♿ **Accessibility** | 100 | 100 |
-| ✅ **Best Practices** | 95+ | 95+ |
-| 🔍 **SEO** | 100 | 100 |
+### 📏 Targets
 
-</div>
+```txt
+Target: LCP < 2.5s na home em 4G
+Target: CLS < 0.1
+Target: acessibilidade WCAG 2.1 AA
+```
+
+> Scores de Lighthouse não são publicados aqui: variam por dispositivo, rede e execução. Meça em produção antes de reportar qualquer número.
 
 ---
 
 ## 📊 Status do Projeto
 
-| Métrica | Estado |
+| Item | Estado |
 |---|---|
-| 🟢 **Deploy** | Online em Vercel + Lovable |
-| 🟢 **PWA** | Instalável, offline fallback ativo |
-| 🟢 **GEO Health Score** | 68/100 (Sólido) |
-| 🟢 **Indexação técnica** | 9/9 checklist OK |
-| 🟢 **Artigos GEO publicados** | 13 |
-| 🟢 **Páginas locais ativas** | 15 cidades |
-| 🟢 **Search Console** | Conectado (`sc-domain:sevendevx.com`) |
-| 🟢 **Bots únicos detectados** | Bingbot / Copilot ativos |
+| 🟢 **Deploy** | Online em Vercel |
+| 🟢 **PWA** | Instalável, fallback offline ativo, fila offline com Background Sync |
+| 🟢 **Search Console** | Conectado via integração `gsc-insights` |
 | 🟢 **Citation Monitor** | Operacional, pausável, queries/modelos editáveis |
-| 🟢 **Edge Functions** | 28 deployadas |
-| 🟢 **Migrations** | 46 versionadas |
-| 🟢 **Lighthouse Performance** | 90+ mobile |
-| 🟢 **Acessibilidade** | WCAG AA |
+| 🟢 **Edge Functions** | 47 no repositório |
+| 🟢 **Migrations** | 67 versionadas |
+| 🟡 **Testes automatizados** | Ausentes — ver [TD-006](docs/technical-debt/README.md) |
+| 🟡 **Bundle de produção** | Chunk principal acima de 4 MB — ver [TD-001](docs/technical-debt/README.md) |
+
 
 ---
 
