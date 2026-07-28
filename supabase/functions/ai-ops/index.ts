@@ -1,3 +1,26 @@
+/**
+ * ⚡ ai-ops/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/ai-ops/index.ts
+ * @module AI Ops
+ *
+ * @description
+ * Operações assistidas por IA sob demanda.
+ *
+ * @security
+ * JWT + role admin. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * AI Gateway
+ *
+ * @remarks
+ * Ações sugeridas ficam em ai_ops_actions para revisão humana.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // AI Ops assistant: analyzes recent events/logs/incidents via Lovable AI Gateway. Admin-only.
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';

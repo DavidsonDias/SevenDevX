@@ -1,3 +1,26 @@
+/**
+ * ⚡ ai-contract-summarize/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/ai-contract-summarize/index.ts
+ * @module IA/Contratos
+ *
+ * @description
+ * Resumo e análise de versões de contrato.
+ *
+ * @security
+ * JWT + role admin. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * AI Gateway
+ *
+ * @remarks
+ * Conteúdo contratual é sensível: não registrar o texto completo em log.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // AI Contract Summarizer — analisa texto longo de contrato e devolve resumo + riscos + checklist.
 // Admin only. Usa Lovable AI Gateway (Gemini Flash).
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';

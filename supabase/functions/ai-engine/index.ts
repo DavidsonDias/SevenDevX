@@ -1,3 +1,26 @@
+/**
+ * ⚡ ai-engine/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/ai-engine/index.ts
+ * @module IA
+ *
+ * @description
+ * Execuções genéricas de IA do SevenOS.
+ *
+ * @security
+ * JWT + role admin. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * AI Gateway
+ *
+ * @remarks
+ * Consumo registrado em ai_usage para controle de quota.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // AI Engine — generates briefings, proposals, scopes, summaries, contracts via Lovable AI Gateway
 // deno-lint-ignore-file no-explicit-any
 import "https://deno.land/x/xhr@0.1.0/mod.ts";

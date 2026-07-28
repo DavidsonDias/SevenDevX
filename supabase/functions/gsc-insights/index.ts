@@ -1,3 +1,26 @@
+/**
+ * ⚡ gsc-insights/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/gsc-insights/index.ts
+ * @module SEO
+ *
+ * @description
+ * Insights de desempenho do Google Search Console.
+ *
+ * @security
+ * JWT + role admin. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * Google Search Console
+ *
+ * @remarks
+ * Dados agregados; sem PII.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // Edge Function: gsc-insights
 // Consulta Google Search Console via Lovable Connector Gateway.
 // Retorna queries, páginas, cliques, impressões, CTR e posição média.

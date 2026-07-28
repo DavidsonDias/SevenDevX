@@ -1,3 +1,26 @@
+/**
+ * ⚡ project-generator/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/project-generator/index.ts
+ * @module Projects
+ *
+ * @description
+ * Geração assistida de estrutura de projeto.
+ *
+ * @security
+ * JWT + role admin. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * AI Gateway
+ *
+ * @remarks
+ * Saída é rascunho: exige confirmação antes de persistir.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // 🤖 project-generator — gera projeto completo a partir de um briefing (cliente + projeto + estágios + documentos + estimativa)
 // Validação rigorosa de input com Zod, rate-limit por usuário, auditoria.
 // deno-lint-ignore-file no-explicit-any

@@ -1,3 +1,26 @@
+/**
+ * ⚡ figma-test/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/figma-test/index.ts
+ * @module Integrations
+ *
+ * @description
+ * Diagnóstico completo da integração Figma (auth e acesso a teams).
+ *
+ * @security
+ * JWT + role admin. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * Figma
+ *
+ * @remarks
+ * Reporta presença do segredo como presente/ausente, nunca o valor.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {

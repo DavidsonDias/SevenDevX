@@ -1,3 +1,26 @@
+/**
+ * ⚡ whatsapp-webhook/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/whatsapp-webhook/index.ts
+ * @module WhatsApp
+ *
+ * @description
+ * Recebe mensagens e status da Meta Cloud API.
+ *
+ * @security
+ * Assinatura HMAC do payload. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * Meta Cloud API
+ *
+ * @remarks
+ * Rejeitar qualquer payload cuja assinatura não confira.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // WhatsApp Business Cloud API webhook receiver + verifier (Meta).
 // GET: verification challenge. POST: incoming messages + status updates.
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';

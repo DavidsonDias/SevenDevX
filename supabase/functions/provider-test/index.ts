@@ -1,3 +1,26 @@
+/**
+ * ⚡ provider-test/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/provider-test/index.ts
+ * @module Integrations
+ *
+ * @description
+ * Teste genérico de conexão para providers do catálogo.
+ *
+ * @security
+ * JWT + role admin. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * Variável (provider)
+ *
+ * @remarks
+ * Propaga status e corpo do provider em caso de falha.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {

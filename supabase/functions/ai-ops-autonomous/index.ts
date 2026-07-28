@@ -1,3 +1,26 @@
+/**
+ * ⚡ ai-ops-autonomous/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/ai-ops-autonomous/index.ts
+ * @module AI Ops
+ *
+ * @description
+ * Rotina autônoma de operações assistidas por IA.
+ *
+ * @security
+ * Token de job. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * AI Gateway
+ *
+ * @remarks
+ * Executa sem interação humana: toda ação deve ser auditável e reversível.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // Autonomous AI Ops: triage lead → suggest project draft + pricing. Admin only.
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';

@@ -1,3 +1,26 @@
+/**
+ * ⚡ whatsapp-send/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/whatsapp-send/index.ts
+ * @module WhatsApp
+ *
+ * @description
+ * Envia mensagem pela Meta Cloud API.
+ *
+ * @security
+ * JWT + role admin. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * Meta Cloud API
+ *
+ * @remarks
+ * Respeitar janelas e templates aprovados pela Meta.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // Send WhatsApp message via Meta Cloud API. Admin only.
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';

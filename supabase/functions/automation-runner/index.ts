@@ -1,3 +1,26 @@
+/**
+ * ⚡ automation-runner/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/automation-runner/index.ts
+ * @module Automations
+ *
+ * @description
+ * Processa os eventos pendentes e executa as automações ativas.
+ *
+ * @security
+ * Token de job. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * —
+ *
+ * @remarks
+ * Cada execução gera registro em automation_runs, inclusive falhas.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // 🤖 Automation Runner — executa automações ativas para um trigger_event.
 // Chamado pelo trigger SQL fn_dispatch_automation OU manualmente via /test-trigger.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";

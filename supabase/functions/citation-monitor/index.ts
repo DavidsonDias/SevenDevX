@@ -1,3 +1,26 @@
+/**
+ * ⚡ citation-monitor/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/citation-monitor/index.ts
+ * @module GEO
+ *
+ * @description
+ * Monitora citações da marca em respostas de IAs e buscadores.
+ *
+ * @security
+ * Token de job. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * Buscadores / IA
+ *
+ * @remarks
+ * Resultados alimentam ai_citations; falha parcial não deve abortar o job.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // Citation Monitor — Edge Function
 // Pergunta para o Lovable AI Gateway (vários modelos) sobre a SevenDevX
 // e registra automaticamente em `ai_citations` se foi mencionada.

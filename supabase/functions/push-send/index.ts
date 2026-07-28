@@ -1,3 +1,26 @@
+/**
+ * ⚡ push-send/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/push-send/index.ts
+ * @module Notifications
+ *
+ * @description
+ * Envia notificações Web Push às inscrições registradas.
+ *
+ * @security
+ * JWT / token de job. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * Web Push
+ *
+ * @remarks
+ * Inscrições inválidas devem ser removidas de push_subscriptions.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import webpush from "https://esm.sh/web-push@3.6.7";
 

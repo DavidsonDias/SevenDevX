@@ -1,3 +1,26 @@
+/**
+ * ⚡ resend-test/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/resend-test/index.ts
+ * @module Integrations
+ *
+ * @description
+ * Testa a integração de e-mail transacional.
+ *
+ * @security
+ * JWT + role admin. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * Resend
+ *
+ * @remarks
+ * Não envia para destinatário arbitrário sem validação.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {

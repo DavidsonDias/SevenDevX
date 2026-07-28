@@ -1,3 +1,26 @@
+/**
+ * ⚡ brand-scan/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/brand-scan/index.ts
+ * @module Branding
+ *
+ * @description
+ * Extrai identidade visual e paleta a partir de uma origem informada.
+ *
+ * @security
+ * JWT + role admin. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * Web (URL informada)
+ *
+ * @remarks
+ * Validar a URL de entrada; não seguir redirecionamentos para rede interna.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // 🎨 Brand Scan v3 — extração profunda de identidade visual (Figma-level).
 // Headers/meta + manifest.json + CSS variables + top colors + gradientes + radii + shadows + spacing + fontes + AI summary.
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";

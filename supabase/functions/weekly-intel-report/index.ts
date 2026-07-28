@@ -1,3 +1,26 @@
+/**
+ * ⚡ weekly-intel-report/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/weekly-intel-report/index.ts
+ * @module Observabilidade
+ *
+ * @description
+ * Relatório semanal de inteligência operacional e comercial.
+ *
+ * @security
+ * Token de job. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * AI Gateway
+ *
+ * @remarks
+ * Números do relatório derivam de dados reais; não estimar.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // Weekly intelligence report — sends rich HTML summary every Monday 8am BRT via Resend.
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { createClient } from "npm:@supabase/supabase-js@2";

@@ -1,3 +1,26 @@
+/**
+ * ⚡ webhook-retry-worker/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/webhook-retry-worker/index.ts
+ * @module Webhooks
+ *
+ * @description
+ * Reprocessa entregas na dead-letter queue.
+ *
+ * @security
+ * Token de job. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * Endpoints externos
+ *
+ * @remarks
+ * Reprocessamento pode duplicar entrega: consumidores devem ser idempotentes.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // 🔁 Webhook Retry Worker — varre deliveries pendentes, redispara via webhook-dispatch, ou move pra DLQ.
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';

@@ -1,3 +1,26 @@
+/**
+ * ⚡ webhook-dispatch/index.ts — SevenOS Edge Function
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/webhook-dispatch/index.ts
+ * @module Webhooks
+ *
+ * @description
+ * Entrega eventos aos endpoints de webhook registrados.
+ *
+ * @security
+ * Token de job / interno. Segredos permanecem em Deno.env e nunca são retornados.
+ *
+ * @external-api
+ * Endpoints externos
+ *
+ * @remarks
+ * Falhas vão para webhook_dlq; cabeçalhos de auth não são logados.
+ *
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ * @see supabase/functions/README.md
+ * ═══════════════════════════════════════════════════════════════════════
+ */
 // Webhook dispatcher: signs payload (HMAC-SHA256), POSTs to webhook URL, logs delivery. Admin-only.
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
