@@ -139,22 +139,31 @@ Entre os recursos implementados estão:
 
 ---
 
-## 📊 Métricas Reais
+## 📊 Números do Projeto
 
-> Snapshot consolidado do projeto — atualizado a cada release.
+> Contagens verificáveis diretamente no repositório. **Nenhuma métrica de performance é declarada sem medição** — abaixo, o que é meta está marcado como `Target`.
 
 | Categoria | Métrica | Valor |
 |-----------|---------|-------|
-| ⚡ **Lighthouse** | Performance · Acessibilidade · Best Practices · SEO | **98 / 100 / 100 / 100** |
-| 🎯 **Core Web Vitals** | LCP · INP · CLS | **< 1.2s · < 80ms · < 0.05** |
-| 📦 **Bundle** | Initial JS (gzip) · CSS (gzip) | **~ 142 KB · ~ 18 KB** |
-| 🧭 **Rotas** | Públicas · Admin (SevenOS) · GEO Hub | **18 · 28 · 7** |
-| 🧩 **Componentes** | UI atômicos · Admin · Módulos | **45+ · 60+ · 25+** |
-| ⚙️ **Edge Functions** | Serverless deploys ativos | **28** |
-| 🗄️ **Database** | Migrations · Tabelas · Policies RLS | **46 · 38 · 120+** |
-| 🌍 **i18n** | Idiomas suportados | **PT · EN · ES** |
-| 📱 **PWA** | Instalável · Offline · Push | **✅ · ✅ · ✅** |
-| 🔐 **Segurança** | RBAC roles · Linter Supabase | **3 · 0 issues** |
+| 🧭 **Rotas** | Declaradas em `src/app/Router.tsx` (sendo 48 em `/admin`) | **77** |
+| 🧩 **Componentes** | Design System · Admin · Módulos | **53 · 33 · 24** |
+| 📄 **Páginas** | Arquivos em `src/pages` | **73** |
+| 🪝 **Hooks** | Arquivos em `src/hooks` | **32** |
+| ⚙️ **Edge Functions** | Diretórios em `supabase/functions` | **47** |
+| 🗄️ **Database** | Migrations versionadas · Tabelas no schema `public` | **67 · 72** |
+| 🌍 **i18n** | Idiomas do site público | **PT · EN · ES** |
+| 📱 **PWA** | Instalável · Fallback offline · Push | **✅ · ✅ · ✅** |
+| 🔐 **Segurança** | Papéis RBAC (`app_role`) | **3** |
+
+### Targets de qualidade (não medidos automaticamente)
+
+```txt
+Target: LCP < 2.5s na home em 4G
+Target: CLS < 0.1
+Target: acessibilidade WCAG 2.1 AA
+Target: nenhuma resposta de API servida a partir do cache do Service Worker
+```
+
 
 ---
 
