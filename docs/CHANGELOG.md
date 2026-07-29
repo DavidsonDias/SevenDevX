@@ -2,6 +2,20 @@
 
 Registro das alterações relevantes da documentação (não do produto).
 
+## [1.1.0] — 2026-07-29
+
+### Added
+- Onda 6 (Audit): cabeçalhos Level 1/2 aplicados a **234 arquivos** restantes de `src/` (componentes, hooks, páginas públicas/GEO/admin, módulos, `core/branding`, `lib`, `utils`, `data`, `i18n`), incluindo `@route` nas páginas e nota de `@security` nas telas administrativas.
+- READMEs de diretório em `src/components/auth`, `src/components/layout`, `src/components/security`, `src/components/services`, `src/components/admin/finance`, `src/components/admin/integrations`, `src/core/branding`, `src/pages/admin`, `src/pages/geo` e `src/integrations`.
+- `scripts/apply-headers.mjs` — ferramenta idempotente de aplicação de cabeçalhos (nunca sobrescreve cabeçalho existente, nunca altera código).
+
+### Changed
+- `scripts/docs-check.mjs` passa a exigir `@file` em **todo** arquivo `.ts/.tsx` de `src/` (exceto `components/ui/`, código gerado e `.d.ts`) e cobre os novos diretórios com README obrigatório.
+- Cabeçalho do service worker (`src/sw.ts`) normalizado com `@file`/`@module`, preservando o histórico de versões já existente no arquivo.
+
+### Notes
+- Nenhuma alteração de comportamento, rota, schema, API ou dependência.
+
 ## [1.0.0] — 2026-07-28
 
 ### Added
