@@ -1,4 +1,17 @@
 /**
+ * AutomationGuideDrawer.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/automations/AutomationGuideDrawer.tsx
+ * @module Automations
+ *
+ * @description
+ * Guia contextual de automações.
+ *
+ * @see src/modules/automations/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📘 AutomationGuideDrawer — Guia completo enterprise de Automações (WHEN → IF → THEN) no SevenOS.
  * Frontend-only: conceitos, triggers, conditions, actions, templates prontos, troubleshooting, FAQs.
  */

@@ -1,4 +1,20 @@
 /**
+ * AutomationsAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/AutomationsAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/automations
+ *
+ * @description
+ * Regras de automação e seus gatilhos.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * ⚡ Automations — when → if → then.
  * Editor visual via AutomationFlowBuilder (node-based).
  */

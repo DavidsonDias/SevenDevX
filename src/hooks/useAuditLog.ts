@@ -1,4 +1,19 @@
 /**
+ * useAuditLog.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/useAuditLog.ts
+ * @module Hooks
+ *
+ * @description
+ * Consulta e exportação do log de auditoria.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🔍 useAuditLog — feed de atividades em tempo real do CRM/ERP
  */
 import { useEffect } from "react";

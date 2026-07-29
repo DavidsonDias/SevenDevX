@@ -1,4 +1,17 @@
 /**
+ * ServicesPreview.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/ServicesPreview.tsx
+ * @module UI
+ *
+ * @description
+ * Prévia dos serviços na home, consumindo `services_cms`.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🚀 ServicesPreview.tsx — SevenDevX v2.0 PRO (i18n)
  * -------------------------------------------------------------
  * ✅ 5 serviços completos (Web, Software, Maintenance, Landing, Consulting)

@@ -1,4 +1,17 @@
 /**
+ * TechPreview.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/TechPreview.tsx
+ * @module UI
+ *
+ * @description
+ * Prévia do stack na home.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * TechPreview — Showcase de tecnologias com animações Framer Motion
  * Removido GSAP, usando apenas Framer Motion para consistência
  */

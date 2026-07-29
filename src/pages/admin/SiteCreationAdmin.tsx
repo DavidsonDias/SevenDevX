@@ -1,4 +1,20 @@
 /**
+ * SiteCreationAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/SiteCreationAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/site-creation
+ *
+ * @description
+ * CMS da landing de criação de sites (seções, projetos, stack e SEO).
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🏗️ SiteCreationAdmin — CMS premium para /criacao-de-sites-profissionais
  * Layout enterprise, mobile-first, tabs com ícones, status card e ações persistentes.
  */

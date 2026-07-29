@@ -1,4 +1,19 @@
 /**
+ * ClientPicker.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/ClientPicker.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Seletor de cliente reutilizado pelos formulários administrativos.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🔗 ClientPicker — autocomplete + criar cliente inline
  * Vincula um cliente a um projeto.
  */

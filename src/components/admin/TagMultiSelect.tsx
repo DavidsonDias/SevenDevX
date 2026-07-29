@@ -1,4 +1,19 @@
 /**
+ * TagMultiSelect.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/TagMultiSelect.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Seleção múltipla de tags do registro.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🏷️ TagMultiSelect — Stripe-level autocomplete for tags
  * - Search/filter from `tag_registry`
  * - Create new tag inline

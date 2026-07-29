@@ -1,4 +1,20 @@
 /**
+ * TechnologiesAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/TechnologiesAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/technologies
+ *
+ * @description
+ * Registro de tecnologias e seus ícones.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🛠️ TechnologiesAdmin — Enterprise CRUD for the tech registry
  * - Listing with logo, name, slug, category, color, status
  * - Create/Edit modal with live preview + custom icon upload

@@ -58,6 +58,16 @@ const REQUIRE_README = [
   "src/modules",
   "src/pages",
   "src/utils",
+  "src/integrations",
+  "src/components/auth",
+  "src/components/layout",
+  "src/components/security",
+  "src/components/services",
+  "src/components/admin/finance",
+  "src/components/admin/integrations",
+  "src/core/branding",
+  "src/pages/admin",
+  "src/pages/geo",
   "supabase/functions",
   "docs",
 ];
@@ -75,6 +85,12 @@ const CRITICAL_GLOBS = [
   "src/components/auth/ProtectedRoute.tsx",
   "src/sw.ts",
 ];
+
+/**
+ * Cobertura Level 1/2: todo arquivo de código em src/ (fora das exclusões)
+ * precisa declarar `@file` no topo, conforme FILE_HEADERS.md.
+ */
+const REQUIRE_FILE_TAG = ["src"];
 
 /** Nunca exigir documentação nestes caminhos. */
 const EXCLUDED = [
@@ -114,6 +130,21 @@ function checkCriticalHeaders() {
     const head = readFileSync(rel, "utf8").slice(0, 600);
     if (!head.includes("/**")) {
       warnings.push(`[header] arquivo crítico sem cabeçalho: ${rel}`);
+    }
+  }
+}
+
+/** 1b. Tag @file em todo arquivo de código de src/. */
+function checkFileTags() {
+  for (const dir of REQUIRE_FILE_TAG) {
+    for (const file of walk(dir)) {
+      if (!/\.(ts|tsx)$/.test(file)) continue;
+      if (isExcluded(file)) continue;
+      if (file.endsWith(".d.ts")) continue;
+      const head = readFileSync(file, "utf8").slice(0, 700);
+      if (!head.includes("@file")) {
+        warnings.push(`[header] arquivo sem @file: ${file.replace(/\\/g, "/")}`);
+      }
     }
   }
 }
@@ -158,6 +189,7 @@ function checkMarkdownLinks() {
 // ============================================================================
 
 checkCriticalHeaders();
+checkFileTags();
 checkReadmes();
 checkMarkdownLinks();
 

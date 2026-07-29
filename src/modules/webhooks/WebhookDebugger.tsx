@@ -1,4 +1,17 @@
 /**
+ * WebhookDebugger.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/webhooks/WebhookDebugger.tsx
+ * @module Webhooks
+ *
+ * @description
+ * Reenvio e inspeção de entregas de webhook.
+ *
+ * @see src/modules/webhooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧪 WebhookDebugger — Editor de payload + assinatura HMAC + envio real
  * Permite testar qualquer webhook com payload customizado, ver headers, signature e response.
  */

@@ -1,4 +1,17 @@
 /**
+ * ProviderLogo.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/integrations/ProviderLogo.tsx
+ * @module Integrations
+ *
+ * @description
+ * Renderização do logo do provider a partir do registro global.
+ *
+ * @see src/modules/integrations/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🎨 ProviderLogo — Logo oficial local-first + fallback resiliente
  * Tier 1: react-icons/simple-icons (sem rede, não quebra por CDN/CSP/SW)
  * Tier 2: cdn.simpleicons.org

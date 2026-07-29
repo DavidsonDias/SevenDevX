@@ -1,4 +1,17 @@
 /**
+ * caseStudies.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/data/caseStudies.ts
+ * @module Content
+ *
+ * @description
+ * Estudos de caso publicados nas páginas GEO.
+ *
+ * @see src/data/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📁 Case Studies — fonte autoritativa de cases reais SevenDevX.
  * Usado por /cases e /cases/:slug com schema CaseStudy + CreativeWork.
  */

@@ -1,4 +1,20 @@
 /**
+ * ProjectsAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/ProjectsAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/projects
+ *
+ * @description
+ * Gestão de projetos e criação assistida.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🛠️ ProjectsAdmin — Enterprise CMS for Projects
  * Full CRUD, image upload (Supabase Storage), publish toggle, featured toggle, tech management.
  */

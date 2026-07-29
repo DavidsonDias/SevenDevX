@@ -1,3 +1,16 @@
+/**
+ * TechModal.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/TechModal.tsx
+ * @module UI
+ *
+ * @description
+ * Detalhe de tecnologia em modal.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ExternalLink } from "lucide-react";
 import { Technology } from "@/utils/techData";

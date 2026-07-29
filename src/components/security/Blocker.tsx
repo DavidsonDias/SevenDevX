@@ -1,4 +1,17 @@
 /**
+ * Blocker.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/security/Blocker.tsx
+ * @module Security
+ *
+ * @description
+ * Bloqueio de UI para estados sem permissão ou pré-requisito não atendido.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🔒 Blocker v1.0 Pro++ ULTIMATE HARDLOCK — Proteção Máxima de Segurança
  * ═════════════════════════════════════════════════════════════════
  * 

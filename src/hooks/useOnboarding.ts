@@ -1,4 +1,19 @@
 /**
+ * useOnboarding.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/useOnboarding.ts
+ * @module Hooks
+ *
+ * @description
+ * Progresso do checklist e do tour de onboarding.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🎯 useOnboarding — track tour progress per user.
  */
 import { useEffect, useState, useCallback } from "react";

@@ -1,4 +1,19 @@
 /**
+ * ProjectFinanceBlock.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/finance/ProjectFinanceBlock.tsx
+ * @module SevenOS/Finance
+ *
+ * @description
+ * Bloco financeiro do projeto: orçamento, transações e margem.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 💼 ProjectFinanceBlock — orçamento, transações e margem real do projeto.
  */
 import { useState } from "react";

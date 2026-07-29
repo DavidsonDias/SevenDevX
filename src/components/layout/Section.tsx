@@ -1,3 +1,16 @@
+/**
+ * Section.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/layout/Section.tsx
+ * @module UI/Layout
+ *
+ * @description
+ * Seção vertical padronizada com espaçamento fluido.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { cn } from "@/lib/utils";
 import { ReactNode } from "react";
 

@@ -1,4 +1,17 @@
 /**
+ * extractPalette.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/core/branding/palette-engine/extractPalette.ts
+ * @module Core/Branding
+ *
+ * @description
+ * Extração de paleta dominante a partir de uma imagem de marca.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🎨 Multi-color palette extraction (SVG inline + raster image).
  * Returns up to N saturated, distinct colors ranked by frequency.
  */

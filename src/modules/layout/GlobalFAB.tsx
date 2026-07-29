@@ -1,4 +1,17 @@
 /**
+ * GlobalFAB.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/layout/GlobalFAB.tsx
+ * @module Layout
+ *
+ * @description
+ * Botão de ação flutuante global (WhatsApp, chatbot e ações rápidas).
+ *
+ * @see src/modules/layout/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * ➕ GlobalFAB — Floating action button contextual por rota (admin only)
  * Dispara eventos customizados que cada página pode escutar (window 'sevenos:fab-action').
  */

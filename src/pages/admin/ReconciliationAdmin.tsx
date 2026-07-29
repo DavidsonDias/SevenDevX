@@ -1,4 +1,20 @@
 /**
+ * ReconciliationAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/ReconciliationAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/finance/reconciliation
+ *
+ * @description
+ * Conciliação bancária a partir de importações.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🏛️ ReconciliationAdmin — conciliação bancária manual + import CSV.
  * CSV: data,descricao,valor (valor positivo=entrada / negativo=saída).
  */

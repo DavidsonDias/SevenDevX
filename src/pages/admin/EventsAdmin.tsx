@@ -1,4 +1,20 @@
 /**
+ * EventsAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/EventsAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/events
+ *
+ * @description
+ * Barramento de eventos internos.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📡 Events — barramento central realtime.
  */
 import { useEffect, useState } from "react";

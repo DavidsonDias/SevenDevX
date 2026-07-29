@@ -1,4 +1,17 @@
 /**
+ * ProviderConfigModal.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/integrations/ProviderConfigModal.tsx
+ * @module Integrations
+ *
+ * @description
+ * Configuração de provider; segredos são gravados via Edge Function, nunca no cliente.
+ *
+ * @see src/modules/integrations/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * ⚙️ ProviderConfigModal — Configuração funcional real de um provider
  * - Verifica secrets via edge function `provider-secrets-check` (sem expor valores)
  * - Edita config JSONB (webhook_url, region, base_url, custom...)

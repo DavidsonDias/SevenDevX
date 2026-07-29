@@ -1,4 +1,20 @@
 /**
+ * ProcessAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/ProcessAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/process
+ *
+ * @description
+ * Modelos de processo e estágios padrão.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧭 ProcessAdmin — editor do template global de processo
  */
 import { useState } from "react";

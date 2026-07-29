@@ -1,4 +1,18 @@
 /**
+ * ProjectDetail.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/ProjectDetail.tsx
+ * @module Public
+ * @route /projects/:slug
+ *
+ * @description
+ * Detalhe de projeto com transição compartilhada a partir dos cards.
+ *
+ * @see src/pages/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🌐 ProjectDetail — /projects/:slug
  * Public project case-study page with full SEO + JSON-LD CreativeWork schema.
  */

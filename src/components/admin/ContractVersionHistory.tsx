@@ -1,4 +1,19 @@
 /**
+ * ContractVersionHistory.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/ContractVersionHistory.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Histórico de versões de contrato com restauração.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📜 ContractVersionHistory — timeline de versões do contrato com hash SHA256 + análise IA.
  */
 import { useState } from "react";

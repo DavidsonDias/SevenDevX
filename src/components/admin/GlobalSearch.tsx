@@ -1,4 +1,19 @@
 /**
+ * GlobalSearch.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/GlobalSearch.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Busca cross-entidade do SevenOS via RPC `search_global`.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🔎 Command Palette (⌘K) — busca cross-entidade + ações rápidas
  * Enterprise-grade: navegação, criação, atalhos, busca de clientes/projetos/leads.
  */

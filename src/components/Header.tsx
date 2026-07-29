@@ -1,3 +1,16 @@
+/**
+ * Header.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/Header.tsx
+ * @module UI
+ *
+ * @description
+ * Navegação pública principal, com underline animado e visibilidade condicional por sessão.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, LogOut, Shield, UserCircle } from "lucide-react";

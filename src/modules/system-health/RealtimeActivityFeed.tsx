@@ -1,4 +1,17 @@
 /**
+ * RealtimeActivityFeed.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/system-health/RealtimeActivityFeed.tsx
+ * @module SystemHealth
+ *
+ * @description
+ * Atividade do sistema em tempo real.
+ *
+ * @see src/modules/system-health/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📡 RealtimeActivityFeed — stream contínuo do event bus.
  */
 import { useEffect, useState } from "react";

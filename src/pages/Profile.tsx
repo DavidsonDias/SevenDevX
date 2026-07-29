@@ -1,3 +1,17 @@
+/**
+ * Profile.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/Profile.tsx
+ * @module Public
+ * @route /profile
+ *
+ * @description
+ * Perfil do usuário autenticado: dados, papéis e estatísticas.
+ *
+ * @see src/pages/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {

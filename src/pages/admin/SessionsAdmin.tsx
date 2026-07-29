@@ -1,4 +1,20 @@
 /**
+ * SessionsAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/SessionsAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/sessions
+ *
+ * @description
+ * Sessões administrativas ativas.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🖥️ SessionsAdmin — Sessões ativas em tempo real
  */
 import { useEffect } from "react";

@@ -1,3 +1,17 @@
+/**
+ * Auth.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/Auth.tsx
+ * @module Public
+ * @route /auth
+ *
+ * @description
+ * Login e cadastro; erros são traduzidos por `authErrors`.
+ *
+ * @see src/pages/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate, useSearchParams } from "react-router-dom";

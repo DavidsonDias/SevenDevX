@@ -1,4 +1,18 @@
 /**
+ * Projects.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/Projects.tsx
+ * @module Public
+ * @route /projects
+ *
+ * @description
+ * Listagem do portfólio com filtros.
+ *
+ * @see src/pages/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🚀 Projects.tsx — SevenDevX v1.1.1 Ultra PRO ENTERPRISE (Corrigida)
  * ═════════════════════════════════════════════════════════════════
  * 

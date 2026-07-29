@@ -1,3 +1,19 @@
+/**
+ * AIHub.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/geo/AIHub.tsx
+ * @module Public/GEO
+ * @route /ai
+ *
+ * @description
+ * Hub de conteúdo otimizado para citação por assistentes de IA.
+ *
+ * @seo Metadados e JSON-LD definidos via `SEOHead`.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";

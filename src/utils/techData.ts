@@ -1,4 +1,17 @@
 /**
+ * techData.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/utils/techData.ts
+ * @module Utils
+ *
+ * @description
+ * Metadados de tecnologias (cores e identificadores de ícone).
+ *
+ * @see src/utils/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧠 TechStack Data v1.0 Pro++ ULTIMATE — Catálogo de Tecnologias Profissionais
  * ════════════════════════════════════════════════════════════════════════════════
  *

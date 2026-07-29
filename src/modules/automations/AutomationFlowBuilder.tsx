@@ -1,4 +1,17 @@
 /**
+ * AutomationFlowBuilder.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/automations/AutomationFlowBuilder.tsx
+ * @module Automations
+ *
+ * @description
+ * Construtor visual de regras de automação (gatilho, condições e ações).
+ *
+ * @see src/modules/automations/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🔄 AutomationFlowBuilder — visual node-based workflow editor.
  * Linear flow: TRIGGER → [CONDITION...] → [ACTION...]
  * Persiste em `automations` (trigger_event, conditions, actions).

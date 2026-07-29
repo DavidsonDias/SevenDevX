@@ -1,3 +1,16 @@
+/**
+ * tourSteps.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/onboarding/tourSteps.ts
+ * @module Onboarding
+ *
+ * @description
+ * Passos do tour de onboarding.
+ *
+ * @see src/modules/onboarding/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import type { TourStep } from "./OnboardingTour";
 
 export const ADMIN_TOUR: TourStep[] = [

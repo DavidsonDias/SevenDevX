@@ -1,4 +1,17 @@
 /**
+ * translations.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/i18n/translations.ts
+ * @module i18n
+ *
+ * @description
+ * Dicionário de traduções do site público.
+ *
+ * @see src/i18n/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🌐 Sistema de Internacionalização - SevenDevX
  * Suporte para: PT-BR, EN, ES
  * Arquivo mesclado com estrutura completa

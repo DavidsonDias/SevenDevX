@@ -1,4 +1,19 @@
 /**
+ * useIntegrationFavorites.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/useIntegrationFavorites.ts
+ * @module Hooks
+ *
+ * @description
+ * Favoritos de integrações por usuário.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * ⭐ useIntegrationFavorites — favoritos de providers persistidos por usuário
  */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";

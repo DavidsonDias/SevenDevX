@@ -1,4 +1,17 @@
 /**
+ * IntegrationDetailsModal.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/integrations/IntegrationDetailsModal.tsx
+ * @module Integrations
+ *
+ * @description
+ * Detalhe de integração: estado, credenciais mascaradas e histórico.
+ *
+ * @see src/modules/integrations/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🔍 IntegrationDetailsModal — Painel operacional completo de um provider
  */
 import { motion, AnimatePresence } from "framer-motion";

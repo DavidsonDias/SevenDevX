@@ -1,3 +1,19 @@
+/**
+ * CriacaoSitesProfissionais.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/geo/CriacaoSitesProfissionais.tsx
+ * @module Public/GEO
+ * @route /criacao-de-sites-profissionais
+ *
+ * @description
+ * Landing de criação de sites, 100% alimentada pelas tabelas `site_page_*`.
+ *
+ * @seo Metadados e JSON-LD definidos via `SEOHead`.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { motion, useMotionValue, useSpring, useTransform, useInView } from "framer-motion";

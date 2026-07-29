@@ -1,4 +1,18 @@
 /**
+ * Home.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/Home.tsx
+ * @module Public
+ * @route / (composição)
+ *
+ * @description
+ * Composição da home pública (hero, serviços, stack, projetos e contato).
+ *
+ * @see src/pages/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🚀 Home.tsx — SevenDevX v1.1 Ultra PRO ENTERPRISE
  * ═════════════════════════════════════════════════════════════════
  * 

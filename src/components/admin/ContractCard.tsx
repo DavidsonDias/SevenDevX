@@ -1,4 +1,19 @@
 /**
+ * ContractCard.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/ContractCard.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Cartão de contrato com estado e ações.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📜 ContractCard — Gestão de Termo/Contrato (TC) para cliente OU projeto.
  * Recursos:
  * - Status (pendente/enviado/aprovado/rejeitado)

@@ -1,4 +1,20 @@
 /**
+ * BrandStudioAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/BrandStudioAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/brand-studio
+ *
+ * @description
+ * Extração de paleta, tokens e brand kit.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🎨 Brand Studio — extrai paleta + favicon kit de qualquer URL.
  * Input: URL pública → backend faz scan (favicons, og:image, theme-color, meta) →
  * cliente extrai paleta multicor e gera favicon kit (16/32/180/512) via canvas.

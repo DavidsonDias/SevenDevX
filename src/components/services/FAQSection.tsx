@@ -1,4 +1,17 @@
 /**
+ * FAQSection.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/services/FAQSection.tsx
+ * @module Public/Services
+ *
+ * @description
+ * FAQ público alimentado por `faq_items`, com JSON-LD FAQPage.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * ❓ FAQSection — Enterprise v3.0 (Categorizado + Search + Tracking)
  * - 6 categorias: Investimento, Prazo, Processo, Tecnologia, Segurança, Pós-Entrega
  * - Filtro por categoria + busca em tempo real

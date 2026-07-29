@@ -1,4 +1,17 @@
 /**
+ * AIChatbot.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/AIChatbot.tsx
+ * @module UI
+ *
+ * @description
+ * Assistente conversacional público; conversa com o modelo via Edge Function, preservando histórico local e renderizando Markdown.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🤖 AIChatbot - Assistente Virtual Inteligente
  * SevenDevX Enterprise Edition
  */

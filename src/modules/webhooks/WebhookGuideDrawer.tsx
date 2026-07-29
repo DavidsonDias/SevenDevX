@@ -1,4 +1,17 @@
 /**
+ * WebhookGuideDrawer.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/webhooks/WebhookGuideDrawer.tsx
+ * @module Webhooks
+ *
+ * @description
+ * Guia de configuração de webhooks.
+ *
+ * @see src/modules/webhooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📘 WebhookGuideDrawer — Guia completo enterprise de criação e uso de Webhooks no SevenOS.
  * Frontend-only: passo-a-passo, exemplos CURL/JSON, HMAC, troubleshooting, FAQs, eventos disponíveis.
  */

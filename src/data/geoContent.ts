@@ -1,4 +1,17 @@
 /**
+ * geoContent.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/data/geoContent.ts
+ * @module Content
+ *
+ * @description
+ * Conteúdo das páginas GEO (respostas, soluções e cidades).
+ *
+ * @see src/data/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * GEO Content — Knowledge Base estruturado para LLMs e AI Search.
  * Cada artigo é otimizado para featured snippets, AI Overviews e RAG.
  */

@@ -1,4 +1,17 @@
 /**
+ * RadialActionMenu.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/layout/RadialActionMenu.tsx
+ * @module Layout
+ *
+ * @description
+ * Menu radial de ações rápidas.
+ *
+ * @see src/modules/layout/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🌐 RadialActionMenu — Mission Control mobile (grouped enterprise)
  * Backdrop blur + stagger spring + grupos operacionais
  */

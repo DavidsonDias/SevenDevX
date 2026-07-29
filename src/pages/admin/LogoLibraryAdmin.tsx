@@ -1,4 +1,20 @@
 /**
+ * LogoLibraryAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/LogoLibraryAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/logo-library
+ *
+ * @description
+ * Acervo de logos e assets de marca.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📚 LogoLibraryAdmin — Biblioteca oficial de logos com editor
  * Catálogo completo + busca + filtro + indicador de "customizado" + editor inline.
  */

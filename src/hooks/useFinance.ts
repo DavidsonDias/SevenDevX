@@ -1,4 +1,19 @@
 /**
+ * useFinance.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/useFinance.ts
+ * @module Hooks
+ *
+ * @description
+ * Transações, orçamentos e margem por projeto.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 💰 useFinance — hooks do módulo financeiro (orçamentos, transações, FX, time, margem).
  */
 import { useEffect } from "react";

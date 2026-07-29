@@ -1,4 +1,20 @@
 /**
+ * CitationsAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/CitationsAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/citations
+ *
+ * @description
+ * Monitoramento de citações da marca em respostas de IA.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📣 Citations Admin — Citation Engine para monitorar menções da SevenDevX
  * em respostas de ChatGPT, Perplexity, Gemini, Claude, Copilot, etc.
  * + visualização de AI Referrals (visitantes vindos dessas engines).

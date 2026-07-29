@@ -1,4 +1,17 @@
 /**
+ * GuidedConnectionTest.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/integrations/GuidedConnectionTest.tsx
+ * @module Integrations
+ *
+ * @description
+ * Teste guiado de conexão com provider externo.
+ *
+ * @see src/modules/integrations/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧠 GuidedConnectionTest — Wizard passo a passo de validação
  * - Roteia para edge function *-test quando existe (github/vercel/figma/whatsapp)
  * - Decompõe os `checks` retornados em passos visuais animados

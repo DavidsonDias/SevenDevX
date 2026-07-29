@@ -1,4 +1,19 @@
 /**
+ * AdminComingSoon.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/AdminComingSoon.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Placeholder padronizado para áreas ainda não liberadas.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🏗️ AdminComingSoon — placeholder enterprise para páginas em construção
  */
 import { motion } from "framer-motion";

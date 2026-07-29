@@ -1,4 +1,19 @@
 /**
+ * StageDocuments.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/StageDocuments.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Documentos vinculados a um estágio de projeto.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📄 StageDocuments — Document Engine por etapa.
  * Lista o catálogo de documentos sugeridos + documentos persistidos.
  * Botão "Gerar com IA" cria + persiste; "Editar" abre modal; "Copiar" copia conteúdo.

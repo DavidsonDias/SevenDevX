@@ -1,3 +1,16 @@
+/**
+ * EntityGraphSchema.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/EntityGraphSchema.tsx
+ * @module UI
+ *
+ * @description
+ * Publica o grafo de entidades (JSON-LD) que sustenta a estratégia GEO da marca.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { Helmet } from "react-helmet";
 import { buildEntityJsonLd } from "@/data/entityGraph";
 

@@ -1,4 +1,19 @@
 /**
+ * useSmartBack.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/useSmartBack.ts
+ * @module Hooks
+ *
+ * @description
+ * Voltar contextual que respeita a origem da navegação.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧭 useSmartBack — Voltar inteligente
  * Se houver histórico no app (mesma origem), volta. Senão, vai para o fallback.
  * Detecta também navegações vindas de fora (sem referer interno) usando sessionStorage.

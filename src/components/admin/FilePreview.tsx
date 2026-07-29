@@ -1,4 +1,19 @@
 /**
+ * FilePreview.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/FilePreview.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Pré-visualização de arquivos privados por URL assinada.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🖼️ FilePreview — preview robusto de anexos do bucket privado.
  * - Resolve signed URL sob demanda (jamais usa file_url legado/público).
  * - Fallback elegante em erro (broken / not found).

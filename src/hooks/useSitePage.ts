@@ -1,4 +1,19 @@
 /**
+ * useSitePage.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/useSitePage.ts
+ * @module Hooks
+ *
+ * @description
+ * Dados da landing de criação de sites resolvidos a partir das tabelas `site_page_*`.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🏗️ useSitePage — hooks para o módulo Criação de Sites (SevenOS CMS).
  * Consolida acesso às tabelas site_page_* com fallback para conteúdo padrão
  * caso o banco esteja vazio (nunca quebra a página pública).

@@ -1,4 +1,17 @@
 /**
+ * OfflineIndicator.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/OfflineIndicator.tsx
+ * @module UI
+ *
+ * @description
+ * Sinaliza perda de conectividade e o estado da fila offline do service worker.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📡 OfflineIndicator — Banner de conexão + toast de reconexão
  * Detecta online/offline, mostra estado do SW e contagem de mutations
  * em fila aguardando sincronização (background sync).

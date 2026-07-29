@@ -1,4 +1,17 @@
 /**
+ * ContactMultiStep.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/ContactMultiStep.tsx
+ * @module UI
+ *
+ * @description
+ * Formulário de contato em etapas, projetado para reduzir atrito e qualificar o lead antes do envio.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * ContactMultiStep — Multi-step form with i18n, validation, sanitization
  */
 

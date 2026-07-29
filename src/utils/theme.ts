@@ -1,4 +1,17 @@
 /**
+ * theme.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/utils/theme.ts
+ * @module Utils
+ *
+ * @description
+ * Alternância e persistência de tema.
+ *
+ * @see src/utils/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🌌 SevenDevX | Theme Manager v1.0 PRO++
  * ---------------------------------------------------------
  * ✅ Suporte a dark, light e temas dinâmicos (neon, matrix…)

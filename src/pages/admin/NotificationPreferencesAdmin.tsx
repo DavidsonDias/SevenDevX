@@ -1,4 +1,20 @@
 /**
+ * NotificationPreferencesAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/NotificationPreferencesAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/notifications/preferences
+ *
+ * @description
+ * Preferências de notificação por canal.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * ⚙️ NotificationPreferencesAdmin — matriz evento × canal.
  */
 import { useEffect, useState } from "react";

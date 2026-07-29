@@ -1,4 +1,19 @@
 /**
+ * useProjects.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/useProjects.ts
+ * @module Hooks
+ *
+ * @description
+ * Projetos, estágios e checklists.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📦 useProjects — React Query hook for DB-backed projects (Enterprise)
  * Single source of truth: Supabase `projects` table.
  * Featured ordering: featured_level DESC → display_order ASC → created_at DESC.

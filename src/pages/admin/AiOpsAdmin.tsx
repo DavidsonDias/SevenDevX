@@ -1,4 +1,20 @@
 /**
+ * AiOpsAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/AiOpsAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/ai-ops
+ *
+ * @description
+ * Operações assistidas por IA e histórico de uso.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🤖 AI Ops — assistant + ações autônomas (triagem de leads, pricing).
  */
 import { useEffect, useState } from "react";

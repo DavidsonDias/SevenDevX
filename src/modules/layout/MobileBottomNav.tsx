@@ -1,4 +1,17 @@
 /**
+ * MobileBottomNav.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/layout/MobileBottomNav.tsx
+ * @module Layout
+ *
+ * @description
+ * Navegação inferior mobile focada no fluxo diário do SevenOS.
+ *
+ * @see src/modules/layout/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📱 MobileBottomNav — Tab bar enterprise estilo app nativo
  * Estrutura: Home · Projects · [CENTER FAB] · Integra · Pipeline
  * Center FAB abre RadialActionMenu (Mission Control mobile).

@@ -1,3 +1,16 @@
+/**
+ * Hero.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/Hero.tsx
+ * @module UI
+ *
+ * @description
+ * Hero da home; controla o vídeo de fundo com fallback para conexões lentas e prioriza o LCP.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import heroBackground from "@/assets/images/hero-tech-workspace.webp";

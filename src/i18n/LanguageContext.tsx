@@ -1,4 +1,17 @@
 /**
+ * LanguageContext.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/i18n/LanguageContext.tsx
+ * @module i18n
+ *
+ * @description
+ * Contexto de idioma (pt/en/es) e função de tradução da aplicação.
+ *
+ * @see src/i18n/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🌐 Language Context - SevenDevX
  * Gerenciamento global do idioma da aplicação
  */

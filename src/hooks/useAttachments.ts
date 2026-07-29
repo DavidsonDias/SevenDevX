@@ -1,4 +1,19 @@
 /**
+ * useAttachments.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/useAttachments.ts
+ * @module Hooks
+ *
+ * @description
+ * CRUD de anexos no bucket privado, sempre com URL assinada.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📎 useAttachments — sistema unificado de anexos com URLs ASSINADAS (bucket privado).
  * Segurança enterprise: URLs expiram em 1h, geradas sob demanda via React Query.
  */

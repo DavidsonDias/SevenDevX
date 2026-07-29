@@ -1,3 +1,16 @@
+/**
+ * ScrollToTop.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/ScrollToTop.tsx
+ * @module UI
+ *
+ * @description
+ * Reposiciona o scroll no topo a cada navegação.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 

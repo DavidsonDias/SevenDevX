@@ -1,3 +1,16 @@
+/**
+ * safeStorage.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/utils/safeStorage.ts
+ * @module Utils
+ *
+ * @description
+ * Wrapper tolerante a falhas sobre localStorage/sessionStorage.
+ *
+ * @see src/utils/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 const memoryStorage = new Map<string, string>();
 
 const getBrowserStorage = (type: "local" | "session"): Storage | null => {

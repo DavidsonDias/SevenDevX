@@ -1,3 +1,16 @@
+/**
+ * SEOHead.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/SEOHead.tsx
+ * @module UI
+ *
+ * @description
+ * Fonte única de metadados por página: title, description, canonical, Open Graph e JSON-LD.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 // 📂 src/components/SEOHead.tsx
 import { Helmet } from "react-helmet";
 

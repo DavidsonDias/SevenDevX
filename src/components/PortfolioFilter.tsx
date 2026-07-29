@@ -1,4 +1,17 @@
 /**
+ * PortfolioFilter.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/PortfolioFilter.tsx
+ * @module UI
+ *
+ * @description
+ * Filtro de projetos por stack e categoria.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🔥 PortfolioFilter v1.0 PRO++ ULTIMATE — SevenDevX
  * -------------------------------------------------------------
  * VERSÃO HÍBRIDA DEFINITIVA - Carrossel Universal com Grid Adaptativo

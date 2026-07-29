@@ -1,4 +1,18 @@
 /**
+ * Blog.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/Blog.tsx
+ * @module Public
+ * @route /blog
+ *
+ * @description
+ * Índice do blog alimentado por `blog_posts`.
+ *
+ * @see src/pages/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📝 Blog — SevenDevX Elite Content Hub
  * Apple/Stripe/Vercel-inspired blog experience
  */

@@ -1,4 +1,17 @@
 /**
+ * IntegrationLogsPanel.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/integrations/IntegrationLogsPanel.tsx
+ * @module Integrations
+ *
+ * @description
+ * Logs de execução das integrações.
+ *
+ * @see src/modules/integrations/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📜 IntegrationLogsPanel — terminal-style realtime log viewer
  * - Filtros por severity
  * - JSON expansível (request/response)

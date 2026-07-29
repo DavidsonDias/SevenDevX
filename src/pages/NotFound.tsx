@@ -1,3 +1,17 @@
+/**
+ * NotFound.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/NotFound.tsx
+ * @module Public
+ * @route *
+ *
+ * @description
+ * Página 404 com efeito glitch e rotas sugeridas.
+ *
+ * @see src/pages/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";

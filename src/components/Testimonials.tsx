@@ -1,3 +1,16 @@
+/**
+ * Testimonials.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/Testimonials.tsx
+ * @module UI
+ *
+ * @description
+ * Depoimentos em grade.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { motion } from "framer-motion";
 import { Star, Quote } from "lucide-react";
 

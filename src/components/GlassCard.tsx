@@ -1,4 +1,17 @@
 /**
+ * GlassCard.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/GlassCard.tsx
+ * @module UI
+ *
+ * @description
+ * Superfície glassmorphic base do design system; centraliza blur, borda e elevação.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🪟 GlassCard - Componente Glassmorphism Premium
  * SevenDevX Enterprise Edition
  */

@@ -1,3 +1,19 @@
+/**
+ * GeoArticle.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/geo/GeoArticle.tsx
+ * @module Public/GEO
+ * @route /answers, /knowledge-base
+ *
+ * @description
+ * Índice e leitura de artigos GEO (respostas e base de conhecimento).
+ *
+ * @seo Metadados e JSON-LD definidos via `SEOHead`.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";

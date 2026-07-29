@@ -1,4 +1,17 @@
 /**
+ * providerCatalog.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/integrations/providerCatalog.ts
+ * @module Integrations
+ *
+ * @description
+ * Catálogo de providers suportados e seus recursos.
+ *
+ * @see src/modules/integrations/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📦 Provider Catalog Enterprise — 100+ providers com branding oficial.
  * Logos via cdn.simpleicons.org com fallback local-first.
  */

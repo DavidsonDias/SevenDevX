@@ -1,6 +1,13 @@
 /**
  * 🚀 SevenDevX PWA Service Worker v8.6.0 ULTRA ENTERPRISE FUSION
  * ═══════════════════════════════════════════════════════════════════
+ * @file src/sw.ts
+ * @module PWA
+ *
+ * @description
+ * Estratégias de cache por tipo de recurso, offline shell e Background Sync
+ * responsável por drenar a fila offline (IndexedDB) quando a rede retorna.
+ * ═══════════════════════════════════════════════════════════════════
  * FIX CRÍTICO: Imagens externas não aparecem após refresh
  * 
  * ✨ DESTAQUES v8.6.0:

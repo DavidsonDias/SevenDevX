@@ -1,4 +1,17 @@
 /**
+ * PortfolioCarousel3D.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/PortfolioCarousel3D.tsx
+ * @module UI
+ *
+ * @description
+ * Carrossel 3D do portfólio; efeitos de profundidade desativados em mobile por performance.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🔥 PortfolioCarousel3D — SevenDevX
  * -------------------------------------------------------------
  * Carrossel 3D com swipe horizontal mobile-first

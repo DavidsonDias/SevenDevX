@@ -1,4 +1,17 @@
 /**
+ * OrcamentoButton.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/OrcamentoButton.tsx
+ * @module UI
+ *
+ * @description
+ * Gatilho flutuante do fluxo de orçamento.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧩 OrcamentoButton.tsx — SevenDevX v1.3 PRO++
  * -------------------------------------------------------------
  * ✅ Abre o OrcamentoModal.tsx ao clicar

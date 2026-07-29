@@ -1,4 +1,19 @@
 /**
+ * useExtractedColor.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/useExtractedColor.ts
+ * @module Hooks
+ *
+ * @description
+ * Cor dominante de uma imagem, usada em glow e realces.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🎨 useExtractedColor — Resolve cor efetiva (override > extraída de SVG/URL > undefined)
  */
 import { useEffect, useState } from "react";

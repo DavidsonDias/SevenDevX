@@ -1,3 +1,18 @@
+/**
+ * PushSubscribeButton.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/PushSubscribeButton.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Assinatura de notificações push do navegador.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { Bell, BellOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { usePushSubscription } from "@/hooks/usePushSubscription";

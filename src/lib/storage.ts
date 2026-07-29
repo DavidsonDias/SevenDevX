@@ -1,4 +1,17 @@
 /**
+ * storage.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/lib/storage.ts
+ * @module Lib
+ *
+ * @description
+ * Acesso ao Storage privado: upload e URLs assinadas.
+ *
+ * @see src/lib/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🗄️ storage.ts — central de URLs assinadas para o bucket privado `attachments`.
  *
  * Por que existir:

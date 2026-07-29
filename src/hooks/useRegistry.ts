@@ -1,4 +1,19 @@
 /**
+ * useRegistry.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/useRegistry.ts
+ * @module Hooks
+ *
+ * @description
+ * Registro de tecnologias e tags compartilhado pelos CMSs.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📚 useRegistry — Tech & Tag registry hooks (Enterprise)
  * Centralized catalog backed by Supabase tables `tech_registry` and `tag_registry`.
  * Supports list, create, update, delete + lookup by slug.

@@ -1,4 +1,20 @@
 /**
+ * NotificationsAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/NotificationsAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/notifications
+ *
+ * @description
+ * Central de notificações do SevenOS.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🔔 NotificationsAdmin — histórico completo com filtros e ações em lote.
  */
 import { useState } from "react";

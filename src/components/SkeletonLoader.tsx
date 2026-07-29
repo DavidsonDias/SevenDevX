@@ -1,4 +1,17 @@
 /**
+ * SkeletonLoader.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/SkeletonLoader.tsx
+ * @module UI
+ *
+ * @description
+ * Placeholders de carregamento padronizados.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 💀 SkeletonLoader - Loading States Premium
  * SevenDevX Enterprise Edition
  */

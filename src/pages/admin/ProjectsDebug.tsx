@@ -1,4 +1,20 @@
 /**
+ * ProjectsDebug.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/ProjectsDebug.tsx
+ * @module SevenOS/Admin
+ * @route /admin/projects/debug
+ *
+ * @description
+ * Tela de diagnóstico de dados de projetos.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🛠️ Debug Panel — Projects diagnostic (admin-only)
  * Displays totals, broken/missing data and rendering counts.
  */

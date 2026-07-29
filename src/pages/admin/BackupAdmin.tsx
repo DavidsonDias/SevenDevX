@@ -1,4 +1,20 @@
 /**
+ * BackupAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/BackupAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/backup
+ *
+ * @description
+ * Exportação de backups do tenant em múltiplos formatos.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📦 BackupAdmin v3 — backup completo (ZIP) ou por domínio + checksum SHA-256 + retenção.
  */
 import { useEffect, useState } from "react";

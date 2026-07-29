@@ -1,4 +1,17 @@
 /**
+ * TechIconCDN.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/TechIconCDN.tsx
+ * @module UI
+ *
+ * @description
+ * Ícone de tecnologia servido por CDN oficial, com fallback para cor/inicial da marca.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🎨 TechIconCDN — Renders OFFICIAL brand-colored tech icons
  *
  * Uses `react-icons/si` (Simple Icons) bundled locally — no CDN dependency,

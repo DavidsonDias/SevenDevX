@@ -1,4 +1,19 @@
 /**
+ * BlogPostEditor.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/BlogPostEditor.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Editor de posts em Markdown com preview e publicação.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📝 BlogPostEditor — modal full editor para posts do blog.
  * Cobre: título, slug, excerpt, conteúdo (markdown/HTML textarea), capa (upload),
  * categoria, tags, status, tempo de leitura, SEO básico.

@@ -1,4 +1,20 @@
 /**
+ * SecurityAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/SecurityAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/security
+ *
+ * @description
+ * Hub de segurança: MFA, sessões e eventos sensíveis.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🛡️ SecurityAdmin — central enterprise de segurança.
  * Password policy + MFA enforcement + rate limit + IP allowlist + emergency logout.
  */

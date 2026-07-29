@@ -1,4 +1,20 @@
 /**
+ * CashflowAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/CashflowAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/cashflow
+ *
+ * @description
+ * Projeção de caixa a partir das transações previstas.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 💸 CashflowAdmin — Fluxo de caixa previsto 90 dias.
  */
 import { useQuery } from "@tanstack/react-query";

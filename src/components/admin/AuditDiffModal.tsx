@@ -1,4 +1,19 @@
 /**
+ * AuditDiffModal.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/AuditDiffModal.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Comparação antes/depois de um registro auditado.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🔬 AuditDiffModal — exibe diff campo a campo de uma entrada de audit_log.
  */
 import { motion, AnimatePresence } from "framer-motion";

@@ -1,4 +1,19 @@
 /**
+ * AiInsightsBlock.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/AiInsightsBlock.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Bloco de insights gerados por IA no dashboard.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧠 AiInsightsBlock — gera insights estratégicos com IA a partir dos KPIs
  */
 import { useState } from "react";

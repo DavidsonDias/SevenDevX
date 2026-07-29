@@ -1,4 +1,19 @@
 /**
+ * AiProjectGeneratorModal.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/AiProjectGeneratorModal.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Geração assistida de projeto a partir de um briefing.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🪄 AiProjectGeneratorModal — gera projeto completo (cliente + projeto + estágios + documentos + estimativa)
  */
 import { useState } from "react";

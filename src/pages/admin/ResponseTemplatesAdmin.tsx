@@ -1,4 +1,20 @@
 /**
+ * ResponseTemplatesAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/ResponseTemplatesAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/templates
+ *
+ * @description
+ * Modelos de resposta do contact center.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 💬 ResponseTemplatesAdmin — biblioteca de templates de resposta com merge tags.
  */
 import { useEffect, useState } from "react";

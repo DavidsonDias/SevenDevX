@@ -1,4 +1,19 @@
 /**
+ * PricingEngineModal.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/PricingEngineModal.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Cálculo de precificação de propostas.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧮 PricingEngineModal — Enterprise modal: sticky header/footer, scroll interno,
  * safe-area iOS, focus trap básico, ESC + click outside.
  */

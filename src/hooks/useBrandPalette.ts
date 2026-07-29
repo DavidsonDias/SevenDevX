@@ -1,4 +1,19 @@
 /**
+ * useBrandPalette.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/useBrandPalette.ts
+ * @module Hooks
+ *
+ * @description
+ * Paleta de marca resolvida para um provider ou projeto.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🎨 useBrandPalette — Resolve a paleta multicor de um provider.
  * Prioridade:
  *  1. Override no DB (cor explícita do admin → mantém comportamento mono-cor)

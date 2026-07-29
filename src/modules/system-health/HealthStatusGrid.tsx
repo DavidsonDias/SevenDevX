@@ -1,4 +1,17 @@
 /**
+ * HealthStatusGrid.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/system-health/HealthStatusGrid.tsx
+ * @module SystemHealth
+ *
+ * @description
+ * Grade de status dos serviços monitorados.
+ *
+ * @see src/modules/system-health/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🟢 HealthStatusGrid — grid compacto de providers + status pulse.
  */
 import { useEffect, useState } from "react";

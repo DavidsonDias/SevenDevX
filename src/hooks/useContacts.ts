@@ -1,3 +1,18 @@
+/**
+ * useContacts.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/useContacts.ts
+ * @module Hooks
+ *
+ * @description
+ * Leads e mensagens de contato, com invalidação de cache após mutações.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
  /**
   * 📋 useContacts - Hook para gerenciamento de leads/contatos
   * SevenDevX Enterprise Edition

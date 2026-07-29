@@ -1,4 +1,17 @@
 /**
+ * money.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/lib/money.ts
+ * @module Lib
+ *
+ * @description
+ * Formatação e aritmética monetária (evita erros de ponto flutuante).
+ *
+ * @see src/lib/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 💰 money — utilitários multi-moeda BRL/USD/EUR.
  */
 export type CurrencyCode = "BRL" | "USD" | "EUR";

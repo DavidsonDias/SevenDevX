@@ -1,4 +1,20 @@
 /**
+ * MfaAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/MfaAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/security/mfa
+ *
+ * @description
+ * Enrolamento e gestão de MFA (TOTP).
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🔐 MfaAdmin — enroll/manage 2FA TOTP.
  */
 import { useState } from "react";

@@ -105,3 +105,14 @@ Para páginas principais, providers, auth, security, integrações, Edge Functio
 | `@sideEffects` | Escritas, invalidações, storage, realtime |
 | `@see` | Arquivos relacionados |
 | `@since` / `@updated` | Datas/versões quando houver valor |
+
+---
+
+## Aplicação e verificação
+
+| Comando | Efeito |
+|---|---|
+| `npm run docs:check` | Reporta arquivos sem `@file`, diretórios sem README e links Markdown quebrados (warning, não bloqueia build) |
+| `node scripts/apply-headers.mjs <lista.txt>` | Aplica cabeçalhos Level 1/2 nos caminhos listados |
+
+`apply-headers.mjs` é idempotente: nunca sobrescreve um cabeçalho existente, nunca altera código e preserva diretivas de topo (`#!`, `"use client"`, `/// <reference>`). Cabeçalhos Level 3 continuam sendo escritos à mão — a profundidade exigida (arquitetura, fluxo, segurança, performance) não é gerável automaticamente.

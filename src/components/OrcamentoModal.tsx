@@ -1,3 +1,16 @@
+/**
+ * OrcamentoModal.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/OrcamentoModal.tsx
+ * @module UI
+ *
+ * @description
+ * Fluxo multi-etapas de orçamento; persiste o lead antes de qualquer redirecionamento externo.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 // 📂 src/components/OrcamentoModal.tsx
 /**
  * 💰 OrcamentoModal.tsx — SevenDevX v1.0 PRO++

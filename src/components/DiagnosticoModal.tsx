@@ -1,4 +1,17 @@
 /**
+ * DiagnosticoModal.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/DiagnosticoModal.tsx
+ * @module UI
+ *
+ * @description
+ * Fluxo de diagnóstico gratuito usado pelos CTAs; grava o lead e as respostas antes de encaminhar ao WhatsApp.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🩺 DiagnosticoModal — formulário multi-step para diagnóstico gratuito.
  * Reutilizado no Hero e no CTA final. Cria contact + registro em site_page_diagnostics.
  */

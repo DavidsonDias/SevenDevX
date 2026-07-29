@@ -1,4 +1,20 @@
 /**
+ * ContactCenterAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/ContactCenterAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/contact-center
+ *
+ * @description
+ * Mensagens recebidas e modelos de resposta.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📬 ContactCenterAdmin — Inbox de leads (estilo Intercom/HubSpot)
  * Realtime · status · notas internas · conversão em cliente
  */

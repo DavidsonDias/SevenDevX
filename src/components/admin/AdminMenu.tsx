@@ -1,4 +1,19 @@
 /**
+ * AdminMenu.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/AdminMenu.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Navegação agrupada do SevenOS; a visibilidade é conveniência de UI, a autoridade é RLS.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🍔 AdminMenu — menu hambúrguer fullscreen global do admin (mobile-first).
  * Estilo igual ao site: overlay com animações suaves, lista de rotas, perfil + logout.
  */
