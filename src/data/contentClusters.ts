@@ -1,4 +1,17 @@
 /**
+ * contentClusters.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/data/contentClusters.ts
+ * @module Content
+ *
+ * @description
+ * Clusters temáticos que organizam a estratégia de conteúdo.
+ *
+ * @see src/data/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🕸️ Content Clusters — mapeamento semântico hub → spokes para SEO/GEO.
  * Cada cluster tem um pilar central e conteúdos satélites interligados
  * por links internos e por DefinedTermSet em JSON-LD.

@@ -1,4 +1,17 @@
 /**
+ * UserDetailsModal.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/users/UserDetailsModal.tsx
+ * @module Users
+ *
+ * @description
+ * Detalhe de usuário, papéis e sessões.
+ *
+ * @see src/modules/users/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 👤 UserDetailsModal — Detalhe + ações enterprise por usuário
  * Protege Davidson/SevenDevX e o último admin contra exclusão.
  */

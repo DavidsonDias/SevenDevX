@@ -1,4 +1,20 @@
 /**
+ * LogsAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/LogsAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/logs
+ *
+ * @description
+ * Log de auditoria com filtros e exportação.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📜 LogsAdmin — Visualizador de audit log
  */
 import { useEffect, useMemo, useState } from "react";

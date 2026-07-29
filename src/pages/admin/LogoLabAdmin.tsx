@@ -1,4 +1,20 @@
 /**
+ * LogoLabAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/LogoLabAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/logo-lab
+ *
+ * @description
+ * Geração de variações de logo assistida por IA.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧪 LogoLab — Playground oficial do LogoRenderer + Dynamic Brand Palette Engine
  * Mostra preview real do card de Integração, Marketplace e Hero usando a paleta
  * multicor extraída automaticamente.

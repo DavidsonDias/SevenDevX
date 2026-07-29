@@ -1,4 +1,19 @@
 /**
+ * SiteCreationProjectsTab.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/SiteCreationProjectsTab.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Aba de curadoria de projetos da landing de criação de sites, com ordenação drag-and-drop.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🗂️ SiteCreationProjectsTab — Drag & drop management of showcased projects
  * for /criacao-de-sites-profissionais. Editable overrides (título, descrição,
  * URL do CTA / link ao vivo) por projeto sem alterar o dado original.

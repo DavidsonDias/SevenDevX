@@ -1,4 +1,19 @@
 /**
+ * AdminPageShell.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/AdminPageShell.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Layout base das telas admin: header auto-hide, breadcrumb, ações e slots de módulos globais.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🎛️ AdminPageShell — consistent header + container for all admin pages
  * Voltar inteligente + breadcrumb dinâmico.
  */

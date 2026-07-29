@@ -1,4 +1,18 @@
 /**
+ * IntegrationsMarketplace.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/IntegrationsMarketplace.tsx
+ * @module Public
+ * @route /integracoes
+ *
+ * @description
+ * Vitrine pública de integrações suportadas.
+ *
+ * @see src/pages/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🛒 IntegrationsMarketplace — vitrine pública + 1-click install (admin).
  */
 import { useMemo, useState } from "react";

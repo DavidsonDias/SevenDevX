@@ -1,4 +1,20 @@
 /**
+ * SearchConsoleAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/SearchConsoleAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/search-console
+ *
+ * @description
+ * Insights de busca orgânica.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📊 SearchConsoleAdmin — visualiza dados do Google Search Console
  * via edge function gsc-insights (Lovable Connector Gateway).
  */

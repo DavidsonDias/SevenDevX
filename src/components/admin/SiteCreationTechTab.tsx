@@ -1,4 +1,19 @@
 /**
+ * SiteCreationTechTab.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/SiteCreationTechTab.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Aba de curadoria de tecnologias da landing de criação de sites.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧪 SiteCreationTechTab — Manage tech stack shown on /criacao-de-sites-profissionais
  * DnD reorder, toggle visibility, remove, and add via TechPickerModal.
  */

@@ -1,4 +1,20 @@
 /**
+ * WhatsAppInboxAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/WhatsAppInboxAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/whatsapp
+ *
+ * @description
+ * Inbox do WhatsApp Business (Meta Cloud API).
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 💬 WhatsApp Business Inbox — bidirectional inbox via Meta Cloud API.
  */
 import { useEffect, useRef, useState } from "react";

@@ -1,4 +1,19 @@
 /**
+ * useContractVersions.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/useContractVersions.ts
+ * @module Hooks
+ *
+ * @description
+ * Versionamento de contratos e restauração de versões.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📜 useContractVersions — histórico imutável de versões de contrato.
  */
 import { useQuery } from "@tanstack/react-query";

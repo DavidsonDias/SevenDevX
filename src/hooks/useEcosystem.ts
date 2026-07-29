@@ -1,4 +1,19 @@
 /**
+ * useEcosystem.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/useEcosystem.ts
+ * @module Hooks
+ *
+ * @description
+ * Estado agregado do ecossistema (saúde, integrações e automações).
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧠 useEcosystem — hooks centralizados do Sistema Operacional SevenDevX
  * Clients, Interactions, Process Stages, Services CMS, FAQ, AI Engine.
  */

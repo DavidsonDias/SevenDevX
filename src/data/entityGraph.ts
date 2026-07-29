@@ -1,4 +1,17 @@
 /**
+ * entityGraph.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/data/entityGraph.ts
+ * @module Content
+ *
+ * @description
+ * Entidades e relações da marca usadas na geração de JSON-LD.
+ *
+ * @see src/data/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧠 Entity Engine — grafo de entidades SevenDevX para Generative Engine Optimization.
  * Cada entidade vira um nó JSON-LD com relacionamentos explícitos (sameAs, knowsAbout, parentOf).
  * Consumido por <EntityGraphSchema /> para injetar @graph estruturado sitewide.

@@ -1,4 +1,17 @@
 /**
+ * offlineQueue.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/utils/offlineQueue.ts
+ * @module Utils
+ *
+ * @description
+ * Fila offline em IndexedDB drenada pelo Background Sync.
+ *
+ * @see src/utils/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📦 offlineQueue — Fila de mutations resiliente baseada em IndexedDB
  * ──────────────────────────────────────────────────────────────────
  * - Persiste payloads de fetch quando offline

@@ -1,4 +1,19 @@
 /**
+ * SmartInsights.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/SmartInsights.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Insights operacionais derivados de RPCs de pipeline e finanças.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧠 SmartInsights — leads parados + receita ponderada do pipeline.
  */
 import { motion } from "framer-motion";

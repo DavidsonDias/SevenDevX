@@ -1,4 +1,19 @@
 /**
+ * useMfa.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/useMfa.ts
+ * @module Hooks
+ *
+ * @description
+ * Enrolamento e verificação de TOTP; segredos nunca são expostos ao cliente.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🔐 useMfa — estado do TOTP do usuário atual.
  */
 import { useEffect, useState, useCallback } from "react";

@@ -1,4 +1,17 @@
 /**
+ * colorExtract.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/lib/colorExtract.ts
+ * @module Lib
+ *
+ * @description
+ * Utilitários de extração e manipulação de cor.
+ *
+ * @see src/lib/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🎨 Color Extraction Engine
  *
  * Deriva a cor primária de um logo customizado para alimentar glow/beam/border.

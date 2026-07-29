@@ -1,4 +1,19 @@
 /**
+ * TimeTrackerWidget.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/finance/TimeTrackerWidget.tsx
+ * @module SevenOS/Finance
+ *
+ * @description
+ * Registro de horas do projeto, base do cálculo de margem.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * ⏱️ TimeTrackerWidget — timer start/stop + lista de horas do projeto.
  */
 import { useEffect, useState } from "react";

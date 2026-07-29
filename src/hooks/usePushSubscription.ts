@@ -1,3 +1,18 @@
+/**
+ * usePushSubscription.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/usePushSubscription.ts
+ * @module Hooks
+ *
+ * @description
+ * Assinatura Web Push e sincronização com `push_subscriptions`.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthContext } from "@/contexts/AuthContext";

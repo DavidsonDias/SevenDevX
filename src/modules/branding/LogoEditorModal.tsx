@@ -1,4 +1,17 @@
 /**
+ * LogoEditorModal.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/branding/LogoEditorModal.tsx
+ * @module Branding
+ *
+ * @description
+ * Editor de variações de logo do Brand Studio.
+ *
+ * @see src/modules/branding/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🎨 LogoEditorModal — Editor visual de logos enterprise
  * Permite sobrescrever cor / SVG inline / URL para qualquer provider do catálogo,
  * com preview live em múltiplas variantes. Persistência via useLogoOverrides.

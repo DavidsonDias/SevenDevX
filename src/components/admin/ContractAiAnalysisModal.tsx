@@ -1,4 +1,19 @@
 /**
+ * ContractAiAnalysisModal.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/ContractAiAnalysisModal.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Resumo e análise de risco de contratos por IA.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧠 ContractAiAnalysisModal — analisa texto de contrato com IA e mostra riscos, cláusulas-chave e checklist.
  */
 import { useState } from "react";

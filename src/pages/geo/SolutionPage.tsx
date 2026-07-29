@@ -1,4 +1,20 @@
 /**
+ * SolutionPage.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/geo/SolutionPage.tsx
+ * @module Public/GEO
+ * @route /solucoes, /solucoes/:slug
+ *
+ * @description
+ * Páginas de soluções por problema de negócio.
+ *
+ * @seo Metadados e JSON-LD definidos via `SEOHead`.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧩 SolutionPage — programmatic SEO por serviço.
  * Rota /solucoes/:slug — gera página otimizada para AI Search por vertical de serviço.
  */

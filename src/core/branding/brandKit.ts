@@ -1,4 +1,17 @@
 /**
+ * brandKit.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/core/branding/brandKit.ts
+ * @module Core/Branding
+ *
+ * @description
+ * Montagem do brand kit exportável (tokens, paleta e variações de logo).
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🎁 brandKit — gera um favicon kit + monograma SVG/PNG empacotado em ZIP.
  * Não depende de assets remotos: usa nome + cor para construir um monograma
  * tipográfico consistente. Útil como fallback quando o usuário não tem SVG oficial.

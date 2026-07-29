@@ -1,4 +1,17 @@
 /**
+ * ProjectCard3D.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/ProjectCard3D.tsx
+ * @module UI
+ *
+ * @description
+ * Card de projeto com tilt 3D e transição compartilhada para o detalhe.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🎴 ProjectCard3D — Enterprise-grade interactive 3D card
  * Features: parallax layers, dynamic spotlight glow, spring physics
  * CRITICAL: Click is NEVER blocked by animations — instant response

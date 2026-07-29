@@ -1,4 +1,20 @@
 /**
+ * TagsAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/TagsAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/tags
+ *
+ * @description
+ * Registro de tags.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🏷️ TagsAdmin — Enterprise CRUD for the tag registry
  */
 import { useMemo, useState } from "react";

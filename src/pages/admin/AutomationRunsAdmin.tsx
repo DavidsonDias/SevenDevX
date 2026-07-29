@@ -1,4 +1,20 @@
 /**
+ * AutomationRunsAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/AutomationRunsAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/automations/runs
+ *
+ * @description
+ * Execuções de automação com status e payloads.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📜 AutomationRunsAdmin — histórico de execuções com replay.
  */
 import { useEffect, useState } from "react";

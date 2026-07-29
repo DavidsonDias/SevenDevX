@@ -1,4 +1,19 @@
 /**
+ * ActivityFeed.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/ActivityFeed.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Feed de auditoria em tempo real, alimentado por `audit_log` via Realtime.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📡 ActivityFeed — timeline em tempo real do audit_log (clicável → diff modal)
  */
 import { useState } from "react";

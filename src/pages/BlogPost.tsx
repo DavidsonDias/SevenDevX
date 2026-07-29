@@ -1,4 +1,18 @@
 /**
+ * BlogPost.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/BlogPost.tsx
+ * @module Public
+ * @route /blog/:slug
+ *
+ * @description
+ * Leitura de post com progresso de leitura e schema.org Article.
+ *
+ * @see src/pages/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📝 BlogPost — Elite Article Reading Experience
  * Vercel/Stripe-inspired: progress bar, premium typography, author section
  */

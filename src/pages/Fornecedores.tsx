@@ -1,4 +1,18 @@
 /**
+ * Fornecedores.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/Fornecedores.tsx
+ * @module Public
+ * @route /fornecedores
+ *
+ * @description
+ * Página de fornecedores e parceiros.
+ *
+ * @see src/pages/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧩 Fornecedores.tsx — SevenDevX v1.0 ULTIMATE
  * -------------------------------------------------------------
  * ✅ v4.0 MELHORIAS:

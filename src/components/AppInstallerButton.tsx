@@ -1,4 +1,17 @@
 /**
+ * AppInstallerButton.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/AppInstallerButton.tsx
+ * @module UI
+ *
+ * @description
+ * Convite de instalação do PWA; só aparece quando o app ainda não está instalado e o navegador expõe o evento de instalação.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📦 AppInstallerButton v4 — SevenDevX Enterprise
  * ─────────────────────────────────────────────────
  * - Detecta instalação de forma confiável (display-mode, navigator.standalone,

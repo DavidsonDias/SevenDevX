@@ -1,4 +1,19 @@
 /**
+ * KpiCards.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/KpiCards.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Indicadores principais do dashboard administrativo.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📊 KpiCards — KPIs avançados de pipeline, conversão e receita
  */
 import { useEffect, useState } from "react";

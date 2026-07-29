@@ -1,4 +1,17 @@
 /**
+ * TechShowcase.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/TechShowcase.tsx
+ * @module UI
+ *
+ * @description
+ * Marquee infinito de tecnologias em duas faixas contínuas.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * ⭐ TECH SHOWCASE — Version 1.0 PRO++
  * --------------------------------------------------------------
  * 🔥 Versão mais estável, performática e limpa produzida até agora.

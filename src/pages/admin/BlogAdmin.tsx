@@ -1,4 +1,20 @@
 /**
+ * BlogAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/BlogAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/blog
+ *
+ * @description
+ * CMS do blog: posts, categorias e publicação.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📝 BlogAdmin — gerenciamento de posts do blog.
  */
 import { useEffect, useState } from "react";

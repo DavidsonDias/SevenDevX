@@ -1,4 +1,19 @@
 /**
+ * useAnalytics.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/useAnalytics.ts
+ * @module Hooks
+ *
+ * @description
+ * Envio de eventos de produto para `analytics_events`.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📊 useAnalytics - Hook para tracking de analytics
  * SevenDevX Enterprise Edition
  */

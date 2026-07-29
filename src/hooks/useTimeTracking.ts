@@ -1,4 +1,19 @@
 /**
+ * useTimeTracking.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/useTimeTracking.ts
+ * @module Hooks
+ *
+ * @description
+ * Apontamento de horas e agregados por projeto.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * ⏱️ useTimeTracking — timer + apontamento de horas por projeto/etapa.
  */
 import { useEffect } from "react";

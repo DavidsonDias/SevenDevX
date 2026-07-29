@@ -1,4 +1,20 @@
 /**
+ * UsersAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/UsersAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/users
+ *
+ * @description
+ * Usuários e papéis; papéis vivem em `user_roles`.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 👥 UsersAdmin — Gestão de usuários e papéis (RBAC enterprise)
  */
 import { useMemo, useState } from "react";

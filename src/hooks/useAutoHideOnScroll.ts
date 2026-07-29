@@ -1,4 +1,19 @@
 /**
+ * useAutoHideOnScroll.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/useAutoHideOnScroll.ts
+ * @module Hooks
+ *
+ * @description
+ * Oculta cabeçalhos ao rolar para baixo e restaura ao subir.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🪄 useAutoHideOnScroll — esconde header ao rolar para baixo, mostra ao rolar para cima.
  * Mesma lógica usada no site público e no AdminPageShell.
  */

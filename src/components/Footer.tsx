@@ -1,3 +1,16 @@
+/**
+ * Footer.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/Footer.tsx
+ * @module UI
+ *
+ * @description
+ * Rodapé global: navegação em colunas, contatos e links institucionais.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";

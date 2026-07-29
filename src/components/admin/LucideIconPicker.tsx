@@ -1,4 +1,19 @@
 /**
+ * LucideIconPicker.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/LucideIconPicker.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Seletor visual de ícones Lucide usado pelos CMSs.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🎨 LucideIconPicker — seletor visual de ícones Lucide com busca.
  * Mostra preview do ícone atual + popover com grid pesquisável (toda a biblioteca).
  */

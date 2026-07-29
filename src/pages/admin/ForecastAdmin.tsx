@@ -1,4 +1,20 @@
 /**
+ * ForecastAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/ForecastAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/forecast
+ *
+ * @description
+ * Previsão ponderada do pipeline comercial.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📈 ForecastAdmin — receita ponderada por mês baseada em probabilidade × forecast_value.
  */
 import { useEffect, useState } from "react";

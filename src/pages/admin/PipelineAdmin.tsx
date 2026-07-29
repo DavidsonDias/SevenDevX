@@ -1,4 +1,20 @@
 /**
+ * PipelineAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/PipelineAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/pipeline
+ *
+ * @description
+ * Funil comercial com histórico de estágios.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧭 PipelineAdmin — Kanban profissional de projetos por estágio comercial
  * - 6 estágios: Lead → Diagnóstico → Proposta → Contrato → Execução → Entrega
  * - Busca global, filtro por cliente, ordenação, persistência via URL

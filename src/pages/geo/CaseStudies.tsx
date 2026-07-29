@@ -1,3 +1,19 @@
+/**
+ * CaseStudies.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/geo/CaseStudies.tsx
+ * @module Public/GEO
+ * @route /cases, /cases/:slug
+ *
+ * @description
+ * Índice e detalhe de estudos de caso.
+ *
+ * @seo Metadados e JSON-LD definidos via `SEOHead`.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";

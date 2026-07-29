@@ -1,4 +1,19 @@
 /**
+ * useScrollLock.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/useScrollLock.ts
+ * @module Hooks
+ *
+ * @description
+ * Bloqueio de scroll com compensação de scrollbar para modais.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * useScrollLock — Locks body scroll when active
  * Compensates for scrollbar width to prevent layout shift
  */

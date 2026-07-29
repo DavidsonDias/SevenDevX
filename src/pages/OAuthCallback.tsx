@@ -1,4 +1,18 @@
 /**
+ * OAuthCallback.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/OAuthCallback.tsx
+ * @module Public
+ * @route /oauth/callback
+ *
+ * @description
+ * Conclusão do fluxo OAuth PKCE e retorno ao destino pretendido.
+ *
+ * @see src/pages/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🔐 OAuthCallback — recebe ?code&state do provider, troca por token via edge.
  */
 import { useEffect, useState } from "react";

@@ -1,4 +1,17 @@
 /**
+ * NotificationBell.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/notifications/NotificationBell.tsx
+ * @module Notifications
+ *
+ * @description
+ * Sino de notificações com contagem em tempo real.
+ *
+ * @see src/modules/notifications/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🔔 NotificationBell — sino com badge, dropdown, realtime e ações inline.
  */
 import { useState, useRef, useEffect } from "react";

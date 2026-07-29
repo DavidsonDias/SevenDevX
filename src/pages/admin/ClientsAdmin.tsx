@@ -1,4 +1,20 @@
 /**
+ * ClientsAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/ClientsAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/clients
+ *
+ * @description
+ * CRM: clientes e interações.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 👥 ClientsAdmin — CRM de clientes (perfil + timeline + IA + projetos + contrato + anexos)
  */
 import { useState, useMemo, useRef, useEffect } from "react";

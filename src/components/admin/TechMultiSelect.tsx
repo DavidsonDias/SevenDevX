@@ -1,4 +1,19 @@
 /**
+ * TechMultiSelect.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/TechMultiSelect.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Seleção múltipla de tecnologias do registro.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧩 TechMultiSelect — Stripe-level autocomplete for technologies
  * - Search/filter from `tech_registry`
  * - Create new tech inline (auto-slug + color)

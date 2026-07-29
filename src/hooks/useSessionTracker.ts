@@ -1,4 +1,19 @@
 /**
+ * useSessionTracker.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/useSessionTracker.ts
+ * @module Hooks
+ *
+ * @description
+ * Rastreio de sessões administrativas (dispositivo e geolocalização aproximada).
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🛰️ useSessionTracker — registra sessão do usuário autenticado e mantém heartbeat
  * Rastreia TODOS os usuários autenticados (não só admin), para que a página /admin/sessions
  * reflita o que está realmente conectado. RLS na tabela protege a leitura (apenas admins leem).

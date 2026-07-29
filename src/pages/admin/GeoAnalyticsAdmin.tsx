@@ -1,4 +1,20 @@
 /**
+ * GeoAnalyticsAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/GeoAnalyticsAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/geo
+ *
+ * @description
+ * Tráfego e citações originadas de IA.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🛰️ GEO Analytics Admin — discoverability em LLMs e AI Search.
  * Mostra tráfego de bots de IA, top páginas GEO e checklist de indexação.
  */

@@ -1,4 +1,17 @@
 /**
+ * projects.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/data/projects.ts
+ * @module Content
+ *
+ * @description
+ * Portfólio estático (slug, descrição, stack e links).
+ *
+ * @see src/data/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📦 Shared Projects Data — SevenDevX
  * Reused by PortfolioCarousel3D and Projects Hub page
  */

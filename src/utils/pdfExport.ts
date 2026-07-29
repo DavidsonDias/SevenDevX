@@ -1,4 +1,17 @@
 /**
+ * pdfExport.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/utils/pdfExport.ts
+ * @module Utils
+ *
+ * @description
+ * Exportação de relatórios em PDF.
+ *
+ * @see src/utils/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📄 pdfExport — Client-side PDF generation using html2pdf.js.
  * Funciona em iOS/iPad sem servidor.
  */

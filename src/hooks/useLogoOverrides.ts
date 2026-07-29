@@ -1,4 +1,19 @@
 /**
+ * useLogoOverrides.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/useLogoOverrides.ts
+ * @module Hooks
+ *
+ * @description
+ * Sobrescritas manuais de logo sobre o registro global.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🎨 useLogoOverrides — Customizações GLOBAIS de logo (DB + Realtime + cache local)
  *
  * Estratégia:

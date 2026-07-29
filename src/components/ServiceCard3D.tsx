@@ -1,4 +1,17 @@
 /**
+ * ServiceCard3D.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/ServiceCard3D.tsx
+ * @module UI
+ *
+ * @description
+ * Card de serviço com tilt 3D, alimentado pelo CMS de serviços.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🎴 ServiceCard3D - SevenDevX
  * Card de serviço com efeito tilt 3D no hover
  * Efeito "cartão flutuante" interativo

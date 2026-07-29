@@ -1,4 +1,19 @@
 /**
+ * Breadcrumb.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/Breadcrumb.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Trilha de navegação do SevenOS.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🗺️ Breadcrumb — caminho dinâmico do admin
  * Resolve labels com base na rota atual.
  */

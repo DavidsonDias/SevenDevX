@@ -1,4 +1,17 @@
 /**
+ * OnboardingTour.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/onboarding/OnboardingTour.tsx
+ * @module Onboarding
+ *
+ * @description
+ * Tour guiado do SevenOS.
+ *
+ * @see src/modules/onboarding/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🎓 OnboardingTour — spotlight overlay com steps configuráveis.
  */
 import { useEffect, useState } from "react";

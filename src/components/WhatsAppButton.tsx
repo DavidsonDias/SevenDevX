@@ -1,3 +1,16 @@
+/**
+ * WhatsAppButton.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/WhatsAppButton.tsx
+ * @module UI
+ *
+ * @description
+ * Atalho flutuante para o WhatsApp comercial.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 

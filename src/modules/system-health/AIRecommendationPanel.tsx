@@ -1,4 +1,17 @@
 /**
+ * AIRecommendationPanel.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/system-health/AIRecommendationPanel.tsx
+ * @module SystemHealth
+ *
+ * @description
+ * Recomendações de saúde do sistema geradas por IA.
+ *
+ * @see src/modules/system-health/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🤖 AIRecommendationPanel — sugestões operacionais via ai-ops edge function.
  */
 import { useState } from "react";

@@ -1,4 +1,20 @@
 /**
+ * SystemHealthAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/SystemHealthAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/system-health
+ *
+ * @description
+ * Saúde dos serviços, SLO e incidentes.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🏥 System Health — uptime, integrações, eventos por minuto, incidentes.
  */
 import { useEffect, useState } from "react";

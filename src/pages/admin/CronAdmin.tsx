@@ -1,4 +1,20 @@
 /**
+ * CronAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/CronAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/cron
+ *
+ * @description
+ * Jobs agendados e seus últimos resultados.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🕒 CronAdmin — Visualização de jobs agendados internos (pg_cron) + execução manual de funções.
  */
 import { useEffect, useState } from "react";

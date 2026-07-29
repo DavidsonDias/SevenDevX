@@ -1,4 +1,17 @@
 /**
+ * TagIcon.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/TagIcon.tsx
+ * @module UI
+ *
+ * @description
+ * Ícone de tag resolvido a partir do registro de tags.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🏷️ TagIcon — Renders the same icon for a given tag everywhere
  * (admin select, project cards, hub, modal, detail page).
  *

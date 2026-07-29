@@ -1,4 +1,20 @@
 /**
+ * DlqAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/DlqAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/webhooks/dlq
+ *
+ * @description
+ * Dead-letter queue de webhooks com reprocessamento.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * ☠️ DlqAdmin — Dead Letter Queue de webhooks com replay.
  */
 import { useEffect, useState } from "react";

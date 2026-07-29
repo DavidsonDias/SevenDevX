@@ -1,4 +1,19 @@
 /**
+ * AttachmentManager.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/AttachmentManager.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Gerência de anexos no bucket privado; sempre por URL assinada.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📂 AttachmentManager — gerenciador unificado de anexos.
  * Pode ser escopado a cliente / projeto / etapa, com tipos (logo, file, idea, document).
  * Drag & drop, preview de imagens, download e delete.

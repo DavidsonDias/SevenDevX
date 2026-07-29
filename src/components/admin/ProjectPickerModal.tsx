@@ -1,4 +1,19 @@
 /**
+ * ProjectPickerModal.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/ProjectPickerModal.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Seleção visual de projetos (com capa e stack) para curadoria de conteúdo.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🎯 ProjectPickerModal — Visual picker for projects to feature on the Site Creation page
  * Reads from public.projects, no duplication of data.
  */

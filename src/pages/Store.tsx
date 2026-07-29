@@ -1,3 +1,17 @@
+/**
+ * Store.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/Store.tsx
+ * @module Public
+ * @route /store
+ *
+ * @description
+ * Vitrine de produtos e pacotes.
+ *
+ * @see src/pages/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 // 📂 src/pages/Store.tsx
 /**
  * 🛍️ Store.tsx — SevenDevX v1.0 PRO ULTRA++

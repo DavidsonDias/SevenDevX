@@ -1,3 +1,16 @@
+/**
+ * browserStorageGuard.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/utils/browserStorageGuard.ts
+ * @module Utils
+ *
+ * @description
+ * Proteção contra ambientes sem acesso a storage (iframes e modo restrito).
+ *
+ * @see src/utils/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 const createMemoryStorage = (): Storage => {
   const store = new Map<string, string>();
 

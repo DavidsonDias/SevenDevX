@@ -1,4 +1,19 @@
 /**
+ * useDocuments.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/useDocuments.ts
+ * @module Hooks
+ *
+ * @description
+ * Documentos de projeto e estágios.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📄 useDocuments — Document Engine (stage_documents)
  * Briefings, escopos, propostas, roadmaps gerados por IA ou manualmente.
  */

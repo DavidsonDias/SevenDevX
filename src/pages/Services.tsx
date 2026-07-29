@@ -1,4 +1,18 @@
 /**
+ * Services.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/Services.tsx
+ * @module Public
+ * @route /services
+ *
+ * @description
+ * Serviços oferecidos, alimentados pelo CMS `services_cms`.
+ *
+ * @see src/pages/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🚀 Services.tsx — SevenDevX v2.0 i18n Ultra PRO ENTERPRISE 
  * ═════════════════════════════════════════════════════════════════
  * 

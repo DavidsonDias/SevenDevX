@@ -1,4 +1,17 @@
 /**
+ * LanguageSwitcher.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/LanguageSwitcher.tsx
+ * @module UI
+ *
+ * @description
+ * Alternador de idioma conectado ao LanguageContext (pt/en/es).
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🌐 Language Switcher - SevenDevX Enterprise
  * Seletor de idioma premium com SVG flags otimizadas para cross-platform
  * Compatível com: Android, iOS, Desktop (Chrome, Safari, Edge)

@@ -1,4 +1,17 @@
 /**
+ * contractBuilder.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/lib/contractBuilder.ts
+ * @module Lib
+ *
+ * @description
+ * Montagem do documento de contrato a partir do projeto e cláusulas.
+ *
+ * @see src/lib/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧱 contractBuilder — tipos, máscaras e cálculos do Contract Builder profissional.
  */
 

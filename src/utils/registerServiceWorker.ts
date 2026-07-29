@@ -1,4 +1,17 @@
 /**
+ * registerServiceWorker.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/utils/registerServiceWorker.ts
+ * @module Utils
+ *
+ * @description
+ * Registro do service worker com guarda para ambientes de preview.
+ *
+ * @see src/utils/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🛰️ Service Worker Manager v1.0 Pro++ ULTIMATE
  * ════════════════════════════════════════════════════════════════════════
  *

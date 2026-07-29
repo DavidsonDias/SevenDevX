@@ -1,4 +1,17 @@
 /**
+ * tokens.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/core/branding/palette-engine/tokens.ts
+ * @module Core/Branding
+ *
+ * @description
+ * Conversão da paleta extraída em design tokens (CSS custom properties).
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🎨 Brand tokens derived from a palette.
  * Generates ready-to-consume CSS for glow / beam / halo / gradient / border.
  */

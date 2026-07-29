@@ -1,3 +1,18 @@
+/**
+ * ProjectIntegrationsBlock.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/integrations/ProjectIntegrationsBlock.tsx
+ * @module SevenOS/Integrations
+ *
+ * @description
+ * Integrações vinculadas ao projeto e seus estados de conexão.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";

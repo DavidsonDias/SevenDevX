@@ -1,3 +1,19 @@
+/**
+ * WhySevenDevX.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/geo/WhySevenDevX.tsx
+ * @module Public/GEO
+ * @route /why-sevendevx
+ *
+ * @description
+ * Página de diferenciais e provas.
+ *
+ * @seo Metadados e JSON-LD definidos via `SEOHead`.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
 import { Award, Code2, Zap, Shield, Users, Trophy, Sparkles, Heart } from "lucide-react";

@@ -1,4 +1,17 @@
 /**
+ * knownBrands.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/core/branding/palette-engine/knownBrands.ts
+ * @module Core/Branding
+ *
+ * @description
+ * Paletas conhecidas de marcas para evitar extração incorreta em logos monocromáticos.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🎨 Known multi-color brand palettes.
  * These take priority over auto-extraction so marcas icônicas sempre
  * exibam sua identidade visual completa (glow, beam, halo multicor).

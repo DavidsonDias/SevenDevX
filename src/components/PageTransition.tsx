@@ -1,4 +1,17 @@
 /**
+ * PageTransition.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/PageTransition.tsx
+ * @module UI
+ *
+ * @description
+ * Transição global entre rotas (fade + scale) com física de mola compartilhada.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🎬 PageTransition - Animações cinematográficas de página
  * SevenDevX Enterprise Edition
  */

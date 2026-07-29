@@ -1,4 +1,17 @@
 /**
+ * IntegrationMarketplaceModal.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/integrations/IntegrationMarketplaceModal.tsx
+ * @module Integrations
+ *
+ * @description
+ * Marketplace interno de providers.
+ *
+ * @see src/modules/integrations/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧠 IntegrationMarketplaceModal — Catálogo enterprise com branding real
  */
 import { motion, AnimatePresence } from "framer-motion";

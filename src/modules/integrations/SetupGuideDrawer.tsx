@@ -1,4 +1,17 @@
 /**
+ * SetupGuideDrawer.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/integrations/SetupGuideDrawer.tsx
+ * @module Integrations
+ *
+ * @description
+ * Passo a passo de configuração por provider.
+ *
+ * @see src/modules/integrations/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📘 SetupGuideDrawer — Tutorial premium passo a passo por provider
  * - Checklist persistente em localStorage
  * - Code blocks com copy

@@ -1,4 +1,17 @@
 /**
+ * OnboardingChecklist.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/onboarding/OnboardingChecklist.tsx
+ * @module Onboarding
+ *
+ * @description
+ * Checklist de ativação persistido em `onboarding_progress`.
+ *
+ * @see src/modules/onboarding/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * ✅ OnboardingChecklist — primeiros passos do admin com status real.
  */
 import { useEffect, useState } from "react";

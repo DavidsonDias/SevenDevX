@@ -1,4 +1,17 @@
 /**
+ * automationTemplates.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/automations/automationTemplates.ts
+ * @module Automations
+ *
+ * @description
+ * Modelos prontos de automação.
+ *
+ * @see src/modules/automations/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📚 Templates prontos de automação — 1 clique para criar.
  */
 export type AutomationTemplate = {

@@ -1,4 +1,19 @@
 /**
+ * useAiReferralTracker.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/useAiReferralTracker.ts
+ * @module Hooks
+ *
+ * @description
+ * Registra visitas originadas de assistentes de IA para a análise GEO.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🛰️ useAiReferralTracker
  * Detecta quando uma visita veio de ChatGPT, Perplexity, Gemini, Claude, Copilot, etc.
  * Estratégias:

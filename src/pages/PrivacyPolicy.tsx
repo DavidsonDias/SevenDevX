@@ -1,4 +1,18 @@
 /**
+ * PrivacyPolicy.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/PrivacyPolicy.tsx
+ * @module Public
+ * @route /privacy-policy
+ *
+ * @description
+ * Política de privacidade.
+ *
+ * @see src/pages/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧩 PrivacyPolicy.tsx — SevenDevX v1.0 PRO++ (i18n)
  * -------------------------------------------------------------
  * ✅ Versão mesclada e otimizada - Conteúdo expandido LGPD

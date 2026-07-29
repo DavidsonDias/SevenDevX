@@ -1,3 +1,16 @@
+/**
+ * ExitIntentPopup.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/ExitIntentPopup.tsx
+ * @module UI
+ *
+ * @description
+ * Captura de intenção de saída em desktop; exibido uma única vez por sessão para não prejudicar a experiência.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { useState, useEffect } from 'react';
 import { X, Gift, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';

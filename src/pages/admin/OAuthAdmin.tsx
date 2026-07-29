@@ -1,4 +1,20 @@
 /**
+ * OAuthAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/OAuthAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/oauth
+ *
+ * @description
+ * Conexões OAuth (PKCE) e seus escopos.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🔐 OAuthAdmin — Conexões OAuth 2.0 reais (GitHub, Google, Slack, Notion)
  */
 import { useEffect, useState } from "react";

@@ -1,4 +1,17 @@
 /**
+ * projectImages.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/data/projectImages.ts
+ * @module Content
+ *
+ * @description
+ * Mapa de imagens dos projetos, incluindo resolução do prefixo `local:`.
+ *
+ * @see src/data/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🖼️ Project Image Registry
  * Maps `local:<filename>` keys (stored in DB) → imported asset URLs.
  * Used as a bridge between dynamic DB data and bundled local assets.

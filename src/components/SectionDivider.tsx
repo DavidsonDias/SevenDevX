@@ -1,4 +1,17 @@
 /**
+ * SectionDivider.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/SectionDivider.tsx
+ * @module UI
+ *
+ * @description
+ * Divisor decorativo entre seções.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🚀 SectionDivider.tsx — SevenDevX v3.2 Hybrid PRO ULTIMATE
  * ═════════════════════════════════════════════════════════════════
  * 

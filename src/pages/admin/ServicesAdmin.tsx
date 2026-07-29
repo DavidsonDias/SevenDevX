@@ -1,4 +1,20 @@
 /**
+ * ServicesAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/ServicesAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/services
+ *
+ * @description
+ * CMS de serviços exibidos no site público.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧰 ServicesAdmin — CMS de serviços do site
  */
 import { useState } from "react";

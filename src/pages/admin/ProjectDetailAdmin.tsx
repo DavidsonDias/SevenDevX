@@ -1,4 +1,20 @@
 /**
+ * ProjectDetailAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/ProjectDetailAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/projects/:id
+ *
+ * @description
+ * Operação completa de um projeto: estágios, documentos, finanças e integrações.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🛰️ ProjectDetailAdmin — /admin/projects/:id
  * O coração operacional: Process Engine + IA + CRM timeline + checklist + uploads.
  * Estilo Linear/Notion. Carrega project_stages REAIS (instância do projeto),

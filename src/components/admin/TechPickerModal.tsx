@@ -1,4 +1,19 @@
 /**
+ * TechPickerModal.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/TechPickerModal.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Seleção visual de tecnologias com logos oficiais e ordenação.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧪 TechPickerModal — Visual multi-select for tech_registry
  * Displays cards with color dot + icon (TechIconCDN), search & category filter.
  */

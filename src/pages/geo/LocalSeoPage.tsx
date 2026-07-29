@@ -1,3 +1,19 @@
+/**
+ * LocalSeoPage.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/geo/LocalSeoPage.tsx
+ * @module Public/GEO
+ * @route /local/:city
+ *
+ * @description
+ * Página local por cidade, com sinais geográficos estruturados.
+ *
+ * @seo Metadados e JSON-LD definidos via `SEOHead`.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";

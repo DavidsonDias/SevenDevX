@@ -1,3 +1,16 @@
+/**
+ * Contact.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/Contact.tsx
+ * @module UI
+ *
+ * @description
+ * Seção de contato do site público; encaminha a mensagem para `contacts` e dispara a notificação administrativa.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";

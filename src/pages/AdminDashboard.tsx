@@ -1,4 +1,18 @@
 /**
+ * AdminDashboard.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/AdminDashboard.tsx
+ * @module Public
+ * @route /admin
+ *
+ * @description
+ * Dashboard do SevenOS: KPIs, insights e atividade recente.
+ *
+ * @see src/pages/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 📊 Admin Dashboard - Painel Administrativo
  * SevenDevX Enterprise Edition
  */

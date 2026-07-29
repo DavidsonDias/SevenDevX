@@ -1,3 +1,16 @@
+/**
+ * BreadcrumbSchema.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/BreadcrumbSchema.tsx
+ * @module UI
+ *
+ * @description
+ * Emite JSON-LD BreadcrumbList para a rota atual, reforçando a trilha de navegação para buscadores e LLMs.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { Helmet } from "react-helmet";
 
 export interface BreadcrumbItem {

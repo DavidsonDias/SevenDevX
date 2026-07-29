@@ -1,4 +1,20 @@
 /**
+ * ClientsFinanceAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/ClientsFinanceAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/finance/clients
+ *
+ * @description
+ * Rentabilidade por cliente.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🏦 ClientsFinanceAdmin — dashboard financeiro por cliente.
  * Receita, margem, pendente, histórico. Visão enterprise por conta.
  */

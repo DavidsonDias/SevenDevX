@@ -1,4 +1,19 @@
 /**
+ * CitationMonitorSettings.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/CitationMonitorSettings.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Configuração do monitor de citações em respostas de IA.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * ⚙️ CitationMonitorSettings — pausa/retoma, edita queries e modelos do Citation Monitor.
  * Consome créditos de Lovable AI a cada execução, por isso o controle é importante.
  */

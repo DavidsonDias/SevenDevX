@@ -1,3 +1,17 @@
+/**
+ * About.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/About.tsx
+ * @module Public
+ * @route /about
+ *
+ * @description
+ * Página institucional com posicionamento, provas reais e links para o portfólio.
+ *
+ * @see src/pages/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { useEffect, useRef, useState } from "react";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { motion, useInView } from "framer-motion";

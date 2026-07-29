@@ -1,4 +1,17 @@
 /**
+ * TestimonialsCarousel3D.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/TestimonialsCarousel3D.tsx
+ * @module UI
+ *
+ * @description
+ * Depoimentos em carrossel 3D.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * TestimonialsCarousel3D — Carousel 3D com glassmorphism e i18n
  */
 

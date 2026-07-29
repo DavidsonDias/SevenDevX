@@ -1,4 +1,20 @@
 /**
+ * IntegrationsAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/IntegrationsAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/integrations
+ *
+ * @description
+ * Providers externos: configuração, testes e saúde.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🔗 IntegrationsAdmin — Mission Control de Integrações
  */
 import { useEffect, useMemo, useState } from "react";

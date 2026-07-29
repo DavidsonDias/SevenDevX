@@ -1,3 +1,16 @@
+/**
+ * ProjectModal.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/ProjectModal.tsx
+ * @module UI
+ *
+ * @description
+ * Detalhe rápido de projeto em modal, com bloqueio de scroll compensado.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import DOMPurify from "dompurify";

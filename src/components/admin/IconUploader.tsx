@@ -1,4 +1,19 @@
 /**
+ * IconUploader.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/admin/IconUploader.tsx
+ * @module SevenOS/UI
+ *
+ * @description
+ * Upload de ícones customizados para registros do CMS.
+ *
+ * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ *
+ * @see src/components/admin/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🖼️ IconUploader — drag&drop SVG/PNG uploader for tech & tag icons
  * Stores files in the public `tech-icons` Supabase Storage bucket.
  */

@@ -1,4 +1,17 @@
 /**
+ * TechIcon.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/TechIcon.tsx
+ * @module UI
+ *
+ * @description
+ * Ícone de tecnologia com resolução local (assets do projeto).
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🎨 TechIcon.tsx — SevenDevX v1.0 ENTERPRISE
  * ═════════════════════════════════════════════════════════════════
  * 📂 Path: src/components/TechIcon.tsx

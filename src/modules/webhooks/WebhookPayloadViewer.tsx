@@ -1,4 +1,17 @@
 /**
+ * WebhookPayloadViewer.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/webhooks/WebhookPayloadViewer.tsx
+ * @module Webhooks
+ *
+ * @description
+ * Visualizador de payloads de webhook.
+ *
+ * @see src/modules/webhooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🪟 WebhookPayloadViewer — JSON inspector com syntax highlight, copy & replay
  */
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";

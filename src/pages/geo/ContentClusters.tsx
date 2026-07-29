@@ -1,3 +1,19 @@
+/**
+ * ContentClusters.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/geo/ContentClusters.tsx
+ * @module Public/GEO
+ * @route /clusters
+ *
+ * @description
+ * Mapa de clusters de conteúdo.
+ *
+ * @seo Metadados e JSON-LD definidos via `SEOHead`.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";

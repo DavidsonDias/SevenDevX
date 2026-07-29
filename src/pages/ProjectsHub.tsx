@@ -1,4 +1,18 @@
 /**
+ * ProjectsHub.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/ProjectsHub.tsx
+ * @module Public
+ * @route /projects-hub
+ *
+ * @description
+ * Hub de navegação entre projetos e clusters relacionados.
+ *
+ * @see src/pages/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🚀 ProjectsHub — SevenDevX Projects Hub (Enterprise)
  * Single source of truth: useProjects() (Supabase).
  * Hero = featured_level=primary | Featured = secondary | Sorted by featured DESC, order ASC.

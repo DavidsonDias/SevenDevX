@@ -1,4 +1,20 @@
 /**
+ * FinanceAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/FinanceAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/financeiro
+ *
+ * @description
+ * Transações, orçamentos e margem consolidada.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 💰 FinanceAdmin — dashboard financeiro do SevenOS.
  * Receitas, despesas, lucro, MRR previsto, multi-moeda (BRL/USD/EUR), time + custo de time.
  */

@@ -1,4 +1,17 @@
 /**
+ * FeaturedProjects.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/FeaturedProjects.tsx
+ * @module UI
+ *
+ * @description
+ * Vitrine dos projetos em destaque na home, com transições compartilhadas para a página de detalhe.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🔥 FeaturedProjects — SevenDevX Home Section (Enterprise)
  * Single source of truth: useProjects() (Supabase).
  * Hero = featured_level=primary | Secondary grid = featured_level=secondary (até 4)

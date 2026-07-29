@@ -1,4 +1,20 @@
 /**
+ * FaqAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/FaqAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/faq
+ *
+ * @description
+ * CMS de FAQ usado pelo site público.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * ❓ FaqAdmin — gerenciador completo do FAQ dinâmico
  */
 import { useState, useMemo } from "react";

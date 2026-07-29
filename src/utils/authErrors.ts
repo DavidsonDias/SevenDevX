@@ -1,3 +1,16 @@
+/**
+ * authErrors.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/utils/authErrors.ts
+ * @module Utils
+ *
+ * @description
+ * Tradução de erros de autenticação para mensagens compreensíveis.
+ *
+ * @see src/utils/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 // src/utils/authErrors.ts
 
 export type AuthFlowContext = "login" | "signup";

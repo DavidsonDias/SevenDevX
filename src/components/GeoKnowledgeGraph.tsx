@@ -1,3 +1,16 @@
+/**
+ * GeoKnowledgeGraph.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/GeoKnowledgeGraph.tsx
+ * @module UI
+ *
+ * @description
+ * Bloco visual do grafo de conhecimento usado nas páginas GEO.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { Helmet } from "react-helmet";
 
 /**

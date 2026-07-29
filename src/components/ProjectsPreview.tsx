@@ -1,3 +1,16 @@
+/**
+ * ProjectsPreview.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/ProjectsPreview.tsx
+ * @module UI
+ *
+ * @description
+ * Prévia de projetos na home.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import { motion } from "framer-motion";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";

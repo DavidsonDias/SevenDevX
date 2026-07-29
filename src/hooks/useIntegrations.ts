@@ -1,4 +1,19 @@
 /**
+ * useIntegrations.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/useIntegrations.ts
+ * @module Hooks
+ *
+ * @description
+ * Providers de integração: configuração, testes e logs, com cache React Query.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🔗 useIntegrations — catálogo + estado das integrações enterprise
  * Roteia teste de conexão para `*-test` edge functions e persiste diagnostics ricos.
  */

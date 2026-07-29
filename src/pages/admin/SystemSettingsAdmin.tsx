@@ -1,4 +1,20 @@
 /**
+ * SystemSettingsAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/SystemSettingsAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/settings
+ *
+ * @description
+ * Configurações globais do sistema (leitura restrita a admin).
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * ⚙️ SystemSettingsAdmin — políticas de senha, MFA obrigatório, retenção de backup.
  */
 import AdminPageShell from "@/components/admin/AdminPageShell";

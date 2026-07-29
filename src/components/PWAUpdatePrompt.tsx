@@ -1,4 +1,17 @@
 /**
+ * PWAUpdatePrompt.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/PWAUpdatePrompt.tsx
+ * @module UI
+ *
+ * @description
+ * Aviso de nova versão do app; a atualização é sempre confirmada pelo usuário.
+ *
+ * @see src/components/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🔄 PWAUpdatePrompt v2 — SevenDevX Enterprise
  * ─────────────────────────────────────────────
  * Só aparece quando existe SW `waiting` de fato (nova versão pronta).

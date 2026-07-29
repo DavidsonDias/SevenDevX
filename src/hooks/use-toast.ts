@@ -1,3 +1,18 @@
+/**
+ * use-toast.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/use-toast.ts
+ * @module Hooks
+ *
+ * @description
+ * Fila de toasts da aplicação.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import * as React from "react";
 
 import type { ToastActionElement, ToastProps } from "@/components/ui/toast";

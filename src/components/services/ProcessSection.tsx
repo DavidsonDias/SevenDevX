@@ -1,4 +1,17 @@
 /**
+ * ProcessSection.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/components/services/ProcessSection.tsx
+ * @module Public/Services
+ *
+ * @description
+ * Linha do tempo do processo de trabalho.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧭 ProcessSection — How It Works (Enterprise v3.0)
  * - 6 etapas expansíveis (Descoberta → Lançamento)
  * - Reveal de entregáveis, duração e ferramentas

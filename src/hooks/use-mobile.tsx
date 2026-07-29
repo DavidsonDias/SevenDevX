@@ -1,3 +1,18 @@
+/**
+ * use-mobile.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/hooks/use-mobile.tsx
+ * @module Hooks
+ *
+ * @description
+ * Detecta breakpoint mobile para desativar efeitos pesados.
+ *
+ * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ *
+ * @see src/hooks/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
 import * as React from "react";
 
 const MOBILE_BREAKPOINT = 768;

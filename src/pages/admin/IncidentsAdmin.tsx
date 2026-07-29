@@ -1,4 +1,20 @@
 /**
+ * IncidentsAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/IncidentsAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/incidents
+ *
+ * @description
+ * Incidentes e linha do tempo de resolução.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🚨 Incidents — registro, timeline, postmortem.
  */
 import { useEffect, useState } from "react";

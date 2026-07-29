@@ -1,4 +1,17 @@
 /**
+ * TestResultPanel.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/modules/integrations/TestResultPanel.tsx
+ * @module Integrations
+ *
+ * @description
+ * Resultado normalizado dos testes de conexão.
+ *
+ * @see src/modules/integrations/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🧪 TestResultPanel — Diagnóstico rico do último teste de conexão
  */
 import { motion } from "framer-motion";

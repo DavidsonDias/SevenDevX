@@ -1,4 +1,20 @@
 /**
+ * WebhooksAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/WebhooksAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/webhooks
+ *
+ * @description
+ * Webhooks, entregas e reprocessamento.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🪝 Webhooks Manager — enterprise CRUD + delivery logs + manual test.
  */
 import { useEffect, useState } from "react";

@@ -1,4 +1,20 @@
 /**
+ * RestoreAdmin.tsx — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/pages/admin/RestoreAdmin.tsx
+ * @module SevenOS/Admin
+ * @route /admin/restore
+ *
+ * @description
+ * Restauração seletiva de tabelas a partir de um backup.
+ *
+ * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * ♻️ Restore Seletivo — escolhe tabelas e reaplica snapshot de backup.
  */
 import { useEffect, useState } from "react";

@@ -1,4 +1,17 @@
 /**
+ * sw.ts — SevenDevX
+ * ─────────────────────────────────────────────────────────────────────
+ * @file src/sw.ts
+ * @module App
+ *
+ * @description
+ * Service worker: estratégias de cache, offline shell e Background Sync da fila offline.
+ *
+ * @see src/README.md
+ * ─────────────────────────────────────────────────────────────────────
+ */
+
+/**
  * 🚀 SevenDevX PWA Service Worker v8.6.0 ULTRA ENTERPRISE FUSION
  * ═══════════════════════════════════════════════════════════════════
  * FIX CRÍTICO: Imagens externas não aparecem após refresh
