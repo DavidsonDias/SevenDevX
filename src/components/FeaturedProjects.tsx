@@ -267,12 +267,32 @@ const ProjectCard = memo(({ project, index, onOpen }: ProjectCardProps) => (
 ));
 ProjectCard.displayName = "ProjectCard";
 
-/* ── Main Section ── */
+// ============================================================================
+// 🏗️ FEATURED PROJECTS SECTION
+// ============================================================================
+
+/**
+ * Seção de portfólio da Home.
+ *
+ * @remarks
+ * Orquestra hero + grade secundária + modal expandido. Enquanto o projeto
+ * primário não estiver disponível (carregando ou nenhum publicado), a seção
+ * inteira não é renderizada — preferimos ausência a um esqueleto vazio no
+ * meio da narrativa da Home.
+ */
 const FeaturedProjects = () => {
   const navigate = useNavigate();
+
+  /**
+   * Projeto atualmente expandido no modal. `null` representa o estado fechado
+   * e é o único controlador da visibilidade do `FeaturedModal`.
+   */
   const [openProject, setOpenProject] = useState<Project | null>(null);
+
+  // Ambos os hooks compartilham a mesma query React Query (`["projects"]`),
+  // portanto não geram requisições adicionais ao Supabase.
   const { data: heroProject } = usePrimaryProject();
-  const { data: secondaryProjects = [] } = useSecondaryFeaturedProjects(4);
+  const { data: secondaryProjects = [] } = useSecondaryFeaturedProjects(MAX_SECONDARY_PROJECTS);
 
   if (!heroProject) return null;
 
