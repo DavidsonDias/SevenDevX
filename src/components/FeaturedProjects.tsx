@@ -316,7 +316,10 @@ const FeaturedProjects = () => {
           </p>
         </motion.div>
 
-        {/* Hero Project (primary) */}
+        {/* ==========================================================================
+            HERO PROJECT
+            Vitrine comercial principal, controlada por featured_level="primary".
+            ========================================================================== */}
         <ProjectCard3D tiltIntensity={4} className="mb-6" layoutId={`featured-card-${heroProject.id}`}>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
