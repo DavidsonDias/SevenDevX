@@ -252,6 +252,8 @@ const ProjectCard = memo(({ project, index, onOpen }: ProjectCardProps) => (
               href={project.liveUrl!}
               target="_blank"
               rel="noopener noreferrer"
+              /* O card inteiro abre o modal; sem stopPropagation o clique no
+                 link externo abriria a nova aba e o modal ao mesmo tempo. */
               onClick={e => e.stopPropagation()}
               className="inline-flex items-center gap-1 text-[11px] uppercase tracking-widest font-semibold border border-foreground/30 px-3 py-1.5 rounded-sm hover:bg-foreground hover:text-background transition-all"
             >
