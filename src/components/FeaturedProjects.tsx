@@ -365,6 +365,9 @@ const FeaturedProjects = () => {
                     </span>
                   ))}
                 </div>
+                {/* O card do hero abre o modal ao ser clicado; a barra de ações
+                    interrompe a propagação para que o CTA externo não dispare
+                    também a abertura do modal. */}
                 <div className="flex gap-3" onClick={e => e.stopPropagation()}>
                   {isValidLiveUrl(heroProject.liveUrl) && (
                     <a
