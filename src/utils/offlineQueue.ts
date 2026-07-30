@@ -179,6 +179,13 @@ export async function flushQueue(): Promise<{ ok: number; fail: number }> {
   return { ok, fail };
 }
 
+/**
+ * Observa o tamanho da fila para exibição no `OfflineIndicator`.
+ *
+ * @param cb - Recebe o novo tamanho a cada enfileiramento ou drenagem.
+ * @returns Função de cancelamento; chamar no cleanup do efeito evita vazar
+ *          listeners entre navegações.
+ */
 export function subscribeQueue(cb: (size: number) => void): () => void {
   listeners.add(cb);
   return () => listeners.delete(cb);
