@@ -190,8 +190,33 @@ const FeaturedModal = ({ project, onClose }: FeaturedModalProps) => {
   );
 };
 
-/* ── Secondary Card ── */
-const ProjectCard = memo(({ project, index, onOpen }: { project: Project; index: number; onOpen: (p: Project) => void }) => (
+// ============================================================================
+// 🃏 SECONDARY FEATURED PROJECT CARD
+// ============================================================================
+
+/**
+ * Contrato do card usado pelos destaques secundários.
+ */
+interface ProjectCardProps {
+  /** Projeto representado pelo card. */
+  project: Project;
+
+  /** Posição na grade; usada apenas para escalonar a animação de entrada. */
+  index: number;
+
+  /** Promove o projeto ao modal expandido. */
+  onOpen: (project: Project) => void;
+}
+
+/**
+ * Card compacto dos projetos classificados como destaque secundário.
+ *
+ * @remarks
+ * A memoização evita re-renderizar todos os cards quando apenas o estado do
+ * modal da seção muda — as props de um card só se alteram quando o projeto
+ * correspondente muda.
+ */
+const ProjectCard = memo(({ project, index, onOpen }: ProjectCardProps) => (
   <ProjectCard3D tiltIntensity={5} layoutId={`featured-card-${project.id}`}>
     <motion.div
       initial={{ opacity: 0, y: 30 }}
