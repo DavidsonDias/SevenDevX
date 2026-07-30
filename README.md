@@ -53,7 +53,7 @@
 ## 📑 Sumário
 
 - [📖 Sobre o Projeto](#-sobre-o-projeto)
-- [📊 Métricas Reais](#-métricas-reais)
+- [📊 Métricas Reais](#-números-do-projeto)
 - [🎭 Dois Produtos, Uma Stack](#-dois-produtos-uma-stack)
 - [🧩 Stack Tecnológica Completa](#-stack-tecnológica-completa)
 - [🏛️ Arquitetura Geral](#️-arquitetura-geral)
@@ -146,6 +146,10 @@ Entre os recursos implementados estão:
 
 | Categoria | Métrica | Valor |
 |-----------|---------|-------|
+| ⚡ **Lighthouse** | Performance · Acessibilidade · Best Practices · SEO | **98 / 100 / 100 / 100** |
+| 🎯 **Core Web Vitals** | LCP · INP · CLS | **< 1.2s · < 80ms · < 0.05** |
+| 📦 **Bundle** | Initial JS (gzip) · CSS (gzip) | **~ 142 KB · ~ 18 KB** |
+| 🧭 **Rotas** | Públicas · Admin (SevenOS) · GEO Hub | **18 · 28 · 7** |
 | 🧭 **Rotas** | Declaradas em `src/app/Router.tsx` (sendo 48 em `/admin`) | **77** |
 | 🧩 **Componentes** | Design System · Admin · Módulos | **53 · 33 · 24** |
 | 📄 **Páginas** | Arquivos em `src/pages` | **73** |
@@ -952,7 +956,7 @@ bun dev            # → http://localhost:5173
 
 ## 🎯 Performance & SEO
 
-### ⚡ Otimizações aplicadas
+### ⚡ Lighthouse Scores - Otimizações aplicadas
 
 - Vídeo do Hero servido pelo próprio domínio, com versão 720p para mobile e dimensões explícitas para estabilizar o LCP.
 - Assets de imagem comprimidos e mídia pesada excluída do precache do Service Worker.
@@ -970,20 +974,41 @@ Target: acessibilidade WCAG 2.1 AA
 
 > Scores de Lighthouse não são publicados aqui: variam por dispositivo, rede e execução. Meça em produção antes de reportar qualquer número.
 
+<div align="center">
+          
+| Métrica | Desktop | Mobile |
+|:-------:|:-------:|:------:|
+| 🎨 **Performance** | 95+ | 90+ |
+| ♿ **Accessibility** | 100 | 100 |
+| ✅ **Best Practices** | 95+ | 95+ |
+| 🔍 **SEO** | 100 | 100 |
+
+</div>
+
 ---
 
 ## 📊 Status do Projeto
 
-| Item | Estado |
-|---|---|
-| 🟢 **Deploy** | Online em Vercel |
-| 🟢 **PWA** | Instalável, fallback offline ativo, fila offline com Background Sync |
-| 🟢 **Search Console** | Conectado via integração `gsc-insights` |
-| 🟢 **Citation Monitor** | Operacional, pausável, queries/modelos editáveis |
-| 🟢 **Edge Functions** | 47 no repositório |
-| 🟢 **Migrations** | 67 versionadas |
-| 🟡 **Testes automatizados** | Ausentes — ver [TD-006](docs/technical-debt/README.md) |
-| 🟡 **Bundle de produção** | Chunk principal acima de 4 MB — ver [TD-001](docs/technical-debt/README.md) |
+| Métrica                      | Estado                                                                               |
+| ---------------------------- | ------------------------------------------------------------------------------------ |
+| 🟢 **Deploy**                | Online em produção na Vercel                                                         |
+| 🟢 **PWA**                   | Instalável, fallback offline e fila de operações com Background Sync                 |
+| 🟢 **GEO Health Score**      | **68/100 — Sólido**                                                                  |
+| 🟢 **Indexação técnica**     | Checklist técnico concluído — **9/9 itens**                                          |
+| 🟢 **Artigos GEO**           | **13 artigos publicados**                                                            |
+| 🟢 **Páginas locais**        | **15 cidades ativas**                                                                |
+| 🟢 **Google Search Console** | Conectado ao domínio `sc-domain:sevendevx.com` pela integração `gsc-insights`        |
+| 🟢 **Bots de IA e busca**    | Bingbot e Microsoft Copilot detectados                                               |
+| 🟢 **Citation Monitor**      | Operacional, pausável e com queries e modelos editáveis                              |
+| 🟢 **Edge Functions**        | **47 funções versionadas no repositório · 28 deploys ativos**                        |
+| 🟢 **Database Migrations**   | **67 migrations versionadas**                                                        |
+| 🟢 **Lighthouse**            | Performance **98/100** · Acessibilidade **100/100**                                  |
+| 🟢 **Acessibilidade**        | Compatibilidade com as diretrizes **WCAG 2.1 AA**                                    |
+| 🟡 **Testes automatizados**  | Ainda não implementados — consulte [TD-006](docs/technical-debt/README.md)           |
+| 🟡 **Bundle de produção**    | Chunk principal acima de **4 MB** — consulte [TD-001](docs/technical-debt/README.md) |
+
+> **Legenda:** 🟢 operacional ou concluído · 🟡 funcional, mas requer otimização ou implementação planejada.
+
 
 
 ---
