@@ -14,11 +14,23 @@
  */
 
 /**
- * 📦 useProjects — React Query hook for DB-backed projects (Enterprise)
- * Single source of truth: Supabase `projects` table.
- * Featured ordering: featured_level DESC → display_order ASC → created_at DESC.
- * Realtime sync via postgres_changes channel (auto-invalidate on any change).
+ * SOURCE OF TRUTH
+ *
+ * A tabela `projects` no Supabase é a única fonte de verdade da vitrine e do
+ * catálogo administrativo. Nenhum consumidor deve manter listas hardcoded.
+ *
+ * ORDENAÇÃO CANÔNICA
+ *   featured_level DESC → display_order ASC → created_at DESC
+ *
+ * REALTIME
+ *   Um único canal `postgres_changes` invalida a query key `["projects"]` a
+ *   cada mudança na tabela, mantendo site público e admin sincronizados sem
+ *   polling.
  */
+
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
 
 import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -33,6 +45,17 @@ import {
   SiPostgresql, SiNextdotjs, SiRedux, SiThreedotjs,
 } from "react-icons/si";
 
+// ============================================================================
+// ⚙️ CONFIGURATION & CONSTANTS
+// ============================================================================
+
+/**
+ * Fallback de ícones para tecnologias gravadas apenas como texto.
+ *
+ * Registros novos armazenam `slug` e são renderizados via TechIconCDN; este
+ * mapa cobre linhas antigas do catálogo e não deve crescer — a migração para
+ * `slug` é o caminho oficial.
+ */
 const TECH_ICON_MAP: Record<string, { icon: React.ElementType; color: string }> = {
   react: { icon: FaReact, color: "#61DAFB" },
   "node.js": { icon: FaNodeJs, color: "#339933" },
@@ -50,6 +73,14 @@ const TECH_ICON_MAP: Record<string, { icon: React.ElementType; color: string }> 
   pwa: { icon: SiFirebase, color: "#FFCA28" },
 };
 
+/**
+ * Resolve ícone e cor de uma tecnologia legada pelo nome.
+ *
+ * @param name - Nome livre gravado no projeto (case-insensitive).
+ * @param fallbackColor - Cor definida manualmente no registro, se houver.
+ * @returns Componente de ícone e cor; nunca retorna `null` para que a UI
+ *          sempre tenha algo renderizável.
+ */
 const resolveTechIcon = (name: string, fallbackColor?: string) => {
   const key = name.trim().toLowerCase();
   const found = TECH_ICON_MAP[key];
