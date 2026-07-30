@@ -88,8 +88,19 @@ const resolveTechIcon = (name: string, fallbackColor?: string) => {
   return { icon: FaReact, color: fallbackColor || "#61DAFB" };
 };
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
+/**
+ * Nível de destaque de um projeto na vitrine pública.
+ *
+ * `primary` é conceitualmente único: se houver mais de um, apenas o primeiro
+ * pela ordenação canônica é usado como hero.
+ */
 export type FeaturedLevel = "none" | "secondary" | "primary";
 
+/** Linha bruta da tabela `projects` (snake_case, contrato do banco). */
 export interface DbProject {
   id: string;
   slug: string;
