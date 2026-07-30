@@ -385,7 +385,12 @@ const FeaturedProjects = () => {
           </motion.div>
         </ProjectCard3D>
 
-        {/* Secondary Projects */}
+        {/* --------------------------------------------------------------------------
+            SECONDARY PROJECT GRID
+            Prévia limitada da curadoria; o portfólio completo permanece em
+            /projects-hub. O `slice(0, 2)` mantém a grade em uma única linha na
+            Home, mesmo que o banco tenha mais destaques secundários.
+            -------------------------------------------------------------------------- */}
         {secondaryProjects.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-12">
             {secondaryProjects.slice(0, 2).map((project, i) => (
