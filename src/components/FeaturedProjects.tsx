@@ -143,6 +143,12 @@ const FeaturedModal = ({ project, onClose }: FeaturedModalProps) => {
               <p className="text-muted-foreground text-sm leading-relaxed">
                 {project.longDescription || project.description}
               </p>
+              {/* Estratégia de resolução do ícone de tecnologia:
+                  1. `slug` → TechIconCDN (fonte preferencial, logo oficial);
+                  2. `icon` legado → componente React de registros antigos;
+                  3. ausência de ambos → renderiza somente o nome.
+                  Não remover o fallback legado enquanto o catálogo de
+                  tecnologias não estiver 100% migrado para `slug`. */}
               <div className="flex flex-wrap gap-2">
                 {project.techs.map(tech => {
                   const Icon = (tech as any).icon;
