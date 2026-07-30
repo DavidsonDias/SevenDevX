@@ -106,7 +106,7 @@ const EXCLUDED = [
 const LINT_MODE = process.argv.includes("--lint");
 
 /** Marcador de tarefa aceito: TAG(SEVEN-123). */
-const TASK_TAG = /\b(TODO|FIXME|HACK|SECURITY|PERF)\b(\(SEVEN-\d+\))?/g;
+const TASK_TAG = /\b(TODO|FIXME|HACK|XXX)\b(\(SEVEN-\d+\))?/g;
 
 // ============================================================================
 // 🧠 CHECKS
