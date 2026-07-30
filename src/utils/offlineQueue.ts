@@ -69,6 +69,22 @@ async function notify() {
   });
 }
 
+/**
+ * Persiste uma requisição para reenvio posterior.
+ *
+ * @param req - Requisição sem os campos de controle (`id`, `createdAt`, `tries`).
+ * @returns Identificador do item na fila, ou `null` se o IndexedDB não estiver
+ *          disponível (modo privado, storage bloqueado).
+ *
+ * @remarks
+ * Side effects: escreve no IndexedDB, notifica subscribers da UI e tenta
+ * registrar o Background Sync `sevendevx-flush-queue`. A falha do registro é
+ * silenciosa de propósito — navegadores sem Sync API drenam a fila no evento
+ * `online`.
+ *
+ * Nunca lança: enfileirar é um caminho de resiliência e não pode derrubar o
+ * fluxo do usuário; falhas são apenas logadas.
+ */
 export async function enqueue(req: Omit<QueuedRequest, "id" | "createdAt" | "tries">) {
   try {
     const item: QueuedRequest = {
@@ -163,6 +179,13 @@ export async function flushQueue(): Promise<{ ok: number; fail: number }> {
   return { ok, fail };
 }
 
+/**
+ * Observa o tamanho da fila para exibição no `OfflineIndicator`.
+ *
+ * @param cb - Recebe o novo tamanho a cada enfileiramento ou drenagem.
+ * @returns Função de cancelamento; chamar no cleanup do efeito evita vazar
+ *          listeners entre navegações.
+ */
 export function subscribeQueue(cb: (size: number) => void): () => void {
   listeners.add(cb);
   return () => listeners.delete(cb);

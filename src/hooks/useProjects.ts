@@ -14,11 +14,23 @@
  */
 
 /**
- * 📦 useProjects — React Query hook for DB-backed projects (Enterprise)
- * Single source of truth: Supabase `projects` table.
- * Featured ordering: featured_level DESC → display_order ASC → created_at DESC.
- * Realtime sync via postgres_changes channel (auto-invalidate on any change).
+ * SOURCE OF TRUTH
+ *
+ * A tabela `projects` no Supabase é a única fonte de verdade da vitrine e do
+ * catálogo administrativo. Nenhum consumidor deve manter listas hardcoded.
+ *
+ * ORDENAÇÃO CANÔNICA
+ *   featured_level DESC → display_order ASC → created_at DESC
+ *
+ * REALTIME
+ *   Um único canal `postgres_changes` invalida a query key `["projects"]` a
+ *   cada mudança na tabela, mantendo site público e admin sincronizados sem
+ *   polling.
  */
+
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
 
 import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -33,6 +45,17 @@ import {
   SiPostgresql, SiNextdotjs, SiRedux, SiThreedotjs,
 } from "react-icons/si";
 
+// ============================================================================
+// ⚙️ CONFIGURATION & CONSTANTS
+// ============================================================================
+
+/**
+ * Fallback de ícones para tecnologias gravadas apenas como texto.
+ *
+ * Registros novos armazenam `slug` e são renderizados via TechIconCDN; este
+ * mapa cobre linhas antigas do catálogo e não deve crescer — a migração para
+ * `slug` é o caminho oficial.
+ */
 const TECH_ICON_MAP: Record<string, { icon: React.ElementType; color: string }> = {
   react: { icon: FaReact, color: "#61DAFB" },
   "node.js": { icon: FaNodeJs, color: "#339933" },
@@ -50,6 +73,14 @@ const TECH_ICON_MAP: Record<string, { icon: React.ElementType; color: string }> 
   pwa: { icon: SiFirebase, color: "#FFCA28" },
 };
 
+/**
+ * Resolve ícone e cor de uma tecnologia legada pelo nome.
+ *
+ * @param name - Nome livre gravado no projeto (case-insensitive).
+ * @param fallbackColor - Cor definida manualmente no registro, se houver.
+ * @returns Componente de ícone e cor; nunca retorna `null` para que a UI
+ *          sempre tenha algo renderizável.
+ */
 const resolveTechIcon = (name: string, fallbackColor?: string) => {
   const key = name.trim().toLowerCase();
   const found = TECH_ICON_MAP[key];
@@ -57,8 +88,19 @@ const resolveTechIcon = (name: string, fallbackColor?: string) => {
   return { icon: FaReact, color: fallbackColor || "#61DAFB" };
 };
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
+/**
+ * Nível de destaque de um projeto na vitrine pública.
+ *
+ * `primary` é conceitualmente único: se houver mais de um, apenas o primeiro
+ * pela ordenação canônica é usado como hero.
+ */
 export type FeaturedLevel = "none" | "secondary" | "primary";
 
+/** Linha bruta da tabela `projects` (snake_case, contrato do banco). */
 export interface DbProject {
   id: string;
   slug: string;
@@ -89,6 +131,13 @@ export interface DbProject {
   updated_at: string;
 }
 
+/**
+ * Projeto normalizado para consumo da UI (camelCase + assets resolvidos).
+ *
+ * Mantém `dbId` porque `id` é um índice sequencial de apresentação herdado do
+ * catálogo estático anterior; mutations administrativas devem sempre usar
+ * `dbId`.
+ */
 export type UIProject = Project & {
   slug: string;
   dbId: string;
@@ -96,6 +145,22 @@ export type UIProject = Project & {
   displayOrder: number;
 };
 
+// ============================================================================
+// 🧠 MAPPING & BUSINESS RULES
+// ============================================================================
+
+/**
+ * Converte uma linha do banco no contrato consumido pela UI.
+ *
+ * @param row - Linha bruta de `projects`.
+ * @param index - Posição na lista já ordenada; alimenta o `id` de apresentação.
+ * @returns Projeto pronto para renderização.
+ *
+ * @remarks
+ * `technologies` é JSONB e aceita tanto strings quanto objetos `{name, slug,
+ * color}` — ambos os formatos convivem enquanto o catálogo não é migrado por
+ * completo.
+ */
 const mapDbToProject = (row: DbProject, index: number): UIProject => {
   const techsRaw = Array.isArray(row.technologies) ? row.technologies : [];
   const techs = techsRaw.map((t: any) => {
@@ -124,8 +189,16 @@ const mapDbToProject = (row: DbProject, index: number): UIProject => {
   };
 };
 
+/** Peso de cada nível de destaque na ordenação canônica. */
 const FEATURED_RANK: Record<FeaturedLevel, number> = { primary: 2, secondary: 1, none: 0 };
 
+/**
+ * Aplica a ordenação canônica da vitrine.
+ *
+ * A ordenação acontece no cliente (e não no `order()` do Supabase) porque
+ * `featured_level` é texto: ordenar alfabeticamente colocaria `secondary`
+ * antes de `primary`.
+ */
 const sortProjects = (rows: DbProject[]): DbProject[] =>
   [...rows].sort((a, b) => {
     const r = FEATURED_RANK[(b.featured_level || "none") as FeaturedLevel] -
@@ -135,6 +208,17 @@ const sortProjects = (rows: DbProject[]): DbProject[] =>
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   });
 
+/**
+ * Busca os projetos visíveis no site público.
+ *
+ * @remarks
+ * Um projeto só é público quando está simultaneamente publicado no site
+ * (`is_published_on_site`) e com `status = "published"` — rascunhos e projetos
+ * internos nunca vazam para a vitrine. As mesmas condições existem na RLS da
+ * tabela para leitura anônima.
+ *
+ * @throws {PostgrestError} Propagado para o React Query tratar como erro de query.
+ */
 const fetchPublishedProjects = async (): Promise<UIProject[]> => {
   const { data, error } = await supabase
     .from("projects")
@@ -145,8 +229,24 @@ const fetchPublishedProjects = async (): Promise<UIProject[]> => {
   return sortProjects(data as DbProject[]).map(mapDbToProject);
 };
 
-/* ── Realtime subscription (singleton across hooks) ── */
+// ============================================================================
+// 🪝 HOOKS & SIDE EFFECTS
+// ============================================================================
+
+/**
+ * Guarda de singleton: impede que múltiplos componentes montados abram canais
+ * realtime duplicados para a mesma tabela.
+ */
 let realtimeBound = false;
+
+/**
+ * Mantém o cache de projetos sincronizado com o banco.
+ *
+ * @remarks
+ * Side effect: abre um canal `postgres_changes` em `public.projects` e
+ * invalida a query key `["projects"]` (todas as variações) a cada evento. O
+ * canal é removido no cleanup, liberando o singleton para o próximo consumidor.
+ */
 const useProjectsRealtime = () => {
   const qc = useQueryClient();
   useEffect(() => {
@@ -169,6 +269,15 @@ const useProjectsRealtime = () => {
   }, [qc]);
 };
 
+/**
+ * Lista os projetos publicados, já ordenados e normalizados.
+ *
+ * @remarks
+ * Cache: query key `["projects", "published"]`, `staleTime` de 60s — mudanças
+ * relevantes chegam por realtime, então o polling implícito não é necessário.
+ *
+ * @returns Query result com `UIProject[]`.
+ */
 export const useProjects = () => {
   useProjectsRealtime();
   return useQuery({
@@ -178,7 +287,16 @@ export const useProjects = () => {
   });
 };
 
-/** Hero project (single primary). Falls back to first project if none. */
+/**
+ * Projeto de destaque principal (hero da Home).
+ *
+ * @remarks
+ * Deriva de `useProjects`, portanto não gera requisição extra. Se nenhum
+ * projeto estiver marcado como `primary`, cai para o primeiro da ordenação
+ * canônica — a Home nunca fica sem hero enquanto houver projeto publicado.
+ *
+ * @returns Query result cujo `data` é o projeto primário ou `null`.
+ */
 export const usePrimaryProject = () => {
   const q = useProjects();
   const primary =
@@ -186,14 +304,27 @@ export const usePrimaryProject = () => {
   return { ...q, data: primary };
 };
 
-/** Secondary featured projects (excluding primary). */
+/**
+ * Destaques secundários da vitrine, excluindo o projeto primário.
+ *
+ * @param limit - Máximo de projetos retornados; a Home limita a curadoria para
+ *                não competir com `/projects-hub`.
+ * @returns Query result cujo `data` é sempre um array (nunca `undefined`).
+ */
 export const useSecondaryFeaturedProjects = (limit = 4) => {
   const q = useProjects();
   const list = q.data?.filter((p) => p.featuredLevel === "secondary").slice(0, limit) ?? [];
   return { ...q, data: list };
 };
 
-/** Backward-compatible: returns featured (primary first, then secondary). */
+/**
+ * Lista unificada de destaques (primário primeiro, depois secundários).
+ *
+ * @remarks
+ * Mantido por compatibilidade com seções anteriores à separação
+ * primary/secondary. Novas telas devem usar `usePrimaryProject` +
+ * `useSecondaryFeaturedProjects`.
+ */
 export const useFeaturedProjects = (limit = 3) => {
   const q = useProjects();
   const featured =
@@ -201,6 +332,16 @@ export const useFeaturedProjects = (limit = 3) => {
   return { ...q, data: featured };
 };
 
+/**
+ * Carrega um projeto pelo slug para a página de detalhe.
+ *
+ * @param slug - Slug da rota; enquanto `undefined` a query fica desabilitada.
+ * @returns Query result com o projeto ou `null` quando o slug não existe.
+ *
+ * @remarks
+ * Usa `maybeSingle()` para tratar "não encontrado" como dado (`null`) e não
+ * como erro, permitindo que a página renderize o estado 404 próprio.
+ */
 export const useProjectBySlug = (slug?: string) => {
   return useQuery({
     queryKey: ["projects", "slug", slug],
@@ -218,7 +359,17 @@ export const useProjectBySlug = (slug?: string) => {
   });
 };
 
-/* ── Admin hooks (all projects, including drafts) ── */
+/**
+ * Catálogo completo para as telas administrativas, incluindo rascunhos.
+ *
+ * @remarks
+ * SECURITY — a visibilidade de rascunhos é garantida pela RLS da tabela
+ * (leitura ampla apenas para papéis administrativos); este hook não aplica
+ * nenhum filtro de permissão no cliente e não deve ser usado em rotas públicas.
+ *
+ * Retorna `DbProject[]` cru de propósito: o admin edita os campos do banco,
+ * não o contrato de apresentação.
+ */
 export const useAllProjects = () => {
   useProjectsRealtime();
   return useQuery({

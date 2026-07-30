@@ -12,12 +12,15 @@ Portal central da documentação técnica do **SevenDevX** (site público) e do 
 ### Standards
 - [SevenDevX Enterprise Code Documentation Standard](code-standards/README.md)
 - [Cabeçalhos de arquivo](code-standards/FILE_HEADERS.md)
+- [Anatomia de arquivo (seções internas)](code-standards/CODE_ANATOMY.md)
+- [Guia de decisão de comentários](code-standards/COMMENT_DECISION_GUIDE.md)
 - [TSDoc](code-standards/TSDOC_STANDARD.md)
 - [Comentários](code-standards/COMMENTS_STANDARD.md)
 - [README por diretório](code-standards/README_STANDARD.md)
 - [Documentação de arquitetura](code-standards/ARCHITECTURE_DOCUMENTATION.md)
 - [Convenções de nomenclatura](code-standards/NAMING_CONVENTIONS.md)
 - [Checklist](code-standards/DOCUMENTATION_CHECKLIST.md)
+- [Glossário do domínio](GLOSSARY.md)
 
 ### Architecture
 - [Visão geral do sistema](architecture/SYSTEM_OVERVIEW.md)
@@ -57,10 +60,13 @@ Portal central da documentação técnica do **SevenDevX** (site público) e do 
 ## 🔍 Verificação
 
 ```bash
-npm run docs:check
+npm run docs:check   # saúde + Documentation Coverage Report
+npm run docs:lint    # regras semânticas (warning only)
 ```
 
-Emite **warnings** (não bloqueia build) para arquivos críticos sem cabeçalho, diretórios relevantes sem `README.md` e links Markdown quebrados.
+`docs:check` emite **warnings** (não bloqueia build) para arquivos críticos sem cabeçalho, diretórios relevantes sem `README.md` e links Markdown quebrados, e imprime o *Documentation Coverage Report* calculado a partir do repositório.
+
+`docs:lint` adiciona regras semânticas: APIs exportadas complexas sem TSDoc e marcadores `TODO/FIXME/HACK` fora do padrão `TAG(SEVEN-###)`.
 
 ---
 

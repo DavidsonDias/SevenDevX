@@ -11,11 +11,9 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
-/**
- * 🔥 FeaturedProjects — SevenDevX Home Section (Enterprise)
- * Single source of truth: useProjects() (Supabase).
- * Hero = featured_level=primary | Secondary grid = featured_level=secondary (até 4)
- */
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
 
 import { memo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -30,9 +28,77 @@ import { Button } from "@/components/ui/button";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { useLanguage } from "@/i18n/LanguageContext";
 
-/* ── Expanded Modal ── */
-const FeaturedModal = ({ project, onClose }: { project: Project | null; onClose: () => void }) => {
+// ============================================================================
+// ⚙️ CONFIGURATION & BUSINESS RULES
+// ============================================================================
+
+/**
+ * SOURCE OF TRUTH
+ *
+ * A vitrine é definida exclusivamente pela tabela `projects` no Supabase:
+ *
+ *   featured_level = "primary"    → hero da seção (um único projeto)
+ *   featured_level = "secondary"  → cards complementares
+ *
+ * Não adicionar listas hardcoded neste componente: qualquer projeto exibido
+ * aqui precisa existir no banco e estar publicado.
+ *
+ * DATA FLOW
+ *
+ * Supabase
+ *    ↓
+ * usePrimaryProject / useSecondaryFeaturedProjects
+ *    ↓
+ * FeaturedProjects
+ *    ├── Hero Project
+ *    └── Secondary Cards
+ *           ↓
+ *      FeaturedModal
+ */
+
+/**
+ * Quantidade máxima de destaques secundários consultados.
+ *
+ * O limite existe para que a Home permaneça uma vitrine curada e não vire um
+ * catálogo; a listagem integral continua em `/projects-hub`.
+ */
+const MAX_SECONDARY_PROJECTS = 4;
+
+// ============================================================================
+// 🪟 FEATURED PROJECT MODAL
+// ============================================================================
+
+/**
+ * Contrato do modal de projeto destacado.
+ */
+interface FeaturedModalProps {
+  /** Projeto atualmente selecionado. `null` mantém o modal fechado. */
+  project: Project | null;
+
+  /** Fecha o modal e devolve o usuário ao contexto da Home. */
+  onClose: () => void;
+}
+
+/**
+ * Exibe os detalhes completos de um projeto sem retirar o usuário da Home.
+ *
+ * @param project - Projeto selecionado; `null` não renderiza nada.
+ * @param onClose - Fecha o modal e restaura a rolagem da página.
+ *
+ * @remarks
+ * - `layoutId` é compartilhado com o card de origem, produzindo uma shared
+ *   layout transition contínua via Framer Motion.
+ * - Links externos interrompem a propagação do clique para não reabrir o modal.
+ */
+const FeaturedModal = ({ project, onClose }: FeaturedModalProps) => {
   const { t } = useLanguage();
+
+  /**
+   * Bloqueia o scroll do documento somente enquanto há projeto aberto, evitando
+   * scroll concorrente entre a página e o conteúdo interno do modal. O hook
+   * restaura o overflow original ao desmontar, para a página não ficar travada
+   * após navegação.
+   */
   useScrollLock(!!project);
 
   if (!project) return null;
@@ -77,6 +143,12 @@ const FeaturedModal = ({ project, onClose }: { project: Project | null; onClose:
               <p className="text-muted-foreground text-sm leading-relaxed">
                 {project.longDescription || project.description}
               </p>
+              {/* Estratégia de resolução do ícone de tecnologia:
+                  1. `slug` → TechIconCDN (fonte preferencial, logo oficial);
+                  2. `icon` legado → componente React de registros antigos;
+                  3. ausência de ambos → renderiza somente o nome.
+                  Não remover o fallback legado enquanto o catálogo de
+                  tecnologias não estiver 100% migrado para `slug`. */}
               <div className="flex flex-wrap gap-2">
                 {project.techs.map(tech => {
                   const Icon = (tech as any).icon;
@@ -118,8 +190,33 @@ const FeaturedModal = ({ project, onClose }: { project: Project | null; onClose:
   );
 };
 
-/* ── Secondary Card ── */
-const ProjectCard = memo(({ project, index, onOpen }: { project: Project; index: number; onOpen: (p: Project) => void }) => (
+// ============================================================================
+// 🃏 SECONDARY FEATURED PROJECT CARD
+// ============================================================================
+
+/**
+ * Contrato do card usado pelos destaques secundários.
+ */
+interface ProjectCardProps {
+  /** Projeto representado pelo card. */
+  project: Project;
+
+  /** Posição na grade; usada apenas para escalonar a animação de entrada. */
+  index: number;
+
+  /** Promove o projeto ao modal expandido. */
+  onOpen: (project: Project) => void;
+}
+
+/**
+ * Card compacto dos projetos classificados como destaque secundário.
+ *
+ * @remarks
+ * A memoização evita re-renderizar todos os cards quando apenas o estado do
+ * modal da seção muda — as props de um card só se alteram quando o projeto
+ * correspondente muda.
+ */
+const ProjectCard = memo(({ project, index, onOpen }: ProjectCardProps) => (
   <ProjectCard3D tiltIntensity={5} layoutId={`featured-card-${project.id}`}>
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -155,6 +252,8 @@ const ProjectCard = memo(({ project, index, onOpen }: { project: Project; index:
               href={project.liveUrl!}
               target="_blank"
               rel="noopener noreferrer"
+              /* O card inteiro abre o modal; sem stopPropagation o clique no
+                 link externo abriria a nova aba e o modal ao mesmo tempo. */
               onClick={e => e.stopPropagation()}
               className="inline-flex items-center gap-1 text-[11px] uppercase tracking-widest font-semibold border border-foreground/30 px-3 py-1.5 rounded-sm hover:bg-foreground hover:text-background transition-all"
             >
@@ -168,12 +267,32 @@ const ProjectCard = memo(({ project, index, onOpen }: { project: Project; index:
 ));
 ProjectCard.displayName = "ProjectCard";
 
-/* ── Main Section ── */
+// ============================================================================
+// 🏗️ FEATURED PROJECTS SECTION
+// ============================================================================
+
+/**
+ * Seção de portfólio da Home.
+ *
+ * @remarks
+ * Orquestra hero + grade secundária + modal expandido. Enquanto o projeto
+ * primário não estiver disponível (carregando ou nenhum publicado), a seção
+ * inteira não é renderizada — preferimos ausência a um esqueleto vazio no
+ * meio da narrativa da Home.
+ */
 const FeaturedProjects = () => {
   const navigate = useNavigate();
+
+  /**
+   * Projeto atualmente expandido no modal. `null` representa o estado fechado
+   * e é o único controlador da visibilidade do `FeaturedModal`.
+   */
   const [openProject, setOpenProject] = useState<Project | null>(null);
+
+  // Ambos os hooks compartilham a mesma query React Query (`["projects"]`),
+  // portanto não geram requisições adicionais ao Supabase.
   const { data: heroProject } = usePrimaryProject();
-  const { data: secondaryProjects = [] } = useSecondaryFeaturedProjects(4);
+  const { data: secondaryProjects = [] } = useSecondaryFeaturedProjects(MAX_SECONDARY_PROJECTS);
 
   if (!heroProject) return null;
 
@@ -197,7 +316,10 @@ const FeaturedProjects = () => {
           </p>
         </motion.div>
 
-        {/* Hero Project (primary) */}
+        {/* ==========================================================================
+            HERO PROJECT
+            Vitrine comercial principal, controlada por featured_level="primary".
+            ========================================================================== */}
         <ProjectCard3D tiltIntensity={4} className="mb-6" layoutId={`featured-card-${heroProject.id}`}>
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -243,6 +365,9 @@ const FeaturedProjects = () => {
                     </span>
                   ))}
                 </div>
+                {/* O card do hero abre o modal ao ser clicado; a barra de ações
+                    interrompe a propagação para que o CTA externo não dispare
+                    também a abertura do modal. */}
                 <div className="flex gap-3" onClick={e => e.stopPropagation()}>
                   {isValidLiveUrl(heroProject.liveUrl) && (
                     <a
@@ -260,7 +385,12 @@ const FeaturedProjects = () => {
           </motion.div>
         </ProjectCard3D>
 
-        {/* Secondary Projects */}
+        {/* --------------------------------------------------------------------------
+            SECONDARY PROJECT GRID
+            Prévia limitada da curadoria; o portfólio completo permanece em
+            /projects-hub. O `slice(0, 2)` mantém a grade em uma única linha na
+            Home, mesmo que o banco tenha mais destaques secundários.
+            -------------------------------------------------------------------------- */}
         {secondaryProjects.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-12">
             {secondaryProjects.slice(0, 2).map((project, i) => (
