@@ -91,27 +91,44 @@ Deno.serve(async (req) => {
     if (expected.length !== provided.length) {
       return new Response(JSON.stringify({ error: 'invalid_signature' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
+    // Comparação em tempo constante: um `===` vazaria, pelo tempo de resposta,
+    // quantos bytes iniciais do HMAC o atacante já acertou.
     let diff = 0;
     for (let i = 0; i < expected.length; i++) diff |= expected.charCodeAt(i) ^ provided.charCodeAt(i);
     if (diff !== 0) {
       return new Response(JSON.stringify({ error: 'invalid_signature' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
+
+    // ========================================================================
+    // 📨 PAYLOAD PROCESSING
+    // ========================================================================
+    //
+    // Estrutura da Meta: entry[] → changes[] → value{ statuses[], messages[] }.
+    // Um único POST pode conter lotes de ambos os tipos, por isso os três
+    // laços aninhados.
     const payload = JSON.parse(rawBody);
     const entries = payload?.entry || [];
     for (const entry of entries) {
       for (const change of entry.changes || []) {
         const value = change.value || {};
-        // Status updates
+
+        // Confirmações de entrega/leitura das mensagens que nós enviamos.
         for (const st of value.statuses || []) {
           await supa.from('whatsapp_messages').update({ status: st.status }).eq('wa_message_id', st.id);
         }
-        // Incoming messages
+
+        // Mensagens recebidas do contato.
         for (const msg of value.messages || []) {
           const phone = msg.from as string;
           const profileName = value.contacts?.[0]?.profile?.name || null;
+          // Normaliza os vários formatos da Meta (texto, botão, lista) num
+          // preview único; tipos sem texto viram `[image]`, `[audio]`, etc.
           const body = msg.text?.body || msg.button?.text || msg.interactive?.list_reply?.title || `[${msg.type}]`;
+          // Guarda apenas o media_id: a URL da Meta expira em minutos e exige
+          // token, então o download é feito sob demanda pela inbox.
           const mediaId = msg.image?.id || msg.audio?.id || msg.video?.id || msg.document?.id || null;
           const mediaType = msg.image ? 'image' : msg.audio ? 'audio' : msg.video ? 'video' : msg.document ? 'document' : null;
+
 
           // Upsert thread
           const { data: existing } = await supa.from('whatsapp_threads').select('id, unread_count').eq('contact_phone', phone).maybeSingle();
