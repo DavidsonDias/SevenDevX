@@ -21,11 +21,20 @@
  * @see supabase/functions/README.md
  * ═══════════════════════════════════════════════════════════════════════
  */
-// WhatsApp Business Cloud API webhook receiver + verifier (Meta).
-// GET: verification challenge. POST: incoming messages + status updates.
+// ============================================================================
+// 📦 IMPORTS & RUNTIME CONFIG
+// ============================================================================
+
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
+/**
+ * SECURITY
+ *
+ * A função roda com service-role porque precisa gravar em `whatsapp_threads`
+ * e `whatsapp_messages` sem sessão de usuário. Por isso o boundary de
+ * confiança é a assinatura HMAC da Meta: nenhum dado é persistido antes dela.
+ */
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
@@ -34,7 +43,13 @@ Deno.serve(async (req) => {
 
   const supa = createClient(SUPABASE_URL, SERVICE_KEY);
 
-  // Verification challenge
+  // ==========================================================================
+  // 🤝 VERIFICATION CHALLENGE (GET)
+  // ==========================================================================
+  //
+  // Handshake exigido pela Meta ao cadastrar/renovar o webhook. O token
+  // esperado vive em `system_settings` (admin-only) e nunca é ecoado: em caso
+  // de divergência a resposta é apenas 403, sem revelar o valor correto.
   if (req.method === 'GET') {
     const url = new URL(req.url);
     const mode = url.searchParams.get('hub.mode');
@@ -49,7 +64,16 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Verify Meta X-Hub-Signature-256 HMAC before trusting the payload
+    // ========================================================================
+    // 🔐 SIGNATURE VERIFICATION (X-Hub-Signature-256)
+    // ========================================================================
+    //
+    // O corpo é lido como texto cru porque o HMAC da Meta é calculado sobre os
+    // bytes originais — reserializar o JSON invalidaria a assinatura.
+    //
+    // Segredo: `system_settings.whatsapp_app_secret` (configurável pelo admin)
+    // com fallback para a env `WHATSAPP_APP_SECRET`. Ausência de segredo ou de
+    // header resulta em 401, nunca em aceitação silenciosa.
     const rawBody = await req.text();
     const sigHeader = req.headers.get('x-hub-signature-256') || '';
     const { data: appSecretRow } = await supa.from('system_settings').select('value').eq('key', 'whatsapp_app_secret').maybeSingle();
