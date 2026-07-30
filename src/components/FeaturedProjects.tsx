@@ -11,11 +11,9 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
-/**
- * 🔥 FeaturedProjects — SevenDevX Home Section (Enterprise)
- * Single source of truth: useProjects() (Supabase).
- * Hero = featured_level=primary | Secondary grid = featured_level=secondary (até 4)
- */
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
 
 import { memo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -30,9 +28,77 @@ import { Button } from "@/components/ui/button";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { useLanguage } from "@/i18n/LanguageContext";
 
-/* ── Expanded Modal ── */
-const FeaturedModal = ({ project, onClose }: { project: Project | null; onClose: () => void }) => {
+// ============================================================================
+// ⚙️ CONFIGURATION & BUSINESS RULES
+// ============================================================================
+
+/**
+ * SOURCE OF TRUTH
+ *
+ * A vitrine é definida exclusivamente pela tabela `projects` no Supabase:
+ *
+ *   featured_level = "primary"    → hero da seção (um único projeto)
+ *   featured_level = "secondary"  → cards complementares
+ *
+ * Não adicionar listas hardcoded neste componente: qualquer projeto exibido
+ * aqui precisa existir no banco e estar publicado.
+ *
+ * DATA FLOW
+ *
+ * Supabase
+ *    ↓
+ * usePrimaryProject / useSecondaryFeaturedProjects
+ *    ↓
+ * FeaturedProjects
+ *    ├── Hero Project
+ *    └── Secondary Cards
+ *           ↓
+ *      FeaturedModal
+ */
+
+/**
+ * Quantidade máxima de destaques secundários consultados.
+ *
+ * O limite existe para que a Home permaneça uma vitrine curada e não vire um
+ * catálogo; a listagem integral continua em `/projects-hub`.
+ */
+const MAX_SECONDARY_PROJECTS = 4;
+
+// ============================================================================
+// 🪟 FEATURED PROJECT MODAL
+// ============================================================================
+
+/**
+ * Contrato do modal de projeto destacado.
+ */
+interface FeaturedModalProps {
+  /** Projeto atualmente selecionado. `null` mantém o modal fechado. */
+  project: Project | null;
+
+  /** Fecha o modal e devolve o usuário ao contexto da Home. */
+  onClose: () => void;
+}
+
+/**
+ * Exibe os detalhes completos de um projeto sem retirar o usuário da Home.
+ *
+ * @param project - Projeto selecionado; `null` não renderiza nada.
+ * @param onClose - Fecha o modal e restaura a rolagem da página.
+ *
+ * @remarks
+ * - `layoutId` é compartilhado com o card de origem, produzindo uma shared
+ *   layout transition contínua via Framer Motion.
+ * - Links externos interrompem a propagação do clique para não reabrir o modal.
+ */
+const FeaturedModal = ({ project, onClose }: FeaturedModalProps) => {
   const { t } = useLanguage();
+
+  /**
+   * Bloqueia o scroll do documento somente enquanto há projeto aberto, evitando
+   * scroll concorrente entre a página e o conteúdo interno do modal. O hook
+   * restaura o overflow original ao desmontar, para a página não ficar travada
+   * após navegação.
+   */
   useScrollLock(!!project);
 
   if (!project) return null;
