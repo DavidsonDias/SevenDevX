@@ -34,12 +34,15 @@ counter++;
 | Documento | Escopo |
 |---|---|
 | [FILE_HEADERS.md](FILE_HEADERS.md) | Cabeçalhos adaptativos (Level 1/2/3) |
+| [CODE_ANATOMY.md](CODE_ANATOMY.md) | Ordem das seções internas e densidade documental |
+| [COMMENT_DECISION_GUIDE.md](COMMENT_DECISION_GUIDE.md) | Quando comentar (e quando não) + marcadores TODO/FIXME |
 | [TSDOC_STANDARD.md](TSDOC_STANDARD.md) | Documentação de funções, hooks, services e tipos |
 | [COMMENTS_STANDARD.md](COMMENTS_STANDARD.md) | Comentários inline e seções internas |
 | [README_STANDARD.md](README_STANDARD.md) | README por diretório/módulo |
 | [ARCHITECTURE_DOCUMENTATION.md](ARCHITECTURE_DOCUMENTATION.md) | Diagramas, data flow e source of truth |
 | [NAMING_CONVENTIONS.md](NAMING_CONVENTIONS.md) | Nomenclatura de arquivos, símbolos e rotas |
 | [DOCUMENTATION_CHECKLIST.md](DOCUMENTATION_CHECKLIST.md) | Checklist de PR e Definition of Done |
+| [GLOSSARY.md](../GLOSSARY.md) | Vocabulário oficial do domínio |
 
 ---
 
