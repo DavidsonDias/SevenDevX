@@ -119,22 +119,49 @@ function pickBest(candidates: [number, number, number][]): string | null {
   );
 }
 
-// ---------- async image sampling ----------
+// ============================================================================
+// 🖼️ ASYNC IMAGE SAMPLING
+// ============================================================================
+//
+// Cache de módulo (não React): a mesma logo aparece em várias telas e a
+// extração é cara. `inflight` deduplica requisições simultâneas para a mesma
+// URL, evitando N canvases para o mesmo asset.
 const imgCache = new Map<string, string | null>();
 const inflight = new Map<string, Promise<string | null>>();
 const SUB = new Set<() => void>();
 
+/**
+ * Assina mudanças no cache de cores extraídas.
+ *
+ * @returns Função de cleanup — chame no unmount para evitar leak de listener.
+ */
 export function subscribeImgColors(cb: () => void) {
   SUB.add(cb);
   return () => SUB.delete(cb);
 }
 function notify() { SUB.forEach((cb) => cb()); }
 
+/**
+ * Leitura síncrona do cache, para render sem flash.
+ *
+ * @returns A cor, `null` quando a extração já falhou, ou `undefined` quando
+ *          ainda não foi tentada — os três estados são distintos para a UI.
+ */
 export function getCachedImageColor(url?: string | null): string | null | undefined {
   if (!url) return undefined;
   return imgCache.has(url) ? imgCache.get(url) : undefined;
 }
 
+/**
+ * Extrai a cor dominante de uma imagem via canvas.
+ *
+ * @remarks
+ * Requer CORS: `crossOrigin="anonymous"` — sem header permissivo na origem o
+ * canvas fica "tainted" e `getImageData` lança, resultando em `null`.
+ *
+ * A imagem é reduzida a 32×32 antes da amostragem: precisão suficiente para
+ * cor dominante e ~1000× menos pixels para percorrer.
+ */
 export function extractColorFromImage(url: string): Promise<string | null> {
   if (imgCache.has(url)) return Promise.resolve(imgCache.get(url) ?? null);
   if (inflight.has(url)) return inflight.get(url)!;
@@ -153,10 +180,13 @@ export function extractColorFromImage(url: string): Promise<string | null> {
           const data = ctx.getImageData(0, 0, w, h).data;
           const cands: [number, number, number][] = [];
           for (let i = 0; i < data.length; i += 4) {
+            // Descarta pixels quase transparentes: bordas de logo PNG
+            // puxariam a média para o fundo, não para a marca.
             const a = data[i + 3];
             if (a < 80) continue;
             cands.push([data[i], data[i + 1], data[i + 2]]);
           }
+
           resolve(pickBest(cands));
         } catch { resolve(null); }
       };

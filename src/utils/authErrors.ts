@@ -11,8 +11,11 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
-// src/utils/authErrors.ts
+// ============================================================================
+// 🧾 TYPES
+// ============================================================================
 
+/** Fluxo em que o erro ocorreu — muda o título e habilita a ação de troca de aba. */
 export type AuthFlowContext = "login" | "signup";
 
 type ToastInfo = {
@@ -22,7 +25,26 @@ type ToastInfo = {
   action?: "switch_to_login";
 };
 
-// Normaliza erro do provider de auth (AuthApiError / AuthRetryableFetchError / TypeError)
+// ============================================================================
+// 🧠 MAPPING
+// ============================================================================
+
+/**
+ * Converte um erro do provider de auth em título/descrição prontos para toast.
+ *
+ * @param error - `AuthApiError`, `AuthRetryableFetchError`, `TypeError` de rede
+ *                ou qualquer objeto com `message`/`status`/`code`.
+ * @param context - fluxo em execução (`login` ou `signup`).
+ * @returns Título, descrição e, quando aplicável, uma ação sugerida à UI.
+ *
+ * @remarks
+ * REGRA DE SEGURANÇA
+ * Em `login` nunca distinguimos "email inexistente" de "senha errada": ambos
+ * viram "Email ou senha incorretos" para não permitir enumeração de contas.
+ *
+ * A ordem das checagens importa — rede primeiro (pode mascarar qualquer outro
+ * sintoma), depois casos específicos, e só então o fallback com a mensagem crua.
+ */
 export function getAuthErrorToast(error: any, context: AuthFlowContext): ToastInfo {
   const status: number | undefined =
     typeof error?.status === "number" ? error.status : undefined;

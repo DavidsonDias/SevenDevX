@@ -17,11 +17,27 @@
  * 🔗 useIntegrations — catálogo + estado das integrações enterprise
  * Roteia teste de conexão para `*-test` edge functions e persiste diagnostics ricos.
  */
+
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+// ============================================================================
+// 🧾 TYPES
+// ============================================================================
+
+/**
+ * Provider de integração como persistido em `integration_providers`.
+ *
+ * @remarks
+ * `secret_refs` guarda apenas os **nomes** dos secrets exigidos pelo provider —
+ * nunca os valores. Os segredos vivem no runtime das edge functions.
+ */
 export interface IntegrationProvider {
   id: string;
   name: string;
@@ -41,6 +57,7 @@ export interface IntegrationProvider {
   updated_at: string;
 }
 
+/** Checagem individual dentro de um teste de conexão (credencial, escopo, ping). */
 export interface ConnectionCheck {
   name: string;
   ok: boolean;
@@ -48,6 +65,14 @@ export interface ConnectionCheck {
   latency_ms?: number;
 }
 
+/**
+ * Resultado normalizado de um teste de conexão.
+ *
+ * @remarks
+ * O formato é o mesmo independentemente de a edge function ter respondido,
+ * ter falhado com erro HTTP ou de a invocação ter lançado exceção — a UI
+ * (`TestResultPanel`) consome sempre a mesma estrutura.
+ */
 export interface ConnectionTestResult {
   ok: boolean;
   latency_ms: number;
@@ -59,6 +84,17 @@ export interface ConnectionTestResult {
   invoked_at: string;
 }
 
+// ============================================================================
+// ⚙️ CONFIG
+// ============================================================================
+
+/**
+ * Mapa provider → edge function de teste.
+ *
+ * REGRA DE NEGÓCIO
+ * Providers sem entrada aqui caem no handler genérico `provider-test`, que
+ * apenas valida a presença dos secrets declarados em `secret_refs`.
+ */
 const TEST_FUNCTION: Record<string, string> = {
   github: "github-test",
   vercel: "vercel-test",
@@ -71,10 +107,35 @@ const TEST_FUNCTION: Record<string, string> = {
   discord: "discord-test",
 };
 
+// ============================================================================
+// 🪝 HOOK
+// ============================================================================
+
+/**
+ * Estado completo da tela de integrações.
+ *
+ * @returns
+ * - `list` — query de `integration_providers` ordenada por categoria e nome
+ * - `toggleActive` — liga/desliga um provider
+ * - `testConnection` — executa o teste e grava provider + log
+ * - `lastResult` — último resultado por provider, em memória (não persistido)
+ *
+ * @remarks
+ * SIDE EFFECTS
+ * - Assina realtime em `integration_providers` e invalida o cache a cada mudança.
+ * - `testConnection` escreve em `integration_providers` e em `integration_logs`.
+ *
+ * O `lastResult` é local por escolha: o painel de diagnóstico mostra o teste
+ * *desta* sessão; o histórico completo vive em `integration_logs`.
+ */
+
+
 export const useIntegrations = () => {
   const qc = useQueryClient();
   const [lastResult, setLastResult] = useState<Record<string, ConnectionTestResult | undefined>>({});
 
+  // Realtime: outro admin (ou uma edge function) pode alterar o provider.
+  // Sem isso o painel exibiria health_status defasado até o próximo refetch.
   useEffect(() => {
     const ch = supabase
       .channel("integrations-realtime")
@@ -111,6 +172,9 @@ export const useIntegrations = () => {
     },
   });
 
+  // O teste nunca "falha" para o React Query: qualquer cenário vira um
+  // ConnectionTestResult com ok=false. Isso mantém o painel de diagnóstico
+  // como fonte única de verdade em vez de espalhar tratamento de erro na UI.
   const testConnection = useMutation({
     mutationFn: async (provider: IntegrationProvider): Promise<ConnectionTestResult> => {
       const fn = TEST_FUNCTION[provider.id] ?? "provider-test";
@@ -122,7 +186,9 @@ export const useIntegrations = () => {
       try {
         const { data, error } = await supabase.functions.invoke(fn, { body: { provider_id: provider.id } });
         if (error) {
-          // Supabase functions error
+          // FunctionsHttpError esconde o corpo da resposta em `context`.
+          // O clone() é obrigatório: o body só pode ser lido uma vez e o SDK
+          // pode consumi-lo depois. Falha na leitura cai no message genérico.
           status_code = (error as any)?.context?.response?.status;
           let detail = error.message;
           try {
@@ -137,6 +203,8 @@ export const useIntegrations = () => {
           };
         } else {
           const d = data as Partial<ConnectionTestResult>;
+          // Latência medida no cliente é o fallback quando a função não reporta:
+          // inclui rede, mas é melhor do que exibir zero.
           parsed = {
             ok: !!d.ok, latency_ms: d.latency_ms ?? Date.now() - t0,
             checks: d.checks ?? [], payload: d.payload, rate_limit: d.rate_limit,
@@ -144,6 +212,7 @@ export const useIntegrations = () => {
           };
         }
       } catch (e: any) {
+        // Rede caiu / função inexistente: ainda assim registramos o log.
         parsed = {
           ok: false, latency_ms: Date.now() - t0,
           checks: [{ name: "Exceção", ok: false, detail: e?.message ?? String(e) }],
@@ -151,13 +220,15 @@ export const useIntegrations = () => {
         };
       }
 
-      // Persistir provider + log
+      // SIDE EFFECT — o resultado do teste é a fonte do health_status exibido
+      // no grid; por isso é gravado antes de retornar, mesmo em caso de falha.
       await supabase.from("integration_providers" as any).update({
         last_test_at: invoked_at,
         health_status: parsed.ok ? "operational" : "offline",
         last_error: parsed.error ?? null,
         is_connected: parsed.ok,
       }).eq("id", provider.id);
+
 
       await supabase.from("integration_logs" as any).insert({
         provider_id: provider.id,
