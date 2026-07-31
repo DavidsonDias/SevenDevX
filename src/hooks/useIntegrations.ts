@@ -172,6 +172,9 @@ export const useIntegrations = () => {
     },
   });
 
+  // O teste nunca "falha" para o React Query: qualquer cenário vira um
+  // ConnectionTestResult com ok=false. Isso mantém o painel de diagnóstico
+  // como fonte única de verdade em vez de espalhar tratamento de erro na UI.
   const testConnection = useMutation({
     mutationFn: async (provider: IntegrationProvider): Promise<ConnectionTestResult> => {
       const fn = TEST_FUNCTION[provider.id] ?? "provider-test";
@@ -183,7 +186,9 @@ export const useIntegrations = () => {
       try {
         const { data, error } = await supabase.functions.invoke(fn, { body: { provider_id: provider.id } });
         if (error) {
-          // Supabase functions error
+          // FunctionsHttpError esconde o corpo da resposta em `context`.
+          // O clone() é obrigatório: o body só pode ser lido uma vez e o SDK
+          // pode consumi-lo depois. Falha na leitura cai no message genérico.
           status_code = (error as any)?.context?.response?.status;
           let detail = error.message;
           try {
@@ -198,6 +203,8 @@ export const useIntegrations = () => {
           };
         } else {
           const d = data as Partial<ConnectionTestResult>;
+          // Latência medida no cliente é o fallback quando a função não reporta:
+          // inclui rede, mas é melhor do que exibir zero.
           parsed = {
             ok: !!d.ok, latency_ms: d.latency_ms ?? Date.now() - t0,
             checks: d.checks ?? [], payload: d.payload, rate_limit: d.rate_limit,
@@ -205,6 +212,7 @@ export const useIntegrations = () => {
           };
         }
       } catch (e: any) {
+        // Rede caiu / função inexistente: ainda assim registramos o log.
         parsed = {
           ok: false, latency_ms: Date.now() - t0,
           checks: [{ name: "Exceção", ok: false, detail: e?.message ?? String(e) }],
@@ -212,13 +220,15 @@ export const useIntegrations = () => {
         };
       }
 
-      // Persistir provider + log
+      // SIDE EFFECT — o resultado do teste é a fonte do health_status exibido
+      // no grid; por isso é gravado antes de retornar, mesmo em caso de falha.
       await supabase.from("integration_providers" as any).update({
         last_test_at: invoked_at,
         health_status: parsed.ok ? "operational" : "offline",
         last_error: parsed.error ?? null,
         is_connected: parsed.ok,
       }).eq("id", provider.id);
+
 
       await supabase.from("integration_logs" as any).insert({
         provider_id: provider.id,
