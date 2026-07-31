@@ -17,11 +17,27 @@
  * 🔗 useIntegrations — catálogo + estado das integrações enterprise
  * Roteia teste de conexão para `*-test` edge functions e persiste diagnostics ricos.
  */
+
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useEffect, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+// ============================================================================
+// 🧾 TYPES
+// ============================================================================
+
+/**
+ * Provider de integração como persistido em `integration_providers`.
+ *
+ * @remarks
+ * `secret_refs` guarda apenas os **nomes** dos secrets exigidos pelo provider —
+ * nunca os valores. Os segredos vivem no runtime das edge functions.
+ */
 export interface IntegrationProvider {
   id: string;
   name: string;
@@ -41,6 +57,7 @@ export interface IntegrationProvider {
   updated_at: string;
 }
 
+/** Checagem individual dentro de um teste de conexão (credencial, escopo, ping). */
 export interface ConnectionCheck {
   name: string;
   ok: boolean;
@@ -48,6 +65,14 @@ export interface ConnectionCheck {
   latency_ms?: number;
 }
 
+/**
+ * Resultado normalizado de um teste de conexão.
+ *
+ * @remarks
+ * O formato é o mesmo independentemente de a edge function ter respondido,
+ * ter falhado com erro HTTP ou de a invocação ter lançado exceção — a UI
+ * (`TestResultPanel`) consome sempre a mesma estrutura.
+ */
 export interface ConnectionTestResult {
   ok: boolean;
   latency_ms: number;
@@ -59,6 +84,17 @@ export interface ConnectionTestResult {
   invoked_at: string;
 }
 
+// ============================================================================
+// ⚙️ CONFIG
+// ============================================================================
+
+/**
+ * Mapa provider → edge function de teste.
+ *
+ * REGRA DE NEGÓCIO
+ * Providers sem entrada aqui caem no handler genérico `provider-test`, que
+ * apenas valida a presença dos secrets declarados em `secret_refs`.
+ */
 const TEST_FUNCTION: Record<string, string> = {
   github: "github-test",
   vercel: "vercel-test",
@@ -70,6 +106,29 @@ const TEST_FUNCTION: Record<string, string> = {
   slack: "slack-test",
   discord: "discord-test",
 };
+
+// ============================================================================
+// 🪝 HOOK
+// ============================================================================
+
+/**
+ * Estado completo da tela de integrações.
+ *
+ * @returns
+ * - `list` — query de `integration_providers` ordenada por categoria e nome
+ * - `toggleActive` — liga/desliga um provider
+ * - `testConnection` — executa o teste e grava provider + log
+ * - `lastResult` — último resultado por provider, em memória (não persistido)
+ *
+ * @remarks
+ * SIDE EFFECTS
+ * - Assina realtime em `integration_providers` e invalida o cache a cada mudança.
+ * - `testConnection` escreve em `integration_providers` e em `integration_logs`.
+ *
+ * O `lastResult` é local por escolha: o painel de diagnóstico mostra o teste
+ * *desta* sessão; o histórico completo vive em `integration_logs`.
+ */
+
 
 export const useIntegrations = () => {
   const qc = useQueryClient();
