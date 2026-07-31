@@ -145,6 +145,9 @@ const TEMPLATES = [
   },
 ];
 
+/**
+ * Drawer com o guia de uso das automações e exemplos de gatilhos e ações.
+ */
 export default function AutomationGuideDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
   useScrollLock(open);
   const [active, setActive] = useState<Section>("intro");

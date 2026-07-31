@@ -34,6 +34,11 @@ export interface ContractVersion {
   created_at: string;
 }
 
+/**
+ * Acesso às versões de um contrato via React Query.
+ *
+ * @remarks Invalida `["contract-versions", contractId]` após criar ou restaurar versão.
+ */
 export const useContractVersions = (entityType: "client" | "project", entityId?: string | null) =>
   useQuery({
     queryKey: ["contract_versions", entityType, entityId],

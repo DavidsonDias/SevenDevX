@@ -33,6 +33,9 @@ export type ProviderCategory =
   | "storage"
   | "marketing";
 
+/**
+ * Selos de confiança exibidos no card do provider.
+ */
 export type ProviderBadge = "official" | "verified" | "popular" | "recommended" | "enterprise" | "beta" | "new" | "premium";
 
 /** Campo persistido em system_settings (gerenciável pelo próprio tenant, sem Lovable Cloud) */
@@ -63,6 +66,9 @@ export interface CatalogProvider {
   tenantSettings?: TenantSettingField[];
 }
 
+/**
+ * Rótulos legíveis de cada categoria de provider.
+ */
 export const CATEGORY_LABEL: Record<ProviderCategory, string> = {
   desenvolvimento: "Desenvolvimento",
   deploy: "Deploy & CI/CD",
@@ -242,11 +248,17 @@ export const PROVIDER_CATALOG: CatalogProvider[] = [
   P({ id: "canva", name: "Canva", slug: "canva", category: "design", color: "#00C4CC", description: "Design templates API.", secrets: ["CANVA_API_KEY"], docs: "https://www.canva.dev/", badges: ["new"] }),
 ];
 
+/**
+ * Categorias na ordem de exibição do marketplace, incluindo a opção "Tudo".
+ */
 export const CATEGORY_LIST: Array<[ProviderCategory | "all", string]> = [
   ["all", "Tudo"],
   ...(Object.entries(CATEGORY_LABEL) as Array<[ProviderCategory, string]>),
 ];
 
+/**
+ * Rótulo e classes visuais de cada selo de provider.
+ */
 export const BADGE_META: Record<ProviderBadge, { label: string; cls: string }> = {
   official:    { label: "OFFICIAL",    cls: "bg-blue-500/15 text-blue-300 border-blue-500/30" },
   verified:    { label: "VERIFIED",    cls: "bg-cyan-500/15 text-cyan-300 border-cyan-500/30" },

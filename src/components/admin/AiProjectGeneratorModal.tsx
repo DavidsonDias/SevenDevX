@@ -30,6 +30,9 @@ interface Props {
   onGenerated?: (projectId: string) => void;
 }
 
+/**
+ * Modal que gera rascunho de projeto (escopo, stack e etapas) via IA.
+ */
 export default function AiProjectGeneratorModal({ open, onClose, onGenerated }: Props) {
   useScrollLock(open);
   const navigate = useNavigate();

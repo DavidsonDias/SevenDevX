@@ -22,6 +22,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { signMany, ATTACHMENTS_BUCKET, invalidateUrl, getFileUrl } from "@/lib/storage";
 
+/**
+ * Categorias de anexo suportadas pelo bucket privado `attachments`.
+ */
 export type AttachmentType = "logo" | "file" | "idea" | "document" | "contract";
 
 interface ListFilter {

@@ -64,6 +64,13 @@ const PROJECT_TYPES = ["Landing page", "Site institucional", "E-commerce", "Sist
 const BUDGETS = ["Até R$ 5k", "R$ 5-15k", "R$ 15-40k", "R$ 40k+", "Não sei ainda"];
 const DEADLINES = ["Urgente (até 15 dias)", "Rápido (15-30 dias)", "Normal (1-2 meses)", "Flexível (3+ meses)"];
 
+/**
+ * Modal do diagnóstico gratuito: coleta as respostas do visitante em etapas e
+ * registra o lead resultante no backend.
+ *
+ * @param open - Controla a visibilidade do modal.
+ * @param onOpenChange - Notifica abertura/fechamento para o componente pai.
+ */
 export default function DiagnosticoModal({ open, onClose, config }: Props) {
   const { toast } = useToast();
   useScrollLock(open);

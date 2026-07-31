@@ -54,6 +54,11 @@ async function ping() {
   }
 }
 
+/**
+ * Registra a sessão ativa do usuário para o painel de sessões e auditoria.
+ *
+ * @sideEffects Escreve heartbeats de sessão no backend.
+ */
 export function useSessionTracker(userId: string | undefined) {
   useEffect(() => {
     if (!userId) return;

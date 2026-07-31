@@ -57,6 +57,10 @@ interface Props {
   onApply: (price: number, weeks: number, breakdownText: string) => void;
 }
 
+/**
+ * Modal do motor de precificação: estima o valor do projeto a partir de tipo,
+ * complexidade e recursos selecionados.
+ */
 export default function PricingEngineModal({ open, onClose, onApply }: Props) {
   useScrollLock(open);
   const [type, setType] = useState<ProjectType>("landing_page");

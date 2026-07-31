@@ -175,6 +175,9 @@ export interface TxFilters {
   to?: string;
 }
 
+/**
+ * Lista as transações financeiras com filtros opcionais de período e projeto.
+ */
 export const useTransactions = (filters: TxFilters = {}) => {
   const qc = useQueryClient();
   useEffect(() => {

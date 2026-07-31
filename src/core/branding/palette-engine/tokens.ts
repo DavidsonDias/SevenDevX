@@ -31,6 +31,12 @@ export interface BrandTokens {
   hoverOverlay: string;
 }
 
+/**
+ * Deriva os design tokens da marca (base, contraste, glow e beam) a partir da paleta.
+ *
+ * @param palette - Cores dominantes já extraídas.
+ * @param fallback - Cor usada quando a paleta está vazia.
+ */
 export function buildBrandTokens(palette: string[], fallback = "#ffffff"): BrandTokens {
   const clean = (palette || []).filter(Boolean);
   const pal = clean.length ? clean : [fallback];

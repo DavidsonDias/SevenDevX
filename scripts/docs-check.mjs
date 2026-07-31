@@ -220,9 +220,17 @@ function checkTsdocCoverage() {
 
   for (const file of sourceFiles()) {
     const lines = readFileSync(file, "utf8").split("\n");
+    // Template literals podem conter exemplos de código com `export` na coluna 0
+    // (ex.: snippets de guias). Esses trechos são conteúdo, não API do arquivo.
+    let insideTemplate = false;
     for (let i = 0; i < lines.length; i++) {
+      const backticks = (lines[i].match(/`/g) ?? []).length;
+      const wasInsideTemplate = insideTemplate;
+      if (backticks % 2 === 1) insideTemplate = !insideTemplate;
+      if (wasInsideTemplate) continue;
       const match = lines[i].match(EXPORT_DECL);
       if (!match) continue;
+
       coverage.exportedApis++;
 
       // Um bloco TSDoc pode terminar na linha imediatamente anterior.

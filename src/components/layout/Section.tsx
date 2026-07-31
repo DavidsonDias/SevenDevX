@@ -20,6 +20,9 @@ interface SectionProps {
   id?: string;
 }
 
+/**
+ * Seção semântica de página, com espaçamento vertical padronizado e âncora opcional.
+ */
 export function Section({ children, className, id }: SectionProps) {
   return (
     <section id={id} className={cn("py-12 md:py-16 lg:py-20", className)}>

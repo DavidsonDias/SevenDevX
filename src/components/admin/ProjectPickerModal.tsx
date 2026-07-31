@@ -45,6 +45,9 @@ interface Props {
   onConfirm: (projectIds: string[]) => Promise<void> | void;
 }
 
+/**
+ * Modal de seleção de projetos com preview de capa e stack, usado no CMS de páginas.
+ */
 export default function ProjectPickerModal({ open, onClose, alreadySelectedIds, onConfirm }: Props) {
   const [projects, setProjects] = useState<PickerProject[]>([]);
   const [loading, setLoading] = useState(false);

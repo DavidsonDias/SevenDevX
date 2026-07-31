@@ -34,6 +34,11 @@ const isImage = (m?: string) => !!m && m.startsWith("image/");
 const isPdf = (m?: string, name?: string) =>
   m === "application/pdf" || (!!name && name.toLowerCase().endsWith(".pdf"));
 
+/**
+ * Pré-visualização de anexo.
+ *
+ * @remarks O bucket `attachments` é privado: a URL sempre vem de `createSignedUrl`.
+ */
 export default function FilePreview({ attachment, variant = "card", className = "" }: Props) {
   const [url, setUrl] = useState<string | null>(null);
   const [state, setState] = useState<"loading" | "ready" | "error">("loading");

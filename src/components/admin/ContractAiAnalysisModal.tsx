@@ -49,6 +49,9 @@ interface Props {
   label?: string;
 }
 
+/**
+ * Modal de análise de contrato por IA: resumo, riscos e cláusulas relevantes.
+ */
 export default function ContractAiAnalysisModal({ open, onClose, text, label }: Props) {
   useScrollLock(open);
   const [loading, setLoading] = useState(false);

@@ -40,6 +40,9 @@ interface Props {
   onChange: (next: SelectedTech[]) => void;
 }
 
+/**
+ * Seleção múltipla de tecnologias a partir do `tech_registry`, com ícones oficiais.
+ */
 export const TechMultiSelect = ({ value, onChange }: Props) => {
   const { data: registry = [], isLoading } = useTechRegistry();
   const createTech = useCreateTech();

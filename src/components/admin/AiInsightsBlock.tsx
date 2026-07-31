@@ -26,6 +26,9 @@ interface Props {
   contactsCount: number;
 }
 
+/**
+ * Bloco de insights gerados por IA para a entidade em contexto.
+ */
 export default function AiInsightsBlock({ stats, contactsCount }: Props) {
   const ai = useAiGenerate();
   const [content, setContent] = useState<string>("");

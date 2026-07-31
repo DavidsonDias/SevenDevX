@@ -88,6 +88,9 @@ function SectionTitle({ icon: Icon, title, kicker }: { icon: any; title: string;
   );
 }
 
+/**
+ * Drawer com o guia de webhooks: eventos, payload e verificação de assinatura HMAC.
+ */
 export default function WebhookGuideDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
   useScrollLock(open);
   const [active, setActive] = useState<Section>("intro");

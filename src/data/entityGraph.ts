@@ -202,6 +202,11 @@ export const ENTITIES: Entity[] = [
   },
 ];
 
+/**
+ * Busca uma entidade do grafo semântico pelo identificador.
+ *
+ * @returns A entidade ou `undefined` quando o id não existe.
+ */
 export function getEntityById(id: string): Entity | undefined {
   return ENTITIES.find((e) => e.id === id);
 }

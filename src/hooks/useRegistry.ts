@@ -49,6 +49,9 @@ export const slugify = (s: string) =>
 
 /* ───────────────── TECH ───────────────── */
 
+/**
+ * Fonte canônica de tecnologias (`tech_registry`) para pickers, cards e showcase.
+ */
 export const useTechRegistry = (opts?: { includeInactive?: boolean }) =>
   useQuery({
     queryKey: ["tech_registry", opts?.includeInactive ? "all" : "active"],
@@ -131,6 +134,9 @@ export const useDeleteTech = () => {
 
 /* ───────────────── TAGS ───────────────── */
 
+/**
+ * Fonte canônica de tags de projeto, com CRUD e invalidação de cache.
+ */
 export const useTagRegistry = (opts?: { includeInactive?: boolean }) =>
   useQuery({
     queryKey: ["tag_registry", opts?.includeInactive ? "all" : "active"],

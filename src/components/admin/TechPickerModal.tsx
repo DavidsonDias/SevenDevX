@@ -42,6 +42,9 @@ interface Props {
   onConfirm: (techIds: string[]) => Promise<void> | void;
 }
 
+/**
+ * Modal visual de escolha de tecnologias, com busca, categorias e ordenação drag-and-drop.
+ */
 export default function TechPickerModal({ open, onClose, alreadySelectedIds, onConfirm }: Props) {
   const [techs, setTechs] = useState<TechRow[]>([]);
   const [loading, setLoading] = useState(false);

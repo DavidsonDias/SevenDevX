@@ -52,6 +52,9 @@ interface LanguageProviderProps {
   children: ReactNode;
 }
 
+/**
+ * Provider de idioma: expõe o idioma ativo e o tradutor para toda a árvore.
+ */
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>(getInitialLanguage);
 

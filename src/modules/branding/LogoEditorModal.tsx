@@ -36,6 +36,9 @@ interface Props {
 
 const PREVIEW_VARIANTS: LogoVariant[] = ["sm", "md", "card", "marketplace", "hero"];
 
+/**
+ * Editor de logo: upload, override de cor e geração de variações.
+ */
 export default function LogoEditorModal({ open, provider, onClose }: Props) {
   useScrollLock(open);
   const { overrides, setOverride, resetOverride } = useLogoOverrides();

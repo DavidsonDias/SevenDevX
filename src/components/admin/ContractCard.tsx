@@ -71,6 +71,9 @@ const STATUS: Record<string, { label: string; cls: string }> = {
 
 
 
+/**
+ * Card de contrato com status, valor, versões e ações rápidas.
+ */
 export default function ContractCard({ entity, id, data, aiContext, entityName, onChange }: Props) {
   const { toast } = useToast();
   const ai = useAiGenerate();

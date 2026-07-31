@@ -36,6 +36,12 @@ interface Props {
   onClose: () => void;
 }
 
+/**
+ * Modal de detalhe de projeto do portfólio, com galeria, stack e links públicos.
+ *
+ * @param project - Projeto exibido; `null` mantém o modal fechado.
+ * @param onClose - Fecha o modal.
+ */
 export default function ProjectModal({ project, onClose }: Props) {
   const { t } = useLanguage();
 

@@ -39,6 +39,9 @@ type Category = { id: string; name: string };
 
 const inp = "w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg outline-none focus:border-white/30 text-sm";
 
+/**
+ * Editor de posts do blog com suporte a Markdown, capa, SEO e publicação.
+ */
 export default function BlogPostEditor({ postId, onClose, onSaved }: Props) {
   const { user } = useAuthContext();
   const [loading, setLoading] = useState(!!postId);

@@ -32,6 +32,9 @@ interface Props {
   intro: string;
 }
 
+/**
+ * Índice dos artigos GEO, agrupados por cluster de conteúdo.
+ */
 export function GeoArticleIndex({ basePath, filterCategory, title, intro }: Props) {
   const articles = GEO_ARTICLES.filter((a) => a.category === filterCategory);
   return (
@@ -87,6 +90,9 @@ export function GeoArticleIndex({ basePath, filterCategory, title, intro }: Prop
   );
 }
 
+/**
+ * Página de artigo GEO resolvida pelo slug da rota.
+ */
 export function GeoArticlePage({ basePath }: { basePath: "answers" | "knowledge-base" }) {
   const { slug } = useParams<{ slug: string }>();
   const article = GEO_ARTICLES.find((a) => a.slug === slug);

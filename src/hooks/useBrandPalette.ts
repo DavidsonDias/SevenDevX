@@ -37,6 +37,11 @@ import {
   type BrandTokens,
 } from "@/core/branding/palette-engine";
 
+/**
+ * Resolve a paleta da marca de um logo, reagindo às atualizações do cache global.
+ *
+ * @returns Cores dominantes e estado de carregamento.
+ */
 export function useBrandPalette(slug?: string, fallback = "#ffffff"): BrandTokens {
   const { get } = useLogoOverrides();
   const ov = get(slug);
