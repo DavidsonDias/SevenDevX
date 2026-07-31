@@ -37,6 +37,12 @@ interface Props {
   backFallback?: string;
 }
 
+/**
+ * Shell de layout das páginas do SevenOS: header com auto-hide, menu lateral,
+ * notificações, onboarding e área de conteúdo.
+ *
+ * @param children - Conteúdo da página admin.
+ */
 export const AdminPageShell = ({ title, subtitle, actions, children, backFallback = "/admin" }: Props) => {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();

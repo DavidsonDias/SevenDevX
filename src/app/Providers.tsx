@@ -62,6 +62,11 @@ const queryClient = new QueryClient({
   },
 });
 
+/**
+ * Compõe os providers globais da aplicação (React Query, Auth, i18n, tooltips e toasts).
+ *
+ * @param children - Árvore da aplicação envolvida pelos providers.
+ */
 export default function Providers({ children }: { children: ReactNode }) {
   useEffect(() => { ensureBrandingHydrated(); }, []);
   return (

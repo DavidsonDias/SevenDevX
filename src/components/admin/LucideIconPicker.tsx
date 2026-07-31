@@ -44,6 +44,9 @@ const POPULAR = [
   "Compass", "Map", "MapPin", "Navigation", "Truck", "Plane", "Car",
 ];
 
+/**
+ * Seletor visual de ícones Lucide com busca, usado no CMS de serviços.
+ */
 export default function LucideIconPicker({ value, onChange, color }: Props) {
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");

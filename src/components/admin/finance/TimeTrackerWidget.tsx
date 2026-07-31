@@ -27,6 +27,9 @@ import { useTeamMembers } from "@/hooks/useFinance";
 import { useTimeEntries, useRunningEntry, useStartTimer, useStopTimer, useDeleteTimeEntry } from "@/hooks/useTimeTracking";
 import { formatHours, formatMoney } from "@/lib/money";
 
+/**
+ * Widget de apontamento de horas do projeto (start/stop e lançamento manual).
+ */
 export default function TimeTrackerWidget({ projectId, stageId }: { projectId: string; stageId?: string }) {
   const { data: members = [] } = useTeamMembers();
   const [memberId, setMemberId] = useState<string>("");

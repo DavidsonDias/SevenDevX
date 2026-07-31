@@ -112,6 +112,12 @@ const CONCEPT_TAG_ICONS: Record<string, ElementType> = {
 const normalize = (s: string) =>
   s.toLowerCase().trim().replace(/\s+/g, "-");
 
+/**
+ * Renderiza o ícone de uma tag de projeto a partir do registry de tags.
+ *
+ * @param name - Nome canônico da tag.
+ * @remarks Faz fallback para um ícone genérico quando a tag não existe no registry.
+ */
 export const TagIcon = ({ name, slug, color, size = 14, className = "", iconUrl }: TagIconProps) => {
   if (iconUrl) {
     return (

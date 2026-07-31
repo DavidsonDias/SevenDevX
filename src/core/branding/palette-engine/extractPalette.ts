@@ -20,9 +20,17 @@ const imgCache = new Map<string, string[]>();
 const inflight = new Map<string, Promise<string[]>>();
 const SUB = new Set<() => void>();
 
+/**
+ * Assina notificações de atualização do cache de paletas.
+ *
+ * @returns Função de cancelamento da assinatura.
+ */
 export function subscribePalettes(cb: () => void) { SUB.add(cb); return () => SUB.delete(cb); }
 function notify() { SUB.forEach((cb) => cb()); }
 
+/**
+ * Lê a paleta já extraída para a URL informada, sem disparar novo processamento.
+ */
 export function getCachedPalette(url?: string | null): string[] | undefined {
   if (!url) return undefined;
   return imgCache.get(url);
@@ -93,6 +101,9 @@ function rankPalette(cands: [number, number, number][], max = 5): string[] {
   return ranked;
 }
 
+/**
+ * Extrai as cores dominantes declaradas no markup SVG.
+ */
 export function extractPaletteFromSvg(svg: string, max = 5): string[] {
   if (!svg) return [];
   const cands: [number, number, number][] = [];
@@ -105,6 +116,11 @@ export function extractPaletteFromSvg(svg: string, max = 5): string[] {
   return rankPalette(cands, max);
 }
 
+/**
+ * Extrai a paleta dominante de uma imagem raster via canvas.
+ *
+ * @remarks Requer CORS anônimo; requisições concorrentes para a mesma URL são deduplicadas.
+ */
 export function extractPaletteFromImage(url: string, max = 5): Promise<string[]> {
   if (imgCache.has(url)) return Promise.resolve(imgCache.get(url)!);
   if (inflight.has(url)) return inflight.get(url)!;

@@ -30,6 +30,9 @@ interface Props {
 const fmtDate = (iso: string) =>
   new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
 
+/**
+ * Linha do tempo das versões de um contrato, com restauração e comparação.
+ */
 export default function ContractVersionHistory({ entityType, entityId, contractText }: Props) {
   const { data: versions = [], isLoading } = useContractVersions(entityType, entityId);
   const [aiOpen, setAiOpen] = useState(false);

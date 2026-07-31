@@ -21,6 +21,9 @@ interface ContainerProps {
   narrow?: boolean;
 }
 
+/**
+ * Container responsivo padrão do site, com larguras máximas e padding consistentes.
+ */
 export function Container({ children, className, narrow }: ContainerProps) {
   return (
     <div

@@ -48,6 +48,9 @@ const TX_EXP = [
   { value: "other_expense", label: "Outras despesas" },
 ];
 
+/**
+ * Bloco financeiro do projeto: orçamento, transações e margem calculada via RPC.
+ */
 export default function ProjectFinanceBlock({ projectId }: { projectId: string }) {
   const { data: budget } = useProjectBudget(projectId);
   const { data: margin } = useProjectMargin(projectId);

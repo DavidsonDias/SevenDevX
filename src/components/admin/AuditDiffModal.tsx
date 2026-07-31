@@ -36,6 +36,9 @@ interface Props {
   onClose: () => void;
 }
 
+/**
+ * Modal que exibe o diff entre os valores antigos e novos de um registro de auditoria.
+ */
 export default function AuditDiffModal({ entry, onClose }: Props) {
   useScrollLock(!!entry);
   if (!entry) return null;

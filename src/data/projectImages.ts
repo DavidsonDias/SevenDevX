@@ -78,4 +78,7 @@ export const resolveProjectImage = (cover?: string | null): string => {
   return cover;
 };
 
+/**
+ * Chaves aceitas no prefixo `local:` das imagens de projeto.
+ */
 export const LOCAL_IMAGE_KEYS = Object.keys(LOCAL_IMAGE_MAP);

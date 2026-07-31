@@ -63,6 +63,15 @@ export const useAuthContext = () => {
   return ctx;
 };
 
+/**
+ * Provider da sessão autenticada e do papel administrativo.
+ *
+ * @remarks
+ * O listener `onAuthStateChange` é registrado antes de `getSession()` e a checagem
+ * de papel roda fora do callback, evitando deadlock do cliente Supabase.
+ *
+ * @security `isAdmin` deriva sempre da RPC `has_role`, nunca de storage local.
+ */
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);

@@ -107,6 +107,9 @@ function MarketplaceCard({
   );
 }
 
+/**
+ * Marketplace de providers: busca, filtro por categoria e início da conexão.
+ */
 export default function IntegrationMarketplaceModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   useScrollLock(open);
   const qc = useQueryClient();

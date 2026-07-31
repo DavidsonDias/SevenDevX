@@ -27,6 +27,9 @@ interface Props {
   onChange: (clientId: string | null) => void;
 }
 
+/**
+ * Seletor de cliente com busca, usado nos formulários de projeto, contrato e financeiro.
+ */
 export default function ClientPicker({ value, onChange }: Props) {
   const { data: clients = [] } = useClients();
   const upsert = useUpsertClient();

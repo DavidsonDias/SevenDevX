@@ -707,6 +707,9 @@ export interface Translations {
   };
 }
 
+/**
+ * Dicionário de traduções por idioma (pt/en/es).
+ */
 export const translations: Record<Language, Translations> = {
   // 🇧🇷 Português (Brasil)
   pt: {

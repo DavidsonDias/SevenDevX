@@ -38,6 +38,9 @@ const stateColor: Record<string, string> = {
   CANCELED: "bg-zinc-500/15 text-zinc-300 border-zinc-500/30",
 };
 
+/**
+ * Integrações externas vinculadas ao projeto, com status de conexão.
+ */
 export default function ProjectIntegrationsBlock({ projectId, initial }: Props) {
   const qc = useQueryClient();
   const [githubRepo, setGithubRepo] = useState(initial.github_repo ?? "");

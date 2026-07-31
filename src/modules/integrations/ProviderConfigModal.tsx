@@ -37,6 +37,11 @@ interface Props {
 
 type SecretStatus = Record<string, { set: boolean; preview?: string }>;
 
+/**
+ * Configuração de um provider externo.
+ *
+ * @security O valor bruto dos segredos nunca retorna ao frontend — apenas metadata mascarada.
+ */
 export default function ProviderConfigModal({ provider, open, onClose, onOpenGuide }: Props) {
   const qc = useQueryClient();
   useScrollLock(open);

@@ -83,6 +83,9 @@ const addToRemoveQueue = (toastId: string) => {
   toastTimeouts.set(toastId, timeout);
 };
 
+/**
+ * Reducer da fila de toasts (adicionar, atualizar, dispensar e remover).
+ */
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
     case "ADD_TOAST":

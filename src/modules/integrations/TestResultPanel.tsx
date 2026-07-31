@@ -18,6 +18,9 @@ import { motion } from "framer-motion";
 import { CheckCircle2, XCircle, Clock } from "lucide-react";
 import type { ConnectionTestResult } from "@/hooks/useIntegrations";
 
+/**
+ * Exibe o resultado normalizado do teste de conexão de um provider.
+ */
 export default function TestResultPanel({ result }: { result: ConnectionTestResult }) {
   return (
     <motion.div

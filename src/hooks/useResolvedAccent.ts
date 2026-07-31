@@ -21,6 +21,9 @@
 import { useLogoOverrides } from "./useLogoOverrides";
 import { useExtractedColor } from "./useExtractedColor";
 
+/**
+ * Resolve a cor de destaque efetiva de uma entidade (override manual ou paleta extraída).
+ */
 export function useResolvedAccent(slug?: string, fallback?: string): string {
   const { get } = useLogoOverrides();
   const ov = get(slug);

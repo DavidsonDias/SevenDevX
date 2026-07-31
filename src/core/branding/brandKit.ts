@@ -36,6 +36,11 @@ function contrastFg(hex: string): string {
   return yiq >= 140 ? "#0a0a0a" : "#ffffff";
 }
 
+/**
+ * Gera o SVG de monograma da marca a partir das iniciais e da cor de destaque.
+ *
+ * @returns Markup SVG pronto para download ou inline.
+ */
 export function buildMonogramSvg(name: string, color: string, size = 512, rounded = true): string {
   const fg = contrastFg(color);
   const initials = getInitials(name);
@@ -111,6 +116,11 @@ export interface BrandKitOptions {
   customSvg?: string; // override the monogram with a real SVG (e.g. official logo)
 }
 
+/**
+ * Empacota o brand kit (logos, paleta, tokens e guia) em um arquivo ZIP.
+ *
+ * @returns Blob do ZIP gerado no browser.
+ */
 export async function generateBrandKitZip(opts: BrandKitOptions): Promise<{ blob: Blob; filename: string }> {
   const { name, color, slug } = opts;
   const baseSvg = opts.customSvg && opts.customSvg.trim().startsWith("<svg")

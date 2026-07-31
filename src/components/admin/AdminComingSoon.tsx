@@ -29,6 +29,9 @@ interface Props {
   phase: number;
 }
 
+/**
+ * Placeholder padronizado para módulos admin ainda não disponíveis.
+ */
 export default function AdminComingSoon({ title, subtitle, icon: Icon, features, phase }: Props) {
   return (
     <AdminPageShell title={title} subtitle={subtitle}>

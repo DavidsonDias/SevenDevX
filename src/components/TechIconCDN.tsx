@@ -117,6 +117,11 @@ const slugToComponentName = (slug: string): string => {
   return "Si" + cased;
 };
 
+/**
+ * Renderiza o logo oficial de uma tecnologia via CDN, com fallback local e monograma.
+ *
+ * @remarks Fonte canônica de ícones de stack: `tech_registry` → `useRegistry` → este componente.
+ */
 export const TechIconCDN = ({ slug, name, color, size = 20, className = "", iconUrl }: TechIconCDNProps) => {
   // 1) Custom uploaded icon takes priority
   if (iconUrl) {

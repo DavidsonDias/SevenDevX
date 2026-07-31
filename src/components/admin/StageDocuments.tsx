@@ -36,6 +36,9 @@ interface Props {
   interactions?: any[];
 }
 
+/**
+ * Lista e gerencia os documentos vinculados a uma etapa do projeto.
+ */
 export default function StageDocuments({ projectId, stage, project, client, interactions }: Props) {
   const { data: docs = [] } = useStageDocuments(stage?.id);
   const upsert = useUpsertDocument();

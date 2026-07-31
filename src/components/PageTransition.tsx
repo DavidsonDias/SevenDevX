@@ -51,6 +51,11 @@ const pageVariants = {
   },
 };
 
+/**
+ * Aplica a transição cinematográfica padrão (fade + scale) entre rotas.
+ *
+ * @param children - Conteúdo da rota animada.
+ */
 export const PageTransition = ({ children }: PageTransitionProps) => {
   const location = useLocation();
 

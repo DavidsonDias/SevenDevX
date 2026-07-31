@@ -15,7 +15,13 @@
  * 🧱 contractBuilder — tipos, máscaras e cálculos do Contract Builder profissional.
  */
 
+/**
+ * Formas de pagamento aceitas em contratos.
+ */
 export type PaymentMethod = "pix" | "boleto" | "transferencia" | "cartao";
+/**
+ * Modalidades de entrega do serviço contratado.
+ */
 export type DeliveryType = "remoto" | "presencial" | "hibrido";
 
 export interface ContractConfig {
@@ -144,6 +150,11 @@ export interface PricingOutput {
   weeks_estimate: number;
 }
 
+/**
+ * Calcula o preço estimado do projeto a partir de tipo, complexidade e recursos.
+ *
+ * @returns Total e o detalhamento por item que compõe o valor.
+ */
 export const estimatePrice = ({ type, complexity, features }: PricingInput): PricingOutput => {
   const base = BASE_PRICE[type] * COMPLEXITY_MULT[complexity];
   const breakdown: PricingOutput["breakdown"] = [

@@ -32,6 +32,9 @@ interface Props {
   onChange: (next: string[]) => void;
 }
 
+/**
+ * Seleção múltipla de tags a partir do registry, com criação inline.
+ */
 export const TagMultiSelect = ({ value, onChange }: Props) => {
   const { data: registry = [], isLoading } = useTagRegistry();
   const createTag = useCreateTag();

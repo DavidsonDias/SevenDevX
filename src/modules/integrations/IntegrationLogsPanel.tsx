@@ -44,6 +44,9 @@ const LEVEL_COLOR: Record<string, string> = {
   debug: "text-sky-300 border-sky-500/30 bg-sky-500/5",
 };
 
+/**
+ * Painel de logs de uma integração, com filtro por status e detalhe da requisição.
+ */
 export default function IntegrationLogsPanel({ providerId }: { providerId: string }) {
   const [logs, setLogs] = useState<Log[]>([]);
   const [loading, setLoading] = useState(true);
