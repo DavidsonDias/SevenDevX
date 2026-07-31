@@ -134,6 +134,8 @@ export const useIntegrations = () => {
   const qc = useQueryClient();
   const [lastResult, setLastResult] = useState<Record<string, ConnectionTestResult | undefined>>({});
 
+  // Realtime: outro admin (ou uma edge function) pode alterar o provider.
+  // Sem isso o painel exibiria health_status defasado até o próximo refetch.
   useEffect(() => {
     const ch = supabase
       .channel("integrations-realtime")
