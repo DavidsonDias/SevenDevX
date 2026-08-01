@@ -12,6 +12,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const DRY = process.argv.includes("--dry");
+const CHECK = process.argv.includes("--check");
 const ROOTS = ["src", "supabase/functions", "scripts"];
 const EXT = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs"]);
 const MIN_LINES = 80;
