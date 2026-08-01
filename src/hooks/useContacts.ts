@@ -18,11 +18,19 @@
   * SevenDevX Enterprise Edition
   */
  
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
  import { useState } from "react";
  import { supabase } from "@/integrations/supabase/client";
  import { useToast } from "@/hooks/use-toast";
  import type { Database } from "@/integrations/supabase/types";
  
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
  type ContactInsert = Database["public"]["Tables"]["contacts"]["Insert"];
  type ContactStatus = Database["public"]["Enums"]["contact_status"];
  
@@ -37,6 +45,10 @@
    source?: string;
  }
  
+// ============================================================================
+// 🪝 HOOK IMPLEMENTATION
+// ============================================================================
+
  export const useContacts = () => {
    const { toast } = useToast();
    const [isSubmitting, setIsSubmitting] = useState(false);
@@ -123,4 +135,8 @@
    };
  };
  
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
+
  export default useContacts;
