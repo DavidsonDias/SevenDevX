@@ -10,7 +10,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "docs:check": "node scripts/docs-check.mjs",
-    "docs:lint": "node scripts/docs-check.mjs --lint"
+    "docs:lint": "node scripts/docs-check.mjs --lint",
+    "docs:sections": "node scripts/apply-sections.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
