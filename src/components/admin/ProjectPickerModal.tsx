@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🎯 ProjectPickerModal — Visual picker for projects to feature on the Site Creation page
  * Reads from public.projects, no duplication of data.
@@ -25,6 +29,10 @@ import { resolveProjectImage } from "@/data/projectImages";
 import TechIconCDN from "@/components/TechIconCDN";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sb = supabase as any;
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 export type PickerProject = {
   id: string;
@@ -44,6 +52,10 @@ interface Props {
   alreadySelectedIds: string[];
   onConfirm: (projectIds: string[]) => Promise<void> | void;
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Modal de seleção de projetos com preview de capa e stack, usado no CMS de páginas.

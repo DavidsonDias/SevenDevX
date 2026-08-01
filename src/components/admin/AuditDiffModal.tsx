@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🔬 AuditDiffModal — exibe diff campo a campo de uma entrada de audit_log.
  */
@@ -20,6 +24,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, ArrowRight, User as UserIcon, Clock } from "lucide-react";
 import type { AuditEntry } from "@/hooks/useAuditLog";
 import { useScrollLock } from "@/hooks/useScrollLock";
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 const fmt = (v: unknown): string => {
   if (v === null || v === undefined) return "—";
@@ -35,6 +43,10 @@ interface Props {
   entry: AuditEntry | null;
   onClose: () => void;
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Modal que exibe o diff entre os valores antigos e novos de um registro de auditoria.

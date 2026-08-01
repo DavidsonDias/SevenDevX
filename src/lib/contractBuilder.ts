@@ -15,6 +15,10 @@
  * 🧱 contractBuilder — tipos, máscaras e cálculos do Contract Builder profissional.
  */
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 /**
  * Formas de pagamento aceitas em contratos.
  */
@@ -50,6 +54,10 @@ export interface ContractConfig {
   extras: string;
 }
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 export const DEFAULT_CONTRACT_CONFIG: ContractConfig = {
   project_name: "",
   project_scope: "",
@@ -70,6 +78,10 @@ export const DEFAULT_CONTRACT_CONFIG: ContractConfig = {
   foro: "São Paulo/SP",
   extras: "",
 };
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 /* ───────── Cálculos ───────── */
 export const recalcInstallments = (cfg: ContractConfig): ContractConfig => {

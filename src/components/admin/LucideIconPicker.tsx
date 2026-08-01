@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🎨 LucideIconPicker — seletor visual de ícones Lucide com busca.
  * Mostra preview do ícone atual + popover com grid pesquisável (toda a biblioteca).
@@ -21,11 +25,19 @@ import { useMemo, useState } from "react";
 import { icons, Search, X } from "lucide-react";
 import LucideIconRender, { resolveLucideIcon } from "@/components/ui/LucideIconRender";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface Props {
   value?: string | null;
   onChange: (name: string) => void;
   color?: string;
 }
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 // Curated "popular" subset shown by default (fast first paint)
 const POPULAR = [
@@ -43,6 +55,10 @@ const POPULAR = [
   "Plug", "Workflow", "GitBranch", "Github", "Terminal", "Bug", "TestTube",
   "Compass", "Map", "MapPin", "Navigation", "Truck", "Plane", "Car",
 ];
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Seletor visual de ícones Lucide com busca, usado no CMS de serviços.

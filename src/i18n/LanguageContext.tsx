@@ -16,15 +16,27 @@
  * Gerenciamento global do idioma da aplicação
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { Language, translations, Translations } from "./translations";
 import { safeStorage } from "@/utils/safeStorage";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: Translations;
 }
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
@@ -51,6 +63,10 @@ const getInitialLanguage = (): Language => {
 interface LanguageProviderProps {
   children: ReactNode;
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Provider de idioma: expõe o idioma ativo e o tradutor para toda a árvore.

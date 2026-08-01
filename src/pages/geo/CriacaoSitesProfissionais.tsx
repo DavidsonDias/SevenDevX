@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { motion, useMotionValue, useSpring, useTransform, useInView } from "framer-motion";
@@ -33,6 +37,10 @@ import { useSitePage } from "@/hooks/useSitePage";
 import { projects as fallbackProjects } from "@/data/projects";
 import { resolveProjectImage } from "@/data/projectImages";
 import { TechIconCDN } from "@/components/TechIconCDN";
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const CANONICAL = "https://www.sevendevx.com/criacao-de-sites-profissionais";
 
@@ -77,6 +85,10 @@ const FB_FAQ = [
   { question: "Vocês cuidam de SEO e hospedagem também?", answer: "Sim. Entregamos SEO técnico, deploy em CDN e monitoramento contínuo." },
   { question: "O site é responsivo e otimizado para mobile?", answer: "Todos os projetos são mobile-first com PWA opcional e acessibilidade WCAG AA." },
 ];
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 function Counter({ to, suffix = "", prefix = "" }: { to: number; suffix?: string; prefix?: string }) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -127,6 +139,10 @@ function BrowserMockup3D({ src, alt, url }: { src: string; alt: string; url: str
     </div>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function CriacaoSitesProfissionais() {
   const { data } = useSitePage();

@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 👥 ClientsAdmin — CRM de clientes (perfil + timeline + IA + projetos + contrato + anexos)
  */
@@ -38,6 +42,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from "react-markdown";
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const STATUS_COLORS: Record<string, string> = {
   lead: "bg-blue-500/10 text-blue-400 border-blue-500/30",
   qualified: "bg-purple-500/10 text-purple-400 border-purple-500/30",
@@ -48,6 +56,10 @@ const STATUS_COLORS: Record<string, string> = {
 const STATUS_LABEL: Record<string, string> = {
   lead: "Lead", qualified: "Qualificado", active: "Ativo", finished: "Finalizado", lost: "Perdido",
 };
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 export default function ClientsAdmin() {
   const { data: clients = [], isLoading } = useClients();
@@ -443,6 +455,10 @@ function ClientAiSummary({ client, interactions, ai, upsert, toast }: any) {
     </div>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /* ─────────── projetos vinculados ao cliente ─────────── */
 function ClientProjects({ clientId }: { clientId: string }) {

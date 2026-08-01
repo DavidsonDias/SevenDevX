@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🔄 PWAUpdatePrompt v2 — SevenDevX Enterprise
  * ─────────────────────────────────────────────
@@ -22,6 +26,10 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, X, ArrowUpRight } from "lucide-react";
 
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
+
 const isPreview = () => {
   try { if (window.self !== window.top) return true; } catch { return true; }
   const h = window.location.hostname;
@@ -31,6 +39,10 @@ const isPreview = () => {
     h.includes("lovable.app")
   );
 };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 const PWAUpdatePrompt = () => {
   const [show, setShow] = useState(false);
@@ -149,5 +161,9 @@ const PWAUpdatePrompt = () => {
     </AnimatePresence>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default PWAUpdatePrompt;

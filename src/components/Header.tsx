@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, LogOut, Shield, UserCircle } from "lucide-react";
@@ -19,6 +23,10 @@ import logo from "@/assets/logo.svg";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useAuthContext } from "@/contexts/AuthContext";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -257,5 +265,9 @@ const Header = () => {
     </>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default Header;

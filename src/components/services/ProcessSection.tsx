@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🧭 ProcessSection — How It Works (Enterprise v3.0)
  * - 6 etapas expansíveis (Descoberta → Lançamento)
@@ -25,6 +29,10 @@ import { ChevronDown, Clock, Package, Wrench, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { useDefaultProcessTemplate } from "@/hooks/useEcosystem";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 const ProcessSection = () => {
   const { t } = useLanguage();
@@ -282,5 +290,9 @@ const ProcessSection = () => {
     </section>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default ProcessSection;

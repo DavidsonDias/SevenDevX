@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📦 AppInstallerButton v4 — SevenDevX Enterprise
  * ─────────────────────────────────────────────────
@@ -25,10 +29,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, ArrowUpRight, Share, PlusSquare, Download } from "lucide-react";
 import logoSevenDevX from "@/assets/logo.svg";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const KEYS = {
   DISMISSED: "sdx_pwa_dismissed_v4",
@@ -44,6 +56,10 @@ const store = {
   get: (k: string) => { try { return localStorage.getItem(k) ?? sessionStorage.getItem(k); } catch { return null; } },
   set: (k: string, v: string) => { try { localStorage.setItem(k, v); } catch { try { sessionStorage.setItem(k, v); } catch {} } },
 };
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent);
 const isStandalone = () =>
@@ -62,6 +78,10 @@ const isPreview = () => {
   const h = window.location.hostname;
   return h.includes("id-preview--") || h.includes("lovableproject.com") || h.includes("lovable.app");
 };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function AppInstallerButton() {
   const [prompt, setPrompt] = useState<BeforeInstallPromptEvent | null>(null);

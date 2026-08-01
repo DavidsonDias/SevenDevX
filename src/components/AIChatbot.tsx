@@ -16,6 +16,10 @@
  * SevenDevX Enterprise Edition
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
@@ -33,6 +37,10 @@ import ReactMarkdown from "react-markdown";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { getOrCreateSafeId } from "@/utils/safeStorage";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface Message {
   id: string;
   role: "user" | "assistant";
@@ -40,7 +48,15 @@ interface Message {
   timestamp: Date;
 }
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-chat`;
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 // Generate unique visitor ID
 const getVisitorId = (): string => {
@@ -51,6 +67,10 @@ const getVisitorId = (): string => {
 const getSessionId = (): string => {
   return getOrCreateSafeId("sevendevx_session_id", "session", "session");
 };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export const AIChatbot = () => {
   const { t } = useLanguage();
@@ -478,5 +498,9 @@ export const AIChatbot = () => {
     </>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default AIChatbot;

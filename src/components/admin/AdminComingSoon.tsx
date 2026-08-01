@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🏗️ AdminComingSoon — placeholder enterprise para páginas em construção
  */
@@ -21,6 +25,10 @@ import { Sparkles, type LucideIcon } from "lucide-react";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import GlassCard from "@/components/GlassCard";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface Props {
   title: string;
   subtitle?: string;
@@ -28,6 +36,10 @@ interface Props {
   features: string[];
   phase: number;
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Placeholder padronizado para módulos admin ainda não disponíveis.

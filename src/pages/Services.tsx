@@ -631,6 +631,10 @@
  * ═════════════════════════════════════════════════════════════════
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -653,6 +657,10 @@ import { useServicesPageServices } from "@/hooks/useEcosystem";
 // Resolver dinâmico de ícones lucide (qualquer nome, com fallback)
 import { resolveLucideIcon } from "@/components/ui/LucideIconRender";
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 // Map slug -> default cover (fallback de imagem)
 const COVER_BY_SLUG: Record<string, string> = {
   "desenvolvimento-web-personalizado": serviceDev,
@@ -668,6 +676,10 @@ const COVER_BY_SLUG: Record<string, string> = {
   "ia": serviceConsulting,
   "mobile": serviceDev,
 };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 const Services = () => {
   const { t, language } = useLanguage();
@@ -1079,5 +1091,9 @@ const Services = () => {
     </>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default Services;

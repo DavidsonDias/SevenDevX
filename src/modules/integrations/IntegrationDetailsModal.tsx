@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🔍 IntegrationDetailsModal — Painel operacional completo de um provider
  */
@@ -28,7 +32,15 @@ import { findCatalogProvider } from "./providerCatalog";
 import { toast } from "sonner";
 import { useScrollLock } from "@/hooks/useScrollLock";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 type Tab = "overview" | "logs" | "credentials" | "webhooks";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function IntegrationDetailsModal({
   provider, onClose,

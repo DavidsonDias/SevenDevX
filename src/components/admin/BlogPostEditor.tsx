@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📝 BlogPostEditor — modal full editor para posts do blog.
  * Cobre: título, slug, excerpt, conteúdo (markdown/HTML textarea), capa (upload),
@@ -24,6 +28,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import IconUploader from "@/components/admin/IconUploader";
 import { useAuthContext } from "@/contexts/AuthContext";
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 const slugify = (s: string) =>
   s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
@@ -38,6 +46,10 @@ interface Props {
 type Category = { id: string; name: string };
 
 const inp = "w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg outline-none focus:border-white/30 text-sm";
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 /**
  * Editor de posts do blog com suporte a Markdown, capa, SEO e publicação.
@@ -215,6 +227,10 @@ export default function BlogPostEditor({ postId, onClose, onSaved }: Props) {
     </div>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 const Field = ({ label, children }: any) => (
   <div>

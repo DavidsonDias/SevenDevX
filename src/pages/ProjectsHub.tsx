@@ -18,6 +18,10 @@
  * Hero = featured_level=primary | Featured = secondary | Sorted by featured DESC, order ASC.
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useState, useMemo, useCallback, memo, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ExternalLink, Github, Sparkles, ArrowLeft, X } from "lucide-react";
@@ -40,6 +44,10 @@ import { useScrollLock } from "@/hooks/useScrollLock";
 import AppLoaderOrbital from "@/components/ui/AppLoaderOrbital";
 import { TechIconCDN } from "@/components/TechIconCDN";
 import { TagIcon } from "@/components/TagIcon";
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 // ─── Project Modal with layoutId ───
 const ProjectModal = memo(({ project, onClose, isPrimary, isFeatured }: {
@@ -378,6 +386,10 @@ ProjectCard.displayName = "ProjectCard";
 // ─── Page ───
 const FILTER_TAGS = ["React", "TypeScript", "Node.js", "SaaS", "3D", "AI", "PWA"];
 
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
+
 const ProjectsHub = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
@@ -608,5 +620,9 @@ const ProjectsHub = () => {
     </>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default ProjectsHub;

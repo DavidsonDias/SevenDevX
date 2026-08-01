@@ -32,6 +32,10 @@
 /// <reference lib="webworker" />
 /* eslint-disable no-restricted-globals */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { precacheAndRoute, cleanupOutdatedCaches } from "workbox-precaching";
 import { registerRoute, setDefaultHandler, setCatchHandler } from "workbox-routing";
 import {
@@ -49,6 +53,11 @@ declare const self: ServiceWorkerGlobalScope & {
 
 /* ═══════════════════════════════════════════════════════════════════
    📌 CONFIGURAÇÕES GLOBAIS
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
    ═══════════════════════════════════════════════════════════════════ */
 const VERSION = "8.6.0";
 const LOG_PREFIX = `[SevenDevX SW v${VERSION}]`;
@@ -79,6 +88,11 @@ const cacheable = new CacheableResponsePlugin({ statuses: [0, 200] });
 
 /* ═══════════════════════════════════════════════════════════════════
    🧠 QUOTA MONITORING
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
+
    ═══════════════════════════════════════════════════════════════════ */
 async function monitorQuota() {
   if (!("storage" in navigator)) return;

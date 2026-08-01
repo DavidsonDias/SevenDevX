@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📜 IntegrationLogsPanel — terminal-style realtime log viewer
  * - Filtros por severity
@@ -23,6 +27,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { AlertTriangle, CheckCircle2, ChevronRight, Loader2, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 type Log = {
   id: string;
@@ -37,12 +45,20 @@ type Log = {
   created_at: string;
 };
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const LEVEL_COLOR: Record<string, string> = {
   info: "text-emerald-300 border-emerald-500/30 bg-emerald-500/5",
   warn: "text-amber-300 border-amber-500/30 bg-amber-500/5",
   error: "text-red-300 border-red-500/30 bg-red-500/5",
   debug: "text-sky-300 border-sky-500/30 bg-sky-500/5",
 };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Painel de logs de uma integração, com filtro por status e detalhe da requisição.

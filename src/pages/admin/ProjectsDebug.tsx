@@ -19,6 +19,10 @@
  * Displays totals, broken/missing data and rendering counts.
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { AlertTriangle, CheckCircle2, Loader2 } from "lucide-react";
@@ -29,6 +33,10 @@ import { Badge } from "@/components/ui/badge";
 import SEOHead from "@/components/SEOHead";
 import type { DbProject } from "@/hooks/useProjects";
 import AdminPageShell from "@/components/admin/AdminPageShell";
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 const ProjectsDebug = () => {
   const navigate = useNavigate();
@@ -177,6 +185,10 @@ const Stat = ({ label, value, highlight, warn }: { label: string; value: number;
   </div>
 );
 
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
+
 const IssueGroup = <T,>({
   title,
   items,
@@ -204,5 +216,9 @@ const IssueGroup = <T,>({
     )}
   </div>
 );
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default ProjectsDebug;

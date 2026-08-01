@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📘 AutomationGuideDrawer — Guia completo enterprise de Automações (WHEN → IF → THEN) no SevenOS.
  * Frontend-only: conceitos, triggers, conditions, actions, templates prontos, troubleshooting, FAQs.
@@ -24,9 +28,17 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useScrollLock } from "@/hooks/useScrollLock";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 type Section =
   | "intro" | "anatomia" | "triggers" | "conditions" | "actions"
   | "templates" | "criar" | "troubleshooting" | "faq";
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const SECTIONS: { id: Section; label: string; icon: any }[] = [
   { id: "intro",         label: "Visão geral",       icon: BookOpen },
@@ -62,6 +74,10 @@ const ACTIONS = [
   { icon: Clock,         label: "Aguardar (delay)",   sample: "Pausa o fluxo por N minutos/horas antes do próximo step." },
   { icon: Sparkles,      label: "IA (7AI)",           sample: "Classificar, resumir ou gerar resposta com Lovable AI." },
 ];
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 function CodeBlock({ children, lang = "json" }: { children: string; lang?: string }) {
   const [copied, setCopied] = useState(false);
@@ -144,6 +160,10 @@ const TEMPLATES = [
     },
   },
 ];
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Drawer com o guia de uso das automações e exemplos de gatilhos e ações.

@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📚 useRegistry — Tech & Tag registry hooks (Enterprise)
  * Centralized catalog backed by Supabase tables `tech_registry` and `tag_registry`.
@@ -20,6 +24,10 @@
  */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 export interface TechEntry {
   id: string;
@@ -44,10 +52,18 @@ export interface TagEntry {
   is_active: boolean;
 }
 
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
+
 export const slugify = (s: string) =>
   s.toLowerCase().trim().replace(/\./g, "dot").replace(/[^a-z0-9]+/g, "").slice(0, 60);
 
 /* ───────────────── TECH ───────────────── */
+
+// ============================================================================
+// 🪝 HOOK IMPLEMENTATION
+// ============================================================================
 
 /**
  * Fonte canônica de tecnologias (`tech_registry`) para pickers, cards e showcase.

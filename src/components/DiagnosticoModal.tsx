@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🩺 DiagnosticoModal — formulário multi-step para diagnóstico gratuito.
  * Reutilizado no Hero e no CTA final. Cria contact + registro em site_page_diagnostics.
@@ -24,6 +28,10 @@ import { useScrollLock } from "@/hooks/useScrollLock";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sb = supabase as any;
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 type Props = {
   open: boolean;
@@ -51,6 +59,10 @@ type FormState = {
   consent: boolean;
 };
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const STEPS = [
   { id: "contact", title: "Contato", fields: ["name", "email", "phone"] },
   { id: "business", title: "Negócio", fields: ["company", "segment"] },
@@ -63,6 +75,10 @@ const STEPS = [
 const PROJECT_TYPES = ["Landing page", "Site institucional", "E-commerce", "Sistema/SaaS", "Portal", "Outro"];
 const BUDGETS = ["Até R$ 5k", "R$ 5-15k", "R$ 15-40k", "R$ 40k+", "Não sei ainda"];
 const DEADLINES = ["Urgente (até 15 dias)", "Rápido (15-30 dias)", "Normal (1-2 meses)", "Flexível (3+ meses)"];
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 /**
  * Modal do diagnóstico gratuito: coleta as respostas do visitante em etapas e
@@ -296,6 +312,11 @@ function TextArea({ label, value, onChange, placeholder }: { label: string; valu
     </div>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
+
 function Select({ label, value, onChange, options }: { label: string; value: string; onChange: (v: string) => void; options: string[]; }) {
   return (
     <div>

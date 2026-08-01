@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🔎 Command Palette (⌘K) — busca cross-entidade + ações rápidas
  * Enterprise-grade: navegação, criação, atalhos, busca de clientes/projetos/leads.
@@ -25,6 +29,10 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 interface Result {
   entity: "client" | "project" | "contact" | "service" | "post";
@@ -45,12 +53,20 @@ interface Action {
   keywords?: string;
 }
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const ENTITY_ICONS: Record<Result["entity"], any> = {
   client: Users, project: FolderKanban, contact: Mail, service: Wrench, post: FileText,
 };
 const ENTITY_LABELS: Record<Result["entity"], string> = {
   client: "Cliente", project: "Projeto", contact: "Lead", service: "Serviço", post: "Post",
 };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function GlobalSearch() {
   const navigate = useNavigate();

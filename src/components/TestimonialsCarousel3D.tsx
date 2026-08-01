@@ -15,6 +15,10 @@
  * TestimonialsCarousel3D — Carousel 3D com glassmorphism e i18n
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useState, useRef, useCallback, useEffect } from "react";
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import { Star, Quote, ChevronLeft, ChevronRight, Shield } from "lucide-react";
@@ -28,6 +32,10 @@ import avatarAna from "@/assets/avatar-ana.jpg";
 import avatarPedro from "@/assets/avatar-pedro.jpg";
 import avatarLucia from "@/assets/avatar-lucia.jpg";
 import avatarRoberto from "@/assets/avatar-roberto.jpg";
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const CONFIG = {
   PERSPECTIVE: 1200,
@@ -50,6 +58,10 @@ interface CardProps {
   onClick: () => void;
   t: any;
 }
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 const TestimonialCard3D = ({ testimonial, avatarIndex, index, activeIndex, onClick, t }: CardProps) => {
   const distance = index - activeIndex;
@@ -117,6 +129,10 @@ const TestimonialCard3D = ({ testimonial, avatarIndex, index, activeIndex, onCli
     </motion.div>
   );
 };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 const TestimonialsCarousel3D = () => {
   const { language, t } = useLanguage();
@@ -220,5 +236,9 @@ const TestimonialsCarousel3D = () => {
     </section>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default TestimonialsCarousel3D;

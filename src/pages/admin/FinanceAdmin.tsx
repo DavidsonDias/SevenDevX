@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 💰 FinanceAdmin — dashboard financeiro do SevenOS.
  * Receitas, despesas, lucro, MRR previsto, multi-moeda (BRL/USD/EUR), time + custo de time.
@@ -41,6 +45,10 @@ import {
 import { useTimeEntries } from "@/hooks/useTimeTracking";
 import { CurrencyCode, formatMoney, formatHours } from "@/lib/money";
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const TX_CATEGORIES_INCOME = [
   { value: "contract", label: "Contrato" },
   { value: "maintenance", label: "Manutenção" },
@@ -58,6 +66,10 @@ const TX_CATEGORIES_EXPENSE = [
   { value: "salary", label: "Salário/PRO-LABORE" },
   { value: "other_expense", label: "Outras despesas" },
 ];
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 /* ───────── KPI CARD ───────── */
 const Kpi = ({ icon: Icon, label, value, accent = "text-white" }: any) => (
@@ -262,6 +274,10 @@ function TeamMembersManager() {
     </Card>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /* ───────── MAIN PAGE ───────── */
 export default function FinanceAdmin() {

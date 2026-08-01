@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📬 ContactCenterAdmin — Inbox de leads (estilo Intercom/HubSpot)
  * Realtime · status · notas internas · conversão em cliente
@@ -26,6 +30,10 @@ import AdminPageShell from "@/components/admin/AdminPageShell";
 import { Inbox, Mail, Phone, Building2, Search, UserCheck, Trash2, Send, Loader2, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 type Contact = {
   id: string;
@@ -44,6 +52,10 @@ type Contact = {
   updated_at: string;
 };
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const STATUS_COLORS: Record<string, string> = {
   new: "bg-blue-500/15 text-blue-300 border-blue-500/30",
   contacted: "bg-amber-500/15 text-amber-300 border-amber-500/30",
@@ -55,6 +67,10 @@ const STATUS_COLORS: Record<string, string> = {
 const STATUS_LABELS: Record<string, string> = {
   new: "Novo", contacted: "Em contato", qualified: "Qualificado", closed: "Fechado", lost: "Perdido",
 };
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 function ContactCenterInner() {
   const qc = useQueryClient();
@@ -353,6 +369,10 @@ function Info({ icon: Icon, label, value }: { icon: any; label: string; value: s
     </div>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function ContactCenterAdmin() {
   return (

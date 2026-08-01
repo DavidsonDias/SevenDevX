@@ -16,6 +16,10 @@
  * Removido GSAP, usando apenas Framer Motion para consistência
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { motion, useInView } from "framer-motion";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -26,6 +30,10 @@ import TechIcon from "./TechIcon";
 import type { Technology } from "@/utils/techData";
 import techBackground from "@/assets/images/tech-background.webp";
 import { useLanguage } from "@/i18n/LanguageContext";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 const TechPreview = () => {
   const { t } = useLanguage();
@@ -237,5 +245,9 @@ const TechPreview = () => {
     </>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default TechPreview;

@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🎨 LogoEditorModal — Editor visual de logos enterprise
  * Permite sobrescrever cor / SVG inline / URL para qualquer provider do catálogo,
@@ -28,13 +32,25 @@ import BrandHalo from "@/components/ui/BrandHalo";
 import { buildBrandTokens, KNOWN_BRAND_PALETTES } from "@/core/branding/palette-engine";
 import type { CatalogProvider } from "@/modules/integrations/providerCatalog";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface Props {
   open: boolean;
   provider: CatalogProvider | null;
   onClose: () => void;
 }
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const PREVIEW_VARIANTS: LogoVariant[] = ["sm", "md", "card", "marketplace", "hero"];
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 /**
  * Editor de logo: upload, override de cor e geração de variações.
@@ -393,6 +409,10 @@ function PreviewSvg({ svg, color, variant, name }: { svg: string; color?: string
     </div>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 function PreviewImg({ url, variant, name }: { url: string; variant: LogoVariant; name: string }) {
   const px = VARIANT_PX[variant];

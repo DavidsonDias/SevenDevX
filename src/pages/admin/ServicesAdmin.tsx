@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🧰 ServicesAdmin — CMS de serviços do site
  */
@@ -26,8 +30,16 @@ import LucideIconPicker from "@/components/admin/LucideIconPicker";
 import IconUploader from "@/components/admin/IconUploader";
 import LucideIconRender from "@/components/ui/LucideIconRender";
 
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
+
 const slugify = (s: string) =>
   s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 export default function ServicesAdmin() {
   const { data: services = [], isLoading } = useAllServices();
@@ -243,6 +255,11 @@ function ServiceModal({ initial, onClose, onSave }: any) {
 }
 
 const inp = "w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg outline-none focus:border-white/30 text-sm";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
+
 const Field = ({ label, children }: any) => (
   <div>
     <label className="text-xs uppercase tracking-wider text-white/50 mb-1 block">{label}</label>

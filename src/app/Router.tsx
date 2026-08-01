@@ -38,6 +38,10 @@
  * ═══════════════════════════════════════════════════════════════════════
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
@@ -49,6 +53,10 @@ import { useAiReferralTracker } from "@/hooks/useAiReferralTracker";
 import MobileBottomNav from "@/modules/layout/MobileBottomNav";
 import GlobalFAB from "@/modules/layout/GlobalFAB";
 import AIChatbot from "@/components/AIChatbot";
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 const Index = lazy(() => import("@/pages/Index"));
 const About = lazy(() => import("@/pages/About"));
@@ -355,6 +363,10 @@ function AnimatedRoutes() {
     </AnimatePresence>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function AppRouter() {
   return (

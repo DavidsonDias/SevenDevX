@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📝 BlogAdmin — gerenciamento de posts do blog.
  */
@@ -24,6 +28,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { Eye, EyeOff, ExternalLink, Trash2, Plus, FileText, Search, Edit2, ImageIcon } from "lucide-react";
 import BlogPostEditor from "@/components/admin/BlogPostEditor";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 type Post = {
   id: string;
@@ -36,6 +44,10 @@ type Post = {
   excerpt: string | null;
   cover_image: string | null;
 };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function BlogAdmin() {
   const [posts, setPosts] = useState<Post[]>([]);

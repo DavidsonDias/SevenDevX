@@ -1,3 +1,7 @@
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🗑️ admin-delete-user — Exclusão real de usuários via service-role.
  * Valida JWT, exige role admin, protege Davidson/SevenDevX e o último admin.
@@ -5,9 +9,22 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const PROTECTED_EMAILS = ["davidson", "sevendevx"];
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
+
 const isProtected = (email?: string | null) =>
   !!email && PROTECTED_EMAILS.some((p) => email.toLowerCase().includes(p));
+
+// ============================================================================
+// 🌐 REQUEST HANDLER
+// ============================================================================
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });

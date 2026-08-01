@@ -17,6 +17,10 @@
  * Consumido por <EntityGraphSchema /> para injetar @graph estruturado sitewide.
  */
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const BASE = "https://www.sevendevx.com";
 
 export type EntityKind =
@@ -201,6 +205,10 @@ export const ENTITIES: Entity[] = [
     relatedIds: ["landing-page", "web-development"],
   },
 ];
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 /**
  * Busca uma entidade do grafo semântico pelo identificador.

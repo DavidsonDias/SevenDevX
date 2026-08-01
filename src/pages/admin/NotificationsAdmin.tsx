@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🔔 NotificationsAdmin — histórico completo com filtros e ações em lote.
  */
@@ -27,6 +31,10 @@ import { ptBR } from "date-fns/locale";
 
 const sevIcon: any = { info: Info, warning: AlertTriangle, error: AlertCircle, success: CheckCircle2 };
 const sevColor: any = { info: "text-sky-300", warning: "text-amber-300", error: "text-red-300", success: "text-emerald-300" };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function NotificationsAdmin() {
   const { items, unread, loading, markRead, markAllRead, remove } = useNotifications(200);

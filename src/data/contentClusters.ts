@@ -17,12 +17,20 @@
  * por links internos e por DefinedTermSet em JSON-LD.
  */
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 export interface ContentCluster {
   id: string;
   hub: { title: string; url: string };
   description: string;
   spokes: { title: string; url: string }[];
 }
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 export const CONTENT_CLUSTERS: ContentCluster[] = [
   {
@@ -80,6 +88,10 @@ export const CONTENT_CLUSTERS: ContentCluster[] = [
     ],
   },
 ];
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 export function buildClusterJsonLd() {
   return CONTENT_CLUSTERS.map((c) => ({

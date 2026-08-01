@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🏗️ SiteCreationAdmin — CMS premium para /criacao-de-sites-profissionais
  * Layout enterprise, mobile-first, tabs com ícones, status card e ações persistentes.
@@ -31,7 +35,15 @@ import { Link } from "react-router-dom";
 import SiteCreationProjectsTab from "@/components/admin/SiteCreationProjectsTab";
 import SiteCreationTechTab from "@/components/admin/SiteCreationTechTab";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 type TabId = "hero" | "projects" | "tech" | "seo" | "diag" | "counts";
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const TABS: { id: TabId; label: string; icon: any }[] = [
   { id: "hero", label: "Hero", icon: Sparkles },
@@ -41,6 +53,10 @@ const TABS: { id: TabId; label: string; icon: any }[] = [
   { id: "diag", label: "Diagnóstico", icon: MessagesSquare },
   { id: "counts", label: "Conteúdo", icon: BarChart3 },
 ];
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 function Field({ label, value, onChange, type = "text", rows }: any) {
   return (
@@ -65,6 +81,10 @@ function SaveButton({ saving, onClick, children }: any) {
     </button>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function SiteCreationAdmin() {
   const { data, loading, reload } = useSitePage();

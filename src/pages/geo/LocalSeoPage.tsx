@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
@@ -24,6 +28,10 @@ import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import NotFound from "@/pages/NotFound";
 import { GEO_PROGRAMMATIC } from "@/data/geoContent";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function LocalSeoPage() {
   const { city } = useParams<{ city: string }>();

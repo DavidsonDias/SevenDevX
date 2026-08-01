@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📱 MobileBottomNav — Tab bar enterprise estilo app nativo
  * Estrutura: Home · Projects · [CENTER FAB] · Integra · Pipeline
@@ -24,6 +28,10 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import RadialActionMenu from "./RadialActionMenu";
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const TABS_LEFT = [
   { to: "/admin", label: "Home", icon: LayoutDashboard, match: (p: string) => p === "/admin" },
   { to: "/admin/projects", label: "Projetos", icon: FolderKanban, match: (p: string) => p.startsWith("/admin/projects") },
@@ -32,6 +40,10 @@ const TABS_RIGHT = [
   { to: "/admin/contact-center", label: "Contatos", icon: Inbox, match: (p: string) => p.startsWith("/admin/contact-center") || p.startsWith("/admin/clients") },
   { to: "/admin/pipeline", label: "Pipeline", icon: GitBranch, match: (p: string) => p.startsWith("/admin/pipeline") },
 ];
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 function TabItem({ tab, active }: { tab: any; active: boolean }) {
   const Icon = tab.icon;
@@ -51,6 +63,10 @@ function TabItem({ tab, active }: { tab: any; active: boolean }) {
     </Link>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function MobileBottomNav() {
   const { pathname } = useLocation();

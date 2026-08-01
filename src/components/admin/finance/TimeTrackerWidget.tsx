@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ⏱️ TimeTrackerWidget — timer start/stop + lista de horas do projeto.
  */
@@ -26,6 +30,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useTeamMembers } from "@/hooks/useFinance";
 import { useTimeEntries, useRunningEntry, useStartTimer, useStopTimer, useDeleteTimeEntry } from "@/hooks/useTimeTracking";
 import { formatHours, formatMoney } from "@/lib/money";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Widget de apontamento de horas do projeto (start/stop e lançamento manual).

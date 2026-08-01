@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🧠 IntegrationMarketplaceModal — Catálogo enterprise com branding real
  */
@@ -27,6 +31,10 @@ import BorderBeam from "@/components/ui/BorderBeam";
 import BrandHalo from "@/components/ui/BrandHalo";
 import { PROVIDER_CATALOG, CATEGORY_LIST, BADGE_META, type CatalogProvider } from "./providerCatalog";
 import { useBrandPalette } from "@/hooks/useBrandPalette";
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 function MarketplaceCard({
   i, isFav, onFav, onAdd, adding,
@@ -106,6 +114,10 @@ function MarketplaceCard({
     </motion.div>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Marketplace de providers: busca, filtro por categoria e início da conexão.

@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 👥 UsersAdmin — Gestão de usuários e papéis (RBAC enterprise)
  */
@@ -28,6 +32,10 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuthContext } from "@/contexts/AuthContext";
 import UserDetailsModal from "@/modules/users/UserDetailsModal";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 type UserRow = {
   user_id: string;
   email: string;
@@ -37,6 +45,10 @@ type UserRow = {
   last_sign_in_at: string | null;
   roles: string[];
 };
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const ALL_ROLES = ["super_admin", "admin", "manager", "moderator", "editor", "viewer", "user"] as const;
 
@@ -49,6 +61,10 @@ const ROLE_COLORS: Record<string, string> = {
   viewer: "bg-white/10 text-white/70 border-white/20",
   user: "bg-white/5 text-white/50 border-white/10",
 };
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 function UsersInner() {
   const qc = useQueryClient();
@@ -202,6 +218,10 @@ function UsersInner() {
     </AdminPageShell>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function UsersAdmin() {
   return (

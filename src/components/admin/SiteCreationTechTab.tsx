@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🧪 SiteCreationTechTab — Manage tech stack shown on /criacao-de-sites-profissionais
  * DnD reorder, toggle visibility, remove, and add via TechPickerModal.
@@ -29,6 +33,10 @@ import TechPickerModal from "./TechPickerModal";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sb = supabase as any;
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 type Row = {
   id: string;
   tech_id: string | null;
@@ -38,6 +46,10 @@ type Row = {
   sort_order: number;
   tech?: { id: string; slug: string; name: string; color: string; category: string | null; icon_url: string | null };
 };
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 function SortableRow({ row, onToggle, onDelete }: {
   row: Row;
@@ -78,6 +90,10 @@ function SortableRow({ row, onToggle, onDelete }: {
     </div>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function SiteCreationTechTab() {
   const [rows, setRows] = useState<Row[]>([]);

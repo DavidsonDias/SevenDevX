@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📦 BackupAdmin v3 — backup completo (ZIP) ou por domínio + checksum SHA-256 + retenção.
  */
@@ -25,6 +29,10 @@ import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "@/hooks/use-toast";
 import { useSystemSettings } from "@/hooks/useSystemSettings";
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const DOMAINS = [
   { id: "projects", label: "Projetos & Tech", icon: "📁" },
@@ -38,6 +46,10 @@ const DOMAINS = [
   { id: "automations", label: "Automações", icon: "🤖" },
   { id: "security", label: "Segurança & Settings", icon: "🛡️" },
 ];
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function BackupAdmin() {
   const [items, setItems] = useState<any[]>([]);

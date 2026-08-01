@@ -31,12 +31,20 @@
  * -------------------------------------------------------------
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import React, { Suspense, lazy, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import DOMPurify from "dompurify";
 import { Check, ArrowRight, Sparkles, Zap, Shield } from "lucide-react";
 import heroBackground from "@/assets/images/hero-tech-workspace.webp";
 import { useLanguage } from "@/i18n/LanguageContext";
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 // Lazy load heavier shared UI components (code splitting)
 const Header = lazy(() => import("@/components/Header"));
@@ -261,6 +269,11 @@ const ComparisonTable: React.FC = () => {
 
 /* -------------------------
    Main component
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
+
    ------------------------- */
 const Store: React.FC = () => {
   const { t } = useLanguage();
@@ -586,5 +599,9 @@ const Store: React.FC = () => {
     </>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default Store;

@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ⚙️ NotificationPreferencesAdmin — matriz evento × canal.
  */
@@ -22,6 +26,10 @@ import AdminPageShell from "@/components/admin/AdminPageShell";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const EVENTS = [
   { type: "contact.created", label: "Novo contato/lead" },
@@ -33,6 +41,10 @@ const EVENTS = [
 ];
 const CHANNELS = ["inapp", "push", "email"] as const;
 const CHANNEL_LABEL: Record<string, string> = { inapp: "Sino 🔔", push: "Push 📱", email: "Email 📧" };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function NotificationPreferencesAdmin() {
   const { user } = useAuthContext();

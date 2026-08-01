@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📈 ForecastAdmin — receita ponderada por mês baseada em probabilidade × forecast_value.
  */
@@ -22,6 +26,10 @@ import AdminPageShell from "@/components/admin/AdminPageShell";
 import { supabase } from "@/integrations/supabase/client";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, CartesianGrid } from "recharts";
 import { TrendingUp, DollarSign, Target } from "lucide-react";
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 export default function ForecastAdmin() {
   const [rows, setRows] = useState<any[]>([]);
@@ -77,6 +85,10 @@ export default function ForecastAdmin() {
     </AdminPageShell>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 function Stat({ icon, label, value, accent }: any) {
   return (

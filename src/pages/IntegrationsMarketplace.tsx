@@ -12,6 +12,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🛒 IntegrationsMarketplace — vitrine pública + 1-click install (admin).
  */
@@ -31,7 +35,15 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const CATS = Object.keys(CATEGORY_LABEL) as ProviderCategory[];
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function IntegrationsMarketplace() {
   const { user, isAdmin } = useAuthContext();

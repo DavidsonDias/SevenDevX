@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🗂️ SiteCreationProjectsTab — Drag & drop management of showcased projects
  * for /criacao-de-sites-profissionais. Editable overrides (título, descrição,
@@ -33,6 +37,10 @@ import ProjectPickerModal from "./ProjectPickerModal";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sb = supabase as any;
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 type Row = {
   id: string;
   project_id: string;
@@ -48,6 +56,10 @@ type Row = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   project?: any;
 };
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 function SortableCard({ row, onToggle, onDelete, onEdit }: {
   row: Row;
@@ -218,6 +230,10 @@ function EditModal({ row, onClose, onSaved }: { row: Row; onClose: () => void; o
     </div>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function SiteCreationProjectsTab() {
   const [rows, setRows] = useState<Row[]>([]);

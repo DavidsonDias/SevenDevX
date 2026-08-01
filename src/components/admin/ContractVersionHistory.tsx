@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📜 ContractVersionHistory — timeline de versões do contrato com hash SHA256 + análise IA.
  */
@@ -21,14 +25,26 @@ import { FileText, ExternalLink, Hash, User as UserIcon, Sparkles } from "lucide
 import { useContractVersions } from "@/hooks/useContractVersions";
 import ContractAiAnalysisModal from "@/components/admin/ContractAiAnalysisModal";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface Props {
   entityType: "client" | "project";
   entityId?: string | null;
   contractText?: string | null;
 }
 
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
+
 const fmtDate = (iso: string) =>
   new Date(iso).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Linha do tempo das versões de um contrato, com restauração e comparação.

@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
@@ -26,7 +30,15 @@ import GlassCard from "@/components/GlassCard";
 import NotFound from "@/pages/NotFound";
 import { CASE_STUDIES, getCaseStudyBySlug } from "@/data/caseStudies";
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const BASE = "https://www.sevendevx.com";
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 export function CaseStudiesIndex() {
   const itemList = {
@@ -102,6 +114,10 @@ export function CaseStudiesIndex() {
     </>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export function CaseStudyPage() {
   const { slug } = useParams<{ slug: string }>();

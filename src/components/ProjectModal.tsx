@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import DOMPurify from "dompurify";
@@ -20,6 +24,10 @@ import { Button } from "@/components/ui/button";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { TechIconCDN } from "@/components/TechIconCDN";
 import { TagIcon } from "@/components/TagIcon";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 interface Props {
   project: null | {
@@ -35,6 +43,10 @@ interface Props {
   };
   onClose: () => void;
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Modal de detalhe de projeto do portfólio, com galeria, stack e links públicos.

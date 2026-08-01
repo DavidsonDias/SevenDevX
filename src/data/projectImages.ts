@@ -18,6 +18,10 @@
  * For uploaded images, the cover_image field contains a full Supabase Storage URL instead.
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import projectPsicoOne from "@/assets/PsicoOne.png";
 import projectGeorgeFiuza from "@/assets/GeorgeFiuza.png";
 import projectRoane from "@/assets/Roane.jpg";
@@ -39,6 +43,10 @@ import projectMedical from "@/assets/project-medical.jpg";
 import projectArchitecture from "@/assets/project-architecture.jpg";
 import projectManagement from "@/assets/project-management.jpg";
 import placeholder from "@/assets/logo.svg";
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const LOCAL_IMAGE_MAP: Record<string, string> = {
   "PsicoOne.png": projectPsicoOne,
@@ -62,6 +70,10 @@ const LOCAL_IMAGE_MAP: Record<string, string> = {
   "project-architecture.jpg": projectArchitecture,
   "project-management.jpg": projectManagement,
 };
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 /**
  * Resolve a cover_image stored in the DB to a usable URL.

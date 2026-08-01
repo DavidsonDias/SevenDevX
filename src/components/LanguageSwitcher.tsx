@@ -17,10 +17,18 @@
  * Compatível com: Android, iOS, Desktop (Chrome, Safari, Edge)
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Globe, Check } from "lucide-react";
 import { useLanguage, Language } from "@/i18n/LanguageContext";
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 /**
  * FlagContainer - Container enterprise para bandeiras
@@ -239,6 +247,10 @@ const languages: { code: Language; label: string; country: string; nativeName: s
   { code: "es", label: "Español", country: "España", nativeName: "ES-ES" },
 ];
 
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
+
 const LanguageSwitcher = () => {
   const { language, setLanguage } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
@@ -436,5 +448,9 @@ const LanguageSwitcher = () => {
     </div>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default LanguageSwitcher;

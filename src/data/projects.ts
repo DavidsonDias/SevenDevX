@@ -16,6 +16,10 @@
  * Reused by PortfolioCarousel3D and Projects Hub page
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { FaReact, FaNodeJs } from "react-icons/fa";
 import {
   SiFirebase,
@@ -47,6 +51,10 @@ import projectErp from "@/assets/project-erp.jpg";
 import projectMedical from "@/assets/project-medical.jpg";
 import projectArchitecture from "@/assets/project-architecture.jpg";
 import projectManagement from "@/assets/project-management.jpg";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 export interface Project {
   id: number;
@@ -355,6 +363,10 @@ export const projects: Project[] = [
     githubUrl: null,
   },
 ];
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 export const isValidLiveUrl = (url?: string | null) => {
   if (!url) return false;

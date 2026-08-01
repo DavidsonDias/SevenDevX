@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ⚡ Automations — when → if → then.
  * Editor visual via AutomationFlowBuilder (node-based).
@@ -28,6 +32,10 @@ import AutomationFlowBuilder from "@/modules/automations/AutomationFlowBuilder";
 import AutomationGuideDrawer from "@/modules/automations/AutomationGuideDrawer";
 import { AUTOMATION_TEMPLATES } from "@/modules/automations/automationTemplates";
 import { motion, AnimatePresence } from "framer-motion";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function AutomationsAdmin() {
   const [list, setList] = useState<any[]>([]);

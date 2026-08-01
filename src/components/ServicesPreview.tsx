@@ -27,6 +27,10 @@
  * -------------------------------------------------------------
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { motion } from "framer-motion";
 import { ArrowRight, Code, Settings, Wrench, FileText, Lightbulb, Sparkles, Briefcase, Layers, Rocket, Palette, Database } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -42,6 +46,10 @@ import serviceConsulting from "@/assets/images/DavidsonConsultig.webp";
 // Resolver dinâmico de ícones lucide (qualquer nome → componente)
 import { resolveLucideIcon } from "@/components/ui/LucideIconRender";
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 // Map service slug -> default cover (fallback if CMS has no cover_image)
 const COVER_BY_SLUG: Record<string, string> = {
   "desenvolvimento-web-personalizado": serviceDev,
@@ -52,6 +60,10 @@ const COVER_BY_SLUG: Record<string, string> = {
   "consulting": serviceConsulting,
   "consultoria-tecnologica": serviceConsulting,
 };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 const ServicesPreview = () => {
   const { t } = useLanguage();
@@ -217,5 +229,9 @@ const ServicesPreview = () => {
     </div>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default ServicesPreview;

@@ -1,3 +1,7 @@
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ⚡ brand-scan/index.ts — SevenOS Edge Function
  * ═══════════════════════════════════════════════════════════════════════
@@ -26,11 +30,19 @@
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY") || "";
 
 const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36 SevenOS-BrandScan/3.0";
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 function abs(base: string, href: string) {
   try { return new URL(href, base).href; } catch { return href; }

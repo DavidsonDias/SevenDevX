@@ -1,3 +1,7 @@
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ⚡ automation-runner/index.ts — SevenOS Edge Function
  * ═══════════════════════════════════════════════════════════════════════
@@ -30,9 +34,17 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 function getPath(obj: any, path: string): any {
   return path.split(".").reduce((acc, k) => (acc == null ? undefined : acc[k]), obj);
@@ -141,6 +153,10 @@ async function runAction(act: any, payload: any, sb: any): Promise<any> {
       return { ok: true, unknown: act.type };
   }
 }
+
+// ============================================================================
+// 🌐 REQUEST HANDLER
+// ============================================================================
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });

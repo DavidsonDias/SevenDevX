@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🎨 TechIconCDN — Renders OFFICIAL brand-colored tech icons
  *
@@ -28,6 +32,10 @@ import * as SiIcons from "react-icons/si";
 import type { IconType } from "react-icons";
 import { Code2 } from "lucide-react";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface TechIconCDNProps {
   slug: string;
   name: string;
@@ -37,6 +45,10 @@ interface TechIconCDNProps {
   /** Custom icon URL (uploaded SVG/PNG) — takes priority over Simple Icons. */
   iconUrl?: string | null;
 }
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 /** Slug aliases → Simple Icons slugs (when registry slug differs from the SI name). */
 const SLUG_ALIASES: Record<string, string> = {
@@ -103,6 +115,10 @@ const SLUG_ALIASES: Record<string, string> = {
   mistral: "mistralai",
 };
 
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
+
 /**
  * Convert a slug like "tailwindcss" → "SiTailwindcss", "d3dotjs" → "SiD3Dotjs".
  * Rule (matches react-icons/si convention): capitalize the first letter, and
@@ -116,6 +132,10 @@ const slugToComponentName = (slug: string): string => {
   const cased = head.replace(/(\d)([a-z])/g, (_, d, l) => `${d}${l.toUpperCase()}`);
   return "Si" + cased;
 };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Renderiza o logo oficial de uma tecnologia via CDN, com fallback local e monograma.
@@ -168,5 +188,9 @@ export const TechIconCDN = ({ slug, name, color, size = 20, className = "", icon
     />
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default TechIconCDN;

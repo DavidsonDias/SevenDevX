@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🔐 OAuthAdmin — Conexões OAuth 2.0 reais (GitHub, Google, Slack, Notion)
  */
@@ -25,12 +29,20 @@ import { toast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const PROVIDERS = [
   { id: "github", name: "GitHub", Icon: Github, color: "#fff", desc: "Repos, issues, PRs, actions" },
   { id: "google", name: "Google", Icon: Mail,   color: "#4285F4", desc: "Drive, Calendar, Gmail (read-only)" },
   { id: "slack",  name: "Slack",  Icon: MessageSquare, color: "#4A154B", desc: "Chat, canais, usuários" },
   { id: "notion", name: "Notion", Icon: BookOpen, color: "#fff", desc: "Pages, databases" },
 ];
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function OAuthAdmin() {
   const [connections, setConnections] = useState<any[]>([]);

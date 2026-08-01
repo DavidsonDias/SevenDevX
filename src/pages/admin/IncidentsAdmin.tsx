@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🚨 Incidents — registro, timeline, postmortem.
  */
@@ -23,6 +27,10 @@ import AdminPageShell from "@/components/admin/AdminPageShell";
 import { AlertTriangle, Plus, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const SEV_COLOR: Record<string,string> = {
   minor: "bg-amber-500/10 text-amber-400 border-amber-500/30",
@@ -36,6 +44,10 @@ const STATUS_COLOR: Record<string,string> = {
   monitoring: "bg-purple-500/10 text-purple-400",
   resolved: "bg-emerald-500/10 text-emerald-400",
 };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function IncidentsAdmin() {
   const [list, setList] = useState<any[]>([]);

@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 💼 ProjectFinanceBlock — orçamento, transações e margem real do projeto.
  */
@@ -32,6 +36,10 @@ import {
 } from "@/hooks/useFinance";
 import { formatMoney, formatHours } from "@/lib/money";
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const TX_INC = [
   { value: "contract", label: "Contrato" },
   { value: "maintenance", label: "Manutenção" },
@@ -47,6 +55,10 @@ const TX_EXP = [
   { value: "marketing", label: "Marketing" },
   { value: "other_expense", label: "Outras despesas" },
 ];
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Bloco financeiro do projeto: orçamento, transações e margem calculada via RPC.

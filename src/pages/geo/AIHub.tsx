@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
@@ -23,6 +27,10 @@ import Footer from "@/components/Footer";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { GEO_ARTICLES, GEO_PROGRAMMATIC } from "@/data/geoContent";
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const HUB_SECTIONS = [
   {
@@ -61,6 +69,10 @@ const HUB_SECTIONS = [
     items: GEO_PROGRAMMATIC.cities.length,
   },
 ];
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function AIHub() {
   return (

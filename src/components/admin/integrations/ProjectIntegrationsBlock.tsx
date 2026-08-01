@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -24,6 +28,10 @@ import { GlassCard } from "@/components/GlassCard";
 import { toast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 interface Props {
   projectId: string;
@@ -37,6 +45,10 @@ const stateColor: Record<string, string> = {
   QUEUED: "bg-blue-500/15 text-blue-300 border-blue-500/30",
   CANCELED: "bg-zinc-500/15 text-zinc-300 border-zinc-500/30",
 };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Integrações externas vinculadas ao projeto, com status de conexão.

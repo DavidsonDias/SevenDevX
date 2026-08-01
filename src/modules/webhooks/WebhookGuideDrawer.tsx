@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📘 WebhookGuideDrawer — Guia completo enterprise de criação e uso de Webhooks no SevenOS.
  * Frontend-only: passo-a-passo, exemplos CURL/JSON, HMAC, troubleshooting, FAQs, eventos disponíveis.
@@ -24,9 +28,17 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useScrollLock } from "@/hooks/useScrollLock";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 type Section =
   | "intro" | "criar" | "eventos" | "payload" | "hmac"
   | "exemplos" | "replay" | "troubleshooting" | "faq";
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const SECTIONS: { id: Section; label: string; icon: any }[] = [
   { id: "intro",         label: "Visão geral",       icon: BookOpen },
@@ -53,6 +65,10 @@ const EVENT_CATALOG: { event: string; description: string; sample: Record<string
   { event: "user.invited",          description: "Novo usuário convidado para a workspace.",       sample: { email: "user@x.com", role: "user" } },
   { event: "user.login",            description: "Usuário fez login com sucesso.",                  sample: { user_id: "uuid", ip: "1.2.3.4", at: "ISO" } },
 ];
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 function CodeBlock({ children, lang = "bash" }: { children: string; lang?: string }) {
   const [copied, setCopied] = useState(false);
@@ -87,6 +103,10 @@ function SectionTitle({ icon: Icon, title, kicker }: { icon: any; title: string;
     </div>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Drawer com o guia de webhooks: eventos, payload e verificação de assinatura HMAC.

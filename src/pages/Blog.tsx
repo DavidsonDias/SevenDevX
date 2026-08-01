@@ -17,6 +17,10 @@
  * Apple/Stripe/Vercel-inspired blog experience
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -33,6 +37,10 @@ import { useLanguage } from "@/i18n/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { fadeInUpVariants, staggerContainerVariants } from "@/components/PageTransition";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 interface BlogPost {
   id: string;
@@ -58,6 +66,10 @@ interface BlogCategory {
   color: string | null;
 }
 
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
+
 const formatDate = (dateString: string | null, lang: string) => {
   if (!dateString) return "";
   const locale = lang === "pt" ? "pt-BR" : lang === "es" ? "es-ES" : "en-US";
@@ -67,6 +79,10 @@ const formatDate = (dateString: string | null, lang: string) => {
     year: "numeric",
   });
 };
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 /* ── Featured Article (Hero) ── */
 const FeaturedArticle = ({ post, lang }: { post: BlogPost; lang: string }) => {
@@ -227,6 +243,10 @@ const ArticleCard = ({ post, index, variant = "default", lang }: { post: BlogPos
     </motion.article>
   );
 };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /* ── Main Blog Page ── */
 const Blog = () => {
@@ -476,5 +496,9 @@ const Blog = () => {
     </>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default Blog;

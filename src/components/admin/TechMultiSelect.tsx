@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🧩 TechMultiSelect — Stripe-level autocomplete for technologies
  * - Search/filter from `tech_registry`
@@ -28,6 +32,10 @@ import { useTechRegistry, useCreateTech, type TechEntry } from "@/hooks/useRegis
 import { TechIconCDN } from "@/components/TechIconCDN";
 import { useToast } from "@/hooks/use-toast";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 export interface SelectedTech {
   slug?: string;
   name: string;
@@ -39,6 +47,10 @@ interface Props {
   value: SelectedTech[];
   onChange: (next: SelectedTech[]) => void;
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Seleção múltipla de tecnologias a partir do `tech_registry`, com ícones oficiais.
@@ -251,5 +263,9 @@ export const TechMultiSelect = ({ value, onChange }: Props) => {
     </div>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default TechMultiSelect;

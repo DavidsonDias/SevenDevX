@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ❓ FaqAdmin — gerenciador completo do FAQ dinâmico
  */
@@ -24,6 +28,10 @@ import GlassCard from "@/components/GlassCard";
 import { useFaqAll, useUpsertFaqItem, useDeleteFaqItem, useAiGenerate } from "@/hooks/useEcosystem";
 import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from "react-markdown";
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 export default function FaqAdmin() {
   const { data, isLoading } = useFaqAll();
@@ -175,6 +183,11 @@ function FaqModal({ initial, categories, onClose, onSave }: any) {
 }
 
 const inp = "w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg outline-none focus:border-white/30 text-sm";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
+
 const Field = ({ label, children }: any) => (
   <div>
     <label className="text-xs uppercase tracking-wider text-white/50 mb-1 block">{label}</label>

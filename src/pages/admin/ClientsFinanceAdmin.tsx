@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🏦 ClientsFinanceAdmin — dashboard financeiro por cliente.
  * Receita, margem, pendente, histórico. Visão enterprise por conta.
@@ -30,6 +34,10 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { formatMoney } from "@/lib/money";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface ClientRow {
   client_id: string | null;
   client_name: string;
@@ -42,6 +50,10 @@ interface ClientRow {
   margin_percent: number;
   last_tx_at: string | null;
 }
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 export default function ClientsFinanceAdmin() {
   const [q, setQ] = useState("");
@@ -176,6 +188,10 @@ export default function ClientsFinanceAdmin() {
     </AdminPageShell>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 const Kpi = ({ icon: Icon, label, value, accent = "text-white" }: any) => (
   <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>

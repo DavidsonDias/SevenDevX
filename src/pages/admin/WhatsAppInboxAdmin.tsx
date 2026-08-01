@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 💬 WhatsApp Business Inbox — bidirectional inbox via Meta Cloud API.
  */
@@ -24,6 +28,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Send, MessageCircle, Loader2, Phone, RefreshCw } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 interface Thread {
   id: string;
@@ -41,6 +49,10 @@ interface Msg {
   status: string;
   created_at: string;
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function WhatsAppInboxAdmin() {
   const [threads, setThreads] = useState<Thread[]>([]);

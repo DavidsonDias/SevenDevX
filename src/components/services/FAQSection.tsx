@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ❓ FAQSection — Enterprise v3.0 (Categorizado + Search + Tracking)
  * - 6 categorias: Investimento, Prazo, Processo, Tecnologia, Segurança, Pós-Entrega
@@ -31,6 +35,10 @@ import {
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { useFaqPublic } from "@/hooks/useEcosystem";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 const FAQSection = () => {
   const { t } = useLanguage();
@@ -309,5 +317,9 @@ const FAQSection = () => {
     </section>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default FAQSection;

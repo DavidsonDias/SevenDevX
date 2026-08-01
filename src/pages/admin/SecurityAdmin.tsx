@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🛡️ SecurityAdmin — central enterprise de segurança.
  * Password policy + MFA enforcement + rate limit + IP allowlist + emergency logout.
@@ -30,10 +34,22 @@ import {
   Webhook, Database,
 } from "lucide-react";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 type AuditRow = { id: string; action: string; table_name: string | null; occurred_at: string; actor_email: string | null };
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const DEFAULT_PWD = { min_length: 10, require_uppercase: true, require_number: true, require_special: true, max_age_days: 90 };
 const DEFAULT_RATE = { auth_per_min: 10, api_per_min: 120, webhook_per_min: 60 };
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 export default function SecurityAdmin() {
   const { settings, loading, setSetting } = useSystemSettings();
@@ -317,6 +333,10 @@ function NumberField({ label, value, min, max, onChange }: any) {
     </label>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 function Toggle({ label, checked, onChange }: any) {
   return (

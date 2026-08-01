@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📜 LogsAdmin — Visualizador de audit log
  */
@@ -28,11 +32,19 @@ import { toast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 type Entry = {
   id: string; occurred_at: string; actor_email: string | null;
   table_name: string; record_id: string | null; action: string;
   diff: Record<string, any>; summary: string | null;
 };
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const ACTION_ICON: Record<string, any> = { INSERT: Plus, UPDATE: Pencil, DELETE: Trash2 };
 const ACTION_COLOR: Record<string, string> = {
@@ -40,6 +52,10 @@ const ACTION_COLOR: Record<string, string> = {
   UPDATE: "text-blue-300 border-blue-500/30 bg-blue-500/10",
   DELETE: "text-red-300 border-red-500/30 bg-red-500/10",
 };
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 function LogsInner() {
   const qc = useQueryClient();
@@ -184,6 +200,10 @@ export default function LogsAdmin() {
     </ProtectedRoute>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 function ExportMenu({ tableFilter }: { tableFilter: string }) {
   const [busy, setBusy] = useState(false);

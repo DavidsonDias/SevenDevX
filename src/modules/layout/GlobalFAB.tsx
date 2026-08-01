@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ➕ GlobalFAB — Floating action button contextual por rota (admin only)
  * Dispara eventos customizados que cada página pode escutar (window 'sevenos:fab-action').
@@ -21,7 +25,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Plus, X, Zap, Webhook, UserPlus, Send, Inbox, FlaskConical, Briefcase, Palette, Plug } from "lucide-react";
 import { useAuthContext } from "@/contexts/AuthContext";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 type FabAction = { id: string; label: string; icon: any; emit?: string; href?: string };
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const ROUTE_ACTIONS: { match: (p: string) => boolean; actions: FabAction[] }[] = [
   {
@@ -61,6 +73,10 @@ const ROUTE_ACTIONS: { match: (p: string) => boolean; actions: FabAction[] }[] =
     ],
   },
 ];
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function GlobalFAB() {
   const { pathname } = useLocation();

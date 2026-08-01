@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📜 AutomationRunsAdmin — histórico de execuções com replay.
  */
@@ -22,6 +26,10 @@ import AdminPageShell from "@/components/admin/AdminPageShell";
 import { supabase } from "@/integrations/supabase/client";
 import { CheckCircle2, XCircle, Play, ChevronDown, ChevronRight, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function AutomationRunsAdmin() {
   const [runs, setRuns] = useState<any[]>([]);

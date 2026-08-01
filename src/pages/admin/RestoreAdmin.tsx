@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ♻️ Restore Seletivo — escolhe tabelas e reaplica snapshot de backup.
  */
@@ -24,12 +28,20 @@ import { Loader2, Database, Play, History, CheckCircle2, XCircle } from "lucide-
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const RESTORABLE = [
   "projects", "clients", "contacts", "transactions", "project_budgets",
   "services_cms", "faq_items", "faq_categories", "blog_posts", "blog_categories",
   "tech_registry", "tag_registry", "response_templates", "automations",
   "process_templates", "process_template_stages",
 ];
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function RestoreAdmin() {
   const [backups, setBackups] = useState<any[]>([]);

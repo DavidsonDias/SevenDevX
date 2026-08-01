@@ -17,6 +17,10 @@
  * Public project case-study page with full SEO + JSON-LD CreativeWork schema.
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -33,6 +37,10 @@ import { isValidLiveUrl } from "@/data/projects";
 import AppLoaderOrbital from "@/components/ui/AppLoaderOrbital";
 import { TechIconCDN } from "@/components/TechIconCDN";
 import { TagIcon } from "@/components/TagIcon";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 const ProjectDetail = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -256,5 +264,9 @@ const ProjectDetail = () => {
     </>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default ProjectDetail;

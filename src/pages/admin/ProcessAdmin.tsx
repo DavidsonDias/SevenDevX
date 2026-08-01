@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🧭 ProcessAdmin — editor do template global de processo
  */
@@ -22,6 +26,10 @@ import { Save, Edit2, Sparkles, Loader2 } from "lucide-react";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import GlassCard from "@/components/GlassCard";
 import { useDefaultProcessTemplate, useUpdateTemplateStage } from "@/hooks/useEcosystem";
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 export default function ProcessAdmin() {
   const { data: tpl, isLoading } = useDefaultProcessTemplate();
@@ -151,6 +159,11 @@ function StageEditModal({ stage, onClose, onSave }: any) {
 }
 
 const inp = "w-full px-3 py-2 bg-white/5 border border-white/10 rounded-lg outline-none focus:border-white/30 text-sm";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
+
 const Field = ({ label, children }: any) => (
   <div>
     <label className="text-xs uppercase tracking-wider text-white/50 mb-1 block">{label}</label>

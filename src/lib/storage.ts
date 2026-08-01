@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🗄️ storage.ts — central de URLs assinadas para o bucket privado `attachments`.
  *
@@ -21,11 +25,19 @@
  */
 import { supabase } from "@/integrations/supabase/client";
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 export const ATTACHMENTS_BUCKET = "attachments";
 const SIGN_TTL_SEC = 60 * 60; // 1h
 const CACHE_TTL_MS = 50 * 60 * 1000; // 50 min
 
 const cache = new Map<string, { url: string; expiresAt: number }>();
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 /** Extrai o storage path de um registro de attachment (preferindo metadata.storage_path). */
 export const resolveStoragePath = (att: any): string | null => {

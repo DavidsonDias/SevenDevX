@@ -1,3 +1,7 @@
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ⚡ resend-test/index.ts — SevenOS Edge Function
  * ═══════════════════════════════════════════════════════════════════════
@@ -27,7 +31,16 @@ const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 type Check = { name: string; ok: boolean; detail?: string; latency_ms?: number };
+
+// ============================================================================
+// 🌐 REQUEST HANDLER
+// ============================================================================
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });

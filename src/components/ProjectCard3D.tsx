@@ -18,9 +18,17 @@
  * Mobile: disabled 3D, tap feedback only
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useRef, useState, useCallback, ReactNode } from "react";
 import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 interface ProjectCard3DProps {
   children: ReactNode;
@@ -29,6 +37,10 @@ interface ProjectCard3DProps {
   glow?: boolean;
   layoutId?: string;
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 const ProjectCard3D = ({
   children,
@@ -171,6 +183,10 @@ const ProjectCard3D = ({
     </motion.div>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default ProjectCard3D;
 export { ProjectCard3D };

@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📜 ContractCard — Gestão de Termo/Contrato (TC) para cliente OU projeto.
  * Recursos:
@@ -40,6 +44,10 @@ import {
   maskBRL, parseBRL, maskDocument, validateContract,
 } from "@/lib/contractBuilder";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 type Entity = "clients" | "projects";
 
 interface Props {
@@ -62,6 +70,10 @@ interface Props {
   onChange?: () => void;
 }
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const STATUS: Record<string, { label: string; cls: string }> = {
   pending:  { label: "Pendente", cls: "bg-yellow-500/10 text-yellow-300 border-yellow-500/30" },
   sent:     { label: "Enviado",  cls: "bg-blue-500/10 text-blue-300 border-blue-500/30" },
@@ -70,6 +82,10 @@ const STATUS: Record<string, { label: string; cls: string }> = {
 };
 
 
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Card de contrato com status, valor, versões e ações rápidas.

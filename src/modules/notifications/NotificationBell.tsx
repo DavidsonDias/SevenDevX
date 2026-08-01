@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🔔 NotificationBell — sino com badge, dropdown, realtime e ações inline.
  */
@@ -24,6 +28,10 @@ import { ptBR } from "date-fns/locale";
 
 const sevIcon = { info: Info, warning: AlertTriangle, error: AlertCircle, success: CheckCircle2 };
 const sevColor = { info: "text-sky-300", warning: "text-amber-300", error: "text-red-300", success: "text-emerald-300" };
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 export default function NotificationBell() {
   const [open, setOpen] = useState(false);
@@ -106,6 +114,10 @@ export default function NotificationBell() {
     </div>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 function Item({ n, onRead, onRemove, onClose }: { n: Notification; onRead: (id: string) => void; onRemove: (id: string) => void; onClose: () => void }) {
   const Icon = sevIcon[n.severity] ?? Info;

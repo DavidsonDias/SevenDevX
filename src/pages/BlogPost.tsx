@@ -17,6 +17,10 @@
  * Vercel/Stripe-inspired: progress bar, premium typography, author section
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -33,6 +37,10 @@ import { Section } from "@/components/layout/Section";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 interface BlogPostData {
   id: string;
@@ -56,6 +64,10 @@ interface BlogPostData {
   } | null;
 }
 
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
+
 const formatDate = (dateString: string | null, lang: string) => {
   if (!dateString) return "";
   const locale = lang === "pt" ? "pt-BR" : lang === "es" ? "es-ES" : "en-US";
@@ -65,6 +77,10 @@ const formatDate = (dateString: string | null, lang: string) => {
     year: "numeric",
   });
 };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -505,5 +521,9 @@ const BlogPost = () => {
     </>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default BlogPost;

@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📡 ActivityFeed — timeline em tempo real do audit_log (clicável → diff modal)
  */
@@ -21,6 +25,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Activity, Plus, Pencil, Trash2, User as UserIcon } from "lucide-react";
 import { useAuditLog, type AuditEntry } from "@/hooks/useAuditLog";
 import AuditDiffModal from "@/components/admin/AuditDiffModal";
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const ICONS = { INSERT: Plus, UPDATE: Pencil, DELETE: Trash2 } as const;
 const COLORS = {
@@ -42,6 +50,10 @@ const TABLE_LABELS: Record<string, string> = {
   blog_posts: "Post",
 };
 
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
+
 const formatTime = (iso: string) => {
   const diff = (Date.now() - new Date(iso).getTime()) / 1000;
   if (diff < 60) return "agora";
@@ -49,6 +61,10 @@ const formatTime = (iso: string) => {
   if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
   return new Date(iso).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" });
 };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function ActivityFeed() {
   const { data: entries = [], isLoading } = useAuditLog(20);

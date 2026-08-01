@@ -16,6 +16,10 @@
  * Usado por /cases e /cases/:slug com schema CaseStudy + CreativeWork.
  */
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 export interface CaseStudy {
   slug: string;
   title: string;
@@ -33,6 +37,10 @@ export interface CaseStudy {
   imageHint: string;
   publishedAt: string;
 }
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 export const CASE_STUDIES: CaseStudy[] = [
   {
@@ -277,6 +285,10 @@ export const CASE_STUDIES: CaseStudy[] = [
     publishedAt: "2026-06-01",
   },
 ];
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 export function getCaseStudyBySlug(slug: string) {
   return CASE_STUDIES.find((c) => c.slug === slug);
