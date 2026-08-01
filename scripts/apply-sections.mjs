@@ -81,7 +81,8 @@ function topLevelLines(lines) {
     const line = lines[i];
     const trimmed = line.trim();
     const wasSafe = !inBlock && tickParity === 0;
-    if (wasSafe && /^\S/.test(line) && !trimmed.startsWith("//") && !trimmed.startsWith("*") && !trimmed.startsWith("/*")) {
+    // tolera arquivos legados indentados por 1 espaço no nível raiz
+    if (wasSafe && /^ {0,1}\S/.test(line) && !trimmed.startsWith("//") && !trimmed.startsWith("*") && !trimmed.startsWith("/*")) {
       safe.push(i);
     }
     // atualiza estados grosseiros
