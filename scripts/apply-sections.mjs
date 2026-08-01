@@ -111,7 +111,7 @@ function blockStart(lines, idx) {
   return i;
 }
 
-function process(file) {
+function processFile(file) {
   const src = fs.readFileSync(file, "utf8");
   if (src.includes("// 📦 IMPORTS") || src.includes("🧩 TYPES")) return false;
   const lines = src.split("\n");
@@ -171,7 +171,7 @@ const files = ROOTS.flatMap((r) => (fs.existsSync(r) ? walk(r) : []))
   .filter((f) => !SKIP.some((s) => f.startsWith(s)));
 for (const f of files) {
   try {
-    if (process(f)) {
+    if (processFile(f)) {
       changed++;
       console.log("✓", f);
     }
