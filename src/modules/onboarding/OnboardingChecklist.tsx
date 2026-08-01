@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ✅ OnboardingChecklist — primeiros passos do admin com status real.
  */
@@ -22,7 +26,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useOnboarding } from "@/hooks/useOnboarding";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 type Item = { id: string; label: string; description: string; to: string; check: (uid: string) => Promise<boolean> };
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const ITEMS: Item[] = [
   {
@@ -61,6 +73,10 @@ const ITEMS: Item[] = [
     },
   },
 ];
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function OnboardingChecklist() {
   const { user } = useAuthContext();

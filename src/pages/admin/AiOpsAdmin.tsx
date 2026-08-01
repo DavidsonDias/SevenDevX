@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🤖 AI Ops — assistant + ações autônomas (triagem de leads, pricing).
  */
@@ -22,6 +26,10 @@ import { supabase } from "@/integrations/supabase/client";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import { Sparkles, Loader2, Bot, Zap, Check, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function AiOpsAdmin() {
   const [tab, setTab] = useState<"assistant" | "actions">("assistant");

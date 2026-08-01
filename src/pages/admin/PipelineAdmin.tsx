@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🧭 PipelineAdmin — Kanban profissional de projetos por estágio comercial
  * - 6 estágios: Lead → Diagnóstico → Proposta → Contrato → Execução → Entrega
@@ -36,6 +40,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 type Stage =
   | "lead"
   | "diagnostico"
@@ -43,6 +51,10 @@ type Stage =
   | "contrato"
   | "execucao"
   | "entrega";
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const COLUMNS: { id: Stage; label: string; color: string }[] = [
   { id: "lead",        label: "Lead",        color: "#3B82F6" },
@@ -62,12 +74,20 @@ const LEGACY_MAP: Record<string, Stage> = {
   done: "entrega",
 };
 
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
+
 const normalizeStage = (s: string | null | undefined): Stage => {
   const v = (s || "lead") as string;
   return (LEGACY_MAP[v] || (v as Stage));
 };
 
 type SortKey = "recent" | "title" | "client";
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 export default function PipelineAdmin() {
   const { data: projects = [], isLoading } = useAllProjects();
@@ -298,6 +318,10 @@ function KanbanColumn({
     </div>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 function KanbanCard({ project, onMove }: { project: any; onMove: (p: any, s: Stage) => void }) {
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: project.id });

@@ -11,8 +11,16 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 interface WhatsAppButtonProps {
   phone?: string;
@@ -21,6 +29,10 @@ interface WhatsAppButtonProps {
   position?: "left" | "right";
   tooltipText?: string;
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
   phone = "5531984740625",
@@ -132,5 +144,9 @@ const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
     </AnimatePresence>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default WhatsAppButton;

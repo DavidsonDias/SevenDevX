@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📂 AttachmentManager — gerenciador unificado de anexos.
  * Pode ser escopado a cliente / projeto / etapa, com tipos (logo, file, idea, document).
@@ -22,6 +26,10 @@ import { useState, useRef } from "react";
 import { Upload, Loader2, X, FileText, Image as ImageIcon, Lightbulb, FileBadge } from "lucide-react";
 import { useAttachments, useUploadAttachment, useDeleteAttachment, AttachmentType } from "@/hooks/useAttachments";
 import FilePreview from "./FilePreview";
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const TYPE_META: Record<AttachmentType, { label: string; icon: any; cls: string }> = {
   logo:      { label: "Logo",       icon: ImageIcon,  cls: "bg-purple-500/10 text-purple-300 border-purple-500/30" },
@@ -42,6 +50,10 @@ interface Props {
 }
 
 
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function AttachmentManager({
   title = "Anexos",

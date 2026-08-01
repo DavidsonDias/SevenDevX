@@ -12,6 +12,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useEffect, useRef, useState } from "react";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { motion, useInView } from "framer-motion";
@@ -24,6 +28,10 @@ import {
   Target, Eye, Heart, Rocket, Users, Award, CheckCircle, Calendar,
   Code, Globe, Zap, TrendingUp
 } from "lucide-react";
+
+// ============================================================================
+// 🪝 HOOK IMPLEMENTATION
+// ============================================================================
 
 // ─── Animated Counter Hook ───
 const useCounter = (target: number, isInView: boolean, duration = 2000) => {
@@ -41,6 +49,10 @@ const useCounter = (target: number, isInView: boolean, duration = 2000) => {
   }, [isInView, target, duration]);
   return count;
 };
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 // ─── Stats Counter Component ───
 const StatCounter = ({ value, suffix, label, icon: Icon }: { value: number; suffix: string; label: string; icon: any }) => {
@@ -60,6 +72,10 @@ const StatCounter = ({ value, suffix, label, icon: Icon }: { value: number; suff
     </motion.div>
   );
 };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 const About = () => {
   const { t, language } = useLanguage();
@@ -261,5 +277,9 @@ const About = () => {
     </>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default About;

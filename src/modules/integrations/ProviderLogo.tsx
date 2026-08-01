@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🎨 ProviderLogo — Logo oficial local-first + fallback resiliente
  * Tier 1: react-icons/simple-icons (sem rede, não quebra por CDN/CSP/SW)
@@ -40,6 +44,10 @@ import {
   SiX, SiZapier, SiZendesk, SiZoom,
 } from "react-icons/si";
 import { providerLogoUrl } from "./providerCatalog";
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const LOCAL_ICONS: Record<string, IconType> = {
   airtable: SiAirtable,
@@ -289,6 +297,10 @@ const CUSTOM_GLYPHS: Record<string, (p: GlyphProps) => React.ReactElement> = {
     "none"),
 };
 
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function ProviderLogo({
   slug, color, name, size = 40, className = "",

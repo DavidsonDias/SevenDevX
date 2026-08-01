@@ -1,3 +1,7 @@
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ⚡ tenant-export/index.ts — SevenOS Edge Function
  * ═══════════════════════════════════════════════════════════════════════
@@ -26,6 +30,10 @@
 // linkados (logos, SVGs, imagens, PDFs), cria catálogos navegáveis e pastas por entidade.
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
@@ -80,6 +88,11 @@ const CRC_TABLE = (() => {
   for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); t[n] = c >>> 0; }
   return t;
 })();
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
+
 function crc32(buf: Uint8Array): number {
   let c = 0xFFFFFFFF;
   for (let i = 0; i < buf.length; i++) c = CRC_TABLE[(c ^ buf[i]) & 0xFF] ^ (c >>> 8);
@@ -513,6 +526,10 @@ function rowsToHtmlTable(rows: any[]): string {
     rows.slice(0, 100).map(r => '<tr>' + cols.map(c => `<td>${escapeHtml(escCell(r[c]))}</td>`).join('') + '</tr>').join('') +
     '</tbody></table></div>';
 }
+
+// ============================================================================
+// 🌐 REQUEST HANDLER
+// ============================================================================
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });

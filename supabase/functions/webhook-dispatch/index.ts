@@ -1,3 +1,7 @@
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ⚡ webhook-dispatch/index.ts — SevenOS Edge Function
  * ═══════════════════════════════════════════════════════════════════════
@@ -25,9 +29,17 @@
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 async function sign(secret: string, body: string): Promise<string> {
   const key = await crypto.subtle.importKey(
@@ -37,6 +49,10 @@ async function sign(secret: string, body: string): Promise<string> {
   const sig = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(body));
   return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('');
 }
+
+// ============================================================================
+// 🌐 REQUEST HANDLER
+// ============================================================================
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });

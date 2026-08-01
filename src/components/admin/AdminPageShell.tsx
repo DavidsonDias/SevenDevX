@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🎛️ AdminPageShell — consistent header + container for all admin pages
  * Voltar inteligente + breadcrumb dinâmico.
@@ -28,6 +32,10 @@ import NotificationBell from "@/modules/notifications/NotificationBell";
 import { useSmartBack } from "@/hooks/useSmartBack";
 import { useAutoHideOnScroll } from "@/hooks/useAutoHideOnScroll";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface Props {
   title: string;
   subtitle?: string;
@@ -36,6 +44,10 @@ interface Props {
   /** Para onde voltar quando não houver histórico interno. Default: /admin */
   backFallback?: string;
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Shell de layout das páginas do SevenOS: header com auto-hide, menu lateral,
@@ -124,6 +136,10 @@ export const AdminPageShell = ({ title, subtitle, actions, children, backFallbac
     </div>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default AdminPageShell;
 

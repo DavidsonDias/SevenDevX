@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🧪 TechPickerModal — Visual multi-select for tech_registry
  * Displays cards with color dot + icon (TechIconCDN), search & category filter.
@@ -24,6 +28,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { TechIconCDN } from "@/components/TechIconCDN";
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sb = supabase as any;
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 type TechRow = {
   id: string;
@@ -41,6 +49,10 @@ interface Props {
   alreadySelectedIds: string[];
   onConfirm: (techIds: string[]) => Promise<void> | void;
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Modal visual de escolha de tecnologias, com busca, categorias e ordenação drag-and-drop.

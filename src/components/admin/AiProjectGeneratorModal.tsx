@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🪄 AiProjectGeneratorModal — gera projeto completo (cliente + projeto + estágios + documentos + estimativa)
  */
@@ -24,11 +28,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useScrollLock } from "@/hooks/useScrollLock";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface Props {
   open: boolean;
   onClose: () => void;
   onGenerated?: (projectId: string) => void;
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Modal que gera rascunho de projeto (escopo, stack e etapas) via IA.

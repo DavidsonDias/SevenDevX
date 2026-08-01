@@ -1,3 +1,7 @@
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ⚡ vercel-info/index.ts — SevenOS Edge Function
  * ═══════════════════════════════════════════════════════════════════════
@@ -28,7 +32,15 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const VERCEL_TOKEN = Deno.env.get("VERCEL_TOKEN") ?? "";
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 async function vc(path: string) {
   const r = await fetch(`https://api.vercel.com${path}`, {
@@ -37,6 +49,10 @@ async function vc(path: string) {
   if (!r.ok) throw new Error(`Vercel ${path}: ${r.status} ${await r.text()}`);
   return r.json();
 }
+
+// ============================================================================
+// 🌐 REQUEST HANDLER
+// ============================================================================
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });

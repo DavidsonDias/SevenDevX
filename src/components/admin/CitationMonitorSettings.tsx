@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ⚙️ CitationMonitorSettings — pausa/retoma, edita queries e modelos do Citation Monitor.
  * Consome créditos de Lovable AI a cada execução, por isso o controle é importante.
@@ -23,6 +27,10 @@ import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import GlassCard from "@/components/GlassCard";
 import { toast } from "sonner";
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const AVAILABLE_MODELS = [
   { id: "google/gemini-2.5-flash", label: "Gemini 2.5 Flash (barato)" },
@@ -40,6 +48,10 @@ interface Settings {
   last_run_mentions: number | null;
   last_run_total: number | null;
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function CitationMonitorSettings() {
   const [s, setS] = useState<Settings | null>(null);

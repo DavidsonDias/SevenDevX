@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🛰️ useSessionTracker — registra sessão do usuário autenticado e mantém heartbeat
  * Rastreia TODOS os usuários autenticados (não só admin), para que a página /admin/sessions
@@ -20,6 +24,10 @@
  */
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 function parseUA(ua: string) {
   const browser =
@@ -53,6 +61,10 @@ async function ping() {
     console.warn("[session-tracker] ping crashed:", e);
   }
 }
+
+// ============================================================================
+// 🪝 HOOK IMPLEMENTATION
+// ============================================================================
 
 /**
  * Registra a sessão ativa do usuário para o painel de sessões e auditoria.

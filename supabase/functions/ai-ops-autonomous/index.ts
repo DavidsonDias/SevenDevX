@@ -1,3 +1,7 @@
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ⚡ ai-ops-autonomous/index.ts — SevenOS Edge Function
  * ═══════════════════════════════════════════════════════════════════════
@@ -25,10 +29,18 @@
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')!;
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 async function ai(prompt: string, system = 'Você é um analista de negócios sênior da SevenDevX. Responda APENAS com JSON válido.') {
   const r = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
@@ -45,6 +57,10 @@ async function ai(prompt: string, system = 'Você é um analista de negócios s�
   const txt = j?.choices?.[0]?.message?.content || '{}';
   try { return JSON.parse(txt); } catch { return { raw: txt }; }
 }
+
+// ============================================================================
+// 🌐 REQUEST HANDLER
+// ============================================================================
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });

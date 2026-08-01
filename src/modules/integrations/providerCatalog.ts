@@ -16,6 +16,10 @@
  * Logos via cdn.simpleicons.org com fallback local-first.
  */
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 export type ProviderCategory =
   | "desenvolvimento"
   | "deploy"
@@ -65,6 +69,10 @@ export interface CatalogProvider {
   /** Configurações persistidas em system_settings (não usam Lovable Cloud secrets) */
   tenantSettings?: TenantSettingField[];
 }
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 /**
  * Rótulos legíveis de cada categoria de provider.
@@ -269,6 +277,10 @@ export const BADGE_META: Record<ProviderBadge, { label: string; cls: string }> =
   new:         { label: "NEW",         cls: "bg-pink-500/15 text-pink-300 border-pink-500/30" },
   premium:     { label: "PREMIUM",     cls: "bg-gradient-to-r from-amber-500/20 to-orange-500/20 text-amber-200 border-amber-400/40" },
 };
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 export const findCatalogProvider = (id: string) =>
   PROVIDER_CATALOG.find((p) => p.id === id);

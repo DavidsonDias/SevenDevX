@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
 import { Award, Code2, Zap, Shield, Users, Trophy, Sparkles, Heart } from "lucide-react";
@@ -22,6 +26,10 @@ import Footer from "@/components/Footer";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { Link } from "react-router-dom";
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const PILLARS = [
   {
@@ -52,6 +60,10 @@ const DIFFERENTIALS = [
   { icon: Users, title: "GEO-Ready", desc: "Sites preparados para ChatGPT, Gemini, Claude, Perplexity e AI Overviews." },
   { icon: Heart, title: "Suporte humano real", desc: "Atendimento direto com quem desenvolveu, sem camadas burocráticas." },
 ];
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function WhySevenDevX() {
   const url = "https://www.sevendevx.com/why-sevendevx";

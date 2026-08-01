@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { motion } from "framer-motion";
 import { Star, Quote } from "lucide-react";
 
@@ -18,6 +22,10 @@ import { Star, Quote } from "lucide-react";
 import avatarCarlos from "@/assets/avatar-carlos.jpg";
 import avatarMaria from "@/assets/avatar-maria.jpg";
 import avatarJoao from "@/assets/avatar-joao.jpg";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 const Testimonials = () => {
   const testimonials = [
@@ -137,5 +145,9 @@ const Testimonials = () => {
     </section>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default Testimonials;

@@ -1,3 +1,7 @@
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ⚡ push-send/index.ts — SevenOS Edge Function
  * ═══════════════════════════════════════════════════════════════════════
@@ -29,11 +33,19 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const VAPID_PUBLIC = Deno.env.get("VAPID_PUBLIC_KEY")!;
 const VAPID_PRIVATE = Deno.env.get("VAPID_PRIVATE_KEY")!;
 const VAPID_SUBJECT = Deno.env.get("VAPID_SUBJECT") ?? "mailto:admin@sevendevx.com";
 
 webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC, VAPID_PRIVATE);
+
+// ============================================================================
+// 🌐 REQUEST HANDLER
+// ============================================================================
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });

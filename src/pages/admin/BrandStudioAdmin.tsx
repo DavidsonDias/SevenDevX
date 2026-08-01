@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🎨 Brand Studio — extrai paleta + favicon kit de qualquer URL.
  * Input: URL pública → backend faz scan (favicons, og:image, theme-color, meta) →
@@ -25,6 +29,10 @@ import { Sparkles, Loader2, Download, Globe, Copy, Check, Palette as PaletteIcon
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import { supabase } from "@/integrations/supabase/client";
 import { extractPaletteFromImage } from "@/core/branding/palette-engine/extractPalette";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 type ScanResult = {
   url: string;
@@ -49,6 +57,10 @@ type ScanResult = {
   stylesheetsScanned?: number;
   ai?: { summary?: string; suggestedPalette?: string[]; personality?: string[] } | null;
 };
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 function downloadBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob);
@@ -76,6 +88,10 @@ async function rasterize(srcUrl: string, size: number): Promise<Blob | null> {
   });
 }
 
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
+
 function Swatch({ color, onCopy }: { color: string; onCopy: () => void }) {
   const [copied, setCopied] = useState(false);
   const handleCopy = () => {
@@ -94,6 +110,10 @@ function Swatch({ color, onCopy }: { color: string; onCopy: () => void }) {
     </button>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function BrandStudioAdmin() {
   const [url, setUrl] = useState("");

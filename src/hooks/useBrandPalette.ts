@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🎨 useBrandPalette — Resolve a paleta multicor de um provider.
  * Prioridade:
@@ -36,6 +40,10 @@ import {
   buildBrandTokens,
   type BrandTokens,
 } from "@/core/branding/palette-engine";
+
+// ============================================================================
+// 🪝 HOOK IMPLEMENTATION
+// ============================================================================
 
 /**
  * Resolve a paleta da marca de um logo, reagindo às atualizações do cache global.

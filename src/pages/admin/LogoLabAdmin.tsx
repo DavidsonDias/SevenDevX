@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🧪 LogoLab — Playground oficial do LogoRenderer + Dynamic Brand Palette Engine
  * Mostra preview real do card de Integração, Marketplace e Hero usando a paleta
@@ -32,7 +36,15 @@ import { generateBrandKitZip, downloadBlob } from "@/core/branding/brandKit";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const VARIANTS: LogoVariant[] = ["xs", "sm", "md", "lg", "xl", "card", "marketplace", "hero", "inline"];
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 function PalettePreview({ slug, name, fallback }: { slug: string; name: string; fallback: string }) {
   const tokens = useBrandPalette(slug, fallback);
@@ -126,6 +138,10 @@ function HeroPreview({ slug, name, fallback }: { slug: string; name: string; fal
     </div>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function LogoLabAdmin() {
   const [variant, setVariant] = useState<LogoVariant>("card");

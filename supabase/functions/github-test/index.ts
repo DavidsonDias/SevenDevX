@@ -1,3 +1,7 @@
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ⚡ github-test/index.ts — SevenOS Edge Function
  * ═══════════════════════════════════════════════════════════════════════
@@ -28,9 +32,17 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const GH_TOKEN = Deno.env.get("GITHUB_TOKEN") ?? "";
 
 type Check = { name: string; ok: boolean; detail?: string; latency_ms?: number };
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 async function gh(path: string) {
   const r = await fetch(`https://api.github.com${path}`, {
@@ -43,6 +55,10 @@ async function gh(path: string) {
   });
   return r;
 }
+
+// ============================================================================
+// 🌐 REQUEST HANDLER
+// ============================================================================
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });

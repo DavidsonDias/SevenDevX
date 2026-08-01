@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🧮 PricingEngineModal — Enterprise modal: sticky header/footer, scroll interno,
  * safe-area iOS, focus trap básico, ESC + click outside.
@@ -25,6 +29,10 @@ import { useScrollLock } from "@/hooks/useScrollLock";
 import {
   estimatePrice, maskBRL, type ProjectType, type Complexity, type PricingFeature,
 } from "@/lib/contractBuilder";
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const TYPES: { id: ProjectType; label: string }[] = [
   { id: "landing_page", label: "Landing Page" },
@@ -56,6 +64,10 @@ interface Props {
   onClose: () => void;
   onApply: (price: number, weeks: number, breakdownText: string) => void;
 }
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 /**
  * Modal do motor de precificação: estima o valor do projeto a partir de tipo,
@@ -210,6 +222,10 @@ function Section({ label, children }: { label: string; children: React.ReactNode
     </div>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
   return (

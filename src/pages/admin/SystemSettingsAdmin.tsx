@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ⚙️ SystemSettingsAdmin — políticas de senha, MFA obrigatório, retenção de backup.
  */
@@ -21,6 +25,10 @@ import AdminPageShell from "@/components/admin/AdminPageShell";
 import { useSystemSettings } from "@/hooks/useSystemSettings";
 import { ShieldCheck, KeyRound, Database } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function SystemSettingsAdmin() {
   const { settings, loading, setSetting } = useSystemSettings();

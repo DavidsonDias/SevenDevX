@@ -34,6 +34,10 @@
  * -------------------------------------------------------------
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useState, useRef, useCallback, useMemo, useEffect } from "react";
 import { motion, useMotionValue, useTransform, useSpring, PanInfo, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -51,6 +55,10 @@ import { TechIconCDN } from "@/components/TechIconCDN";
 // ---------------------------------------------------------
 // 🧱 Constants
 // ---------------------------------------------------------
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 // 🎨 Configuração do efeito 3D (ajustável)
 const CAROUSEL_CONFIG = {
@@ -84,6 +92,10 @@ interface ProjectModalProps {
   project: Project | null;
   onClose: () => void;
 }
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
   const { t } = useLanguage();
@@ -629,6 +641,10 @@ const Carousel3D = ({ projects, onCardClick, onOpenModal }: Carousel3DProps) => 
 // 🧩 Main Component
 // ---------------------------------------------------------
 
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
+
 const PortfolioCarousel3D = () => {
   const { t } = useLanguage();
   const navigate = useNavigate();
@@ -771,5 +787,9 @@ const PortfolioCarousel3D = () => {
     </section>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default PortfolioCarousel3D;

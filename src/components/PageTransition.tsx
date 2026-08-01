@@ -16,9 +16,17 @@
  * SevenDevX Enterprise Edition
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import { ReactNode } from "react";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 interface PageTransitionProps {
   children: ReactNode;
@@ -50,6 +58,10 @@ const pageVariants = {
     },
   },
 };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Aplica a transição cinematográfica padrão (fade + scale) entre rotas.
@@ -111,5 +123,9 @@ export const scaleInVariants = {
     },
   },
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default PageTransition;

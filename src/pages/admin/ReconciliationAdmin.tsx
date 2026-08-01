@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🏛️ ReconciliationAdmin — conciliação bancária manual + import CSV.
  * CSV: data,descricao,valor (valor positivo=entrada / negativo=saída).
@@ -31,6 +35,10 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { formatMoney } from "@/lib/money";
 
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
+
 function parseCsv(text: string): Array<{ date: string; description: string; amount: number }> {
   const lines = text.split(/\r?\n/).filter(Boolean);
   if (lines.length === 0) return [];
@@ -47,6 +55,10 @@ function parseCsv(text: string): Array<{ date: string; description: string; amou
   }
   return out;
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function ReconciliationAdmin() {
   const qc = useQueryClient();

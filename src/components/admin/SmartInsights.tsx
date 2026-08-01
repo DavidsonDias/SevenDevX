@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🧠 SmartInsights — leads parados + receita ponderada do pipeline.
  */
@@ -20,6 +24,10 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { AlertTriangle, TrendingUp, ArrowRight } from "lucide-react";
 import { useStaleLeads, usePipelineForecast } from "@/hooks/useSmartInsights";
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const STAGE_LABELS: Record<string, string> = {
   lead: "Lead",
@@ -31,7 +39,15 @@ const STAGE_LABELS: Record<string, string> = {
   entrega: "Entrega",
 };
 
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
+
 const brl = (v: number) => `R$ ${Math.round(v).toLocaleString("pt-BR")}`;
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function SmartInsights() {
   const navigate = useNavigate();

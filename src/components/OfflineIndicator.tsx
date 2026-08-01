@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📡 OfflineIndicator — Banner de conexão + toast de reconexão
  * Detecta online/offline, mostra estado do SW e contagem de mutations
@@ -20,6 +24,10 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { WifiOff, Wifi, CloudOff, RefreshCw } from "lucide-react";
 import { getQueueSize, flushQueue, subscribeQueue } from "@/utils/offlineQueue";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function OfflineIndicator() {
   const [online, setOnline] = useState(navigator.onLine);

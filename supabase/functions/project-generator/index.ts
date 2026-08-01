@@ -1,3 +1,7 @@
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ⚡ project-generator/index.ts — SevenOS Edge Function
  * ═══════════════════════════════════════════════════════════════════════
@@ -41,6 +45,10 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
+
 const formatDateBR = () =>
   new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
 
@@ -81,6 +89,10 @@ async function callAI(apiKey: string, system: string, user: string, schema?: any
   }
   return data.choices?.[0]?.message?.content || "";
 }
+
+// ============================================================================
+// 🌐 REQUEST HANDLER
+// ============================================================================
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });

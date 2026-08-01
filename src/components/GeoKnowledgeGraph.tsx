@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { Helmet } from "react-helmet";
 
 /**
@@ -26,6 +30,10 @@ import { Helmet } from "react-helmet";
  * Objetivo: aumentar descoberta em ChatGPT, Gemini, Claude, Perplexity,
  * Copilot, Google AI Overviews, Bing AI, Meta AI e sistemas RAG.
  */
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const BASE = "https://www.sevendevx.com";
 const LOGO = `${BASE}/logo-512.png`;
@@ -266,6 +274,10 @@ const PROFESSIONAL_SERVICE = {
   areaServed: { "@type": "Country", name: "Brasil" },
   hasOfferCatalog: { "@id": `${BASE}/#organization` },
 };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function GeoKnowledgeGraph() {
   return (

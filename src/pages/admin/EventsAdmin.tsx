@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📡 Events — barramento central realtime.
  */
@@ -23,7 +27,15 @@ import AdminPageShell from "@/components/admin/AdminPageShell";
 import { Activity, AlertTriangle, Info, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface Ev { id: string; type: string; source: string; payload: any; severity: string; actor_email: string | null; created_at: string; }
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const SEV_COLOR: Record<string,string> = {
   info: "text-sky-400 border-sky-400/30 bg-sky-400/5",
@@ -31,6 +43,10 @@ const SEV_COLOR: Record<string,string> = {
   error: "text-red-400 border-red-400/30 bg-red-400/5",
   critical: "text-red-400 border-red-400/40 bg-red-400/10",
 };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function EventsAdmin() {
   const [events, setEvents] = useState<Ev[]>([]);

@@ -54,6 +54,10 @@
  */
 
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
@@ -83,6 +87,10 @@ import projectManagement from "@/assets/project-management.jpg";
 // 🧱 Types & Constants
 // ---------------------------------------------------------
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface Project {
   id: number;
   title: string;
@@ -95,6 +103,10 @@ interface Project {
 }
 
 type LayoutMode = "mobile" | "tablet" | "desktop";
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const BREAKPOINTS = {
   MOBILE: 640,
@@ -218,6 +230,10 @@ const projects: Project[] = [
 // 🔧 Helpers
 // ---------------------------------------------------------
 
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
+
 const isValidLiveUrl = (url?: string | null) => {
   if (!url) return false;
   const s = url.trim();
@@ -240,6 +256,10 @@ const chunk = <T,>(arr: T[], size: number): T[][] => {
 // ---------------------------------------------------------
 // 🪝 Custom Hook: Responsive Breakpoint Detection
 // ---------------------------------------------------------
+
+// ============================================================================
+// 🪝 HOOK IMPLEMENTATION
+// ============================================================================
 
 const useLayoutMode = (): LayoutMode => {
   const [mode, setMode] = useState<LayoutMode>(() => {
@@ -273,6 +293,10 @@ interface ProjectModalProps {
   project: Project | null;
   onClose: () => void;
 }
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
   const modalRef = useRef<HTMLDivElement | null>(null);
@@ -811,6 +835,10 @@ const UniversalCarousel = ({ projects, itemsPerSlide, onCardClick, onOpenModal }
 // 🧩 Main Component
 // ---------------------------------------------------------
 
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
+
 const PortfolioFilter = () => {
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
   const [openProject, setOpenProject] = useState<Project | null>(null);
@@ -912,5 +940,9 @@ const PortfolioFilter = () => {
     </section>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default PortfolioFilter;

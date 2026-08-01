@@ -19,6 +19,10 @@
  * Full CRUD, image upload (Supabase Storage), publish toggle, featured toggle, tech management.
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -59,6 +63,10 @@ import AiProjectGeneratorModal from "@/components/admin/AiProjectGeneratorModal"
 import Breadcrumb from "@/components/admin/Breadcrumb";
 import { useSmartBack } from "@/hooks/useSmartBack";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface FormState {
   id?: string;
   slug: string;
@@ -98,6 +106,10 @@ const emptyForm: FormState = {
   display_order: 0,
 };
 
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
+
 const slugify = (s: string) =>
   s
     .toLowerCase()
@@ -105,6 +117,10 @@ const slugify = (s: string) =>
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/(^-|-$)+/g, "");
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 const ProjectsAdmin = () => {
   const navigate = useNavigate();
@@ -744,11 +760,19 @@ const ProjectsAdmin = () => {
   );
 };
 
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
+
 const StatChip = ({ label, value }: { label: string; value: number }) => (
   <div className="rounded-lg border border-border bg-card p-3">
     <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</p>
     <p className="text-2xl font-bold mt-0.5">{value}</p>
   </div>
 );
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default ProjectsAdmin;

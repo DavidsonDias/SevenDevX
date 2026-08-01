@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🖥️ SessionsAdmin — Sessões ativas em tempo real
  */
@@ -29,11 +33,19 @@ import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { pingSessionNow } from "@/hooks/useSessionTracker";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 type Sess = {
   id: string; user_id: string; user_email: string | null;
   device: string | null; browser: string | null; os: string | null;
   ip: string | null; last_seen_at: string; created_at: string; revoked_at: string | null;
 };
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 function SessionsInner() {
   const qc = useQueryClient();
@@ -176,6 +188,10 @@ function SessionsInner() {
     </AdminPageShell>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function SessionsAdmin() {
   return (

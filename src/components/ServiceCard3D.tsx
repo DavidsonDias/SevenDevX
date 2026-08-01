@@ -17,8 +17,16 @@
  * Efeito "cartão flutuante" interativo
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useRef, useState, ReactNode } from "react";
 import { motion, useMotionValue, useTransform, useSpring } from "framer-motion";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 interface ServiceCard3DProps {
   children: ReactNode;
@@ -30,6 +38,10 @@ interface ServiceCard3DProps {
   /** Cor do glow (padrão: branco) */
   glowColor?: string;
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 const ServiceCard3D = ({
   children,
@@ -142,5 +154,9 @@ const ServiceCard3D = ({
     </motion.div>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default ServiceCard3D;

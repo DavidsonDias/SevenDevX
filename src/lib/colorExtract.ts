@@ -23,8 +23,16 @@
  *  - Prioriza cores saturadas. Cai para o tom mais frequente caso contrário.
  */
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const NEUTRAL = (h: number, s: number, l: number) =>
   s < 0.12 || l < 0.06 || l > 0.94;
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 function hexToRgb(hex: string): [number, number, number] | null {
   let h = hex.replace("#", "").trim();

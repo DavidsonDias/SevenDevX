@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🧩 SolutionPage — programmatic SEO por serviço.
  * Rota /solucoes/:slug — gera página otimizada para AI Search por vertical de serviço.
@@ -26,7 +30,15 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { GEO_PROGRAMMATIC, GEO_ARTICLES } from "@/data/geoContent";
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const BASE = "https://sevendevx.com";
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 export default function SolutionPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -138,6 +150,10 @@ export default function SolutionPage() {
     </div>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export function SolutionsIndex() {
   return (

@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📊 SearchConsoleAdmin — visualiza dados do Google Search Console
  * via edge function gsc-insights (Lovable Connector Gateway).
@@ -25,8 +29,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { AdminPageShell } from "@/components/admin/AdminPageShell";
 import { Button } from "@/components/ui/button";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 type Row = { keys: string[]; clicks: number; impressions: number; ctr: number; position: number };
 type Dim = "query" | "page" | "country" | "device";
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 export default function SearchConsoleAdmin() {
   const [site, setSite] = useState<string>("");
@@ -138,6 +150,10 @@ export default function SearchConsoleAdmin() {
     </AdminPageShell>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 function Kpi({ icon: Icon, label, value }: { icon: any; label: string; value: string }) {
   return (

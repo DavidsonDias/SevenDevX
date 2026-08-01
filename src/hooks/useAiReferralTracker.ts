@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🛰️ useAiReferralTracker
  * Detecta quando uma visita veio de ChatGPT, Perplexity, Gemini, Claude, Copilot, etc.
@@ -27,6 +31,10 @@ import { useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { getOrCreateSafeId } from "@/utils/safeStorage";
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const AI_SOURCES: { id: string; match: (ref: string, search: URLSearchParams) => boolean }[] = [
   { id: "chatgpt",     match: (r, s) => /chat\.openai\.com|chatgpt\.com/i.test(r) || s.get("utm_source") === "chatgpt" || s.get("ref") === "chatgpt" },
   { id: "perplexity",  match: (r, s) => /perplexity\.ai/i.test(r) || s.get("utm_source") === "perplexity" },
@@ -40,6 +48,10 @@ const AI_SOURCES: { id: string; match: (ref: string, search: URLSearchParams) =>
 ];
 
 const SESSION_KEY = "sevendevx_ai_referrals_logged";
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 function getLogged(): Set<string> {
   try {
@@ -56,6 +68,10 @@ function markLogged(id: string) {
     sessionStorage.setItem(SESSION_KEY, JSON.stringify([...s]));
   } catch { /* noop */ }
 }
+
+// ============================================================================
+// 🪝 HOOK IMPLEMENTATION
+// ============================================================================
 
 export function useAiReferralTracker() {
   const location = useLocation();

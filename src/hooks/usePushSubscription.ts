@@ -13,10 +13,18 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { toast } from "@/hooks/use-toast";
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 async function fetchVapidKey(): Promise<string> {
   const { data, error } = await supabase.functions.invoke("push-public-key");
@@ -32,6 +40,10 @@ function urlBase64ToUint8Array(base64: string) {
   for (let i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
   return out;
 }
+
+// ============================================================================
+// 🪝 HOOK IMPLEMENTATION
+// ============================================================================
 
 export function usePushSubscription() {
   const { user } = useAuthContext();

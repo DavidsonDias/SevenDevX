@@ -18,7 +18,16 @@
 
 const imgCache = new Map<string, string[]>();
 const inflight = new Map<string, Promise<string[]>>();
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const SUB = new Set<() => void>();
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 /**
  * Assina notificações de atualização do cache de paletas.

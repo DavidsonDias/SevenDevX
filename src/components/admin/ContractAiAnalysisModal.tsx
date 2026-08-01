@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🧠 ContractAiAnalysisModal — analisa texto de contrato com IA e mostra riscos, cláusulas-chave e checklist.
  */
@@ -26,6 +30,10 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useScrollLock } from "@/hooks/useScrollLock";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 type Risk = { severity: "high" | "medium" | "low"; title: string; detail: string; clause_ref?: string };
 type Clause = { title: string; summary: string };
@@ -48,6 +56,10 @@ interface Props {
   text: string;
   label?: string;
 }
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 /**
  * Modal de análise de contrato por IA: resumo, riscos e cláusulas relevantes.
@@ -224,6 +236,10 @@ export default function ContractAiAnalysisModal({ open, onClose, text, label }: 
     document.body,
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 function Kpi({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (

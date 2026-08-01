@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🏷️ TagMultiSelect — Stripe-level autocomplete for tags
  * - Search/filter from `tag_registry`
@@ -27,10 +31,18 @@ import { useTagRegistry, useCreateTag, type TagEntry } from "@/hooks/useRegistry
 import { useToast } from "@/hooks/use-toast";
 import { TagIcon } from "@/components/TagIcon";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface Props {
   value: string[];
   onChange: (next: string[]) => void;
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Seleção múltipla de tags a partir do registry, com criação inline.
@@ -227,5 +239,9 @@ export const TagMultiSelect = ({ value, onChange }: Props) => {
     </div>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default TagMultiSelect;

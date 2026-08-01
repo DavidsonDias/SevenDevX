@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🪟 WebhookPayloadViewer — JSON inspector com syntax highlight, copy & replay
  */
@@ -19,6 +23,10 @@ import { Copy, RotateCw, CheckCircle2, XCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useState } from "react";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 interface Delivery {
   id: string;
@@ -32,6 +40,10 @@ interface Delivery {
   error: string | null;
 }
 
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
+
 const highlight = (json: string) =>
   json
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
@@ -44,6 +56,10 @@ const highlight = (json: string) =>
         if (num) return `<span class="text-fuchsia-300">${num}</span>`;
         return m;
       });
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function WebhookPayloadViewer({
   delivery, open, onClose, onReplayed,

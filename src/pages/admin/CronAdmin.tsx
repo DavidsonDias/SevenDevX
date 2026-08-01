@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🕒 CronAdmin — Visualização de jobs agendados internos (pg_cron) + execução manual de funções.
  */
@@ -26,6 +30,10 @@ import { Clock, Play, RefreshCw, CheckCircle2, XCircle, Loader2, Calendar } from
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 type Job = {
   jobid: number;
   jobname: string;
@@ -37,6 +45,10 @@ type Job = {
   last_duration_ms: number | null;
 };
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const MANUAL_TRIGGERS = [
   { fn: "health-collector", label: "Coletar saúde agora", desc: "Faz checks de uptime/latência imediatamente" },
   { fn: "daily-digest", label: "Enviar digest agora", desc: "Resumo executivo do dia por email" },
@@ -44,6 +56,10 @@ const MANUAL_TRIGGERS = [
   { fn: "gsc-insights", label: "Sincronizar Search Console", desc: "Importa últimos dados do Google" },
   { fn: "webhook-retry-worker", label: "Processar DLQ", desc: "Reprocessa webhooks falhados" },
 ];
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 function CronInner() {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -159,6 +175,10 @@ function CronInner() {
     </AdminPageShell>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function CronAdmin() {
   return (

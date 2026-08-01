@@ -18,11 +18,23 @@
  * SevenDevX Enterprise Edition
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useEffect, useCallback, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { getOrCreateSafeId } from "@/utils/safeStorage";
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const ANALYTICS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/track-analytics`;
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 // Get or create visitor ID
 const getVisitorId = (): string => {
@@ -38,6 +50,10 @@ interface TrackEventOptions {
   event_type: string;
   event_data?: Record<string, unknown>;
 }
+
+// ============================================================================
+// 🪝 HOOK IMPLEMENTATION
+// ============================================================================
 
 export const useAnalytics = () => {
   const location = useLocation();
@@ -138,5 +154,9 @@ export const useAnalytics = () => {
     sessionId: getSessionId(),
   };
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default useAnalytics;

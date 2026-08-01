@@ -1,3 +1,7 @@
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ⚡ logo-variations-ai/index.ts — SevenOS Edge Function
  * ═══════════════════════════════════════════════════════════════════════
@@ -26,6 +30,10 @@
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -37,6 +45,10 @@ const VARIANT_PROMPTS: Record<string, string> = {
   vertical: "Vertical lockup: icon on top, brand wordmark centered below, balanced proportions, premium tech aesthetic, white background",
   monochrome: "Single-color flat monochrome version of the brand mark only (no gradients, no shading), pure black on white background, suitable for stamping, embroidery, watermarks",
 };
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 async function genImage(prompt: string): Promise<string | null> {
   const res = await fetch("https://ai.gateway.lovable.dev/v1/images/generations", {
@@ -54,6 +66,10 @@ async function genImage(prompt: string): Promise<string | null> {
     ?? j?.choices?.[0]?.message?.images?.[0]?.image_url?.url?.split(',')?.[1];
   return b64 || null;
 }
+
+// ============================================================================
+// 🌐 REQUEST HANDLER
+// ============================================================================
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });

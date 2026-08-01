@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
@@ -25,7 +29,15 @@ import { Section } from "@/components/layout/Section";
 import GlassCard from "@/components/GlassCard";
 import { CONTENT_CLUSTERS, buildClusterJsonLd } from "@/data/contentClusters";
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const BASE = "https://www.sevendevx.com";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function ContentClusters() {
   const schema = buildClusterJsonLd();

@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
@@ -25,12 +29,20 @@ import { Section } from "@/components/layout/Section";
 import NotFound from "@/pages/NotFound";
 import { GEO_ARTICLES, type GeoArticle } from "@/data/geoContent";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface Props {
   basePath: "answers" | "knowledge-base";
   filterCategory: GeoArticle["category"];
   title: string;
   intro: string;
 }
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 /**
  * Índice dos artigos GEO, agrupados por cluster de conteúdo.
@@ -89,6 +101,10 @@ export function GeoArticleIndex({ basePath, filterCategory, title, intro }: Prop
     </>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Página de artigo GEO resolvida pelo slug da rota.

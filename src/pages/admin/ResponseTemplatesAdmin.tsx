@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 💬 ResponseTemplatesAdmin — biblioteca de templates de resposta com merge tags.
  */
@@ -23,7 +27,15 @@ import { supabase } from "@/integrations/supabase/client";
 import { MessageSquare, Plus, Trash2, Save } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 type Tpl = { id: string; name: string; category: string; subject: string | null; body: string; variables: string[]; usage_count: number };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function ResponseTemplatesAdmin() {
   const [items, setItems] = useState<Tpl[]>([]);

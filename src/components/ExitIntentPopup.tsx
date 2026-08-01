@@ -11,11 +11,19 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useState, useEffect } from 'react';
 import { X, Gift, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/i18n/LanguageContext';
 import { safeStorage } from '@/utils/safeStorage';
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * 💎 Exit Intent Popup - Captura visitantes antes de saírem
@@ -122,5 +130,9 @@ const ExitIntentPopup = () => {
     </div>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default ExitIntentPopup;

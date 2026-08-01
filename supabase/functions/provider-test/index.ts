@@ -1,3 +1,7 @@
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ⚡ provider-test/index.ts — SevenOS Edge Function
  * ═══════════════════════════════════════════════════════════════════════
@@ -28,6 +32,10 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 type Check = { name: string; ok: boolean; detail?: string; latency_ms?: number };
 type ProviderSpec = {
   name: string;
@@ -35,6 +43,10 @@ type ProviderSpec = {
   optional?: string[];
   test?: (secrets: Record<string, string>) => Promise<{ checks: Check[]; payload?: Record<string, unknown>; rate_limit?: Record<string, unknown> }>;
 };
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
@@ -162,6 +174,10 @@ const PRESENCE_ONLY: Record<string, ProviderSpec> = {
   clerk: { name: "Clerk", secrets: ["CLERK_SECRET_KEY"] },
   auth0: { name: "Auth0", secrets: ["AUTH0_DOMAIN", "AUTH0_CLIENT_ID", "AUTH0_CLIENT_SECRET"] },
 };
+
+// ============================================================================
+// 🌐 REQUEST HANDLER
+// ============================================================================
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });

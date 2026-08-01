@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🍔 AdminMenu — menu hambúrguer fullscreen global do admin (mobile-first).
  * Estilo igual ao site: overlay com animações suaves, lista de rotas, perfil + logout.
@@ -29,6 +33,10 @@ import {
   TrendingUp, Database, KeyRound, AlertOctagon, Clock,
 } from "lucide-react";
 import { useAuthContext as useAuth } from "@/contexts/AuthContext";
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const NAV: { label: string; to: string; icon: any; group: string }[] = [
   // Operação — visão diária
@@ -97,6 +105,10 @@ const NAV: { label: string; to: string; icon: any; group: string }[] = [
   { group: "Sistema", label: "Backups",       to: "/admin/backup",    icon: Database },
   { group: "Sistema", label: "Restore",       to: "/admin/restore",   icon: Database },
 ];
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function AdminMenu() {
   const [open, setOpen] = useState(false);

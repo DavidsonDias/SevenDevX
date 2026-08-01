@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🎨 useLogoOverrides — Customizações GLOBAIS de logo (DB + Realtime + cache local)
  *
@@ -27,6 +31,10 @@
 import { useCallback, useEffect, useSyncExternalStore } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const CACHE_KEY = "sdx:branding-assets:v1";
 const EVT = "sdx:branding-assets-changed";
 
@@ -39,6 +47,10 @@ export interface LogoOverride {
 }
 
 type Store = Record<string, LogoOverride>;
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 // ---------- cache + pub/sub ----------
 function readCache(): Store {
@@ -120,6 +132,10 @@ async function hydrate() {
     )
     .subscribe();
 }
+
+// ============================================================================
+// 🪝 HOOK IMPLEMENTATION
+// ============================================================================
 
 // ---------- hook ----------
 export function useLogoOverrides() {

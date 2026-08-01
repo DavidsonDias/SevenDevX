@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🔗 ClientPicker — autocomplete + criar cliente inline
  * Vincula um cliente a um projeto.
@@ -22,10 +26,18 @@ import { Search, Plus, X, Building2, Mail, Check, User as UserIcon } from "lucid
 import { useClients, useUpsertClient } from "@/hooks/useEcosystem";
 import { Link } from "react-router-dom";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface Props {
   value?: string | null;
   onChange: (clientId: string | null) => void;
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Seletor de cliente com busca, usado nos formulários de projeto, contrato e financeiro.

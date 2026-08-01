@@ -1,3 +1,7 @@
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ⚡ oauth-start/index.ts — SevenOS Edge Function
  * ═══════════════════════════════════════════════════════════════════════
@@ -26,6 +30,10 @@
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -44,11 +52,19 @@ const PROVIDERS: Record<string, ProviderConf> = {
   notion: { authorize_url: 'https://api.notion.com/v1/oauth/authorize', client_id_env: 'NOTION_OAUTH_CLIENT_ID', default_scopes: '', uses_pkce: false },
 };
 
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
+
 function b64url(buf: ArrayBuffer | Uint8Array): string {
   const arr = buf instanceof Uint8Array ? buf : new Uint8Array(buf);
   let s = ''; arr.forEach(b => s += String.fromCharCode(b));
   return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
+
+// ============================================================================
+// 🌐 REQUEST HANDLER
+// ============================================================================
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });

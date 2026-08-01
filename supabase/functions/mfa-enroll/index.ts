@@ -1,3 +1,7 @@
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ⚡ mfa-enroll/index.ts — SevenOS Edge Function
  * ═══════════════════════════════════════════════════════════════════════
@@ -25,9 +29,17 @@
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 function base32(buf: Uint8Array): string {
   const ALPH = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
@@ -44,6 +56,10 @@ function backupCode(): string {
   const a = new Uint8Array(5); crypto.getRandomValues(a);
   return Array.from(a).map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
 }
+
+// ============================================================================
+// 🌐 REQUEST HANDLER
+// ============================================================================
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });

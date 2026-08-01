@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🛰️ GEO Analytics Admin — discoverability em LLMs e AI Search.
  * Mostra tráfego de bots de IA, top páginas GEO e checklist de indexação.
@@ -31,6 +35,10 @@ import AdminPageShell from "@/components/admin/AdminPageShell";
 import GlassCard from "@/components/GlassCard";
 import SEOHead from "@/components/SEOHead";
 import { GEO_ARTICLES, GEO_PROGRAMMATIC } from "@/data/geoContent";
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const AI_BOTS = [
   { id: "gptbot", name: "GPTBot (OpenAI)", match: /GPTBot/i },
@@ -59,6 +67,10 @@ interface PageView {
   visitor_id: string | null;
   created_at: string;
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function GeoAnalyticsAdmin() {
   const { isAdmin } = useAuth();

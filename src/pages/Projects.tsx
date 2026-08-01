@@ -509,6 +509,10 @@
  * ═════════════════════════════════════════════════════════════════
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { Suspense, lazy, useEffect } from "react";
 import { motion } from "framer-motion";
 
@@ -524,8 +528,16 @@ import { useAnalytics } from "@/hooks/useAnalytics";
 import heroBackground from "@/assets/images/hero-tech-workspace.webp";
 import projectsShowcase from "@/assets/images/projects-showcase.webp";
 
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
+
 const TechShowcase = lazy(() => import("@/components/TechShowcase"));
 const PortfolioCarousel3D = lazy(() => import("@/components/PortfolioCarousel3D"));
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 const Projects = () => {
   const { t } = useLanguage();
@@ -733,5 +745,9 @@ const Projects = () => {
     </>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default Projects;

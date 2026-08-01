@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🧭 useSmartBack — Voltar inteligente
  * Se houver histórico no app (mesma origem), volta. Senão, vai para o fallback.
@@ -21,8 +25,16 @@
 import { useCallback, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const HISTORY_KEY = "sevendevx:nav-history";
 const MAX = 25;
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 const readHistory = (): string[] => {
   try {
@@ -40,6 +52,10 @@ const writeHistory = (h: string[]) => {
     /* storage bloqueado */
   }
 };
+
+// ============================================================================
+// 🪝 HOOK IMPLEMENTATION
+// ============================================================================
 
 /** Hook que registra cada navegação no sessionStorage (instalar 1x no Router root). */
 export const useNavHistoryTracker = () => {

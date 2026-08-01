@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🛠️ TechnologiesAdmin — Enterprise CRUD for the tech registry
  * - Listing with logo, name, slug, category, color, status
@@ -49,6 +53,10 @@ import { IconUploader } from "@/components/admin/IconUploader";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import SEOHead from "@/components/SEOHead";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface FormState {
   id?: string;
   name: string;
@@ -60,10 +68,18 @@ interface FormState {
   is_active: boolean;
 }
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const EMPTY: FormState = {
   name: "", slug: "", category: "", color: "#8B5CF6",
   description: "", icon_url: null, is_active: true,
 };
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 const TechnologiesAdmin = () => {
   const { data: registry = [], isLoading } = useTechRegistry({ includeInactive: true });
@@ -514,6 +530,10 @@ const StatPill = ({ label, value }: { label: string; value: number }) => (
   </div>
 );
 
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
+
 const EmptyState = ({ onCreate }: { onCreate: () => void }) => (
   <div className="rounded-xl border border-dashed border-white/10 p-10 text-center">
     <Layers className="w-10 h-10 mx-auto text-white/30 mb-3" />
@@ -526,5 +546,9 @@ const EmptyState = ({ onCreate }: { onCreate: () => void }) => (
     </Button>
   </div>
 );
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default TechnologiesAdmin;

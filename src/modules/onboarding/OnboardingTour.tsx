@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🎓 OnboardingTour — spotlight overlay com steps configuráveis.
  */
@@ -20,6 +24,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, ChevronRight, ChevronLeft, Sparkles } from "lucide-react";
 import { useOnboarding } from "@/hooks/useOnboarding";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 export type TourStep = {
   id: string;
   title: string;
@@ -27,6 +35,10 @@ export type TourStep = {
   targetSelector?: string; // optional — when missing, shows centered modal
   placement?: "top" | "bottom" | "left" | "right" | "center";
 };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function OnboardingTour({
   tourKey, steps, autoStart = true,

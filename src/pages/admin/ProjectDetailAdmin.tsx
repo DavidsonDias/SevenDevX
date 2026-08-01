@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🛰️ ProjectDetailAdmin — /admin/projects/:id
  * O coração operacional: Process Engine + IA + CRM timeline + checklist + uploads.
@@ -49,6 +53,10 @@ import ProjectFinanceBlock from "@/components/admin/finance/ProjectFinanceBlock"
 import TimeTrackerWidget from "@/components/admin/finance/TimeTrackerWidget";
 import ProjectIntegrationsBlock from "@/components/admin/integrations/ProjectIntegrationsBlock";
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const STAGE_STATUS: Record<string, { label: string; color: string }> = {
   pending:     { label: "Pendente",    color: "#6B7280" },
   in_progress: { label: "Em andamento", color: "#3B82F6" },
@@ -72,7 +80,16 @@ const LEGACY_PIPELINE: Record<string, string> = {
   launch: "entrega",
   done: "entrega",
 };
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
+
 const normalizePipeline = (s: any) => LEGACY_PIPELINE[s as string] || s || "lead";
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 export default function ProjectDetailAdmin() {
   const { id } = useParams<{ id: string }>();
@@ -674,6 +691,10 @@ function ClientPanel({
     </>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /* ─────────────────── CLIENT AI SUMMARY (main column) ─────────────────── */
 function ClientAiSummaryBlock({ clientId }: { clientId?: string | null }) {

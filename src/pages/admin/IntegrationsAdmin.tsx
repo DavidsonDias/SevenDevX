@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🔗 IntegrationsAdmin — Mission Control de Integrações
  */
@@ -35,6 +39,10 @@ import BorderBeam from "@/components/ui/BorderBeam";
 import BrandHalo from "@/components/ui/BrandHalo";
 import { findCatalogProvider, CATEGORY_LABEL, type CatalogProvider } from "@/modules/integrations/providerCatalog";
 import { useBrandPalette } from "@/hooks/useBrandPalette";
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 // Card item isolado para que cada provider possa reagir ao branding global (DB + extração de cor)
 function ProviderItemCard({
@@ -167,6 +175,10 @@ const Kpi = ({ icon: Icon, label, value, hint }: any) => (
     </div>
   </GlassCard>
 );
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function IntegrationsAdmin() {
   const { list, toggleActive, testConnection } = useIntegrations();

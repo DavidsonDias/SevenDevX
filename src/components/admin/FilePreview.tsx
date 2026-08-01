@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🖼️ FilePreview — preview robusto de anexos do bucket privado.
  * - Resolve signed URL sob demanda (jamais usa file_url legado/público).
@@ -23,6 +27,10 @@ import { useEffect, useState } from "react";
 import { Loader2, FileText, AlertCircle, ExternalLink, Download } from "lucide-react";
 import { getFileUrl, resolveStoragePath } from "@/lib/storage";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface Props {
   attachment: any;
   variant?: "card" | "row";
@@ -30,9 +38,17 @@ interface Props {
   onClickOverride?: () => void;
 }
 
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
+
 const isImage = (m?: string) => !!m && m.startsWith("image/");
 const isPdf = (m?: string, name?: string) =>
   m === "application/pdf" || (!!name && name.toLowerCase().endsWith(".pdf"));
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Pré-visualização de anexo.

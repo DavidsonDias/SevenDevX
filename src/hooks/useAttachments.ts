@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📎 useAttachments — sistema unificado de anexos com URLs ASSINADAS (bucket privado).
  * Segurança enterprise: URLs expiram em 1h, geradas sob demanda via React Query.
@@ -21,6 +25,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { signMany, ATTACHMENTS_BUCKET, invalidateUrl, getFileUrl } from "@/lib/storage";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 /**
  * Categorias de anexo suportadas pelo bucket privado `attachments`.
@@ -34,7 +42,15 @@ interface ListFilter {
   type?: AttachmentType;
 }
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const SIGN_TTL = 60 * 60; // 1h
+
+// ============================================================================
+// 🪝 HOOK IMPLEMENTATION
+// ============================================================================
 
 export const useAttachments = (filter: ListFilter) => {
   return useQuery({

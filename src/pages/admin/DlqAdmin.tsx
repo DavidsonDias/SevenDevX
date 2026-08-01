@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ☠️ DlqAdmin — Dead Letter Queue de webhooks com replay.
  */
@@ -24,6 +28,10 @@ import { AlertOctagon, RotateCw, Trash2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "@/hooks/use-toast";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function DlqAdmin() {
   const [items, setItems] = useState<any[]>([]);

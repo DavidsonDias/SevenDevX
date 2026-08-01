@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📄 StageDocuments — Document Engine por etapa.
  * Lista o catálogo de documentos sugeridos + documentos persistidos.
@@ -28,6 +32,10 @@ import {
 import { useAiGenerate } from "@/hooks/useEcosystem";
 import { useToast } from "@/hooks/use-toast";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface Props {
   projectId: string;
   stage: any;
@@ -35,6 +43,10 @@ interface Props {
   client?: any;
   interactions?: any[];
 }
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 /**
  * Lista e gerencia os documentos vinculados a uma etapa do projeto.
@@ -238,6 +250,10 @@ export default function StageDocuments({ projectId, stage, project, client, inte
     </div>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 function DocEditorModal({ doc, onClose, onSave }: any) {
   const viewMode = !!doc._viewMode;

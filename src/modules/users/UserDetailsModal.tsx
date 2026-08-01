@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 👤 UserDetailsModal — Detalhe + ações enterprise por usuário
  * Protege Davidson/SevenDevX e o último admin contra exclusão.
@@ -22,14 +26,31 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useScrollLock } from "@/hooks/useScrollLock";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 type UserRow = {
   user_id: string; email: string; full_name: string | null; avatar_url: string | null;
   created_at: string; last_sign_in_at: string | null; roles: string[];
 };
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const PROTECTED_EMAILS = ["davidson", "sevendevx"]; // qualquer email contendo isso
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
+
 const isProtected = (email?: string | null) =>
   !!email && PROTECTED_EMAILS.some((p) => email.toLowerCase().includes(p));
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function UserDetailsModal({
   user, allUsers, onClose, onChanged,

@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🏗️ useSitePage — hooks para o módulo Criação de Sites (SevenOS CMS).
  * Consolida acesso às tabelas site_page_* com fallback para conteúdo padrão
@@ -23,6 +27,10 @@ import { supabase } from "@/integrations/supabase/client";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sb = supabase as any;
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 export type SitePageConfig = {
   id: string;
@@ -147,10 +155,18 @@ export type SitePageData = {
   faqs: SitePageFaq[];
 };
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const EMPTY: SitePageData = {
   config: null, metrics: [], differentials: [], process: [],
   comparison: [], roi: [], projects: [], tech: [], faqs: [],
 };
+
+// ============================================================================
+// 🪝 HOOK IMPLEMENTATION
+// ============================================================================
 
 export function useSitePage() {
   const [data, setData] = useState<SitePageData>(EMPTY);

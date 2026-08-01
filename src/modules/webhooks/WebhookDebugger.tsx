@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🧪 WebhookDebugger — Editor de payload + assinatura HMAC + envio real
  * Permite testar qualquer webhook com payload customizado, ver headers, signature e response.
@@ -22,6 +26,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface Webhook {
   id: string;
   name: string;
@@ -30,12 +38,20 @@ interface Webhook {
   events: string[];
 }
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const PRESETS: Record<string, any> = {
   "test.ping": { hello: "SevenOS", at: new Date().toISOString() },
   "lead.created": { id: "lead_demo_123", name: "Acme Co", email: "contato@acme.com", source: "site" },
   "project.pipeline_changed": { project_id: "proj_demo", from: "lead", to: "proposta" },
   "deployment.ready": { project: "sevenos", env: "production", url: "https://sevenos.app", commit: "abc1234" },
 };
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 async function hmacHex(secret: string, body: string) {
   const key = await crypto.subtle.importKey(
@@ -45,6 +61,10 @@ async function hmacHex(secret: string, body: string) {
   const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(body));
   return Array.from(new Uint8Array(sig)).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function WebhookDebugger({
   webhook, open, onClose, onSent,

@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📊 KpiCards — KPIs avançados de pipeline, conversão e receita
  */
@@ -21,6 +25,10 @@ import { TrendingUp, DollarSign, Target, Briefcase } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import GlassCard from "@/components/GlassCard";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface Kpis {
   pipelineActive: number;
   conversionRate: number; // contacts → clients
@@ -28,6 +36,10 @@ interface Kpis {
   contractsPending: number;
   estimatedRevenue: number; // soma de projetos com pipeline ativo
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function KpiCards() {
   const [k, setK] = useState<Kpis | null>(null);

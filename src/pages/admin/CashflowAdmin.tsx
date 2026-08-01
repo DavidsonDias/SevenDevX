@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 💸 CashflowAdmin — Fluxo de caixa previsto 90 dias.
  */
@@ -25,6 +29,10 @@ import AdminPageShell from "@/components/admin/AdminPageShell";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { formatMoney } from "@/lib/money";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function CashflowAdmin() {
   const { data, isLoading } = useQuery({

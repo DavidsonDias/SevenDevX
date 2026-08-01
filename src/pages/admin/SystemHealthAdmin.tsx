@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🏥 System Health — uptime, integrações, eventos por minuto, incidentes.
  */
@@ -26,7 +30,15 @@ import RealtimeActivityFeed from "@/modules/system-health/RealtimeActivityFeed";
 import HealthStatusGrid from "@/modules/system-health/HealthStatusGrid";
 import AIRecommendationPanel from "@/modules/system-health/AIRecommendationPanel";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface Metric { label: string; value: string | number; status: "ok" | "warn" | "down"; icon: any; }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function SystemHealthAdmin() {
   const [metrics, setMetrics] = useState<Metric[]>([]);

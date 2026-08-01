@@ -419,6 +419,10 @@
  * ═════════════════════════════════════════════════════════════════
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
@@ -432,6 +436,10 @@ import SEOHead from "@/components/SEOHead";
 import ExitIntentPopup from "@/components/ExitIntentPopup";
 import SectionDivider from "@/components/SectionDivider";
 import { useAnalytics } from "@/hooks/useAnalytics";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 const Home = () => {
   // 📊 Track page view
@@ -544,5 +552,9 @@ const Home = () => {
     </>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default Home;

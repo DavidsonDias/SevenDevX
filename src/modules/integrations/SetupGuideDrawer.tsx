@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📘 SetupGuideDrawer — Tutorial premium passo a passo por provider
  * - Checklist persistente em localStorage
@@ -24,6 +28,10 @@ import { toast } from "sonner";
 import LogoRenderer from "@/components/ui/logo/LogoRenderer";
 import { useScrollLock } from "@/hooks/useScrollLock";
 import { getCatalogProvider } from "./providerCatalog";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 type Step = {
   title: string;
@@ -42,6 +50,10 @@ type Guide = {
   troubleshooting?: Trouble[];
   faq?: FAQ[];
 };
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const GUIDES: Record<string, Guide> = {
   github: {
@@ -569,6 +581,10 @@ const GUIDES: Record<string, Guide> = {
 
 const STORAGE_KEY = (id: string) => `setup-guide-done:${id}`;
 
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
+
 function CopyBlock({ value, label }: { value: string; label?: string }) {
   const [copied, setCopied] = useState(false);
   return (
@@ -623,6 +639,10 @@ function buildGenericGuide(providerId: string): Guide {
     ],
   };
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function SetupGuideDrawer({
   providerId, open, onClose,

@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🪝 Webhooks Manager — enterprise CRUD + delivery logs + manual test.
  */
@@ -27,6 +31,10 @@ import WebhookPayloadViewer from "@/modules/webhooks/WebhookPayloadViewer";
 import WebhookDebugger from "@/modules/webhooks/WebhookDebugger";
 import WebhookGuideDrawer from "@/modules/webhooks/WebhookGuideDrawer";
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const EVENT_CATALOG = [
   "lead.created", "lead.updated", "project.created", "project.pipeline_changed",
   "contract.signed", "payment.received", "deployment.failed", "deployment.ready",
@@ -38,6 +46,10 @@ interface Webhook {
   events: string[]; is_active: boolean; success_count: number; failure_count: number;
   last_delivery_at: string | null; description: string | null;
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function WebhooksAdmin() {
   const [hooks, setHooks] = useState<Webhook[]>([]);

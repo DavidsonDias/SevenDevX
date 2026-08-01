@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🔄 AutomationFlowBuilder — visual node-based workflow editor.
  * Linear flow: TRIGGER → [CONDITION...] → [ACTION...]
@@ -27,11 +31,19 @@ import {
   Bell, Code2, Repeat, Send, Save, Play, Trash2, ChevronDown, GripVertical, Sparkles,
 } from "lucide-react";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 type NodeKind = "trigger" | "condition" | "action";
 type ActionType =
   | "webhook.call" | "email.send" | "whatsapp.send" | "discord.notify" | "slack.notify"
   | "ai.summarize" | "db.update" | "delay" | "push.send" | "code.run" | "loop" | "retry"
   | "pipeline.move" | "http.request" | "transform";
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const TRIGGERS = [
   "lead.created", "lead.updated", "project.created", "project.pipeline_changed",
@@ -61,6 +73,10 @@ const CONDITION_OPS = ["equals", "not_equals", "contains", "gt", "lt", "exists",
 
 type Condition = { id: string; field: string; op: typeof CONDITION_OPS[number]; value: string };
 type Action = { id: string; type: ActionType; params: Record<string, any> };
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 export default function AutomationFlowBuilder({
   open, onClose, automationId,
@@ -387,6 +403,10 @@ function ActionNode({
     </div>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 function Connector() {
   return (

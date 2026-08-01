@@ -15,6 +15,10 @@
  * ContactMultiStep — Multi-step form with i18n, validation, sanitization
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,6 +31,10 @@ import contactBackground from "@/assets/images/contact-background.webp";
 import DOMPurify from "dompurify";
 import { useContacts } from "@/hooks/useContacts";
 import { useLanguage } from "@/i18n/LanguageContext";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 const ContactMultiStep: React.FC = () => {
   const { toast } = useToast();
@@ -308,5 +316,9 @@ const ContactMultiStep: React.FC = () => {
     </section>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default ContactMultiStep;

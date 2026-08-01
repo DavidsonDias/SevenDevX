@@ -27,8 +27,16 @@
 //
 // Pode ser chamada manualmente (POST sem body) ou via cron job.
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
@@ -39,6 +47,10 @@ const DEFAULT_MODELS: { id: string; label: string }[] = [
   { id: 'google/gemini-2.5-flash', label: 'Gemini' },
   { id: 'openai/gpt-5-mini', label: 'ChatGPT' },
 ];
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 function modelLabel(id: string): string {
   if (id.startsWith('google/gemini')) return id.includes('pro') ? 'Gemini Pro' : 'Gemini';
@@ -92,6 +104,10 @@ async function askModel(model: string, query: string): Promise<string | null> {
     return null;
   }
 }
+
+// ============================================================================
+// 🌐 REQUEST HANDLER
+// ============================================================================
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });

@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📚 LogoLibraryAdmin — Biblioteca oficial de logos com editor
  * Catálogo completo + busca + filtro + indicador de "customizado" + editor inline.
@@ -26,6 +30,10 @@ import LogoEditorModal from "@/modules/branding/LogoEditorModal";
 import { PROVIDER_CATALOG, CATEGORY_LABEL, type CatalogProvider, type ProviderCategory } from "@/modules/integrations/providerCatalog";
 import { useLogoOverrides } from "@/hooks/useLogoOverrides";
 import { Search, Pencil, Sparkles, RotateCcw, Star } from "lucide-react";
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 function LogoLibraryInner() {
   const [q, setQ] = useState("");
@@ -140,6 +148,10 @@ function LogoLibraryInner() {
     </AdminPageShell>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function LogoLibraryAdmin() {
   return (

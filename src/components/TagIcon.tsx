@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🏷️ TagIcon — Renders the same icon for a given tag everywhere
  * (admin select, project cards, hub, modal, detail page).
@@ -31,6 +35,10 @@ import {
 import * as SiIcons from "react-icons/si";
 import type { ElementType } from "react";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface TagIconProps {
   name: string;
   slug?: string;
@@ -40,6 +48,10 @@ interface TagIconProps {
   /** Custom icon URL (uploaded SVG/PNG) — takes priority. */
   iconUrl?: string | null;
 }
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 /** Brand/product logos (Simple Icons). */
 const BRAND_TAG_ICONS: Record<string, ElementType> = {
@@ -109,8 +121,16 @@ const CONCEPT_TAG_ICONS: Record<string, ElementType> = {
   webapp: Network,
 };
 
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
+
 const normalize = (s: string) =>
   s.toLowerCase().trim().replace(/\s+/g, "-");
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Renderiza o ícone de uma tag de projeto a partir do registry de tags.
@@ -149,5 +169,9 @@ export const TagIcon = ({ name, slug, color, size = 14, className = "", iconUrl 
     />
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default TagIcon;

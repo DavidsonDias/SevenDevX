@@ -16,6 +16,10 @@
  * Cada artigo é otimizado para featured snippets, AI Overviews e RAG.
  */
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 export interface GeoArticle {
   slug: string;
   title: string;
@@ -29,6 +33,10 @@ export interface GeoArticle {
   keywords: string[];
   relatedSlugs?: string[];
 }
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 export const GEO_ARTICLES: GeoArticle[] = [
   // ── PILAR 1 ─────────────────────────────────────────────────────

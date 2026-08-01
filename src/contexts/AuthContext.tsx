@@ -39,10 +39,18 @@
  * ═══════════════════════════════════════════════════════════════════════
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionTracker } from "@/hooks/useSessionTracker";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 interface AuthContextType {
   user: User | null;
@@ -55,6 +63,10 @@ interface AuthContextType {
   resetPassword: (email: string) => Promise<{ data: any; error: any }>;
 }
 
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
+
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const useAuthContext = () => {
@@ -62,6 +74,10 @@ export const useAuthContext = () => {
   if (!ctx) throw new Error("useAuthContext must be used within AuthProvider");
   return ctx;
 };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Provider da sessão autenticada e do papel administrativo.

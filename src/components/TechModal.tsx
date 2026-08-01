@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ExternalLink } from "lucide-react";
 import { Technology } from "@/utils/techData";
@@ -19,10 +23,18 @@ import TechIcon from "./TechIcon";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useScrollLock } from "@/hooks/useScrollLock";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface TechModalProps {
   tech: Technology | null;
   onClose: () => void;
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 const TechModal = ({ tech, onClose }: TechModalProps) => {
   const { t } = useLanguage();
@@ -134,5 +146,9 @@ const TechModal = ({ tech, onClose }: TechModalProps) => {
     </AnimatePresence>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default TechModal;

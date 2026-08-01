@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🖼️ IconUploader — drag&drop SVG/PNG uploader for tech & tag icons
  * Stores files in the public `tech-icons` Supabase Storage bucket.
@@ -21,6 +25,10 @@ import { useCallback, useRef, useState } from "react";
 import { Upload, X, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 interface IconUploaderProps {
   value?: string | null;
@@ -38,8 +46,16 @@ interface IconUploaderProps {
   aspect?: "square" | "landscape";
 }
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const DEFAULT_MAX_BYTES = 1024 * 1024; // 1MB
 const ALLOWED = ["image/svg+xml", "image/png", "image/jpeg", "image/jpg", "image/webp"];
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export const IconUploader = ({
   value,
@@ -181,5 +197,9 @@ export const IconUploader = ({
     </div>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default IconUploader;

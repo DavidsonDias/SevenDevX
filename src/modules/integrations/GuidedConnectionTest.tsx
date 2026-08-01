@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🧠 GuidedConnectionTest — Wizard passo a passo de validação
  * - Roteia para edge function *-test quando existe (github/vercel/figma/whatsapp)
@@ -27,7 +31,15 @@ import { useScrollLock } from "@/hooks/useScrollLock";
 import { findCatalogProvider } from "./providerCatalog";
 import type { IntegrationProvider, ConnectionTestResult } from "@/hooks/useIntegrations";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 type StepStatus = "pending" | "running" | "ok" | "fail";
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 const FUNCTION_MAP: Record<string, string> = {
   github: "github-test",
@@ -54,6 +66,10 @@ const STEPS_BY_PROVIDER: Record<string, string[]> = {
 };
 
 const DEFAULT_STEPS = ["Validar secrets", "Executar teste real", "Analisar resposta", "Persistir diagnóstico"];
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function GuidedConnectionTest({
   provider, open, onClose, onOpenGuide,

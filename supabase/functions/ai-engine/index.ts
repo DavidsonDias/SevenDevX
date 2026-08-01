@@ -1,3 +1,7 @@
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ⚡ ai-engine/index.ts — SevenOS Edge Function
  * ═══════════════════════════════════════════════════════════════════════
@@ -32,6 +36,10 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
 
@@ -48,7 +56,15 @@ const SYSTEM_PROMPTS: Record<string, string> = {
     `Você é um advogado sênior especializado em contratos de prestação de serviços de tecnologia. Gere um contrato profissional completo em PT-BR a partir do contexto fornecido (contract_config, current_date). Use linguagem jurídica formal brasileira, markdown limpo, sem placeholders. Inclua cláusulas de objeto, escopo, valor, prazo, suporte, propriedade intelectual, confidencialidade, LGPD, limitação de responsabilidade, rescisão e foro. NUNCA escreva a palavra "engenharia"; use "desenvolvimento de software".`,
 };
 
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
+
 const formatDateBR = () => new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
+
+// ============================================================================
+// 🌐 REQUEST HANDLER
+// ============================================================================
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });

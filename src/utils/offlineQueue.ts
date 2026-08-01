@@ -20,6 +20,10 @@
  * - Tenta usar Background Sync API quando disponível
  */
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 type QueuedRequest = {
   id: string;
   url: string;
@@ -30,11 +34,19 @@ type QueuedRequest = {
   tries: number;
 };
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const DB_NAME = "sevendevx-offline";
 const STORE = "queue";
 const DB_VERSION = 1;
 
 const listeners = new Set<(size: number) => void>();
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {

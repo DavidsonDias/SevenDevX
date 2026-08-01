@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📣 Citations Admin — Citation Engine para monitorar menções da SevenDevX
  * em respostas de ChatGPT, Perplexity, Gemini, Claude, Copilot, etc.
@@ -32,6 +36,10 @@ import GlassCard from "@/components/GlassCard";
 import SEOHead from "@/components/SEOHead";
 import CitationMonitorSettings from "@/components/admin/CitationMonitorSettings";
 import { toast } from "sonner";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 interface Citation {
   id: string;
@@ -53,7 +61,15 @@ interface Referral {
   created_at: string;
 }
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const SOURCES = ["ChatGPT", "Perplexity", "Gemini", "Claude", "Copilot", "You.com", "Meta AI", "Phind", "DeepSeek", "Outro"];
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function CitationsAdmin() {
   const { isAdmin } = useAuth();

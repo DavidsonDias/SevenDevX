@@ -31,6 +31,10 @@
  */
 
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import DOMPurify from "dompurify";
@@ -41,6 +45,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 type OrcamentoModalProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -48,7 +56,15 @@ type OrcamentoModalProps = {
   whatsappNumber?: string; // formato internacional sem + (ex: '5531984740625') — se não passar, usa fallback
 };
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const DEFAULT_WHATSAPP = "5531984740625";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 const OrcamentoModal: React.FC<OrcamentoModalProps> = ({
   isOpen,
@@ -446,5 +462,9 @@ const OrcamentoModal: React.FC<OrcamentoModalProps> = ({
     </AnimatePresence>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default OrcamentoModal;

@@ -32,6 +32,10 @@
  * ═══════════════════════════════════════════════════════════════════════
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { ErrorBoundary } from "react-error-boundary";
 import Providers from "@/app/Providers";
 import AppRouter from "@/app/Router";
@@ -40,6 +44,10 @@ import AppInstallerButton from "@/components/AppInstallerButton";
 import PWAUpdatePrompt from "@/components/PWAUpdatePrompt";
 import OfflineIndicator from "@/components/OfflineIndicator";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 function ErrorFallback({ error, resetErrorBoundary }: any) {
   return (
@@ -66,6 +74,10 @@ function ErrorFallback({ error, resetErrorBoundary }: any) {
     </div>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function App() {
   return (

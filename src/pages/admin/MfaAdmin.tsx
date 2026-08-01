@@ -14,6 +14,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🔐 MfaAdmin — enroll/manage 2FA TOTP.
  */
@@ -22,6 +26,10 @@ import AdminPageShell from "@/components/admin/AdminPageShell";
 import { useMfa } from "@/hooks/useMfa";
 import { Shield, ShieldCheck, ShieldOff, Copy, Check, AlertTriangle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function MfaAdmin() {
   const { enabled, loading, enroll, verify, disable } = useMfa();

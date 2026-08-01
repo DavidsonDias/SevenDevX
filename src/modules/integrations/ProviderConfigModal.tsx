@@ -11,6 +11,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * ⚙️ ProviderConfigModal — Configuração funcional real de um provider
  * - Verifica secrets via edge function `provider-secrets-check` (sem expor valores)
@@ -28,6 +32,10 @@ import LogoRenderer from "@/components/ui/logo/LogoRenderer";
 import type { IntegrationProvider } from "@/hooks/useIntegrations";
 import { useScrollLock } from "@/hooks/useScrollLock";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface Props {
   provider: IntegrationProvider | null;
   open: boolean;
@@ -36,6 +44,10 @@ interface Props {
 }
 
 type SecretStatus = Record<string, { set: boolean; preview?: string }>;
+
+// ============================================================================
+// 🎨 INTERNAL COMPONENTS
+// ============================================================================
 
 /**
  * Configuração de um provider externo.
@@ -465,6 +477,10 @@ export default function ProviderConfigModal({ provider, open, onClose, onOpenGui
     </AnimatePresence>
   );
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (

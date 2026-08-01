@@ -13,6 +13,10 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📄 useDocuments — Document Engine (stage_documents)
  * Briefings, escopos, propostas, roadmaps gerados por IA ou manualmente.
@@ -20,6 +24,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 export type DocumentType =
   | "briefing" | "competitor_analysis" | "kpis"
@@ -29,6 +37,10 @@ export type DocumentType =
   | "setup" | "sprints" | "qa"
   | "deploy" | "monitoring" | "training" | "evolution_plan"
   | "custom";
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 /* Catálogo de documentos por slug de etapa do template default */
 export const STAGE_DOC_CATALOG: Record<string, { type: DocumentType; title: string; prompt: string }[]> = {
@@ -64,6 +76,10 @@ export const STAGE_DOC_CATALOG: Record<string, { type: DocumentType; title: stri
     { type: "evolution_plan", title: "Plano de evolução", prompt: "Construa um plano de evolução pós-lançamento (90 dias) com melhorias e otimizações." },
   ],
 };
+
+// ============================================================================
+// 🪝 HOOK IMPLEMENTATION
+// ============================================================================
 
 export const useStageDocuments = (stageId?: string) => {
   return useQuery({
