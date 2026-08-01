@@ -12,6 +12,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const DRY = process.argv.includes("--dry");
+const CHECK = process.argv.includes("--check");
 const ROOTS = ["src", "supabase/functions", "scripts"];
 const EXT = new Set([".ts", ".tsx", ".js", ".jsx", ".mjs"]);
 const MIN_LINES = 80;
@@ -80,7 +81,8 @@ function topLevelLines(lines) {
     const line = lines[i];
     const trimmed = line.trim();
     const wasSafe = !inBlock && tickParity === 0;
-    if (wasSafe && /^\S/.test(line) && !trimmed.startsWith("//") && !trimmed.startsWith("*") && !trimmed.startsWith("/*")) {
+    // tolera arquivos legados indentados por 1 espaço no nível raiz
+    if (wasSafe && /^ {0,1}\S/.test(line) && !trimmed.startsWith("//") && !trimmed.startsWith("*") && !trimmed.startsWith("/*")) {
       safe.push(i);
     }
     // atualiza estados grosseiros
@@ -111,9 +113,13 @@ function blockStart(lines, idx) {
   return i;
 }
 
+/** Detecta qualquer divisor de seção já existente (independente do emoji usado). */
+const HAS_DIVIDER = /^\/\/ ={20,}$/m;
+
 function processFile(file) {
   const src = fs.readFileSync(file, "utf8");
-  if (src.includes("// 📦 IMPORTS") || src.includes("🧩 TYPES")) return false;
+  if (HAS_DIVIDER.test(src)) return false;
+  // normaliza arquivos indentados por 1 espaço no topo (legado)
   const lines = src.split("\n");
   if (lines.length < MIN_LINES) return false;
 
@@ -123,7 +129,7 @@ function processFile(file) {
   // Primeira passagem: coleta categorias por linha
   const hits = [];
   for (const i of safe) {
-    let cat = classify(lines[i], file);
+    let cat = classify(lines[i].trimStart(), file);
     if (cat) hits.push({ line: i, cat });
   }
   if (!hits.length) return false;
@@ -162,21 +168,45 @@ function processFile(file) {
 
   const result = out.join("\n");
   if (result === src) return false;
-  if (!DRY) fs.writeFileSync(file, result);
+  if (!DRY && !CHECK) fs.writeFileSync(file, result);
   return true;
 }
 
+// ============================================================================
+// 🌐 RUNNER
+// ============================================================================
+
 let changed = 0;
+const pending = [];
 const files = ROOTS.flatMap((r) => (fs.existsSync(r) ? walk(r) : []))
   .filter((f) => !SKIP.some((s) => f.startsWith(s)));
+
+let sectioned = 0;
 for (const f of files) {
   try {
+    if (HAS_DIVIDER.test(fs.readFileSync(f, "utf8"))) sectioned++;
     if (processFile(f)) {
       changed++;
+      pending.push(f);
       console.log("✓", f);
     }
   } catch (e) {
     console.error("✗", f, e.message);
   }
 }
-console.log(`\n${changed}/${files.length} arquivos atualizados${DRY ? " (dry-run)" : ""}.`);
+
+const coverage = files.length ? ((sectioned / files.length) * 100).toFixed(1) : "0.0";
+console.log(`\nSection Coverage: ${sectioned}/${files.length} (${coverage}%)`);
+
+if (CHECK) {
+  if (changed) {
+    console.error(
+      `\n✗ ${changed} arquivo(s) sem divisores de seção. Rode: npm run docs:sections`,
+    );
+    process.exit(1);
+  }
+  console.log("✓ Todos os arquivos elegíveis possuem divisores de seção.");
+} else {
+  console.log(`${changed}/${files.length} arquivos atualizados${DRY ? " (dry-run)" : ""}.`);
+}
+
