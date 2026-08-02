@@ -46,9 +46,6 @@ gsap.registerPlugin(ScrollTrigger);
 // 🏗️ MAIN COMPONENT
 // ============================================================================
 
-// =====================================================================
-// 🔮 COMPONENT: TechShowcase
-// =====================================================================
 const TechShowcase = () => {
   const sectionRef = useRef<HTMLElement>(null);
 

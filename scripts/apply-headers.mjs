@@ -31,10 +31,6 @@ import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { basename, dirname } from "node:path";
 
 // ============================================================================
-// ⚙️ CONFIGURATION — descrições curadas
-// ============================================================================
-
-// ============================================================================
 // ⚙️ CONSTANTS & CONFIGURATION
 // ============================================================================
 
@@ -399,10 +395,6 @@ const NOTES = [
   [/^src\/pages\/geo\//, "@seo Metadados e JSON-LD definidos via `SEOHead`."],
   [/^src\/hooks\//, "@remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations."],
 ];
-
-// ============================================================================
-// 🧠 GERAÇÃO
-// ============================================================================
 
 // ============================================================================
 // 🧠 BUSINESS LOGIC
