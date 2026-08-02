@@ -1,5 +1,5 @@
 /**
- * 🚀 index.ts — SevenDevX Enterprise Platform
+ * 🚀 health-collector/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
  *
  * @file supabase/functions/health-collector/index.ts
@@ -24,7 +24,7 @@
  *    ↓
  * Consulta direta via client
  *    ↓
- * index.ts
+ * Edge Function `health-collector`
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🔒 REGRAS DE NEGÓCIO E INVARIANTES                                  │
@@ -44,7 +44,7 @@
  * └─────────────────────────────────────────────────────────────────────┘
  *
  * ✅ Valida o JWT antes de qualquer operação privilegiada
- * 🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)
+ * 🔒 A autoridade final é a RLS do banco, não o corpo da requisição
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🔧 MANUTENÇÃO                                                       │

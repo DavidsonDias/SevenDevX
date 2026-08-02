@@ -363,7 +363,7 @@ function blocks(file, a, level) {
       "   ↓",
       a.hooks.length ? `Hooks: ${a.hooks.slice(0, 4).join(", ")}` : "Consulta direta via client",
       "   ↓",
-      `${path.basename(file)}`,
+      a.isEdge ? `Edge Function \`${path.basename(path.dirname(file))}\`` : path.basename(file),
     ]);
   }
 
@@ -405,7 +405,8 @@ function blocks(file, a, level) {
   const sec = [];
   if (a.isEdge) sec.push("✅ Valida o JWT antes de qualquer operação privilegiada");
   if (a.usesAuth) sec.push("✅ Sessão obtida do AuthContext; nunca de storage local");
-  sec.push("🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)");
+  if (!a.isEdge) sec.push("🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)");
+  if (a.isEdge) sec.push("🔒 A autoridade final é a RLS do banco, não o corpo da requisição");
   if (level === 3) push("🔐 SEGURANÇA", sec);
 
   // 🔧 Manutenção
@@ -434,7 +435,7 @@ function seeRefs(file, level) {
 
 /** Gera o cabeçalho final para o arquivo. */
 function renderHeader(file, a, level, prev) {
-  const name = path.basename(file);
+  const name = a.isEdge ? `${path.basename(path.dirname(file))}/index.ts` : path.basename(file);
   const module = pickPrefix(MODULE_BY_DIR, file, "SevenDevX");
   const layer = pickPrefix(LAYER_BY_DIR, file, "Application");
   const route = ROUTES[file];

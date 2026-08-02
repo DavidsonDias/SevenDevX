@@ -1,5 +1,5 @@
 /**
- * 🚀 index.ts — SevenDevX Enterprise Platform
+ * 🚀 ai-ops/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
  *
  * @file supabase/functions/ai-ops/index.ts
@@ -25,7 +25,7 @@
  *    ↓
  * Consulta direta via client
  *    ↓
- * index.ts
+ * Edge Function `ai-ops`
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🔒 REGRAS DE NEGÓCIO E INVARIANTES                                  │
@@ -46,7 +46,7 @@
  *
  * ✅ Valida o JWT antes de qualquer operação privilegiada
  * ✅ Sessão obtida do AuthContext; nunca de storage local
- * 🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)
+ * 🔒 A autoridade final é a RLS do banco, não o corpo da requisição
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🔧 MANUTENÇÃO                                                       │

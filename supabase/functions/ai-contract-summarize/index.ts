@@ -1,5 +1,5 @@
 /**
- * 🚀 index.ts — SevenDevX Enterprise Platform
+ * 🚀 ai-contract-summarize/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
  *
  * @file supabase/functions/ai-contract-summarize/index.ts
@@ -24,7 +24,7 @@
  *    ↓
  * Consulta direta via client
  *    ↓
- * index.ts
+ * Edge Function `ai-contract-summarize`
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🔒 REGRAS DE NEGÓCIO E INVARIANTES                                  │
@@ -45,7 +45,7 @@
  *
  * ✅ Valida o JWT antes de qualquer operação privilegiada
  * ✅ Sessão obtida do AuthContext; nunca de storage local
- * 🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)
+ * 🔒 A autoridade final é a RLS do banco, não o corpo da requisição
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🔧 MANUTENÇÃO                                                       │

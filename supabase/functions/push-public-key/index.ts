@@ -1,5 +1,5 @@
 /**
- * 🚀 index.ts — SevenDevX Enterprise Platform
+ * 🚀 push-public-key/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
  *
  * @file supabase/functions/push-public-key/index.ts
@@ -21,7 +21,7 @@
  * └─────────────────────────────────────────────────────────────────────┘
  *
  * ✅ Valida o JWT antes de qualquer operação privilegiada
- * 🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)
+ * 🔒 A autoridade final é a RLS do banco, não o corpo da requisição
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🔧 MANUTENÇÃO                                                       │
