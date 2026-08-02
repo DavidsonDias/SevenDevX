@@ -12,7 +12,10 @@
     "docs:check": "node scripts/docs-check.mjs",
     "docs:lint": "node scripts/docs-check.mjs --lint",
     "docs:sections": "node scripts/apply-sections.mjs",
-    "docs:sections:check": "node scripts/apply-sections.mjs --check"
+    "docs:sections:check": "node scripts/apply-sections.mjs --check",
+    "docs:headers": "node scripts/apply-doc-headers.mjs",
+    "docs:headers:check": "node scripts/apply-doc-headers.mjs --check",
+    "typecheck": "tsc --noEmit -p tsconfig.app.json"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
