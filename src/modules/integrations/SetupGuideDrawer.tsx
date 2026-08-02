@@ -1,14 +1,72 @@
 /**
- * SetupGuideDrawer.tsx — SevenDevX
- * ─────────────────────────────────────────────────────────────────────
+ * 🚀 SetupGuideDrawer.tsx — SevenDevX Enterprise Platform
+ * ═══════════════════════════════════════════════════════════════════════
+ *
  * @file src/modules/integrations/SetupGuideDrawer.tsx
  * @module Integrations
+ * @layer Feature Module
+ * @status Active
  *
  * @description
  * Passo a passo de configuração por provider.
  *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Exporta `SetupGuideDrawer`
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Framer Motion — transições e animações
+ * ✅ Lucide — iconografia do design system
+ * ✅ Sonner — feedback via toast
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 💾 PERSISTÊNCIA                                                     │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 💾 Usa armazenamento do navegador com acesso protegido por guard
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ⚡ PERFORMANCE                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Evitar alterações que provoquem layout shift
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ♿ ACESSIBILIDADE                                                    │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Controles interativos expõem rótulos/roles acessíveis
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
  * @see src/modules/integrations/README.md
- * ─────────────────────────────────────────────────────────────────────
+ * @see docs/architecture/MODULE_MAP.md
+ * @see docs/code-standards/CODE_ANATOMY.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
+ * ═══════════════════════════════════════════════════════════════════════
  */
 
 // ============================================================================

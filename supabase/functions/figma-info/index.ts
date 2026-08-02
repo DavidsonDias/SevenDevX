@@ -1,26 +1,73 @@
 /**
- * ⚡ figma-info/index.ts — SevenOS Edge Function
+ * 🚀 figma-info/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
  *
  * @file supabase/functions/figma-info/index.ts
- * @module Integrations
+ * @module Edge Functions
+ * @layer Backend / Edge Function
+ * @status Active
  *
  * @description
  * Retorna dados da conta Figma conectada.
  *
- * @security
- * JWT + role admin. Segredos permanecem em Deno.env e nunca são retornados.
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
  *
- * @external-api
- * Figma
+ * ✅ Invoca RPC: `has_role`
  *
- * @remarks
- * O token permanece no ambiente da função.
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔄 FLUXO DE DADOS                                                   │
+ * └─────────────────────────────────────────────────────────────────────┘
  *
+ * Supabase (RLS aplicada)
+ *    ↓
+ * Consulta direta via client
+ *    ↓
+ * Edge Function `figma-info`
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔒 REGRAS DE NEGÓCIO E INVARIANTES                                  │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ O papel administrativo é verificado via RPC `has_role` (SECURITY DEFINER)
+ * 🔒 Secrets permanecem em `Deno.env` e nunca retornam ao cliente
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🌐 API EXTERNA                                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 🌐 api.figma.com
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Valida o JWT antes de qualquer operação privilegiada
+ * ✅ Sessão obtida do AuthContext; nunca de storage local
+ * 🔒 A autoridade final é a RLS do banco, não o corpo da requisição
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * @see docs/code-standards/CODE_ANATOMY.md
  * @see docs/security/EDGE_FUNCTION_SECURITY.md
- * @see supabase/functions/README.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
  * ═══════════════════════════════════════════════════════════════════════
  */
+
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {

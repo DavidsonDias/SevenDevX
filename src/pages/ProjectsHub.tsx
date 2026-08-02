@@ -1,21 +1,81 @@
 /**
- * ProjectsHub.tsx — SevenDevX
- * ─────────────────────────────────────────────────────────────────────
+ * 🚀 ProjectsHub.tsx — SevenDevX Enterprise Platform
+ * ═══════════════════════════════════════════════════════════════════════
+ *
  * @file src/pages/ProjectsHub.tsx
  * @module Public
  * @route /projects-hub
+ * @layer Presentation / Public
+ * @status Active
  *
  * @description
  * Hub de navegação entre projetos e clusters relacionados.
  *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Compõe blocos de UI importados de `@/components` e `@/modules`
+ * ✅ Aplica metadados SEO/GEO da rota
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🧩 ARQUITETURA DO ARQUIVO                                           │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ProjectsHub
+ *    ├── Header
+ *    ├── Footer
+ *    ├── WhatsAppButton
+ *    ├── SEOHead
+ *    ├── ProjectCard3D
+ *    ├── TechIconCDN
+ *    └── TagIcon
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ React Router — navegação e parâmetros de rota
+ * ✅ Framer Motion — transições e animações
+ * ✅ Lucide — iconografia do design system
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ⚡ PERFORMANCE                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Evitar alterações que provoquem layout shift
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ♿ ACESSIBILIDADE                                                    │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Controles interativos expõem rótulos/roles acessíveis
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
  * @see src/pages/README.md
- * ─────────────────────────────────────────────────────────────────────
- */
-
-/**
- * 🚀 ProjectsHub — SevenDevX Projects Hub (Enterprise)
- * Single source of truth: useProjects() (Supabase).
- * Hero = featured_level=primary | Featured = secondary | Sorted by featured DESC, order ASC.
+ * @see docs/architecture/MODULE_MAP.md
+ * @see docs/code-standards/CODE_ANATOMY.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
+ * ═══════════════════════════════════════════════════════════════════════
  */
 
 // ============================================================================

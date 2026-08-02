@@ -1,14 +1,52 @@
 /**
- * safeStorage.ts — SevenDevX
- * ─────────────────────────────────────────────────────────────────────
+ * 🚀 safeStorage.ts — SevenDevX Enterprise Platform
+ * ═══════════════════════════════════════════════════════════════════════
+ *
  * @file src/utils/safeStorage.ts
  * @module Utils
+ * @layer Infrastructure / Utils
+ * @status Active
  *
  * @description
  * Wrapper tolerante a falhas sobre localStorage/sessionStorage.
  *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Exporta `safeStorage`, `getOrCreateSafeId`
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 💾 PERSISTÊNCIA                                                     │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 💾 Usa armazenamento do navegador com acesso protegido por guard
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
  * @see src/utils/README.md
- * ─────────────────────────────────────────────────────────────────────
+ * @see docs/architecture/MODULE_MAP.md
+ * @see docs/code-standards/CODE_ANATOMY.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
+ * ═══════════════════════════════════════════════════════════════════════
  */
 
 const memoryStorage = new Map<string, string>();

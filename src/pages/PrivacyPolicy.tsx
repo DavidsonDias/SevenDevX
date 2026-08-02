@@ -1,27 +1,75 @@
 /**
- * PrivacyPolicy.tsx — SevenDevX
- * ─────────────────────────────────────────────────────────────────────
+ * 🚀 PrivacyPolicy.tsx — SevenDevX Enterprise Platform
+ * ═══════════════════════════════════════════════════════════════════════
+ *
  * @file src/pages/PrivacyPolicy.tsx
  * @module Public
  * @route /privacy-policy
+ * @layer Presentation / Public
+ * @status Active
  *
  * @description
  * Política de privacidade.
  *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Compõe blocos de UI importados de `@/components` e `@/modules`
+ * ✅ Aplica metadados SEO/GEO da rota
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🧩 ARQUITETURA DO ARQUIVO                                           │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * PrivacyPolicy
+ *    ├── Header
+ *    ├── Footer
+ *    └── SEOHead
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Framer Motion — transições e animações
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ⚡ PERFORMANCE                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Evitar alterações que provoquem layout shift
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ♿ ACESSIBILIDADE                                                    │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Controles interativos expõem rótulos/roles acessíveis
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
  * @see src/pages/README.md
- * ─────────────────────────────────────────────────────────────────────
- */
-
-/**
- * 🧩 PrivacyPolicy.tsx — SevenDevX v1.0 PRO++ (i18n)
- * -------------------------------------------------------------
- * ✅ Versão mesclada e otimizada - Conteúdo expandido LGPD
- * ✅ SEO dinâmico integrado via <SEOHead />
- * ✅ Estrutura responsiva, semântica e mobile-first
- * ✅ Conformidade total com LGPD e boas práticas de acessibilidade
- * ✅ Design consistente com o sistema global (index.css v1.5)
- * ✅ Código limpo, modular e com animações suaves (Framer Motion)
- * -------------------------------------------------------------
+ * @see docs/architecture/MODULE_MAP.md
+ * @see docs/code-standards/CODE_ANATOMY.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
+ * ═══════════════════════════════════════════════════════════════════════
  */
 
 // ============================================================================

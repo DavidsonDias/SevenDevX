@@ -1,37 +1,36 @@
 /**
- * PortfolioCarousel3D.tsx — SevenDevX
+ * 🧩 PortfolioCarousel3D.tsx — SevenDevX
  * ─────────────────────────────────────────────────────────────────────
+ *
  * @file src/components/PortfolioCarousel3D.tsx
  * @module UI
+ * @layer Presentation / UI
+ * @status Active
  *
  * @description
- * Carrossel 3D do portfólio; efeitos de profundidade desativados em mobile por performance.
+ * Carrossel 3D do portfólio; efeitos de profundidade desativados em
+ * mobile por performance.
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Compõe blocos de UI importados de `@/components` e `@/modules`
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ React Router — navegação e parâmetros de rota
+ * ✅ Framer Motion — transições e animações
+ * ✅ Lucide — iconografia do design system
  *
  * @see src/components/README.md
+ * @see docs/architecture/MODULE_MAP.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
  * ─────────────────────────────────────────────────────────────────────
- */
-
-/**
- * 🔥 PortfolioCarousel3D — SevenDevX
- * -------------------------------------------------------------
- * Carrossel 3D com swipe horizontal mobile-first
- * 
- * EFEITOS VISUAIS:
- * ✅ perspective + rotateY + scale + translateX
- * ✅ z-index dinâmico
- * ✅ Transições spring suaves
- * ✅ Cards laterais com opacidade e escala reduzidas
- * 
- * MOBILE-FIRST:
- * ✅ Swipe touch nativo
- * ✅ Snap suave entre cards
- * ✅ Indicador de posição (dots)
- * 
- * DESKTOP:
- * ✅ Mouse drag + trackpad
- * ✅ Keyboard navigation
- * ✅ Hover effects
- * -------------------------------------------------------------
  */
 
 // ============================================================================

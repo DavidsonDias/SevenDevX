@@ -1,16 +1,71 @@
 /**
- * ContractAiAnalysisModal.tsx — SevenDevX
- * ─────────────────────────────────────────────────────────────────────
+ * 🚀 ContractAiAnalysisModal.tsx — SevenDevX Enterprise Platform
+ * ═══════════════════════════════════════════════════════════════════════
+ *
  * @file src/components/admin/ContractAiAnalysisModal.tsx
  * @module SevenOS/UI
+ * @layer Presentation / UI
+ * @status Active
  *
  * @description
  * Resumo e análise de risco de contratos por IA.
  *
- * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Exporta `ContractAiAnalysisModal`
+ * ✅ Aciona Edge Functions: `ai-contract-summarize`
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔄 FLUXO DE DADOS                                                   │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * Supabase (RLS aplicada)
+ *    ↓
+ * Hooks: useScrollLock
+ *    ↓
+ * ContractAiAnalysisModal.tsx
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Framer Motion — transições e animações
+ * ✅ Lucide — iconografia do design system
+ * ✅ Supabase Client — dados, auth e RPC
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ⚡ PERFORMANCE                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Evitar alterações que provoquem layout shift
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
  *
  * @see src/components/admin/README.md
- * ─────────────────────────────────────────────────────────────────────
+ * @see docs/architecture/MODULE_MAP.md
+ * @see docs/code-standards/CODE_ANATOMY.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
+ * ═══════════════════════════════════════════════════════════════════════
  */
 
 // ============================================================================

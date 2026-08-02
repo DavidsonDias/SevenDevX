@@ -1,149 +1,59 @@
 /**
- * Blocker.tsx — SevenDevX
- * ─────────────────────────────────────────────────────────────────────
+ * 🚀 Blocker.tsx — SevenDevX Enterprise Platform
+ * ═══════════════════════════════════════════════════════════════════════
+ *
  * @file src/components/security/Blocker.tsx
  * @module Security
+ * @layer Presentation / UI
+ * @status Active
  *
  * @description
- * Bloqueio de UI para estados sem permissão ou pré-requisito não atendido.
+ * Bloqueio de UI para estados sem permissão ou pré-requisito não
+ * atendido.
  *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Framer Motion — transições e animações
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ⚡ PERFORMANCE                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Evitar alterações que provoquem layout shift
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ♿ ACESSIBILIDADE                                                    │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Controles interativos expõem rótulos/roles acessíveis
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * @see src/components/security/README.md
  * @see docs/architecture/MODULE_MAP.md
- * ─────────────────────────────────────────────────────────────────────
- */
-
-/**
- * 🔒 Blocker v1.0 Pro++ ULTIMATE HARDLOCK — Proteção Máxima de Segurança
- * ═════════════════════════════════════════════════════════════════
- * 
- * Sistema de bloqueio avançado que impede cópia, inspeção e manipulação
- * de conteúdo em toda a aplicação, incluindo DevTools e atalhos do navegador.
- * 
- * ┌─────────────────────────────────────────────────────────────────┐
- * │ 🛡️  BLOQUEIOS ATIVOS (SEM EXCEÇÕES)                            │
- * └─────────────────────────────────────────────────────────────────┘
- * 
- * 🔴 INTERAÇÃO COM MOUSE:
- *    • Clique direito (context menu)
- *    • Clique do meio (middle click)
- *    • Arrastar texto (drag & drop)
- *    • Seleção de texto com mouse
- * 
- * 🔴 FERRAMENTAS DE DESENVOLVEDOR:
- *    • F12 (DevTools)
- *    • Ctrl+Shift+I / Cmd+Shift+I (Inspector)
- *    • Ctrl+Shift+C / Cmd+Shift+C (Element Picker)
- *    • Ctrl+Shift+J / Cmd+Shift+J (Console)
- * 
- * 🔴 AÇÕES DE CÓPIA/EDIÇÃO:
- *    • Ctrl+C / Cmd+C (Copy)
- *    • Ctrl+V / Cmd+V (Paste)
- *    • Ctrl+X / Cmd+X (Cut)
- *    • Ctrl+A / Cmd+A (Select All)
- *    • Evento nativo 'copy' (menu Edit > Copy)
- * 
- * 🔴 CÓDIGO-FONTE & IMPRESSÃO:
- *    • Ctrl+U / Cmd+U (View Source)
- *    • Ctrl+S / Cmd+S (Save Page)
- *    • Ctrl+P / Cmd+P (Print)
- * 
- * 🔴 NAVEGAÇÃO & BUSCA:
- *    • Ctrl+F / Cmd+F (Find in page)
- *    • Ctrl+G / Cmd+G (Find next)
- *    • Ctrl+H / Cmd+H (History)
- *    • Ctrl+J / Cmd+J (Downloads)
- *    • Ctrl+K / Cmd+K (Search bar)
- *    • Ctrl+L / Cmd+L (Address bar)
- *    • Ctrl+D / Cmd+D (Bookmark)
- *    • Ctrl+E / Cmd+E (Search engine)
- * 
- * 🔴 GERENCIAMENTO DE ABAS:
- *    • Ctrl+T / Cmd+T (New tab)
- *    • Ctrl+W / Cmd+W (Close tab)
- *    • Ctrl+N / Cmd+N (New window)
- *    • Ctrl+R / Cmd+R (Reload)
- * 
- * 🔴 ZOOM:
- *    • Ctrl+Plus / Cmd+Plus (Zoom in)
- *    • Ctrl+Minus / Cmd+Minus (Zoom out)
- *    • Ctrl+0 / Cmd+0 (Reset zoom)
- * 
- * ┌─────────────────────────────────────────────────────────────────┐
- * │ ✅ RECURSOS DE PROTEÇÃO                                        │
- * └─────────────────────────────────────────────────────────────────┘
- * 
- * • Cross-platform: Windows (Ctrl) + macOS (Cmd) + Linux (Ctrl)
- * • Cooldown anti-spam: 2.5s entre notificações
- * • Toast animado: Framer Motion com feedback visual suave
- * • Performance otimizada: useRef para estado de cooldown
- * • Sem exceções: Bloqueia até em <input> e <textarea>
- * • Evento passive: false para garantir preventDefault()
- * 
- * ┌─────────────────────────────────────────────────────────────────┐
- * │ ⚠️  OBSERVAÇÕES IMPORTANTES                                    │
- * └─────────────────────────────────────────────────────────────────┘
- * 
- * 1. Este nível de bloqueio é EXTREMAMENTE agressivo
- * 2. Impacta negativamente a experiência do usuário
- * 3. Não é 100% seguro (screenshots e OCR contornam isso)
- * 4. Use apenas para conteúdo altamente sensível/proprietário
- * 5. Pode violar acessibilidade (WCAG) em alguns contextos
- * 
- * ┌─────────────────────────────────────────────────────────────────┐
- * │ 🔧 CONFIGURAÇÃO                                                │
- * └─────────────────────────────────────────────────────────────────┘
- * 
- * Adicione no seu App.tsx/Root:
- * 
- *   import Blocker from '@/components/Blocker';
- * 
- *   function App() {
- *     return (
- *       <>
- *         <Blocker />
- *         {/* resto da aplicação *\/}
- *       </>
- *     );
- *   }
- * 
- * CSS adicional recomendado (global.css):
- * 
- *   body {
- *     -webkit-user-select: none;
- *     -moz-user-select: none;
- *     -ms-user-select: none;
- *     user-select: none;
- *   }
- * 
- *   input, textarea, [contenteditable] {
- *     -webkit-user-select: text;
- *     -moz-user-select: text;
- *     -ms-user-select: text;
- *     user-select: text;
- *   }
- * 
- * ┌─────────────────────────────────────────────────────────────────┐
- * │ 📝 CHANGELOG                                                   │
- * └─────────────────────────────────────────────────────────────────┘
- * 
- * v1.3 (2025-11-17):
- * • Refatoração final com memoização de handlers
- * • Tipagem TypeScript aprimorada
- * • Comentários inline documentados
- * • Validação de evento otimizada
- * 
- * v1.2 (2025-11-17):
- * • FIX CRÍTICO: F12 agora usa e.key original
- * • passive:false em selectstart e dragstart
- * • Código modular em blocos separados
- * • Nomenclatura melhorada (isCtrl, isShift)
- * 
- * ═════════════════════════════════════════════════════════════════
- * @version 1.0.0
- * @author SevenDevX
- * @license Proprietary
- * @security CRITICAL - Não modificar sem autorização
- * @tested Chrome 119+, Firefox 120+, Safari 17+, Edge 119+
- * ═════════════════════════════════════════════════════════════════
+ * @see docs/code-standards/CODE_ANATOMY.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
+ * ═══════════════════════════════════════════════════════════════════════
  */
 
 import { useEffect, useRef, useState, useCallback } from "react";

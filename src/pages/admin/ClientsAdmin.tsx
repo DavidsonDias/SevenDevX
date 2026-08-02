@@ -1,17 +1,92 @@
 /**
- * ClientsAdmin.tsx — SevenDevX
- * ─────────────────────────────────────────────────────────────────────
+ * 🚀 ClientsAdmin.tsx — SevenDevX Enterprise Platform
+ * ═══════════════════════════════════════════════════════════════════════
+ *
  * @file src/pages/admin/ClientsAdmin.tsx
  * @module SevenOS/Admin
  * @route /admin/clients
+ * @layer Presentation / Admin
+ * @status Active
  *
  * @description
  * CRM: clientes e interações.
  *
- * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
  *
+ * ✅ Exporta `ClientsAdmin`
+ * ✅ Compõe blocos de UI importados de `@/components` e `@/modules`
+ * ✅ Lê/escreve nas tabelas: `projects`
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🧩 ARQUITETURA DO ARQUIVO                                           │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ClientsAdmin
+ *    ├── AdminPageShell
+ *    ├── GlassCard
+ *    ├── ContractCard
+ *    └── AttachmentManager
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔄 FLUXO DE DADOS                                                   │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * Supabase (RLS aplicada)
+ *    ↓
+ * Hooks: useClients, useUpsertClient, useDeleteClient, useClient
+ *    ↓
+ * ClientsAdmin.tsx
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ React Router — navegação e parâmetros de rota
+ * ✅ React Query — consulta, cache e invalidação
+ * ✅ Framer Motion — transições e animações
+ * ✅ Lucide — iconografia do design system
+ * ✅ Supabase Client — dados, auth e RPC
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔒 REGRAS DE NEGÓCIO E INVARIANTES                                  │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Rota protegida por `ProtectedRoute`; a autoridade final é a RLS
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ⚡ PERFORMANCE                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Evitar alterações que provoquem layout shift
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * @see src/pages/admin/README.md
  * @see docs/architecture/MODULE_MAP.md
- * ─────────────────────────────────────────────────────────────────────
+ * @see docs/code-standards/CODE_ANATOMY.md
+ * @see docs/security/AUTHORIZATION.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
+ * ═══════════════════════════════════════════════════════════════════════
  */
 
 // ============================================================================

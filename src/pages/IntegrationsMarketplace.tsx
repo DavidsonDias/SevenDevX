@@ -1,15 +1,89 @@
 /**
- * IntegrationsMarketplace.tsx — SevenDevX
- * ─────────────────────────────────────────────────────────────────────
+ * 🚀 IntegrationsMarketplace.tsx — SevenDevX Enterprise Platform
+ * ═══════════════════════════════════════════════════════════════════════
+ *
  * @file src/pages/IntegrationsMarketplace.tsx
  * @module Public
  * @route /integracoes
+ * @layer Presentation / Public
+ * @status Active
  *
  * @description
  * Vitrine pública de integrações suportadas.
  *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Exporta `IntegrationsMarketplace`
+ * ✅ Compõe blocos de UI importados de `@/components` e `@/modules`
+ * ✅ Lê/escreve nas tabelas: `integration_providers`, `marketplace_installs`
+ * ✅ Aplica metadados SEO/GEO da rota
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🧩 ARQUITETURA DO ARQUIVO                                           │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * IntegrationsMarketplace
+ *    ├── Header
+ *    ├── Footer
+ *    ├── SEOHead
+ *    ├── PROVIDER_CATALOG
+ *    ├── CATEGORY_LABEL
+ *    └── ProviderLogo
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔄 FLUXO DE DADOS                                                   │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * Supabase (RLS aplicada)
+ *    ↓
+ * Hooks: useAuthContext
+ *    ↓
+ * IntegrationsMarketplace.tsx
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ React Router — navegação e parâmetros de rota
+ * ✅ Framer Motion — transições e animações
+ * ✅ Lucide — iconografia do design system
+ * ✅ Supabase Client — dados, auth e RPC
+ * ✅ AuthContext — sessão e papel administrativo
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ⚡ PERFORMANCE                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Evitar alterações que provoquem layout shift
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Sessão obtida do AuthContext; nunca de storage local
+ * 🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
  * @see src/pages/README.md
- * ─────────────────────────────────────────────────────────────────────
+ * @see docs/architecture/MODULE_MAP.md
+ * @see docs/code-standards/CODE_ANATOMY.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
+ * ═══════════════════════════════════════════════════════════════════════
  */
 
 // ============================================================================

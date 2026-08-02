@@ -1,16 +1,74 @@
 /**
- * ProjectIntegrationsBlock.tsx — SevenDevX
- * ─────────────────────────────────────────────────────────────────────
+ * 🚀 ProjectIntegrationsBlock.tsx — SevenDevX Enterprise Platform
+ * ═══════════════════════════════════════════════════════════════════════
+ *
  * @file src/components/admin/integrations/ProjectIntegrationsBlock.tsx
  * @module SevenOS/Integrations
+ * @layer Presentation / UI
+ * @status Active
  *
  * @description
  * Integrações vinculadas ao projeto e seus estados de conexão.
  *
- * @security Uso restrito ao SevenOS; arquivos privados sempre por URL assinada.
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
  *
+ * ✅ Exporta `ProjectIntegrationsBlock`
+ * ✅ Compõe blocos de UI importados de `@/components` e `@/modules`
+ * ✅ Lê/escreve nas tabelas: `projects`
+ * ✅ Aciona Edge Functions: `github-info`, `vercel-info`
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔄 FLUXO DE DADOS                                                   │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * Supabase (RLS aplicada)
+ *    ↓
+ * Hooks: useQueryClient, useMutation, useQuery
+ *    ↓
+ * ProjectIntegrationsBlock.tsx
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ React Query — consulta, cache e invalidação
+ * ✅ date-fns — formatação de datas
+ * ✅ Lucide — iconografia do design system
+ * ✅ Supabase Client — dados, auth e RPC
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ⚡ PERFORMANCE                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Evitar alterações que provoquem layout shift
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * @see src/components/admin/integrations/README.md
  * @see docs/architecture/MODULE_MAP.md
- * ─────────────────────────────────────────────────────────────────────
+ * @see docs/code-standards/CODE_ANATOMY.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
+ * ═══════════════════════════════════════════════════════════════════════
  */
 
 // ============================================================================

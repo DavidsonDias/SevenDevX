@@ -1,26 +1,65 @@
 /**
- * ⚡ whatsapp-webhook/index.ts — SevenOS Edge Function
+ * 🚀 whatsapp-webhook/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
  *
  * @file supabase/functions/whatsapp-webhook/index.ts
- * @module WhatsApp
+ * @module Edge Functions
+ * @layer Backend / Edge Function
+ * @status Active
  *
  * @description
  * Recebe mensagens e status da Meta Cloud API.
  *
- * @security
- * Assinatura HMAC do payload. Segredos permanecem em Deno.env e nunca são retornados.
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
  *
- * @external-api
- * Meta Cloud API
+ * ✅ Lê/escreve nas tabelas: `system_settings`, `whatsapp_messages`, `whatsapp_threads`
  *
- * @remarks
- * Rejeitar qualquer payload cuja assinatura não confira.
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔄 FLUXO DE DADOS                                                   │
+ * └─────────────────────────────────────────────────────────────────────┘
  *
+ * Supabase (RLS aplicada)
+ *    ↓
+ * Consulta direta via client
+ *    ↓
+ * Edge Function `whatsapp-webhook`
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔒 REGRAS DE NEGÓCIO E INVARIANTES                                  │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 🔒 Secrets permanecem em `Deno.env` e nunca retornam ao cliente
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Valida o JWT antes de qualquer operação privilegiada
+ * 🔒 A autoridade final é a RLS do banco, não o corpo da requisição
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * @see docs/code-standards/CODE_ANATOMY.md
  * @see docs/security/EDGE_FUNCTION_SECURITY.md
- * @see supabase/functions/README.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
  * ═══════════════════════════════════════════════════════════════════════
  */
+
 // ============================================================================
 // 📦 IMPORTS & RUNTIME CONFIG
 // ============================================================================

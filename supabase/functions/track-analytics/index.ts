@@ -1,4 +1,66 @@
 /**
+ * 🚀 track-analytics/index.ts — SevenDevX Enterprise Platform
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/track-analytics/index.ts
+ * @module Edge Functions
+ * @layer Backend / Edge Function
+ * @status Active
+ *
+ * @description
+ * Edge Function `track-analytics` do módulo Edge Functions.
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Lê/escreve nas tabelas: `page_views`, `analytics_events`
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔄 FLUXO DE DADOS                                                   │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * Supabase (RLS aplicada)
+ *    ↓
+ * Consulta direta via client
+ *    ↓
+ * Edge Function `track-analytics`
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔒 REGRAS DE NEGÓCIO E INVARIANTES                                  │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 🔒 Secrets permanecem em `Deno.env` e nunca retornam ao cliente
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Valida o JWT antes de qualquer operação privilegiada
+ * 🔒 A autoridade final é a RLS do banco, não o corpo da requisição
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * @see docs/code-standards/CODE_ANATOMY.md
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
+ * ═══════════════════════════════════════════════════════════════════════
+ */
+
+/**
  * 📊 Analytics Tracking Edge Function - SevenDevX Enterprise
  * Coleta page views e eventos de analytics
  */

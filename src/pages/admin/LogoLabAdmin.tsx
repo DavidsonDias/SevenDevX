@@ -1,17 +1,90 @@
 /**
- * LogoLabAdmin.tsx — SevenDevX
- * ─────────────────────────────────────────────────────────────────────
+ * 🚀 LogoLabAdmin.tsx — SevenDevX Enterprise Platform
+ * ═══════════════════════════════════════════════════════════════════════
+ *
  * @file src/pages/admin/LogoLabAdmin.tsx
  * @module SevenOS/Admin
  * @route /admin/logo-lab
+ * @layer Presentation / Admin
+ * @status Active
  *
  * @description
  * Geração de variações de logo assistida por IA.
  *
- * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
  *
+ * ✅ Exporta `LogoLabAdmin`
+ * ✅ Compõe blocos de UI importados de `@/components` e `@/modules`
+ * ✅ Lê/escreve nas tabelas: `logo_variations`
+ * ✅ Aciona Edge Functions: `logo-variations-ai`
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🧩 ARQUITETURA DO ARQUIVO                                           │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * LogoLabAdmin
+ *    ├── AdminPageShell
+ *    ├── GlassCard
+ *    ├── PROVIDER_CATALOG
+ *    └── CATEGORY_LABEL
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔄 FLUXO DE DADOS                                                   │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * Supabase (RLS aplicada)
+ *    ↓
+ * Hooks: useBrandPalette
+ *    ↓
+ * LogoLabAdmin.tsx
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Lucide — iconografia do design system
+ * ✅ Supabase Client — dados, auth e RPC
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔒 REGRAS DE NEGÓCIO E INVARIANTES                                  │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Rota protegida por `ProtectedRoute`; a autoridade final é a RLS
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ⚡ PERFORMANCE                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Evitar alterações que provoquem layout shift
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * @see src/pages/admin/README.md
  * @see docs/architecture/MODULE_MAP.md
- * ─────────────────────────────────────────────────────────────────────
+ * @see docs/code-standards/CODE_ANATOMY.md
+ * @see docs/security/AUTHORIZATION.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
+ * ═══════════════════════════════════════════════════════════════════════
  */
 
 // ============================================================================

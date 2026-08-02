@@ -1,33 +1,85 @@
 /**
- * ⚡ mfa-disable/index.ts — SevenOS Edge Function
+ * 🚀 mfa-disable/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
  *
  * @file supabase/functions/mfa-disable/index.ts
- * @module Security/MFA
+ * @module Edge Functions
+ * @layer Backend / Edge Function
+ * @status Active
  *
  * @description
  * Remove o MFA do próprio usuário autenticado.
  *
- * @security
- * JWT do usuário. Segredos permanecem em Deno.env e nunca são retornados.
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
  *
- * @external-api
- * —
+ * ✅ Lê/escreve nas tabelas: `user_mfa`
  *
- * @remarks
- * Opera exclusivamente sobre auth.uid(); não permite alvo arbitrário.
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔄 FLUXO DE DADOS                                                   │
+ * └─────────────────────────────────────────────────────────────────────┘
  *
+ * Supabase (RLS aplicada)
+ *    ↓
+ * Consulta direta via client
+ *    ↓
+ * Edge Function `mfa-disable`
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔒 REGRAS DE NEGÓCIO E INVARIANTES                                  │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 🔒 Secrets permanecem em `Deno.env` e nunca retornam ao cliente
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Valida o JWT antes de qualquer operação privilegiada
+ * ✅ Sessão obtida do AuthContext; nunca de storage local
+ * 🔒 A autoridade final é a RLS do banco, não o corpo da requisição
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * @see docs/code-standards/CODE_ANATOMY.md
  * @see docs/security/EDGE_FUNCTION_SECURITY.md
- * @see supabase/functions/README.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
  * ═══════════════════════════════════════════════════════════════════════
  */
+
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 // 🔐 MFA Disable — remove MFA do próprio usuário.
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
+
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+
+// ============================================================================
+// 🌐 REQUEST HANDLER
+// ============================================================================
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });

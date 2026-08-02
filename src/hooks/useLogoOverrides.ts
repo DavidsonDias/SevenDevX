@@ -1,16 +1,75 @@
 /**
- * useLogoOverrides.ts — SevenDevX
- * ─────────────────────────────────────────────────────────────────────
+ * 🚀 useLogoOverrides.ts — SevenDevX Enterprise Platform
+ * ═══════════════════════════════════════════════════════════════════════
+ *
  * @file src/hooks/useLogoOverrides.ts
  * @module Hooks
+ * @layer Data Access / Hooks
+ * @status Active
  *
  * @description
  * Sobrescritas manuais de logo sobre o registro global.
  *
- * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Exporta `LogoOverride`, `useLogoOverrides`, `getLogoOverride`, `ensureBrandingHydrated`
+ * ✅ Lê/escreve nas tabelas: `branding_assets`
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔄 FLUXO DE DADOS                                                   │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * Supabase (RLS aplicada)
+ *    ↓
+ * Hooks: useLogoOverrides, useSyncExternalStore
+ *    ↓
+ * useLogoOverrides.ts
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Supabase Client — dados, auth e RPC
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 📡 REALTIME                                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 📡 Assina canais Supabase Realtime e libera a inscrição no unmount
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 💾 PERSISTÊNCIA                                                     │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 💾 Usa armazenamento do navegador com acesso protegido por guard
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
  *
  * @see src/hooks/README.md
- * ─────────────────────────────────────────────────────────────────────
+ * @see docs/architecture/MODULE_MAP.md
+ * @see docs/code-standards/CODE_ANATOMY.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
+ * ═══════════════════════════════════════════════════════════════════════
  */
 
 // ============================================================================

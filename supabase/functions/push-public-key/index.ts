@@ -1,26 +1,49 @@
 /**
- * ⚡ push-public-key/index.ts — SevenOS Edge Function
+ * 🚀 push-public-key/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
  *
  * @file supabase/functions/push-public-key/index.ts
- * @module Notifications
+ * @module Edge Functions
+ * @layer Backend / Edge Function
+ * @status Active
  *
  * @description
  * Fornece a chave pública usada para assinar inscrições Web Push.
  *
- * @security
- * Pública. Segredos permanecem em Deno.env e nunca são retornados.
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔒 REGRAS DE NEGÓCIO E INVARIANTES                                  │
+ * └─────────────────────────────────────────────────────────────────────┘
  *
- * @external-api
- * —
+ * 🔒 Secrets permanecem em `Deno.env` e nunca retornam ao cliente
  *
- * @remarks
- * Chave pública por definição; nenhuma chave privada é exposta.
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
  *
+ * ✅ Valida o JWT antes de qualquer operação privilegiada
+ * 🔒 A autoridade final é a RLS do banco, não o corpo da requisição
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * @see docs/code-standards/CODE_ANATOMY.md
  * @see docs/security/EDGE_FUNCTION_SECURITY.md
- * @see supabase/functions/README.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
  * ═══════════════════════════════════════════════════════════════════════
  */
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",

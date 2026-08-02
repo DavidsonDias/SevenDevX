@@ -1,17 +1,81 @@
 /**
- * AutomationRunsAdmin.tsx — SevenDevX
- * ─────────────────────────────────────────────────────────────────────
+ * 🚀 AutomationRunsAdmin.tsx — SevenDevX Enterprise Platform
+ * ═══════════════════════════════════════════════════════════════════════
+ *
  * @file src/pages/admin/AutomationRunsAdmin.tsx
  * @module SevenOS/Admin
  * @route /admin/automations/runs
+ * @layer Presentation / Admin
+ * @status Active
  *
  * @description
  * Execuções de automação com status e payloads.
  *
- * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
  *
+ * ✅ Exporta `AutomationRunsAdmin`
+ * ✅ Compõe blocos de UI importados de `@/components` e `@/modules`
+ * ✅ Lê/escreve nas tabelas: `automation_runs`
+ * ✅ Aciona Edge Functions: `automation-runner`
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔄 FLUXO DE DADOS                                                   │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * Supabase (RLS aplicada)
+ *    ↓
+ * Consulta direta via client
+ *    ↓
+ * AutomationRunsAdmin.tsx
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Lucide — iconografia do design system
+ * ✅ Supabase Client — dados, auth e RPC
+ * ✅ Sonner — feedback via toast
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔒 REGRAS DE NEGÓCIO E INVARIANTES                                  │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Rota protegida por `ProtectedRoute`; a autoridade final é a RLS
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ⚡ PERFORMANCE                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Evitar alterações que provoquem layout shift
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * @see src/pages/admin/README.md
  * @see docs/architecture/MODULE_MAP.md
- * ─────────────────────────────────────────────────────────────────────
+ * @see docs/code-standards/CODE_ANATOMY.md
+ * @see docs/security/AUTHORIZATION.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
+ * ═══════════════════════════════════════════════════════════════════════
  */
 
 // ============================================================================

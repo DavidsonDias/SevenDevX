@@ -1,23 +1,52 @@
 /**
- * offlineQueue.ts — SevenDevX
- * ─────────────────────────────────────────────────────────────────────
+ * 🚀 offlineQueue.ts — SevenDevX Enterprise Platform
+ * ═══════════════════════════════════════════════════════════════════════
+ *
  * @file src/utils/offlineQueue.ts
  * @module Utils
+ * @layer Infrastructure / Utils
+ * @status Active
  *
  * @description
  * Fila offline em IndexedDB drenada pelo Background Sync.
  *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Exporta `enqueue`, `getQueueSize`, `flushQueue`, `subscribeQueue`
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 💾 PERSISTÊNCIA                                                     │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 💾 Usa armazenamento do navegador com acesso protegido por guard
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
  * @see src/utils/README.md
- * ─────────────────────────────────────────────────────────────────────
- */
-
-/**
- * 📦 offlineQueue — Fila de mutations resiliente baseada em IndexedDB
- * ──────────────────────────────────────────────────────────────────
- * - Persiste payloads de fetch quando offline
- * - Reexecuta automaticamente ao voltar online
- * - Notifica subscribers (UI) sobre mudanças na fila
- * - Tenta usar Background Sync API quando disponível
+ * @see docs/architecture/MODULE_MAP.md
+ * @see docs/code-standards/CODE_ANATOMY.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
+ * ═══════════════════════════════════════════════════════════════════════
  */
 
 // ============================================================================

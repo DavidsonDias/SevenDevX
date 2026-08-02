@@ -1,30 +1,29 @@
 /**
- * ServicesPreview.tsx — SevenDevX
+ * 🧩 ServicesPreview.tsx — SevenDevX
  * ─────────────────────────────────────────────────────────────────────
+ *
  * @file src/components/ServicesPreview.tsx
  * @module UI
+ * @layer Presentation / UI
+ * @status Active
  *
  * @description
  * Prévia dos serviços na home, consumindo `services_cms`.
  *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ React Router — navegação e parâmetros de rota
+ * ✅ Framer Motion — transições e animações
+ * ✅ Lucide — iconografia do design system
+ *
  * @see src/components/README.md
+ * @see docs/architecture/MODULE_MAP.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
  * ─────────────────────────────────────────────────────────────────────
- */
-
-/**
- * 🚀 ServicesPreview.tsx — SevenDevX v2.0 PRO (i18n)
- * -------------------------------------------------------------
- * ✅ 5 serviços completos (Web, Software, Maintenance, Landing, Consulting)
- * ✅ Responsividade mobile/desktop (layouts diferentes)
- * ✅ Animações Framer Motion scroll-triggered
- * ✅ Acessibilidade WCAG 2.1 AA (role, aria-labels)
- * ✅ Performance otimizada (eager first, lazy rest)
- * ✅ Picture element (WebP + fallback)
- * ✅ SEO melhorado (heading hierarchy)
- * ✅ UX aprimorada (CTA em todos serviços)
- * ✅ i18n completo (PT/EN/ES)
- * ✅ Icons por serviço
- * -------------------------------------------------------------
  */
 
 // ============================================================================

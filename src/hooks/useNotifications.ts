@@ -1,21 +1,84 @@
 /**
- * useNotifications.ts — SevenDevX
- * ─────────────────────────────────────────────────────────────────────
+ * 🚀 useNotifications.ts — SevenDevX Enterprise Platform
+ * ═══════════════════════════════════════════════════════════════════════
+ *
  * @file src/hooks/useNotifications.ts
  * @module Hooks
+ * @layer Data Access / Hooks
+ * @status Active
  *
  * @description
  * Central de notificações com atualização em tempo real.
  *
- * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Exporta `Notification`, `useNotifications`
+ * ✅ Lê/escreve nas tabelas: `notifications`
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔄 FLUXO DE DADOS                                                   │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * Supabase (RLS aplicada)
+ *    ↓
+ * Hooks: useNotifications, useAuthContext
+ *    ↓
+ * useNotifications.ts
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Supabase Client — dados, auth e RPC
+ * ✅ AuthContext — sessão e papel administrativo
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 📡 REALTIME                                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 📡 Assina canais Supabase Realtime e libera a inscrição no unmount
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Sessão obtida do AuthContext; nunca de storage local
+ * 🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
  *
  * @see src/hooks/README.md
- * ─────────────────────────────────────────────────────────────────────
+ * @see docs/architecture/MODULE_MAP.md
+ * @see docs/code-standards/CODE_ANATOMY.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
+ * ═══════════════════════════════════════════════════════════════════════
  */
+
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
 
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthContext } from "@/contexts/AuthContext";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 export type Notification = {
   id: string;
@@ -28,6 +91,10 @@ export type Notification = {
   read_at: string | null;
   created_at: string;
 };
+
+// ============================================================================
+// 🪝 HOOK IMPLEMENTATION
+// ============================================================================
 
 export function useNotifications(limit = 20) {
   const { user } = useAuthContext();

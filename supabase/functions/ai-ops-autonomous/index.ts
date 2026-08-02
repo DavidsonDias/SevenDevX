@@ -1,3 +1,74 @@
+/**
+ * 🚀 ai-ops-autonomous/index.ts — SevenDevX Enterprise Platform
+ * ═══════════════════════════════════════════════════════════════════════
+ *
+ * @file supabase/functions/ai-ops-autonomous/index.ts
+ * @module Edge Functions
+ * @layer Backend / Edge Function
+ * @status Active
+ *
+ * @description
+ * Edge Function `ai-ops-autonomous` do módulo Edge Functions.
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Lê/escreve nas tabelas: `contacts`, `projects`, `ai_ops_actions`
+ * ✅ Invoca RPC: `has_role`
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔄 FLUXO DE DADOS                                                   │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * Supabase (RLS aplicada)
+ *    ↓
+ * Consulta direta via client
+ *    ↓
+ * Edge Function `ai-ops-autonomous`
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔒 REGRAS DE NEGÓCIO E INVARIANTES                                  │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ O papel administrativo é verificado via RPC `has_role` (SECURITY DEFINER)
+ * 🔒 Secrets permanecem em `Deno.env` e nunca retornam ao cliente
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🌐 API EXTERNA                                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 🌐 ai.gateway.lovable.dev
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Valida o JWT antes de qualquer operação privilegiada
+ * ✅ Sessão obtida do AuthContext; nunca de storage local
+ * 🔒 A autoridade final é a RLS do banco, não o corpo da requisição
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * @see docs/code-standards/CODE_ANATOMY.md
+ * @see docs/security/EDGE_FUNCTION_SECURITY.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
+ * ═══════════════════════════════════════════════════════════════════════
+ */
+
 // ============================================================================
 // 📦 IMPORTS
 // ============================================================================

@@ -26,3 +26,9 @@ Registro de problemas observados **sem alterar o comportamento do sistema**. Cad
 ## Resolvidos
 
 _Nenhum item resolvido até o momento._
+
+## Onda 8 — observações da auditoria documental (2026-08-02)
+
+- 🟡 37 arquivos ficam abaixo do limiar de 80 linhas do codemod de seções e permanecem sem divisores internos — intencional, para não poluir arquivos pequenos.
+- 🟡 Divisores legados duplicados foram removidos em `TechShowcase.tsx`, `utils/techData.ts` e `scripts/apply-headers.mjs` (somente comentários).
+- ⚠️ Nenhum problema funcional foi corrigido nesta onda; a tarefa foi exclusivamente documental.
