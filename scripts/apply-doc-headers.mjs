@@ -206,7 +206,7 @@ function analyze(file, src) {
   const body = stripLeadingHeaders(src).body;
   const imports = [...body.matchAll(/from\s+["']([^"']+)["']/g)].map((m) => m[1]);
   const localComponents = [
-    ...body.matchAll(/import\s+(?:\{([^}]+)\}|(\w+))\s+from\s+["']@\/(components|modules)\/[^"']+["']/g),
+    ...body.matchAll(/import\s+(?:\{([^}]+)\}|(\w+))\s+from\s+["']@\/(?:components|modules)\/(?!ui\/)[^"']+["']/g),
   ]
     .flatMap((m) => (m[1] ? m[1].split(",") : [m[2]]))
     .map((s) => s.trim().split(/\s+as\s+/)[0])
@@ -300,7 +300,7 @@ function stripLeadingHeaders(src) {
 function reuse(headers) {
   const joined = headers.join("\n");
   const out = {};
-  const desc = /@description\s*\n((?:\s*\*(?!\s*@).*\n)+)/.exec(joined);
+  const desc = /@description[ \t]*\n((?:[ \t]*\*[ \t]+(?!@).*\n)+)/.exec(joined);
   if (desc) {
     out.description = desc[1]
       .split("\n")
@@ -502,6 +502,8 @@ function wrap(text, width) {
 /** Decide se o cabeçalho atual deve ser substituído. */
 function needsRewrite(headers, level) {
   if (!headers.length) return true;
+  // cabeçalhos gerados por esta ferramenta são sempre reavaliados (self-healing)
+  if (/@status Active/.test(headers.join("\n")) && /@license Proprietary/.test(headers.join("\n"))) return "regen";
   const joined = headers.join("\n");
   if (headers.length > 1) return true;
   if (PROMO.test(joined)) return true;
