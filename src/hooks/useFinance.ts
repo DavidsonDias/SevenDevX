@@ -1,16 +1,71 @@
 /**
- * useFinance.ts — SevenDevX
- * ─────────────────────────────────────────────────────────────────────
+ * 🚀 useFinance.ts — SevenDevX Enterprise Platform
+ * ═══════════════════════════════════════════════════════════════════════
+ *
  * @file src/hooks/useFinance.ts
  * @module Hooks
+ * @layer Data Access / Hooks
+ * @status Active
  *
  * @description
  * Transações, orçamentos e margem por projeto.
  *
- * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Exporta `useFxRates`, `useUpsertFxRate`, `useTeamMembers`, `useUpsertTeamMember`
+ * ✅ Lê/escreve nas tabelas: `fx_rates`, `team_members`, `project_budgets`, `transactions`
+ * ✅ Invoca RPC: `fn_project_margin`
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔄 FLUXO DE DADOS                                                   │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * Supabase (RLS aplicada)
+ *    ↓
+ * Hooks: useQuery, useQueryClient, useToast, useMutation
+ *    ↓
+ * useFinance.ts
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ React Query — consulta, cache e invalidação
+ * ✅ Supabase Client — dados, auth e RPC
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 📡 REALTIME                                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 📡 Assina canais Supabase Realtime e libera a inscrição no unmount
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
  *
  * @see src/hooks/README.md
- * ─────────────────────────────────────────────────────────────────────
+ * @see docs/architecture/MODULE_MAP.md
+ * @see docs/code-standards/CODE_ANATOMY.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
+ * ═══════════════════════════════════════════════════════════════════════
  */
 
 // ============================================================================

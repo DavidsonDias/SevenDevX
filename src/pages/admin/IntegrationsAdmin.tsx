@@ -1,17 +1,84 @@
 /**
- * IntegrationsAdmin.tsx — SevenDevX
- * ─────────────────────────────────────────────────────────────────────
+ * 🚀 IntegrationsAdmin.tsx — SevenDevX Enterprise Platform
+ * ═══════════════════════════════════════════════════════════════════════
+ *
  * @file src/pages/admin/IntegrationsAdmin.tsx
  * @module SevenOS/Admin
  * @route /admin/integrations
+ * @layer Presentation / Admin
+ * @status Active
  *
  * @description
  * Providers externos: configuração, testes e saúde.
  *
- * @security Rota protegida por `ProtectedRoute requiredRole="admin"`; a autoridade final é RLS.
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
  *
+ * ✅ Exporta `IntegrationsAdmin`
+ * ✅ Compõe blocos de UI importados de `@/components` e `@/modules`
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🧩 ARQUITETURA DO ARQUIVO                                           │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * IntegrationsAdmin
+ *    ├── AdminPageShell
+ *    ├── GlassCard
+ *    ├── IntegrationDetailsModal
+ *    ├── IntegrationMarketplaceModal
+ *    ├── GuidedConnectionTest
+ *    ├── SetupGuideDrawer
+ *    ├── ProviderConfigModal
+ *    ├── LogoRenderer
+ *    ├── BorderBeam
+ *    └── BrandHalo
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Framer Motion — transições e animações
+ * ✅ Lucide — iconografia do design system
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔒 REGRAS DE NEGÓCIO E INVARIANTES                                  │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Rota protegida por `ProtectedRoute`; a autoridade final é a RLS
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ⚡ PERFORMANCE                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Evitar alterações que provoquem layout shift
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * @see src/pages/admin/README.md
  * @see docs/architecture/MODULE_MAP.md
- * ─────────────────────────────────────────────────────────────────────
+ * @see docs/code-standards/CODE_ANATOMY.md
+ * @see docs/security/AUTHORIZATION.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
+ * ═══════════════════════════════════════════════════════════════════════
  */
 
 // ============================================================================

@@ -1,26 +1,67 @@
 /**
- * ⚡ gsc-insights/index.ts — SevenOS Edge Function
+ * 🚀 index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
  *
  * @file supabase/functions/gsc-insights/index.ts
- * @module SEO
+ * @module Edge Functions
+ * @layer Backend / Edge Function
+ * @status Active
  *
  * @description
  * Insights de desempenho do Google Search Console.
  *
- * @security
- * JWT + role admin. Segredos permanecem em Deno.env e nunca são retornados.
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
  *
- * @external-api
- * Google Search Console
+ * ✅ Invoca RPC: `has_role`
  *
- * @remarks
- * Dados agregados; sem PII.
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔄 FLUXO DE DADOS                                                   │
+ * └─────────────────────────────────────────────────────────────────────┘
  *
+ * Supabase (RLS aplicada)
+ *    ↓
+ * Consulta direta via client
+ *    ↓
+ * index.ts
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔒 REGRAS DE NEGÓCIO E INVARIANTES                                  │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ O papel administrativo é verificado via RPC `has_role` (SECURITY DEFINER)
+ * 🔒 Secrets permanecem em `Deno.env` e nunca retornam ao cliente
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Valida o JWT antes de qualquer operação privilegiada
+ * ✅ Sessão obtida do AuthContext; nunca de storage local
+ * 🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * @see docs/architecture/MODULE_MAP.md
+ * @see docs/code-standards/CODE_ANATOMY.md
  * @see docs/security/EDGE_FUNCTION_SECURITY.md
- * @see supabase/functions/README.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
  * ═══════════════════════════════════════════════════════════════════════
  */
+
 // Edge Function: gsc-insights
 // Consulta Google Search Console via Lovable Connector Gateway.
 // Retorna queries, páginas, cliques, impressões, CTR e posição média.

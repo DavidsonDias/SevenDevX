@@ -1,25 +1,34 @@
 /**
- * OrcamentoButton.tsx — SevenDevX
+ * 🧩 OrcamentoButton.tsx — SevenDevX
  * ─────────────────────────────────────────────────────────────────────
+ *
  * @file src/components/OrcamentoButton.tsx
  * @module UI
+ * @layer Presentation / UI
+ * @status Active
  *
  * @description
  * Gatilho flutuante do fluxo de orçamento.
  *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Compõe blocos de UI importados de `@/components` e `@/modules`
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Framer Motion — transições e animações
+ * ✅ Lucide — iconografia do design system
+ *
  * @see src/components/README.md
+ * @see docs/architecture/MODULE_MAP.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
  * ─────────────────────────────────────────────────────────────────────
- */
-
-/**
- * 🧩 OrcamentoButton.tsx — SevenDevX v1.3 PRO++
- * -------------------------------------------------------------
- * ✅ Abre o OrcamentoModal.tsx ao clicar
- * ✅ Passa automaticamente o nome do plano
- * ✅ Design consistente com botões do site (SpaceX-style)
- * ✅ Usa Framer Motion para hover suave
- * ✅ Totalmente isolado (não depende de estado global)
- * -------------------------------------------------------------
  */
 
 import React, { useState } from "react";

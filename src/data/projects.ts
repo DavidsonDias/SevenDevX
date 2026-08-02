@@ -1,19 +1,27 @@
 /**
- * projects.ts — SevenDevX
+ * 🧩 projects.ts — SevenDevX
  * ─────────────────────────────────────────────────────────────────────
+ *
  * @file src/data/projects.ts
  * @module Content
+ * @layer Content / Static Data
+ * @status Active
  *
  * @description
  * Portfólio estático (slug, descrição, stack e links).
  *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Exporta `Project`, `projects`, `isValidLiveUrl`
+ *
  * @see src/data/README.md
+ * @see docs/architecture/MODULE_MAP.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
  * ─────────────────────────────────────────────────────────────────────
- */
-
-/**
- * 📦 Shared Projects Data — SevenDevX
- * Reused by PortfolioCarousel3D and Projects Hub page
  */
 
 // ============================================================================

@@ -1,48 +1,27 @@
 /**
- * techData.ts — SevenDevX
+ * 🧩 techData.ts — SevenDevX
  * ─────────────────────────────────────────────────────────────────────
+ *
  * @file src/utils/techData.ts
  * @module Utils
+ * @layer Infrastructure / Utils
+ * @status Active
  *
  * @description
  * Metadados de tecnologias (cores e identificadores de ícone).
  *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Exporta `Technology`, `techData`, `featuredTechs`, `categories`
+ *
  * @see src/utils/README.md
+ * @see docs/architecture/MODULE_MAP.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
  * ─────────────────────────────────────────────────────────────────────
- */
-
-/**
- * 🧠 TechStack Data v1.0 Pro++ ULTIMATE — Catálogo de Tecnologias Profissionais
- * ════════════════════════════════════════════════════════════════════════════════
- *
- * Arquivo de tecnologia completo, documentado estilo "Enterprise-Level".
- * Inclui:
- *
- *  ✔ Tipagem forte de Technology (name, category, link, icon, etc.)
- *  ✔ Organização modular por categorias (Front-End, Back-End, Database, DevOps, Design)
- *  ✔ Descrições profissionais otimizadas para copywriting
- *  ✔ Paleta de cores oficial para cada tecnologia
- *  ✔ Suporte total para React Icons (IconType)
- *  ✔ Exportações adicionais:
- *      → featuredTechs (Top 8 da Home)
- *      → categories (para filtros dinâmicos)
- *
- * Estrutura:
- *  1. Imports de ícones (react-icons)
- *  2. Interface Technology
- *  3. Array techData (catálogo principal)
- *  4. featuredTechs (top tecnologias para preview)
- *  5. categories (filtros dinâmicos)
- *
- * @version 3.0.0 (2025-11-17)
- * @author  
- *   SevenDevX — Enterprise Web Development, Software & Branding
- *
- * @compatibility
- *   React 18+, Next.js 14+, Vite 5+, TypeScript 5+
- *
- * @license Proprietary — Uso restrito à SevenDevX
- * ════════════════════════════════════════════════════════════════════════════════
  */
 
 // ============================================================================

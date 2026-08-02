@@ -1,26 +1,57 @@
 /**
- * 🛡️ ProtectedRoute.tsx — SevenDevX Enterprise Platform
+ * 🚀 ProtectedRoute.tsx — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
  *
- * @file ProtectedRoute.tsx
- * @module Core/Auth
+ * @file src/components/auth/ProtectedRoute.tsx
+ * @module Auth
+ * @layer Presentation / UI
+ * @status Active
  *
  * @description
  * Guarda de navegação: exige sessão ativa e, opcionalmente, papel
- * administrativo antes de renderizar a rota. Preserva o destino original
- * no parâmetro `redirect` para retomar o fluxo após o login.
+ * administrativo antes de renderizar a rota. Preserva o destino
+ * original no parâmetro `redirect` para retomar o fluxo após o
+ * login.
  *
- * @responsibilities
- *   - Exibir estado de carregamento enquanto a sessão hidrata
- *   - Redirecionar visitantes anônimos para /auth
- *   - Exibir tela de acesso restrito quando faltar o papel exigido
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
  *
- * @security
- *   Este componente é **UX, não autorização**. A autoridade efetiva é o
- *   RLS do banco e a verificação de papel nas Edge Functions. Nunca
- *   assuma que ocultar a rota protege o dado.
+ * ✅ React Router — navegação e parâmetros de rota
+ * ✅ Lucide — iconografia do design system
+ * ✅ AuthContext — sessão e papel administrativo
  *
- * @see src/contexts/AuthContext.tsx · docs/security/AUTHORIZATION.md
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ⚡ PERFORMANCE                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Evitar alterações que provoquem layout shift
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Sessão obtida do AuthContext; nunca de storage local
+ * 🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * @see src/components/auth/README.md
+ * @see docs/architecture/MODULE_MAP.md
+ * @see docs/code-standards/CODE_ANATOMY.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
  * ═══════════════════════════════════════════════════════════════════════
  */
 

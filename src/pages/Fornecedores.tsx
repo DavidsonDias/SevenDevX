@@ -1,30 +1,78 @@
 /**
- * Fornecedores.tsx — SevenDevX
- * ─────────────────────────────────────────────────────────────────────
+ * 🚀 Fornecedores.tsx — SevenDevX Enterprise Platform
+ * ═══════════════════════════════════════════════════════════════════════
+ *
  * @file src/pages/Fornecedores.tsx
  * @module Public
  * @route /fornecedores
+ * @layer Presentation / Public
+ * @status Active
  *
  * @description
  * Página de fornecedores e parceiros.
  *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Compõe blocos de UI importados de `@/components` e `@/modules`
+ * ✅ Aplica metadados SEO/GEO da rota
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🧩 ARQUITETURA DO ARQUIVO                                           │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * Fornecedores
+ *    ├── Header
+ *    ├── Footer
+ *    ├── WhatsAppButton
+ *    └── SEOHead
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Framer Motion — transições e animações
+ * ✅ Lucide — iconografia do design system
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ⚡ PERFORMANCE                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Evitar alterações que provoquem layout shift
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ♿ ACESSIBILIDADE                                                    │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Controles interativos expõem rótulos/roles acessíveis
+ * ✅ Respeita a preferência de redução de movimento
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔐 SEGURANÇA                                                        │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * 🔒 Validações de frontend são de UX — a autoridade é o banco (RLS)
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔧 MANUTENÇÃO                                                       │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
+ * ✅ Manter regras de negócio próximas da implementação
+ * ✅ Registrar decisões arquiteturais relevantes em ADR
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
  * @see src/pages/README.md
- * ─────────────────────────────────────────────────────────────────────
- */
-
-/**
- * 🧩 Fornecedores.tsx — SevenDevX v1.0 ULTIMATE
- * -------------------------------------------------------------
- * ✅ v4.0 MELHORIAS:
- * → Performance: useMemo para áreas + contatos
- * → UX: Loading states + error boundaries
- * → Conversão: Form de contato inline (melhor que só email)
- * → SEO: Schema.org Organization + BreadcrumbList
- * → A11y: Live regions + skip links + reduced-motion
- * → Visual: Micro-interactions + skeleton loader
- * → Mobile: Sticky CTA + thumb-friendly buttons
- * → Analytics: Event tracking ready
- * -------------------------------------------------------------
+ * @see docs/architecture/MODULE_MAP.md
+ * @see docs/code-standards/CODE_ANATOMY.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
+ * ═══════════════════════════════════════════════════════════════════════
  */
 
 // ============================================================================

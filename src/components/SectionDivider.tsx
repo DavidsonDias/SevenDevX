@@ -1,50 +1,21 @@
 /**
- * SectionDivider.tsx — SevenDevX
+ * 🧩 SectionDivider.tsx — SevenDevX
  * ─────────────────────────────────────────────────────────────────────
+ *
  * @file src/components/SectionDivider.tsx
  * @module UI
+ * @layer Presentation / UI
+ * @status Active
  *
  * @description
  * Divisor decorativo entre seções.
  *
  * @see src/components/README.md
+ * @see docs/architecture/MODULE_MAP.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
  * ─────────────────────────────────────────────────────────────────────
- */
-
-/**
- * 🚀 SectionDivider.tsx — SevenDevX v3.2 Hybrid PRO ULTIMATE
- * ═════════════════════════════════════════════════════════════════
- * 
- * Divisor de seção animado com setas SpaceX-style.
- * Versão híbrida: combina estabilidade v3.0 + features úteis v3.1.
- * 
- * ┌─────────────────────────────────────────────────────────────────┐
- * │ ✨ FEATURES v3.2 HYBRID                                        │
- * └─────────────────────────────────────────────────────────────────┘
- * 
- * ✅ Scroll arrow animation (SpaceX-style)
- * ✅ Dual-arrow cascade effect with depth
- * ✅ Physics-inspired easing (cubic-bezier bounce)
- * ✅ Size variants: sm | md | lg
- * ✅ Speed control (0.5x - 2x+)
- * ✅ Animation toggle (animate prop)
- * ✅ Glow intensity: subtle | default | intense
- * ✅ Visual variants: default | cosmic | minimal | elegant (NOVO)
- * ✅ Trail effect opcional (NOVO, otimizado)
- * ✅ External className support
- * ✅ Accessible (aria-hidden, reduced-motion)
- * ✅ Performance optimized (zero hooks, zero listeners)
- * ✅ Mobile responsive (80% scaling)
- * ✅ TypeScript strict mode
- * ✅ Zero memory leaks
- * ✅ Production-ready
- * 
- * REMOVIDO (problemas v3.1):
- * ❌ autoScroll (performance hit)
- * ❌ parallax hover (pointer-events conflict)
- * ❌ quantum drift (confuso)
- * 
- * ═════════════════════════════════════════════════════════════════
  */
 
 // ============================================================================

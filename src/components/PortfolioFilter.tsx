@@ -1,58 +1,35 @@
 /**
- * PortfolioFilter.tsx — SevenDevX
+ * 🧩 PortfolioFilter.tsx — SevenDevX
  * ─────────────────────────────────────────────────────────────────────
+ *
  * @file src/components/PortfolioFilter.tsx
  * @module UI
+ * @layer Presentation / UI
+ * @status Active
  *
  * @description
  * Filtro de projetos por stack e categoria.
  *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Compõe blocos de UI importados de `@/components` e `@/modules`
+ *
+ * ┌─────────────────────────────────────────────────────────────────────┐
+ * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │
+ * └─────────────────────────────────────────────────────────────────────┘
+ *
+ * ✅ Framer Motion — transições e animações
+ * ✅ Lucide — iconografia do design system
+ *
  * @see src/components/README.md
+ * @see docs/architecture/MODULE_MAP.md
+ *
+ * @updated 2026-08-02
+ * @license Proprietary — SevenDevX
  * ─────────────────────────────────────────────────────────────────────
  */
-
-/**
- * 🔥 PortfolioFilter v1.0 PRO++ ULTIMATE — SevenDevX
- * -------------------------------------------------------------
- * VERSÃO HÍBRIDA DEFINITIVA - Carrossel Universal com Grid Adaptativo
- * 
- * 📱 MOBILE (<640px):
- *   → 1 card por slide (optimal UX)
- *   → Touch + mouse drag + keyboard navigation
- *   → Setas flutuantes + dots
- *   → Swipe responsivo (50px threshold)
- * 
- * 💻 TABLET (640px-1023px):
- *   → 4 cards por slide (grid 2x2)
- *   → Touch + mouse drag + keyboard
- *   → Setas + dots + swipe
- * 
- * 🖥️ DESKTOP (≥1024px):
- *   → 4 cards por slide (grid 2x2)
- *   → Mouse drag + keyboard navigation
- *   → Setas + dots + swipe habilitado
- *   → Ultra-wide suportado
- * 
- * LAYOUT VISUAL (Tablet/Desktop):
- * ┌─────────────┬─────────────┐
- * │  Projeto 1  │  Projeto 2  │
- * ├─────────────┼─────────────┤
- * │  Projeto 3  │  Projeto 4  │
- * └─────────────┴─────────────┘
- * 
- * FEATURES ENTERPRISE:
- * ✅ Performance: useMemo para filtered + allTags
- * ✅ Acessibilidade: WCAG 2.1 AAA completo
- * ✅ Modal: useRef + focus trap + restore
- * ✅ Tag toggle: clique duas vezes desativa
- * ✅ Swipe em TODAS as resoluções
- * ✅ Physics realista (spring + inertia)
- * ✅ Drag constraints inteligentes + GPU acceleration
- * ✅ Clamp protection: previne slides vazios
- * ✅ Zero bugs de tela preta + código morto
- * -------------------------------------------------------------
- */
-
 
 // ============================================================================
 // 📦 IMPORTS
