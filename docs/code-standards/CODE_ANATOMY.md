@@ -93,3 +93,29 @@ interface ProjectCardProps {
 - Extrair constantes/interfaces apenas quando for semanticamente neutro e melhorar manutenção.
 
 Ver também: [Comment Decision Guide](./COMMENT_DECISION_GUIDE.md) · [TSDoc Standard](./TSDOC_STANDARD.md) · [File Headers](./FILE_HEADERS.md)
+
+---
+
+## Ordem canônica validada
+
+`npm run docs:sections:check` valida presença, unicidade, preenchimento e ordem:
+
+```txt
+FILE HEADER → IMPORTS → TYPES & CONTRACTS → CONSTANTS & CONFIGURATION
+→ BUSINESS RULES & INVARIANTS → VALIDATION → STATE → HOOKS & SIDE EFFECTS
+→ BUSINESS LOGIC → INTERNAL COMPONENTS → MAIN COMPONENT → REQUEST HANDLER → EXPORTS
+```
+
+A ordem é adaptativa: seções inexistentes não são exigidas. São reportados como erro: seções duplicadas, seções vazias (divisor sem conteúdo), seções fora de ordem e `import` posicionado depois da lógica.
+
+## Regras de negócio próximas da implementação
+
+Arquivos críticos (financeiro, contratos, auth, RBAC, integrações, webhooks, automações, uploads privados, Edge Functions, RLS, secrets) devem conter:
+
+```ts
+// ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+```
+
+Somente invariantes comprovadas pelo código — nunca regras genéricas.
