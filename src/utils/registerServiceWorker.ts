@@ -44,7 +44,7 @@
  */
 
 /**
- * 🛰️ Service Worker Manager v1.0 Pro++ ULTIMATE
+ * 🛰️ Service Worker Manager — SevenDevX
  * ════════════════════════════════════════════════════════════════════════
  *
  * Sistema de registro avançado para PWAs, com:
