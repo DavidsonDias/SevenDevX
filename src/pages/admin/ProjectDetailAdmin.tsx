@@ -27,7 +27,6 @@
  * ProjectDetailAdmin
  *    ├── AdminPageShell
  *    ├── GlassCard
- *    ├── Skeleton
  *    ├── ClientPicker
  *    ├── ContractCard
  *    ├── AttachmentManager

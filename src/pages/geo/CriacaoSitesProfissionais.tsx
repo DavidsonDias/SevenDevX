@@ -31,7 +31,6 @@
  *    ├── Section
  *    ├── GlassCard
  *    ├── BreadcrumbSchema
- *    ├── LucideIconRender
  *    ├── DiagnosticoModal
  *    └── TechIconCDN
  *

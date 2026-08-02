@@ -23,16 +23,10 @@
  * └─────────────────────────────────────────────────────────────────────┘
  *
  * TagsAdmin
- *    ├── Dialog
- *    ├── DialogContent
- *    ├── DialogHeader
- *    ├── DialogTitle
- *    ├── DialogDescription
- *    ├── DialogFooter
- *    ├── AlertDialog
- *    ├── AlertDialogAction
- *    ├── AlertDialogCancel
- *    └── AlertDialogContent
+ *    ├── TagIcon
+ *    ├── IconUploader
+ *    ├── AdminPageShell
+ *    └── SEOHead
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │

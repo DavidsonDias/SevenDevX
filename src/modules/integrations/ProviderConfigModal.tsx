@@ -16,7 +16,6 @@
  * └─────────────────────────────────────────────────────────────────────┘
  *
  * ✅ Exporta `ProviderConfigModal`
- * ✅ Compõe blocos de UI importados de `@/components` e `@/modules`
  * ✅ Lê/escreve nas tabelas: `system_settings`, `integration_providers`
  * ✅ Aciona Edge Functions: `provider-secrets-check`
  *

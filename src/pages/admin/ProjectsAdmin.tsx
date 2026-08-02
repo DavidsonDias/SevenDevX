@@ -26,14 +26,11 @@
  * ProjectsAdmin
  *    ├── AdminPageShell
  *    ├── SEOHead
- *    ├── Button
- *    ├── Input
- *    ├── Textarea
- *    ├── Label
- *    ├── Dialog
- *    ├── DialogContent
- *    ├── DialogHeader
- *    └── DialogTitle
+ *    ├── TechMultiSelect
+ *    ├── TagMultiSelect
+ *    ├── TagIcon
+ *    ├── AiProjectGeneratorModal
+ *    └── Breadcrumb
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🔄 FLUXO DE DADOS                                                   │

@@ -27,8 +27,6 @@
  * LogoLabAdmin
  *    ├── AdminPageShell
  *    ├── GlassCard
- *    ├── BrandHalo
- *    ├── BorderBeam
  *    ├── PROVIDER_CATALOG
  *    └── CATEGORY_LABEL
  *

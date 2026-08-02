@@ -15,23 +15,6 @@
  * └─────────────────────────────────────────────────────────────────────┘
  *
  * ✅ Exporta `ProjectFinanceBlock`
- * ✅ Compõe blocos de UI importados de `@/components` e `@/modules`
- *
- * ┌─────────────────────────────────────────────────────────────────────┐
- * │ 🧩 ARQUITETURA DO ARQUIVO                                           │
- * └─────────────────────────────────────────────────────────────────────┘
- *
- * ProjectFinanceBlock
- *    ├── Card
- *    ├── CardContent
- *    ├── CardHeader
- *    ├── CardTitle
- *    ├── Button
- *    ├── Input
- *    ├── Label
- *    ├── Select
- *    ├── SelectContent
- *    └── SelectItem
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │

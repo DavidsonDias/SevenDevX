@@ -15,18 +15,7 @@
  * └─────────────────────────────────────────────────────────────────────┘
  *
  * ✅ Exporta `WebhookDebugger`
- * ✅ Compõe blocos de UI importados de `@/components` e `@/modules`
  * ✅ Aciona Edge Functions: `webhook-dispatch`
- *
- * ┌─────────────────────────────────────────────────────────────────────┐
- * │ 🧩 ARQUITETURA DO ARQUIVO                                           │
- * └─────────────────────────────────────────────────────────────────────┘
- *
- * WebhookDebugger
- *    ├── Dialog
- *    ├── DialogContent
- *    ├── DialogHeader
- *    └── DialogTitle
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🔄 FLUXO DE DADOS                                                   │

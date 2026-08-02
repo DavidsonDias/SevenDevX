@@ -30,9 +30,7 @@
  *    ├── GuidedConnectionTest
  *    ├── SetupGuideDrawer
  *    ├── ProviderConfigModal
- *    ├── LogoRenderer
- *    ├── BorderBeam
- *    └── BrandHalo
+ *    └── CATEGORY_LABEL
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │

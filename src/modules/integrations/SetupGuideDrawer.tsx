@@ -15,7 +15,6 @@
  * └─────────────────────────────────────────────────────────────────────┘
  *
  * ✅ Exporta `SetupGuideDrawer`
- * ✅ Compõe blocos de UI importados de `@/components` e `@/modules`
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │

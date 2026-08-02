@@ -28,9 +28,6 @@
  *    ├── Header
  *    ├── Footer
  *    ├── SEOHead
- *    ├── Input
- *    ├── Badge
- *    ├── Button
  *    ├── PROVIDER_CATALOG
  *    ├── CATEGORY_LABEL
  *    └── ProviderLogo

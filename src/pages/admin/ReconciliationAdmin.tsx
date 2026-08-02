@@ -20,21 +20,6 @@
  * ✅ Lê/escreve nas tabelas: `transactions`, `bank_import_batches`
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
- * │ 🧩 ARQUITETURA DO ARQUIVO                                           │
- * └─────────────────────────────────────────────────────────────────────┘
- *
- * ReconciliationAdmin
- *    ├── AdminPageShell
- *    ├── Card
- *    ├── CardContent
- *    ├── Button
- *    ├── Tabs
- *    ├── TabsContent
- *    ├── TabsList
- *    ├── TabsTrigger
- *    └── Badge
- *
- * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🔄 FLUXO DE DADOS                                                   │
  * └─────────────────────────────────────────────────────────────────────┘
  *

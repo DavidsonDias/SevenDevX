@@ -15,7 +15,6 @@
  * └─────────────────────────────────────────────────────────────────────┘
  *
  * ✅ Exporta `IntegrationDetailsModal`
- * ✅ Compõe blocos de UI importados de `@/components` e `@/modules`
  * ✅ Lê/escreve nas tabelas: `integration_providers`
  *
  * ┌─────────────────────────────────────────────────────────────────────┐

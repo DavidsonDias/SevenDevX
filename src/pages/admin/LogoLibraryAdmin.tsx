@@ -25,7 +25,6 @@
  * LogoLibraryAdmin
  *    ├── AdminPageShell
  *    ├── ProtectedRoute
- *    ├── LogoRenderer
  *    ├── LogoEditorModal
  *    ├── PROVIDER_CATALOG
  *    └── CATEGORY_LABEL

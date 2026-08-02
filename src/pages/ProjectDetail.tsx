@@ -27,9 +27,6 @@
  *    ├── Footer
  *    ├── WhatsAppButton
  *    ├── SEOHead
- *    ├── Button
- *    ├── Badge
- *    ├── AppLoaderOrbital
  *    ├── TechIconCDN
  *    └── TagIcon
  *

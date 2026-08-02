@@ -27,12 +27,9 @@
  *    ├── Footer
  *    ├── WhatsAppButton
  *    ├── SEOHead
- *    ├── Badge
- *    ├── Button
- *    ├── Card
- *    ├── CardContent
  *    ├── ProjectCard3D
- *    └── AppLoaderOrbital
+ *    ├── TechIconCDN
+ *    └── TagIcon
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │

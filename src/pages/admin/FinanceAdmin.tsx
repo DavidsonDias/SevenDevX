@@ -19,22 +19,6 @@
  * ✅ Compõe blocos de UI importados de `@/components` e `@/modules`
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
- * │ 🧩 ARQUITETURA DO ARQUIVO                                           │
- * └─────────────────────────────────────────────────────────────────────┘
- *
- * FinanceAdmin
- *    ├── AdminPageShell
- *    ├── Card
- *    ├── CardContent
- *    ├── CardHeader
- *    ├── CardTitle
- *    ├── Button
- *    ├── Input
- *    ├── Label
- *    ├── Textarea
- *    └── Tabs
- *
- * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │
  * └─────────────────────────────────────────────────────────────────────┘
  *

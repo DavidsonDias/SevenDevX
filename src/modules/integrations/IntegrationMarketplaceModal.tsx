@@ -15,17 +15,7 @@
  * └─────────────────────────────────────────────────────────────────────┘
  *
  * ✅ Exporta `IntegrationMarketplaceModal`
- * ✅ Compõe blocos de UI importados de `@/components` e `@/modules`
  * ✅ Lê/escreve nas tabelas: `integration_providers`
- *
- * ┌─────────────────────────────────────────────────────────────────────┐
- * │ 🧩 ARQUITETURA DO ARQUIVO                                           │
- * └─────────────────────────────────────────────────────────────────────┘
- *
- * IntegrationMarketplaceModal
- *    ├── LogoRenderer
- *    ├── BorderBeam
- *    └── BrandHalo
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🔄 FLUXO DE DADOS                                                   │

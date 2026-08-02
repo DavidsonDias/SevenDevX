@@ -15,18 +15,7 @@
  * └─────────────────────────────────────────────────────────────────────┘
  *
  * ✅ Exporta `WebhookPayloadViewer`
- * ✅ Compõe blocos de UI importados de `@/components` e `@/modules`
  * ✅ Aciona Edge Functions: `webhook-dispatch`
- *
- * ┌─────────────────────────────────────────────────────────────────────┐
- * │ 🧩 ARQUITETURA DO ARQUIVO                                           │
- * └─────────────────────────────────────────────────────────────────────┘
- *
- * WebhookPayloadViewer
- *    ├── Dialog
- *    ├── DialogContent
- *    ├── DialogHeader
- *    └── DialogTitle
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🔄 FLUXO DE DADOS                                                   │

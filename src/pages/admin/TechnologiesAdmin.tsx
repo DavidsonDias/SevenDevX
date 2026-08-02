@@ -23,16 +23,10 @@
  * └─────────────────────────────────────────────────────────────────────┘
  *
  * TechnologiesAdmin
- *    ├── Dialog
- *    ├── DialogContent
- *    ├── DialogHeader
- *    ├── DialogTitle
- *    ├── DialogDescription
- *    ├── DialogFooter
- *    ├── AlertDialog
- *    ├── AlertDialogAction
- *    ├── AlertDialogCancel
- *    └── AlertDialogContent
+ *    ├── TechIconCDN
+ *    ├── IconUploader
+ *    ├── AdminPageShell
+ *    └── SEOHead
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │

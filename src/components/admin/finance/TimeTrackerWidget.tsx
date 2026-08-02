@@ -15,23 +15,6 @@
  * └─────────────────────────────────────────────────────────────────────┘
  *
  * ✅ Exporta `TimeTrackerWidget`
- * ✅ Compõe blocos de UI importados de `@/components` e `@/modules`
- *
- * ┌─────────────────────────────────────────────────────────────────────┐
- * │ 🧩 ARQUITETURA DO ARQUIVO                                           │
- * └─────────────────────────────────────────────────────────────────────┘
- *
- * TimeTrackerWidget
- *    ├── Card
- *    ├── CardContent
- *    ├── CardHeader
- *    ├── CardTitle
- *    ├── Button
- *    ├── Input
- *    ├── Select
- *    ├── SelectContent
- *    ├── SelectItem
- *    └── SelectTrigger
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │

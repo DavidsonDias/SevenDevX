@@ -26,8 +26,7 @@
  *    ├── AdminPageShell
  *    ├── GlassCard
  *    ├── LucideIconPicker
- *    ├── IconUploader
- *    └── LucideIconRender
+ *    └── IconUploader
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🛠️ DEPENDÊNCIAS RELEVANTES                                         │

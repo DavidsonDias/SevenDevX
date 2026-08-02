@@ -27,7 +27,6 @@
  *    ├── Footer
  *    ├── WhatsAppButton
  *    ├── SEOHead
- *    ├── AppLoaderOrbital
  *    ├── SectionDivider
  *    ├── TechShowcase
  *    └── PortfolioCarousel3D
