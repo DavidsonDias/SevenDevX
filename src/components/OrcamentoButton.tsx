@@ -31,16 +31,28 @@
  * ─────────────────────────────────────────────────────────────────────
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import OrcamentoModal from "@/components/OrcamentoModal";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 interface OrcamentoButtonProps {
   planName: string;
   label?: string; // texto do botão
   className?: string; // estilos extras
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 const OrcamentoButton: React.FC<OrcamentoButtonProps> = ({
   planName,
@@ -77,5 +89,9 @@ const OrcamentoButton: React.FC<OrcamentoButtonProps> = ({
     </>
   );
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default OrcamentoButton;

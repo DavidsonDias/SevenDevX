@@ -69,6 +69,10 @@
  * ═══════════════════════════════════════════════════════════════════════
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🔐 OAuthCallback — recebe ?code&state do provider, troca por token via edge.
  */
@@ -76,6 +80,10 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function OAuthCallback() {
   const [params] = useSearchParams();

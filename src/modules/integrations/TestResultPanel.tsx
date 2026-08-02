@@ -56,12 +56,20 @@
  * ═══════════════════════════════════════════════════════════════════════
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🧪 TestResultPanel — Diagnóstico rico do último teste de conexão
  */
 import { motion } from "framer-motion";
 import { CheckCircle2, XCircle, Clock } from "lucide-react";
 import type { ConnectionTestResult } from "@/hooks/useIntegrations";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 /**
  * Exibe o resultado normalizado do teste de conexão de um provider.

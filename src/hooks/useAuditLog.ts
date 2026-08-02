@@ -67,12 +67,20 @@
  * ═══════════════════════════════════════════════════════════════════════
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🔍 useAuditLog — feed de atividades em tempo real do CRM/ERP
  */
 import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 export interface AuditEntry {
   id: string;
@@ -85,6 +93,10 @@ export interface AuditEntry {
   diff: Record<string, any>;
   summary: string | null;
 }
+
+// ============================================================================
+// 🪝 HOOK IMPLEMENTATION
+// ============================================================================
 
 export const useAuditLog = (limit = 25) => {
   const qc = useQueryClient();

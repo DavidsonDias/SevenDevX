@@ -73,12 +73,20 @@
  * ═══════════════════════════════════════════════════════════════════════
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🟢 HealthStatusGrid — grid compacto de providers + status pulse.
  */
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 interface Row { id: string; name: string; health_status: string; is_active: boolean; last_test_at: string | null; }
 
@@ -88,6 +96,10 @@ const dot: Record<string, string> = {
   offline: "bg-red-400 shadow-[0_0_10px_rgba(248,113,113,0.7)]",
   unknown: "bg-white/20",
 };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function HealthStatusGrid() {
   const [rows, setRows] = useState<Row[]>([]);

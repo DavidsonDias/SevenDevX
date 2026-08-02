@@ -55,14 +55,26 @@
  * ═══════════════════════════════════════════════════════════════════════
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { Navigate, useLocation } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { useAuthContext } from "@/contexts/AuthContext";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
   requiredRole?: "admin" | "moderator";
 }
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
   const { user, isLoading, isAdmin } = useAuthContext();
@@ -102,5 +114,9 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
 
   return <>{children}</>;
 };
+
+// ============================================================================
+// 📤 EXPORTS
+// ============================================================================
 
 export default ProtectedRoute;

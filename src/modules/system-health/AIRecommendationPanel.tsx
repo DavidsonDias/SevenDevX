@@ -68,6 +68,10 @@
  * ═══════════════════════════════════════════════════════════════════════
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 🤖 AIRecommendationPanel — sugestões operacionais via ai-ops edge function.
  */
@@ -75,6 +79,10 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Sparkles, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function AIRecommendationPanel() {
   const [loading, setLoading] = useState(false);

@@ -68,9 +68,17 @@
  * ═══════════════════════════════════════════════════════════════════════
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthContext } from "@/contexts/AuthContext";
+
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
 
 export type Notification = {
   id: string;
@@ -83,6 +91,10 @@ export type Notification = {
   read_at: string | null;
   created_at: string;
 };
+
+// ============================================================================
+// 🪝 HOOK IMPLEMENTATION
+// ============================================================================
 
 export function useNotifications(limit = 20) {
   const { user } = useAuthContext();

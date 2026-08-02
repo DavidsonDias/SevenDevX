@@ -74,6 +74,10 @@
  * ═══════════════════════════════════════════════════════════════════════
  */
 
+// ============================================================================
+// 📦 IMPORTS
+// ============================================================================
+
 /**
  * 📡 RealtimeActivityFeed — stream contínuo do event bus.
  */
@@ -82,11 +86,19 @@ import { supabase } from "@/integrations/supabase/client";
 import { motion, AnimatePresence } from "framer-motion";
 import { Radio } from "lucide-react";
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 interface Evt { id: string; type: string; source: string; severity: string; created_at: string; }
 
 const sevColor: Record<string, string> = {
   info: "bg-sky-400", warn: "bg-amber-400", error: "bg-red-400", critical: "bg-red-500", success: "bg-emerald-400",
 };
+
+// ============================================================================
+// 🏗️ MAIN COMPONENT
+// ============================================================================
 
 export default function RealtimeActivityFeed() {
   const [events, setEvents] = useState<Evt[]>([]);
