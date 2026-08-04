@@ -56,6 +56,22 @@ counter++;
 
 ---
 
+## Automação (codemods e verificação)
+
+| Comando | Efeito |
+|---|---|
+| `npm run docs:headers` / `docs:headers:check` | Cabeçalhos adaptativos Level 1/2/3 |
+| `npm run docs:sections` / `docs:sections:check` | Seções internas + ordem canônica, duplicidade e blocos vazios |
+| `npm run docs:rules` / `docs:rules:check` | Bloco `🔒 BUSINESS RULES & INVARIANTS` em arquivos críticos |
+| `npm run docs:check` / `docs:lint` | Cobertura documental e lint de TSDoc |
+
+Todos os codemods são idempotentes, escrevem apenas comentários e derivam cada
+afirmação de sinais reais do código (auth, secrets, RLS, storage privado,
+assinatura de webhook, realtime, IA, APIs externas).
+
+---
+
+
 ## Regra de ouro
 
 A documentação de um arquivo deve responder rapidamente:
