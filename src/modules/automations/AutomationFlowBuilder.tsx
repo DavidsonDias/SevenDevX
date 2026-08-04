@@ -135,6 +135,14 @@ type Condition = { id: string; field: string; op: typeof CONDITION_OPS[number]; 
 type Action = { id: string; type: ActionType; params: Record<string, any> };
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// 🔒 A autoridade final de acesso é a RLS do banco, não a validação do cliente.
+// 🟡 Saídas geradas por IA são assistivas e exigem revisão humana antes de uso oficial.
+//
+
+// ============================================================================
 // 🎨 INTERNAL COMPONENTS
 // ============================================================================
 

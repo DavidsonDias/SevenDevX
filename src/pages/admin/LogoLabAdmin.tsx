@@ -116,6 +116,14 @@ import { supabase } from "@/integrations/supabase/client";
 const VARIANTS: LogoVariant[] = ["xs", "sm", "md", "lg", "xl", "card", "marketplace", "hero", "inline"];
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// 🔒 A autoridade final de acesso é a RLS do banco, não a validação do cliente.
+// 🟡 Saídas geradas por IA são assistivas e exigem revisão humana antes de uso oficial.
+//
+
+// ============================================================================
 // 🎨 INTERNAL COMPONENTS
 // ============================================================================
 

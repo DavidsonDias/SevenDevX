@@ -101,6 +101,14 @@ type UserRow = {
 const PROTECTED_EMAILS = ["davidson", "sevendevx"]; // qualquer email contendo isso
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// ✅ Alterações relevantes ficam registradas na trilha de auditoria.
+// 🔒 A autoridade final de acesso é a RLS do banco, não a validação do cliente.
+//
+
+// ============================================================================
 // 🧠 BUSINESS LOGIC
 // ============================================================================
 

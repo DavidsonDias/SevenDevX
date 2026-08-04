@@ -126,6 +126,16 @@ const ACTION_COLOR: Record<string, string> = {
 };
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// ✅ Operações administrativas exigem o papel `admin`; o papel nunca vem do cliente.
+// ✅ Alterações relevantes ficam registradas na trilha de auditoria.
+// 🔒 A autoridade final de acesso é a RLS do banco, não a validação do cliente.
+// 📡 O estado local é reconciliado a cada evento Realtime recebido.
+//
+
+// ============================================================================
 // 🎨 INTERNAL COMPONENTS
 // ============================================================================
 

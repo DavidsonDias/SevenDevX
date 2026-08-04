@@ -111,6 +111,14 @@ const DEFAULT_PWD = { min_length: 10, require_uppercase: true, require_number: t
 const DEFAULT_RATE = { auth_per_min: 10, api_per_min: 120, webhook_per_min: 60 };
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// ✅ Alterações relevantes ficam registradas na trilha de auditoria.
+// 🔒 A autoridade final de acesso é a RLS do banco, não a validação do cliente.
+//
+
+// ============================================================================
 // 🎨 INTERNAL COMPONENTS
 // ============================================================================
 

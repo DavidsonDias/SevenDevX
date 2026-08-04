@@ -114,6 +114,16 @@ const DOMAINS = [
 ];
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// 🔒 Arquivos privados são acessados apenas por URL assinada temporária — nunca URL pública.
+// ⚠️ URLs assinadas expiram; não devem ser persistidas como valor permanente.
+// ⚠️ Exclusões são definitivas e exigem confirmação explícita antes do disparo.
+// 🔒 A autoridade final de acesso é a RLS do banco, não a validação do cliente.
+//
+
+// ============================================================================
 // 🏗️ MAIN COMPONENT
 // ============================================================================
 

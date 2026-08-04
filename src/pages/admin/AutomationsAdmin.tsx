@@ -109,6 +109,14 @@ import { AUTOMATION_TEMPLATES } from "@/modules/automations/automationTemplates"
 import { motion, AnimatePresence } from "framer-motion";
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// ⚠️ Exclusões são definitivas e exigem confirmação explícita antes do disparo.
+// 🔒 A autoridade final de acesso é a RLS do banco, não a validação do cliente.
+//
+
+// ============================================================================
 // 🏗️ MAIN COMPONENT
 // ============================================================================
 

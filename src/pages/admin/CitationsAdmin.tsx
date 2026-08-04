@@ -146,6 +146,16 @@ interface Referral {
 const SOURCES = ["ChatGPT", "Perplexity", "Gemini", "Claude", "Copilot", "You.com", "Meta AI", "Phind", "DeepSeek", "Outro"];
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// ✅ Operações administrativas exigem o papel `admin`; o papel nunca vem do cliente.
+// ⚠️ Exclusões são definitivas e exigem confirmação explícita antes do disparo.
+// 🔒 A autoridade final de acesso é a RLS do banco, não a validação do cliente.
+// 🟡 Saídas geradas por IA são assistivas e exigem revisão humana antes de uso oficial.
+//
+
+// ============================================================================
 // 🏗️ MAIN COMPONENT
 // ============================================================================
 

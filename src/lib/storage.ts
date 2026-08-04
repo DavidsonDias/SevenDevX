@@ -80,6 +80,14 @@ const CACHE_TTL_MS = 50 * 60 * 1000; // 50 min
 const cache = new Map<string, { url: string; expiresAt: number }>();
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// 🔒 Arquivos privados são acessados apenas por URL assinada temporária — nunca URL pública.
+// ⚠️ URLs assinadas expiram; não devem ser persistidas como valor permanente.
+//
+
+// ============================================================================
 // 🧠 BUSINESS LOGIC
 // ============================================================================
 

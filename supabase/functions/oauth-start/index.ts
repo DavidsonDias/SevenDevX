@@ -118,6 +118,19 @@ const PROVIDERS: Record<string, ProviderConf> = {
 };
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// ✅ A sessão autenticada é validada antes de qualquer operação privilegiada.
+// 🔒 Requisições sem sessão válida são rejeitadas antes de tocar os dados.
+// ✅ Operações administrativas exigem o papel `admin`; o papel nunca vem do cliente.
+// 🔒 A service role key permanece no servidor e nunca é devolvida ao frontend.
+// 🔒 Secrets são lidos de `Deno.env`; valores brutos nunca retornam na resposta.
+// 🔒 A autoridade final de acesso é a RLS do banco, não a validação do cliente.
+// ✅ Toda resposta inclui os headers de CORS previstos, inclusive nos caminhos de erro.
+//
+
+// ============================================================================
 // 🧠 BUSINESS LOGIC
 // ============================================================================
 

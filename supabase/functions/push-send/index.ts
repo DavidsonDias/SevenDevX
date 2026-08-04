@@ -109,6 +109,19 @@ const VAPID_SUBJECT = Deno.env.get("VAPID_SUBJECT") ?? "mailto:admin@sevendevx.c
 webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC, VAPID_PRIVATE);
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// ✅ A sessão autenticada é validada antes de qualquer operação privilegiada.
+// 🔒 Requisições sem sessão válida são rejeitadas antes de tocar os dados.
+// ✅ Operações administrativas exigem o papel `admin`; o papel nunca vem do cliente.
+// 🔒 A service role key permanece no servidor e nunca é devolvida ao frontend.
+// 🔒 Secrets são lidos de `Deno.env`; valores brutos nunca retornam na resposta.
+// ⚠️ Exclusões são definitivas e exigem confirmação explícita antes do disparo.
+// 🔒 A autoridade final de acesso é a RLS do banco, não a validação do cliente.
+//
+
+// ============================================================================
 // 🌐 REQUEST HANDLER
 // ============================================================================
 

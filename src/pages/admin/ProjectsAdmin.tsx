@@ -187,6 +187,16 @@ const emptyForm: FormState = {
 };
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// ✅ Operações administrativas exigem o papel `admin`; o papel nunca vem do cliente.
+// ⚠️ URLs assinadas expiram; não devem ser persistidas como valor permanente.
+// ⚠️ Exclusões são definitivas e exigem confirmação explícita antes do disparo.
+// 🔒 A autoridade final de acesso é a RLS do banco, não a validação do cliente.
+//
+
+// ============================================================================
 // 🧠 BUSINESS LOGIC
 // ============================================================================
 

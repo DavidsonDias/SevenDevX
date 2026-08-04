@@ -103,6 +103,16 @@ interface EventPayload {
 type AnalyticsPayload = PageViewPayload | EventPayload;
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// 🔒 A service role key permanece no servidor e nunca é devolvida ao frontend.
+// 🔒 Secrets são lidos de `Deno.env`; valores brutos nunca retornam na resposta.
+// 🔒 A autoridade final de acesso é a RLS do banco, não a validação do cliente.
+// ✅ Toda resposta inclui os headers de CORS previstos, inclusive nos caminhos de erro.
+//
+
+// ============================================================================
 // 🧠 BUSINESS LOGIC
 // ============================================================================
 

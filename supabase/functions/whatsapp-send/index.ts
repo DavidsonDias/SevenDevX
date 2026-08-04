@@ -110,6 +110,19 @@ const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const WA_TOKEN = Deno.env.get('WHATSAPP_TOKEN') || '';
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// ✅ A sessão autenticada é validada antes de qualquer operação privilegiada.
+// 🔒 Requisições sem sessão válida são rejeitadas antes de tocar os dados.
+// ✅ Operações administrativas exigem o papel `admin`; o papel nunca vem do cliente.
+// 🔒 A service role key permanece no servidor e nunca é devolvida ao frontend.
+// 🔒 Secrets são lidos de `Deno.env`; valores brutos nunca retornam na resposta.
+// 🔒 A autoridade final de acesso é a RLS do banco, não a validação do cliente.
+// 🌐 Falhas de API externa são tratadas e devolvidas como erro, sem derrubar o fluxo.
+//
+
+// ============================================================================
 // 🌐 REQUEST HANDLER
 // ============================================================================
 
