@@ -15,7 +15,9 @@
     "docs:sections:check": "node scripts/apply-sections.mjs --check",
     "docs:headers": "node scripts/apply-doc-headers.mjs",
     "docs:headers:check": "node scripts/apply-doc-headers.mjs --check",
-    "typecheck": "tsc --noEmit -p tsconfig.app.json"
+    "typecheck": "tsc --noEmit -p tsconfig.app.json",
+    "docs:rules": "node scripts/apply-business-rules.mjs",
+    "docs:rules:check": "node scripts/apply-business-rules.mjs --check"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
