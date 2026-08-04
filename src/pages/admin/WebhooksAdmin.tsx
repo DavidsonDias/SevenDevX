@@ -129,6 +129,16 @@ interface Webhook {
 }
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// 🔒 Payloads externos só são processados após verificação de assinatura.
+// ⚠️ Exclusões são definitivas e exigem confirmação explícita antes do disparo.
+// 🔒 A autoridade final de acesso é a RLS do banco, não a validação do cliente.
+// 📡 O estado local é reconciliado a cada evento Realtime recebido.
+//
+
+// ============================================================================
 // 🏗️ MAIN COMPONENT
 // ============================================================================
 

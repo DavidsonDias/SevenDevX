@@ -311,6 +311,14 @@ export const BADGE_META: Record<ProviderBadge, { label: string; cls: string }> =
 };
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// 🔒 A service role key permanece no servidor e nunca é devolvida ao frontend.
+// 🟡 Saídas geradas por IA são assistivas e exigem revisão humana antes de uso oficial.
+//
+
+// ============================================================================
 // 🧠 BUSINESS LOGIC
 // ============================================================================
 

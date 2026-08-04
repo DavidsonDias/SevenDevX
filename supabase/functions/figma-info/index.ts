@@ -70,6 +70,19 @@
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
+// ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// ✅ A sessão autenticada é validada antes de qualquer operação privilegiada.
+// 🔒 Requisições sem sessão válida são rejeitadas antes de tocar os dados.
+// ✅ Operações administrativas exigem o papel `admin`; o papel nunca vem do cliente.
+// 🔒 Secrets são lidos de `Deno.env`; valores brutos nunca retornam na resposta.
+// 🌐 Falhas de API externa são tratadas e devolvidas como erro, sem derrubar o fluxo.
+// ✅ Toda resposta inclui os headers de CORS previstos, inclusive nos caminhos de erro.
+//
+
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",

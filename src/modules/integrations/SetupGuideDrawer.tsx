@@ -640,6 +640,15 @@ const GUIDES: Record<string, Guide> = {
 const STORAGE_KEY = (id: string) => `setup-guide-done:${id}`;
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// 🔒 A service role key permanece no servidor e nunca é devolvida ao frontend.
+// 🔒 Payloads externos só são processados após verificação de assinatura.
+// 🟡 Saídas geradas por IA são assistivas e exigem revisão humana antes de uso oficial.
+//
+
+// ============================================================================
 // 🎨 INTERNAL COMPONENTS
 // ============================================================================
 

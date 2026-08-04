@@ -111,6 +111,18 @@ const GH_TOKEN = Deno.env.get("GITHUB_TOKEN") ?? "";
 type Check = { name: string; ok: boolean; detail?: string; latency_ms?: number };
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// ✅ A sessão autenticada é validada antes de qualquer operação privilegiada.
+// 🔒 Requisições sem sessão válida são rejeitadas antes de tocar os dados.
+// ✅ Operações administrativas exigem o papel `admin`; o papel nunca vem do cliente.
+// 🔒 Secrets são lidos de `Deno.env`; valores brutos nunca retornam na resposta.
+// 🌐 Falhas de API externa são tratadas e devolvidas como erro, sem derrubar o fluxo.
+// ✅ Toda resposta inclui os headers de CORS previstos, inclusive nos caminhos de erro.
+//
+
+// ============================================================================
 // 🧠 BUSINESS LOGIC
 // ============================================================================
 

@@ -113,6 +113,19 @@ const RESTORABLE = new Set([
 ]);
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// ✅ A sessão autenticada é validada antes de qualquer operação privilegiada.
+// 🔒 Requisições sem sessão válida são rejeitadas antes de tocar os dados.
+// ✅ Operações administrativas exigem o papel `admin`; o papel nunca vem do cliente.
+// 🔒 A service role key permanece no servidor e nunca é devolvida ao frontend.
+// 🔒 Secrets são lidos de `Deno.env`; valores brutos nunca retornam na resposta.
+// 🔒 Arquivos privados são acessados apenas por URL assinada temporária — nunca URL pública.
+// ⚠️ URLs assinadas expiram; não devem ser persistidas como valor permanente.
+//
+
+// ============================================================================
 // 🌐 REQUEST HANDLER
 // ============================================================================
 

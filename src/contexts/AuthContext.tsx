@@ -64,6 +64,14 @@ interface AuthContextType {
 }
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// ✅ A sessão autenticada é validada antes de qualquer operação privilegiada.
+// ✅ Operações administrativas exigem o papel `admin`; o papel nunca vem do cliente.
+//
+
+// ============================================================================
 // 🎨 INTERNAL COMPONENTS
 // ============================================================================
 

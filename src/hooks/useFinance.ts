@@ -82,6 +82,15 @@ import { useToast } from "@/hooks/use-toast";
 import { CurrencyCode, convertToBRL } from "@/lib/money";
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// ⚠️ Exclusões são definitivas e exigem confirmação explícita antes do disparo.
+// 🔒 A autoridade final de acesso é a RLS do banco, não a validação do cliente.
+// 📡 O estado local é reconciliado a cada evento Realtime recebido.
+//
+
+// ============================================================================
 // 🪝 HOOK IMPLEMENTATION
 // ============================================================================
 

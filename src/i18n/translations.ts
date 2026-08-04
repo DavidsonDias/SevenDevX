@@ -17,6 +17,10 @@
  * Arquivo mesclado com estrutura completa
  */
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 export type Language = "pt" | "en" | "es";
 
 export interface Translations {
@@ -706,6 +710,10 @@ export interface Translations {
     seconds: string;
   };
 }
+
+// ============================================================================
+// ⚙️ CONSTANTS & CONFIGURATION
+// ============================================================================
 
 /**
  * Dicionário de traduções por idioma (pt/en/es).

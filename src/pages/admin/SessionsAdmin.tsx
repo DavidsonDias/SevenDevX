@@ -116,6 +116,15 @@ type Sess = {
 };
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// ✅ Operações administrativas exigem o papel `admin`; o papel nunca vem do cliente.
+// 🔒 A autoridade final de acesso é a RLS do banco, não a validação do cliente.
+// 📡 O estado local é reconciliado a cada evento Realtime recebido.
+//
+
+// ============================================================================
 // 🎨 INTERNAL COMPONENTS
 // ============================================================================
 

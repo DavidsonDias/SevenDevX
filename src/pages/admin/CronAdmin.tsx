@@ -121,6 +121,14 @@ const MANUAL_TRIGGERS = [
 ];
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// ✅ Operações administrativas exigem o papel `admin`; o papel nunca vem do cliente.
+// 🟡 Saídas geradas por IA são assistivas e exigem revisão humana antes de uso oficial.
+//
+
+// ============================================================================
 // 🎨 INTERNAL COMPONENTS
 // ============================================================================
 

@@ -97,6 +97,14 @@ import { useScrollLock } from "@/hooks/useScrollLock";
 type Tab = "overview" | "logs" | "credentials" | "webhooks";
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// ⚠️ Exclusões são definitivas e exigem confirmação explícita antes do disparo.
+// 🔒 A autoridade final de acesso é a RLS do banco, não a validação do cliente.
+//
+
+// ============================================================================
 // 🏗️ MAIN COMPONENT
 // ============================================================================
 

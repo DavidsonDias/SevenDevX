@@ -69,6 +69,19 @@
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
+// ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// ✅ A sessão autenticada é validada antes de qualquer operação privilegiada.
+// 🔒 Requisições sem sessão válida são rejeitadas antes de tocar os dados.
+// ✅ Operações administrativas exigem o papel `admin`; o papel nunca vem do cliente.
+// 🔒 Secrets são lidos de `Deno.env`; valores brutos nunca retornam na resposta.
+// 🟡 Saídas geradas por IA são assistivas e exigem revisão humana antes de uso oficial.
+// ✅ Toda resposta inclui os headers de CORS previstos, inclusive nos caminhos de erro.
+//
+
+
 const GATEWAY = 'https://connector-gateway.lovable.dev/google_search_console';
 
 Deno.serve(async (req) => {

@@ -96,6 +96,14 @@ import { toast } from "@/hooks/use-toast";
 type Tpl = { id: string; name: string; category: string; subject: string | null; body: string; variables: string[]; usage_count: number };
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// ⚠️ Exclusões são definitivas e exigem confirmação explícita antes do disparo.
+// 🔒 A autoridade final de acesso é a RLS do banco, não a validação do cliente.
+//
+
+// ============================================================================
 // 🏗️ MAIN COMPONENT
 // ============================================================================
 

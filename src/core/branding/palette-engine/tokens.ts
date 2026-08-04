@@ -43,6 +43,10 @@
  * ═══════════════════════════════════════════════════════════════════════
  */
 
+// ============================================================================
+// 🧩 TYPES & CONTRACTS
+// ============================================================================
+
 /**
  * 🎨 Brand tokens derived from a palette.
  * Generates ready-to-consume CSS for glow / beam / halo / gradient / border.
@@ -62,6 +66,10 @@ export interface BrandTokens {
   /** rotating gradient overlay (for hover) */
   hoverOverlay: string;
 }
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 /**
  * Deriva os design tokens da marca (base, contraste, glow e beam) a partir da paleta.

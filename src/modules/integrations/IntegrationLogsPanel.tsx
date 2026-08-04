@@ -127,6 +127,14 @@ const LEVEL_COLOR: Record<string, string> = {
 };
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// 🔒 A autoridade final de acesso é a RLS do banco, não a validação do cliente.
+// 📡 O estado local é reconciliado a cada evento Realtime recebido.
+//
+
+// ============================================================================
 // 🏗️ MAIN COMPONENT
 // ============================================================================
 

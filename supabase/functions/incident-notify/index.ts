@@ -101,6 +101,18 @@ const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 const SEV_COLOR: Record<string, number> = { critical: 0xef4444, high: 0xf97316, medium: 0xeab308, low: 0x3b82f6 };
 
 // ============================================================================
+// 🔒 BUSINESS RULES & INVARIANTS
+// ============================================================================
+//
+// 🔒 Requisições sem sessão válida são rejeitadas antes de tocar os dados.
+// ✅ Operações administrativas exigem o papel `admin`; o papel nunca vem do cliente.
+// 🔒 A service role key permanece no servidor e nunca é devolvida ao frontend.
+// 🔒 Secrets são lidos de `Deno.env`; valores brutos nunca retornam na resposta.
+// 🔒 A autoridade final de acesso é a RLS do banco, não a validação do cliente.
+// ✅ Toda resposta inclui os headers de CORS previstos, inclusive nos caminhos de erro.
+//
+
+// ============================================================================
 // 🌐 REQUEST HANDLER
 // ============================================================================
 

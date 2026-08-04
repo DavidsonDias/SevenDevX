@@ -43,29 +43,10 @@
  * ═══════════════════════════════════════════════════════════════════════
  */
 
-/**
- * 🛰️ Service Worker Manager — SevenDevX
- * ════════════════════════════════════════════════════════════════════════
- *
- * Sistema de registro avançado para PWAs, com:
- *
- *  ✅ Registro seguro e validado (produção + HTTPS)
- *  ✅ Logs estilizados para debugging
- *  ✅ Tratamento de erros robusto
- *  ✅ Suporte ao ciclo de vida completo do SW
- *  ✅ Atualização automática opcional
- *  ✅ Timeout fail-safe (evita unidades zumbis)
- *
- * @version 1.0.0
- * @author  
- *   SevenDevX — Enterprise Web Development
- *
- * @compatibility
- *   Chrome, Safari, Edge, Firefox (PWA-compliant)
- *
- * @license Proprietary — Uso restrito à SevenDevX
- * ════════════════════════════════════════════════════════════════════════
- */
+
+// ============================================================================
+// 🧠 BUSINESS LOGIC
+// ============================================================================
 
 export const registerServiceWorker = () => {
   if (!('serviceWorker' in navigator)) {
