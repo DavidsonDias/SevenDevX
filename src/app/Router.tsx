@@ -247,6 +247,10 @@ function AnimatedRoutes() {
             <Route path="/admin/site-creation" element={
               <ProtectedRoute requiredRole="admin"><SiteCreationAdmin /></ProtectedRoute>
             } />
+            <Route path="/admin/portfolio" element={
+              <ProtectedRoute requiredRole="admin"><PortfolioAdmin /></ProtectedRoute>
+            } />
+
             <Route path="/admin/financeiro" element={
               <ProtectedRoute requiredRole="admin"><FinanceAdmin /></ProtectedRoute>
             } />
