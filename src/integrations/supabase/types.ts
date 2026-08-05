@@ -1669,6 +1669,48 @@ export type Database = {
         }
         Relationships: []
       }
+      portfolio_settings: {
+        Row: {
+          about: Json
+          created_at: string
+          hero: Json
+          id: string
+          is_published: boolean
+          links: Json
+          profile: Json
+          seo: Json
+          site_key: string
+          skills: Json
+          updated_at: string
+        }
+        Insert: {
+          about?: Json
+          created_at?: string
+          hero?: Json
+          id?: string
+          is_published?: boolean
+          links?: Json
+          profile?: Json
+          seo?: Json
+          site_key?: string
+          skills?: Json
+          updated_at?: string
+        }
+        Update: {
+          about?: Json
+          created_at?: string
+          hero?: Json
+          id?: string
+          is_published?: boolean
+          links?: Json
+          profile?: Json
+          seo?: Json
+          site_key?: string
+          skills?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       process_template_stages: {
         Row: {
           ai_prompt: string | null
@@ -1934,6 +1976,9 @@ export type Database = {
           live_url: string | null
           long_description: string | null
           pipeline_stage: Database["public"]["Enums"]["project_pipeline_stage"]
+          portfolio_enabled: boolean
+          portfolio_highlight: boolean
+          portfolio_order: number
           probability: number | null
           published_at: string | null
           seo_description: string | null
@@ -1977,6 +2022,9 @@ export type Database = {
           live_url?: string | null
           long_description?: string | null
           pipeline_stage?: Database["public"]["Enums"]["project_pipeline_stage"]
+          portfolio_enabled?: boolean
+          portfolio_highlight?: boolean
+          portfolio_order?: number
           probability?: number | null
           published_at?: string | null
           seo_description?: string | null
@@ -2020,6 +2068,9 @@ export type Database = {
           live_url?: string | null
           long_description?: string | null
           pipeline_stage?: Database["public"]["Enums"]["project_pipeline_stage"]
+          portfolio_enabled?: boolean
+          portfolio_highlight?: boolean
+          portfolio_order?: number
           probability?: number | null
           published_at?: string | null
           seo_description?: string | null
