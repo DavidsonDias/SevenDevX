@@ -111,14 +111,14 @@ Deno.serve(async (req) => {
 
     const { data: techRows } = await supabase
       .from("tech_registry")
-      .select("id, name, slug, category, icon_url, color")
+      .select("id, name, slug, category, icon_url, color").eq("is_active", true)
       .limit(200);
 
     let posts: unknown[] = [];
     if (includePosts) {
       const { data: postRows } = await supabase
         .from("blog_posts")
-        .select("id, slug, title, excerpt, cover_image, tags, published_at, reading_time")
+        .select("id, slug, title, excerpt, cover_image, tags, published_at, read_time")
         .eq("status", "published")
         .order("published_at", { ascending: false })
         .limit(24);
