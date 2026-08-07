@@ -95,16 +95,46 @@ export default function PortfolioAdmin() {
     });
   }, [settings]);
 
-  const enabled = useMemo(() => projects.filter((p) => p.portfolio_enabled), [projects]);
+  const reorder = useReorderPortfolioProjects();
+
+  /** Projetos publicados no portfólio, na ordem exata servida pela API. */
+  const enabled = useMemo(
+    () =>
+      projects
+        .filter((p) => p.portfolio_enabled)
+        .sort(
+          (a, b) =>
+            (a.portfolio_order ?? 0) - (b.portfolio_order ?? 0) || a.title.localeCompare(b.title),
+        ),
+    [projects],
+  );
+
+  /** Projetos ainda fora do portfólio. */
+  const available = useMemo(() => projects.filter((p) => !p.portfolio_enabled), [projects]);
 
   const toggle = (p: PortfolioProject) =>
     updateProject.mutate(
-      { id: p.id, patch: { portfolio_enabled: !p.portfolio_enabled } },
+      {
+        id: p.id,
+        patch: {
+          portfolio_enabled: !p.portfolio_enabled,
+          ...(p.portfolio_enabled ? {} : { portfolio_order: enabled.length + 1 }),
+        },
+      },
       { onError: () => toast({ title: "Falha ao atualizar", variant: "destructive" }) },
     );
 
-  const move = (p: PortfolioProject, dir: -1 | 1) =>
-    updateProject.mutate({ id: p.id, patch: { portfolio_order: (p.portfolio_order ?? 0) + dir } });
+  /** Reposiciona um projeto para o índice `to` (0-based) e normaliza 1..n. */
+  const moveTo = (from: number, to: number) => {
+    if (to < 0 || to >= enabled.length || to === from) return;
+    const ids = enabled.map((p) => p.id);
+    const [moved] = ids.splice(from, 1);
+    ids.splice(to, 0, moved);
+    reorder.mutate(ids, {
+      onError: () => toast({ title: "Falha ao reordenar", variant: "destructive" }),
+    });
+  };
+
 
   const saveSettings = () =>
     updateSettings.mutate(
