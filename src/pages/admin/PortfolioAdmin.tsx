@@ -36,9 +36,10 @@ import {
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import GlassCard from "@/components/GlassCard";
 import { useToast } from "@/hooks/use-toast";
+import { resolveProjectImage } from "@/data/projectImages";
 import {
   usePortfolioProjects, useUpdatePortfolioProject, usePortfolioSettings,
-  useUpdatePortfolioSettings, PORTFOLIO_API_URL, type PortfolioProject,
+  useUpdatePortfolioSettings, useReorderPortfolioProjects, PORTFOLIO_API_URL, type PortfolioProject,
 } from "@/hooks/usePortfolio";
 
 // ============================================================================
