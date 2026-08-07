@@ -102,6 +102,28 @@ export function useUpdatePortfolioProject() {
   });
 }
 
+/**
+ * Persiste uma nova ordenação completa do portfólio.
+ *
+ * 🔒 A posição é sempre normalizada em índices sequenciais (1..n) para evitar
+ *    empates e "buracos" que quebrariam a ordem exibida no site público.
+ */
+export function useReorderPortfolioProjects() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (orderedIds: string[]) => {
+      for (let i = 0; i < orderedIds.length; i++) {
+        const { error } = await sb
+          .from("projects")
+          .update({ portfolio_order: i + 1 })
+          .eq("id", orderedIds[i]);
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["portfolio_projects"] }),
+  });
+}
+
 /** Configurações globais do site de portfólio. */
 export function usePortfolioSettings(siteKey = "davidson") {
   return useQuery<PortfolioSettings | null>({

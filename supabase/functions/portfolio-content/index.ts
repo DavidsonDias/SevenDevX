@@ -62,9 +62,48 @@ const JSON_HEADERS = {
   "Cache-Control": CACHE_HEADER,
 };
 
+/** Bucket privado com as capas locais migradas do bundle do SevenOS. */
+const COVERS_BUCKET = "portfolio-covers";
+/** Validade das URLs assinadas (7 dias) — muito acima do TTL de cache da CDN. */
+const SIGNED_URL_TTL = 60 * 60 * 24 * 7;
+
 // ============================================================================
 // 🧠 CORE LOGIC
 // ============================================================================
+
+/**
+ * Resolve capas no formato `local:<arquivo>` para URLs assinadas do Storage.
+ * URLs absolutas (`http`) e caminhos já públicos são devolvidos sem alteração.
+ */
+async function resolveCovers(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any,
+  covers: (string | null | undefined)[],
+): Promise<Record<string, string>> {
+  const files = [
+    ...new Set(
+      covers
+        .filter((c): c is string => typeof c === "string" && c.startsWith("local:"))
+        .map((c) => c.slice(6)),
+    ),
+  ];
+  if (files.length === 0) return {};
+
+  const { data, error } = await supabase.storage
+    .from(COVERS_BUCKET)
+    .createSignedUrls(files, SIGNED_URL_TTL);
+
+  if (error) {
+    console.error("[portfolio-content] signed urls", error);
+    return {};
+  }
+
+  const map: Record<string, string> = {};
+  for (const item of data ?? []) {
+    if (item.signedUrl && item.path) map[`local:${item.path}`] = item.signedUrl;
+  }
+  return map;
+}
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -125,6 +164,18 @@ Deno.serve(async (req) => {
       posts = postRows ?? [];
     }
 
+    // 🔒 Capas `local:` só existem no bundle do SevenOS — resolvidas para
+    // URLs assinadas do Storage para que sites externos consigam exibi-las.
+    const coverMap = await resolveCovers(supabase, [
+      ...(projectRows ?? []).flatMap((p) => [
+        p.cover_image,
+        ...(Array.isArray(p.gallery) ? (p.gallery as string[]) : []),
+      ]),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ...(posts as any[]).map((p) => p.cover_image),
+    ]);
+    const resolve = (c?: string | null) => (c ? coverMap[c] ?? c : null);
+
     const payload = {
       version: API_VERSION,
       site: siteKey,
@@ -144,8 +195,8 @@ Deno.serve(async (req) => {
         subtitle: p.subtitle,
         description: p.description,
         content: p.long_description,
-        cover_image: p.cover_image,
-        gallery: p.gallery ?? [],
+        cover_image: resolve(p.cover_image),
+        gallery: (Array.isArray(p.gallery) ? (p.gallery as string[]) : []).map((g) => resolve(g)),
         technologies: p.technologies ?? [],
         tags: p.tags ?? [],
         category: p.category,
@@ -157,7 +208,8 @@ Deno.serve(async (req) => {
         published_at: p.published_at,
       })),
       tech: techRows ?? [],
-      posts,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      posts: (posts as any[]).map((p) => ({ ...p, cover_image: resolve(p.cover_image) })),
     };
 
     return new Response(JSON.stringify(payload), { headers: JSON_HEADERS });

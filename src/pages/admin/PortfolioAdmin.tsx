@@ -36,9 +36,10 @@ import {
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import GlassCard from "@/components/GlassCard";
 import { useToast } from "@/hooks/use-toast";
+import { resolveProjectImage } from "@/data/projectImages";
 import {
   usePortfolioProjects, useUpdatePortfolioProject, usePortfolioSettings,
-  useUpdatePortfolioSettings, PORTFOLIO_API_URL, type PortfolioProject,
+  useUpdatePortfolioSettings, useReorderPortfolioProjects, PORTFOLIO_API_URL, type PortfolioProject,
 } from "@/hooks/usePortfolio";
 
 // ============================================================================
@@ -94,16 +95,46 @@ export default function PortfolioAdmin() {
     });
   }, [settings]);
 
-  const enabled = useMemo(() => projects.filter((p) => p.portfolio_enabled), [projects]);
+  const reorder = useReorderPortfolioProjects();
+
+  /** Projetos publicados no portfólio, na ordem exata servida pela API. */
+  const enabled = useMemo(
+    () =>
+      projects
+        .filter((p) => p.portfolio_enabled)
+        .sort(
+          (a, b) =>
+            (a.portfolio_order ?? 0) - (b.portfolio_order ?? 0) || a.title.localeCompare(b.title),
+        ),
+    [projects],
+  );
+
+  /** Projetos ainda fora do portfólio. */
+  const available = useMemo(() => projects.filter((p) => !p.portfolio_enabled), [projects]);
 
   const toggle = (p: PortfolioProject) =>
     updateProject.mutate(
-      { id: p.id, patch: { portfolio_enabled: !p.portfolio_enabled } },
+      {
+        id: p.id,
+        patch: {
+          portfolio_enabled: !p.portfolio_enabled,
+          ...(p.portfolio_enabled ? {} : { portfolio_order: enabled.length + 1 }),
+        },
+      },
       { onError: () => toast({ title: "Falha ao atualizar", variant: "destructive" }) },
     );
 
-  const move = (p: PortfolioProject, dir: -1 | 1) =>
-    updateProject.mutate({ id: p.id, patch: { portfolio_order: (p.portfolio_order ?? 0) + dir } });
+  /** Reposiciona um projeto para o índice `to` (0-based) e normaliza 1..n. */
+  const moveTo = (from: number, to: number) => {
+    if (to < 0 || to >= enabled.length || to === from) return;
+    const ids = enabled.map((p) => p.id);
+    const [moved] = ids.splice(from, 1);
+    ids.splice(to, 0, moved);
+    reorder.mutate(ids, {
+      onError: () => toast({ title: "Falha ao reordenar", variant: "destructive" }),
+    });
+  };
+
 
   const saveSettings = () =>
     updateSettings.mutate(
@@ -202,37 +233,55 @@ export default function PortfolioAdmin() {
           </div>
         </GlassCard>
 
-        {/* Seleção de projetos */}
+        {/* Projetos publicados — ordem exata da API */}
         <GlassCard className="p-5 space-y-4">
           <div className="flex items-center justify-between gap-3 flex-wrap">
-            <h2 className="text-sm font-semibold uppercase tracking-wider">Projetos no portfólio</h2>
-            <span className="text-xs text-muted-foreground">{enabled.length} publicados de {projects.length}</span>
+            <h2 className="text-sm font-semibold uppercase tracking-wider">Ordem no portfólio</h2>
+            <span className="text-xs text-muted-foreground">
+              {enabled.length} publicados de {projects.length}
+              {reorder.isPending ? " · salvando…" : ""}
+            </span>
           </div>
 
           {isLoading ? (
             <div className="flex items-center gap-2 text-sm text-muted-foreground py-8 justify-center">
               <Loader2 className="w-4 h-4 animate-spin" /> Carregando projetos…
             </div>
+          ) : enabled.length === 0 ? (
+            <p className="text-sm text-muted-foreground py-6 text-center">
+              Nenhum projeto no portfólio ainda — adicione abaixo.
+            </p>
           ) : (
             <ul className="space-y-2">
-              {projects.map((p) => (
+              {enabled.map((p, i) => (
                 <li
                   key={p.id}
-                  className={`flex items-center gap-3 rounded-lg border p-3 transition-colors ${
-                    p.portfolio_enabled ? "border-foreground/25 bg-foreground/[0.03]" : "border-border"
-                  }`}
+                  className="flex items-center gap-3 rounded-lg border border-foreground/25 bg-foreground/[0.03] p-3"
                 >
+                  <input
+                    type="number"
+                    min={1}
+                    max={enabled.length}
+                    value={i + 1}
+                    onChange={(e) => moveTo(i, Number(e.target.value) - 1)}
+                    aria-label={`Posição de ${p.title}`}
+                    className="w-12 shrink-0 bg-background/40 border border-border rounded text-center text-xs py-1.5 outline-none focus:border-foreground/40"
+                  />
+
                   <div className="w-12 h-12 rounded-md overflow-hidden bg-background/50 border border-border shrink-0">
-                    {p.cover_image ? (
-                      <img src={p.cover_image} alt={p.title} loading="lazy" className="w-full h-full object-cover" />
-                    ) : null}
+                    <img
+                      src={resolveProjectImage(p.cover_image)}
+                      alt={p.title}
+                      loading="lazy"
+                      className="w-full h-full object-cover"
+                    />
                   </div>
 
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium truncate">{p.title}</p>
                     <p className="text-[11px] text-muted-foreground truncate">
                       {p.category || "sem categoria"} · {p.status}
-                      {p.status !== "published" && p.portfolio_enabled ? " · não sairá na API" : ""}
+                      {p.status !== "published" ? " · não sairá na API" : ""}
                     </p>
                   </div>
 
@@ -247,29 +296,58 @@ export default function PortfolioAdmin() {
                   </button>
 
                   <div className="flex flex-col">
-                    <button onClick={() => move(p, -1)} aria-label="Subir" className="p-0.5 text-muted-foreground hover:text-foreground transition-colors">
+                    <button onClick={() => moveTo(i, i - 1)} disabled={i === 0} aria-label="Subir" className="p-0.5 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30">
                       <ArrowUp className="w-3.5 h-3.5" />
                     </button>
-                    <button onClick={() => move(p, 1)} aria-label="Descer" className="p-0.5 text-muted-foreground hover:text-foreground transition-colors">
+                    <button onClick={() => moveTo(i, i + 1)} disabled={i === enabled.length - 1} aria-label="Descer" className="p-0.5 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30">
                       <ArrowDown className="w-3.5 h-3.5" />
                     </button>
                   </div>
 
                   <button
                     onClick={() => toggle(p)}
-                    className={`text-[11px] uppercase tracking-wider border rounded px-2.5 py-1.5 transition-colors ${
-                      p.portfolio_enabled
-                        ? "border-foreground/30 hover:bg-foreground/5"
-                        : "border-border text-muted-foreground hover:bg-foreground/5"
-                    }`}
+                    className="text-[11px] uppercase tracking-wider border border-foreground/30 rounded px-2.5 py-1.5 hover:bg-foreground/5 transition-colors"
                   >
-                    {p.portfolio_enabled ? "No portfólio" : "Adicionar"}
+                    Remover
                   </button>
                 </li>
               ))}
             </ul>
           )}
         </GlassCard>
+
+        {/* Projetos disponíveis */}
+        {!isLoading && available.length > 0 && (
+          <GlassCard className="p-5 space-y-4">
+            <h2 className="text-sm font-semibold uppercase tracking-wider">Disponíveis</h2>
+            <ul className="space-y-2">
+              {available.map((p) => (
+                <li key={p.id} className="flex items-center gap-3 rounded-lg border border-border p-3">
+                  <div className="w-12 h-12 rounded-md overflow-hidden bg-background/50 border border-border shrink-0">
+                    <img
+                      src={resolveProjectImage(p.cover_image)}
+                      alt={p.title}
+                      loading="lazy"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium truncate">{p.title}</p>
+                    <p className="text-[11px] text-muted-foreground truncate">
+                      {p.category || "sem categoria"} · {p.status}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => toggle(p)}
+                    className="text-[11px] uppercase tracking-wider border border-border text-muted-foreground rounded px-2.5 py-1.5 hover:bg-foreground/5 transition-colors"
+                  >
+                    Adicionar
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </GlassCard>
+        )}
       </div>
     </AdminPageShell>
   );
