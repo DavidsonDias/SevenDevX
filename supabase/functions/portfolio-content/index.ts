@@ -164,6 +164,18 @@ Deno.serve(async (req) => {
       posts = postRows ?? [];
     }
 
+    // 🔒 Capas `local:` só existem no bundle do SevenOS — resolvidas para
+    // URLs assinadas do Storage para que sites externos consigam exibi-las.
+    const coverMap = await resolveCovers(supabase, [
+      ...(projectRows ?? []).flatMap((p) => [
+        p.cover_image,
+        ...(Array.isArray(p.gallery) ? (p.gallery as string[]) : []),
+      ]),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      ...(posts as any[]).map((p) => p.cover_image),
+    ]);
+    const resolve = (c?: string | null) => (c ? coverMap[c] ?? c : null);
+
     const payload = {
       version: API_VERSION,
       site: siteKey,
@@ -183,8 +195,8 @@ Deno.serve(async (req) => {
         subtitle: p.subtitle,
         description: p.description,
         content: p.long_description,
-        cover_image: p.cover_image,
-        gallery: p.gallery ?? [],
+        cover_image: resolve(p.cover_image),
+        gallery: (Array.isArray(p.gallery) ? (p.gallery as string[]) : []).map((g) => resolve(g)),
         technologies: p.technologies ?? [],
         tags: p.tags ?? [],
         category: p.category,
