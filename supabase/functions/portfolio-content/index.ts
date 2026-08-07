@@ -208,7 +208,8 @@ Deno.serve(async (req) => {
         published_at: p.published_at,
       })),
       tech: techRows ?? [],
-      posts,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      posts: (posts as any[]).map((p) => ({ ...p, cover_image: resolve(p.cover_image) })),
     };
 
     return new Response(JSON.stringify(payload), { headers: JSON_HEADERS });
