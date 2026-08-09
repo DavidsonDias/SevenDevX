@@ -1,0 +1,1 @@
+ALTER TABLE public.portfolio_settings ADD COLUMN IF NOT EXISTS cv jsonb NOT NULL DEFAULT '{}'::jsonb;

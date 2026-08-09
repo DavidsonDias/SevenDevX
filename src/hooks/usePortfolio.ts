@@ -64,6 +64,10 @@ export type PortfolioSettings = {
   skills: unknown[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   seo: Record<string, any>;
+  /** Conteúdo do currículo servido em `/curriculo` e no PDF. */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  cv: Record<string, any>;
+
   is_published: boolean;
   updated_at: string;
 };

@@ -105,6 +105,88 @@ async function resolveCovers(
   return map;
 }
 
+/** Aliases de nomes livres → slug canônico do `tech_registry` / simple-icons. */
+const TECH_ALIASES: Record<string, string> = {
+  node: "nodedotjs",
+  nodejs: "nodedotjs",
+  next: "nextdotjs",
+  nextjs: "nextdotjs",
+  vue: "vuedotjs",
+  vuejs: "vuedotjs",
+  three: "threedotjs",
+  threejs: "threedotjs",
+  tailwind: "tailwindcss",
+  tailwindcss: "tailwindcss",
+  framermotion: "framer",
+  gsap: "greensock",
+  postgres: "postgresql",
+  reactquery: "reactquery",
+  tanstackquery: "reactquery",
+  d3: "d3dotjs",
+  chartjs: "chartdotjs",
+  socketio: "socketdotio",
+  vscode: "vscodium",
+  shadcn: "shadcnui",
+  materialui: "mui",
+  rubyonrails: "rubyonrails",
+  csharp: "sharp",
+  dotnet: "dotnet",
+  java: "openjdk",
+};
+
+/** Normaliza um nome de tecnologia para casar com o registry. */
+const normalizeTech = (value: string) =>
+  value.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+/**
+ * 🔒 Toda tecnologia devolvida pela API precisa ter ícone.
+ * Resolve `icon_url` na ordem: registry → simple-icons CDN (por slug).
+ */
+function buildTechResolver(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  registry: any[],
+) {
+  const bySlug = new Map<string, Record<string, unknown>>();
+  for (const t of registry) {
+    if (t.slug) bySlug.set(normalizeTech(String(t.slug)), t);
+    if (t.name) bySlug.set(normalizeTech(String(t.name)), t);
+  }
+
+  return (raw: unknown) => {
+    const input =
+      typeof raw === "string"
+        ? { name: raw }
+        : ((raw ?? {}) as Record<string, unknown>);
+
+    const name = String(input.name ?? input.slug ?? "").trim();
+    if (!name) return null;
+
+    const key = normalizeTech(String(input.slug ?? name));
+    const hit = bySlug.get(key) ?? bySlug.get(normalizeTech(name));
+    const slug =
+      (hit?.slug as string | undefined) ??
+      TECH_ALIASES[key] ??
+      (input.slug as string | undefined) ??
+      key;
+    const color =
+      (input.color as string | undefined) ?? (hit?.color as string | undefined) ?? null;
+    const iconUrl =
+      (hit?.icon_url as string | undefined) ??
+      (input.iconUrl as string | undefined) ??
+      `https://cdn.simpleicons.org/${slug}${color ? `/${color.replace("#", "")}` : ""}`;
+
+    return {
+      name: (hit?.name as string | undefined) ?? name,
+      slug,
+      color,
+      icon_url: iconUrl,
+      iconUrl,
+      category: (hit?.category as string | undefined) ?? null,
+    };
+  };
+}
+
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
@@ -127,7 +209,7 @@ Deno.serve(async (req) => {
 
     const { data: settings } = await supabase
       .from("portfolio_settings")
-      .select("site_key, profile, hero, about, links, skills, seo, is_published, updated_at")
+      .select("site_key, profile, hero, about, links, skills, seo, cv, is_published, updated_at")
       .eq("site_key", siteKey)
       .maybeSingle();
 
@@ -175,6 +257,7 @@ Deno.serve(async (req) => {
       ...(posts as any[]).map((p) => p.cover_image),
     ]);
     const resolve = (c?: string | null) => (c ? coverMap[c] ?? c : null);
+    const resolveTech = buildTechResolver(techRows ?? []);
 
     const payload = {
       version: API_VERSION,
@@ -188,6 +271,7 @@ Deno.serve(async (req) => {
       links: settings?.links ?? [],
       skills: settings?.skills ?? [],
       seo: settings?.seo ?? {},
+      cv: settings?.cv ?? {},
       projects: (projectRows ?? []).map((p) => ({
         id: p.id,
         slug: p.slug,
@@ -197,7 +281,9 @@ Deno.serve(async (req) => {
         content: p.long_description,
         cover_image: resolve(p.cover_image),
         gallery: (Array.isArray(p.gallery) ? (p.gallery as string[]) : []).map((g) => resolve(g)),
-        technologies: p.technologies ?? [],
+        technologies: (Array.isArray(p.technologies) ? p.technologies : [])
+          .map(resolveTech)
+          .filter(Boolean),
         tags: p.tags ?? [],
         category: p.category,
         live_url: p.live_url,
@@ -207,7 +293,7 @@ Deno.serve(async (req) => {
         order: p.portfolio_order ?? 0,
         published_at: p.published_at,
       })),
-      tech: techRows ?? [],
+      tech: (techRows ?? []).map(resolveTech).filter(Boolean),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       posts: (posts as any[]).map((p) => ({ ...p, cover_image: resolve(p.cover_image) })),
     };
