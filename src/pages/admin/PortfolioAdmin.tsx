@@ -37,6 +37,7 @@ import AdminPageShell from "@/components/admin/AdminPageShell";
 import GlassCard from "@/components/GlassCard";
 import { useToast } from "@/hooks/use-toast";
 import { resolveProjectImage } from "@/data/projectImages";
+import CvEditor, { type CvData } from "@/components/admin/CvEditor";
 import {
   usePortfolioProjects, useUpdatePortfolioProject, usePortfolioSettings,
   useUpdatePortfolioSettings, useReorderPortfolioProjects, PORTFOLIO_API_URL, type PortfolioProject,
@@ -81,6 +82,7 @@ export default function PortfolioAdmin() {
 
   const [copied, setCopied] = useState(false);
   const [form, setForm] = useState({ name: "", role: "", headline: "", bio: "", email: "", github: "", linkedin: "" });
+  const [cv, setCv] = useState<CvData>({});
 
   useEffect(() => {
     if (!settings) return;
@@ -93,6 +95,7 @@ export default function PortfolioAdmin() {
       github: settings.profile?.github ?? "",
       linkedin: settings.profile?.linkedin ?? "",
     });
+    setCv((settings.cv ?? {}) as CvData);
   }, [settings]);
 
   const reorder = useReorderPortfolioProjects();
@@ -142,6 +145,7 @@ export default function PortfolioAdmin() {
         profile: { name: form.name, role: form.role, email: form.email, github: form.github, linkedin: form.linkedin },
         hero: { ...(settings?.hero ?? {}), headline: form.headline },
         about: { ...(settings?.about ?? {}), bio: form.bio },
+        cv,
       },
       {
         onSuccess: () => toast({ title: "Conteúdo do portfólio salvo" }),
@@ -231,6 +235,27 @@ export default function PortfolioAdmin() {
               <Field label="Bio (sobre)" value={form.bio} onChange={(v) => setForm({ ...form, bio: v })} textarea />
             </div>
           </div>
+        </GlassCard>
+
+        {/* Currículo — servido em /curriculo e no PDF do portfólio */}
+        <GlassCard className="p-5 space-y-4">
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <div>
+              <h2 className="text-sm font-semibold uppercase tracking-wider">Currículo</h2>
+              <p className="text-[11px] text-muted-foreground">
+                Alimenta a página <span className="font-mono">/curriculo</span> e o PDF do portfólio.
+              </p>
+            </div>
+            <button
+              onClick={saveSettings}
+              disabled={updateSettings.isPending}
+              className="inline-flex items-center gap-1.5 text-xs border border-foreground/30 rounded px-3 py-1.5 hover:bg-foreground/5 transition-colors disabled:opacity-50"
+            >
+              {updateSettings.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+              Salvar currículo
+            </button>
+          </div>
+          <CvEditor value={cv} onChange={setCv} />
         </GlassCard>
 
         {/* Projetos publicados — ordem exata da API */}
