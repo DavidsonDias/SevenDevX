@@ -105,6 +105,88 @@ async function resolveCovers(
   return map;
 }
 
+/** Aliases de nomes livres → slug canônico do `tech_registry` / simple-icons. */
+const TECH_ALIASES: Record<string, string> = {
+  node: "nodedotjs",
+  nodejs: "nodedotjs",
+  next: "nextdotjs",
+  nextjs: "nextdotjs",
+  vue: "vuedotjs",
+  vuejs: "vuedotjs",
+  three: "threedotjs",
+  threejs: "threedotjs",
+  tailwind: "tailwindcss",
+  tailwindcss: "tailwindcss",
+  framermotion: "framer",
+  gsap: "greensock",
+  postgres: "postgresql",
+  reactquery: "reactquery",
+  tanstackquery: "reactquery",
+  d3: "d3dotjs",
+  chartjs: "chartdotjs",
+  socketio: "socketdotio",
+  vscode: "vscodium",
+  shadcn: "shadcnui",
+  materialui: "mui",
+  rubyonrails: "rubyonrails",
+  csharp: "sharp",
+  dotnet: "dotnet",
+  java: "openjdk",
+};
+
+/** Normaliza um nome de tecnologia para casar com o registry. */
+const normalizeTech = (value: string) =>
+  value.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+/**
+ * 🔒 Toda tecnologia devolvida pela API precisa ter ícone.
+ * Resolve `icon_url` na ordem: registry → simple-icons CDN (por slug).
+ */
+function buildTechResolver(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  registry: any[],
+) {
+  const bySlug = new Map<string, Record<string, unknown>>();
+  for (const t of registry) {
+    if (t.slug) bySlug.set(normalizeTech(String(t.slug)), t);
+    if (t.name) bySlug.set(normalizeTech(String(t.name)), t);
+  }
+
+  return (raw: unknown) => {
+    const input =
+      typeof raw === "string"
+        ? { name: raw }
+        : ((raw ?? {}) as Record<string, unknown>);
+
+    const name = String(input.name ?? input.slug ?? "").trim();
+    if (!name) return null;
+
+    const key = normalizeTech(String(input.slug ?? name));
+    const hit = bySlug.get(key) ?? bySlug.get(normalizeTech(name));
+    const slug =
+      (hit?.slug as string | undefined) ??
+      TECH_ALIASES[key] ??
+      (input.slug as string | undefined) ??
+      key;
+    const color =
+      (input.color as string | undefined) ?? (hit?.color as string | undefined) ?? null;
+    const iconUrl =
+      (hit?.icon_url as string | undefined) ??
+      (input.iconUrl as string | undefined) ??
+      `https://cdn.simpleicons.org/${slug}${color ? `/${color.replace("#", "")}` : ""}`;
+
+    return {
+      name: (hit?.name as string | undefined) ?? name,
+      slug,
+      color,
+      icon_url: iconUrl,
+      iconUrl,
+      category: (hit?.category as string | undefined) ?? null,
+    };
+  };
+}
+
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
