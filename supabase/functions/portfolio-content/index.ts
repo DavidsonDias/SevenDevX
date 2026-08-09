@@ -209,7 +209,7 @@ Deno.serve(async (req) => {
 
     const { data: settings } = await supabase
       .from("portfolio_settings")
-      .select("site_key, profile, hero, about, links, skills, seo, is_published, updated_at")
+      .select("site_key, profile, hero, about, links, skills, seo, cv, is_published, updated_at")
       .eq("site_key", siteKey)
       .maybeSingle();
 
@@ -257,6 +257,7 @@ Deno.serve(async (req) => {
       ...(posts as any[]).map((p) => p.cover_image),
     ]);
     const resolve = (c?: string | null) => (c ? coverMap[c] ?? c : null);
+    const resolveTech = buildTechResolver(techRows ?? []);
 
     const payload = {
       version: API_VERSION,
@@ -270,6 +271,7 @@ Deno.serve(async (req) => {
       links: settings?.links ?? [],
       skills: settings?.skills ?? [],
       seo: settings?.seo ?? {},
+      cv: settings?.cv ?? {},
       projects: (projectRows ?? []).map((p) => ({
         id: p.id,
         slug: p.slug,
@@ -279,7 +281,9 @@ Deno.serve(async (req) => {
         content: p.long_description,
         cover_image: resolve(p.cover_image),
         gallery: (Array.isArray(p.gallery) ? (p.gallery as string[]) : []).map((g) => resolve(g)),
-        technologies: p.technologies ?? [],
+        technologies: (Array.isArray(p.technologies) ? p.technologies : [])
+          .map(resolveTech)
+          .filter(Boolean),
         tags: p.tags ?? [],
         category: p.category,
         live_url: p.live_url,
@@ -289,7 +293,7 @@ Deno.serve(async (req) => {
         order: p.portfolio_order ?? 0,
         published_at: p.published_at,
       })),
-      tech: techRows ?? [],
+      tech: (techRows ?? []).map(resolveTech).filter(Boolean),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       posts: (posts as any[]).map((p) => ({ ...p, cover_image: resolve(p.cover_image) })),
     };
