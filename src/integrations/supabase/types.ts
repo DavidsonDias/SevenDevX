@@ -1673,6 +1673,7 @@ export type Database = {
         Row: {
           about: Json
           created_at: string
+          cv: Json
           hero: Json
           id: string
           is_published: boolean
@@ -1686,6 +1687,7 @@ export type Database = {
         Insert: {
           about?: Json
           created_at?: string
+          cv?: Json
           hero?: Json
           id?: string
           is_published?: boolean
@@ -1699,6 +1701,7 @@ export type Database = {
         Update: {
           about?: Json
           created_at?: string
+          cv?: Json
           hero?: Json
           id?: string
           is_published?: boolean
