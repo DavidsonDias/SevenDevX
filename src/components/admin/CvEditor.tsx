@@ -46,10 +46,14 @@ export type CvCertification = { name: string; issuer: string; year: string };
 
 export type CvData = {
   summary?: string;
+  headline?: string;
   location?: string;
   phone?: string;
+  email?: string;
+  linkedin?: string;
   website?: string;
   languages?: string[];
+  skills?: string[];
   highlights?: string[];
   experiences?: CvExperience[];
   education?: CvEducation[];
