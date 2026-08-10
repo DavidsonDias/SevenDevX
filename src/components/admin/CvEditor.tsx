@@ -161,10 +161,17 @@ export default function CvEditor({ value, onChange }: Props) {
 
   return (
     <div className="space-y-6">
+      <Field label="Headline" value={cv.headline} onChange={(v) => patch({ headline: v })} placeholder="Systems Analyst | Front-End Developer" />
+
       <div className="grid gap-4 sm:grid-cols-3">
-        <Field label="Localização" value={cv.location} onChange={(v) => patch({ location: v })} placeholder="Salvador, BA" />
-        <Field label="Telefone" value={cv.phone} onChange={(v) => patch({ phone: v })} placeholder="+55 71 ..." />
+        <Field label="Localização" value={cv.location} onChange={(v) => patch({ location: v })} placeholder="Belo Horizonte, MG" />
+        <Field label="Telefone" value={cv.phone} onChange={(v) => patch({ phone: v })} placeholder="+55 31 ..." />
+        <Field label="E-mail" value={cv.email} onChange={(v) => patch({ email: v })} placeholder="voce@email.com" />
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Website" value={cv.website} onChange={(v) => patch({ website: v })} placeholder="https://..." />
+        <Field label="LinkedIn" value={cv.linkedin} onChange={(v) => patch({ linkedin: v })} placeholder="https://linkedin.com/in/..." />
       </div>
 
       <Field
@@ -183,6 +190,14 @@ export default function CvEditor({ value, onChange }: Props) {
       />
 
       <Field
+        label="Competências (separadas por vírgula)"
+        value={cv.skills.join(", ")}
+        onChange={(v) => patch({ skills: v.split(",").map((s) => s.trim()).filter(Boolean) })}
+        textarea
+        placeholder="React, Node.js, SQL Server, Scrum"
+      />
+
+      <Field
         label="Destaques (um por linha)"
         value={cv.highlights.join("\n")}
         onChange={(v) => patch({ highlights: v.split("\n").map((s) => s.trim()).filter(Boolean) })}
@@ -195,7 +210,7 @@ export default function CvEditor({ value, onChange }: Props) {
         <SectionHead
           title="Experiência"
           onAdd={() =>
-            patch({ experiences: [...cv.experiences, { role: "", company: "", period: "", description: "" }] })
+            patch({ experiences: [...cv.experiences, { role: "", company: "", period: "", location: "", description: "" }] })
           }
         />
         {cv.experiences.map((exp, i) => (
@@ -203,10 +218,11 @@ export default function CvEditor({ value, onChange }: Props) {
             key={i}
             onRemove={() => patch({ experiences: cv.experiences.filter((_, index) => index !== i) })}
           >
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2">
               <Field label="Cargo" value={exp.role} onChange={(v) => patch({ experiences: setItem(cv.experiences, i, { ...exp, role: v }) })} />
               <Field label="Empresa" value={exp.company} onChange={(v) => patch({ experiences: setItem(cv.experiences, i, { ...exp, company: v }) })} />
               <Field label="Período" value={exp.period} onChange={(v) => patch({ experiences: setItem(cv.experiences, i, { ...exp, period: v }) })} />
+              <Field label="Local" value={exp.location ?? ""} onChange={(v) => patch({ experiences: setItem(cv.experiences, i, { ...exp, location: v }) })} />
             </div>
             <Field
               label="Descrição"
@@ -217,6 +233,7 @@ export default function CvEditor({ value, onChange }: Props) {
           </RowShell>
         ))}
       </div>
+
 
       {/* Formação */}
       <div className="space-y-3">
