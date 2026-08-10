@@ -37,6 +37,7 @@ export type CvExperience = {
   role: string;
   company: string;
   period: string;
+  location?: string;
   description: string;
 };
 
