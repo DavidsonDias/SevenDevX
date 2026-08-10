@@ -139,10 +139,14 @@ const RowShell = ({ onRemove, children }: { onRemove: () => void; children: Reac
 export default function CvEditor({ value, onChange }: Props) {
   const cv: Required<CvData> = {
     summary: value.summary ?? "",
+    headline: value.headline ?? "",
     location: value.location ?? "",
     phone: value.phone ?? "",
+    email: value.email ?? "",
+    linkedin: value.linkedin ?? "",
     website: value.website ?? "",
     languages: value.languages ?? [],
+    skills: value.skills ?? [],
     highlights: value.highlights ?? [],
     experiences: value.experiences ?? [],
     education: value.education ?? [],
