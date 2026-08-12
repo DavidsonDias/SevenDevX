@@ -44,12 +44,40 @@ const fallbackSvg = (color: string) =>
 // 🧠 CORE LOGIC
 // ============================================================================
 
+/** Slugs alternativos tentados quando o principal não existe no upstream. */
+const SLUG_FALLBACKS: Record<string, string[]> = {
+  pwa: ["pwa", "googlechrome"],
+  tailwind: ["tailwindcss"],
+  three: ["threedotjs"],
+  webgl: ["webgl", "khronosgroup"],
+  vscode: ["vscodium", "visualstudiocode"],
+  reactquery: ["reactquery", "reactivex"],
+};
+
+/**
+ * 🔒 Ícones muito escuros somem em temas dark: clareia até um mínimo de
+ *    luminância mantendo o matiz da marca.
+ */
+function ensureVisible(hex: string): string {
+  const n = parseInt(hex, 16);
+  let r = (n >> 16) & 255, g = (n >> 8) & 255, b = n & 255;
+  const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+  if (lum >= 0.35) return hex;
+  if (r + g + b < 30) return "E8EAF0"; // preto puro → quase branco
+  const k = 0.42 / Math.max(lum, 0.04);
+  const cl = (v: number) => Math.min(255, Math.round(v * k));
+  r = cl(r); g = cl(g); b = cl(b);
+  return [r, g, b].map((v) => v.toString(16).padStart(2, "0")).join("");
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   const url = new URL(req.url);
   const slug = (url.searchParams.get("slug") ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
-  const color = (url.searchParams.get("color") ?? "").replace(/[^0-9a-fA-F]/g, "").slice(0, 6);
+  const raw = (url.searchParams.get("color") ?? "").replace(/[^0-9a-fA-F]/g, "").slice(0, 6);
+  const theme = url.searchParams.get("theme") ?? "dark";
+  const color = raw.length === 6 && theme === "dark" ? ensureVisible(raw) : raw;
   const headers = {
     ...corsHeaders,
     "Content-Type": "image/svg+xml; charset=utf-8",
@@ -58,14 +86,18 @@ Deno.serve(async (req) => {
 
   if (!slug) return new Response(fallbackSvg("#8B5CF6"), { headers });
 
-  try {
-    const upstream = await fetch(
-      `https://cdn.simpleicons.org/${slug}${color ? `/${color}` : ""}`,
-    );
-    if (!upstream.ok) throw new Error(`upstream ${upstream.status}`);
-    return new Response(await upstream.text(), { headers });
-  } catch (err) {
-    console.error("[tech-icon]", slug, err);
-    return new Response(fallbackSvg(color ? `#${color}` : "#8B5CF6"), { headers });
+  const candidates = SLUG_FALLBACKS[slug] ?? [slug];
+  for (const candidate of candidates) {
+    try {
+      const upstream = await fetch(
+        `https://cdn.simpleicons.org/${candidate}${color ? `/${color}` : ""}`,
+      );
+      if (upstream.ok) return new Response(await upstream.text(), { headers });
+    } catch (err) {
+      console.error("[tech-icon]", candidate, err);
+    }
   }
+
+  return new Response(fallbackSvg(color ? `#${color}` : "#8B5CF6"), { headers });
 });
+
