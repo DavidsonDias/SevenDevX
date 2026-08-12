@@ -64,6 +64,8 @@ const JSON_HEADERS = {
 
 /** Bucket privado com as capas locais migradas do bundle do SevenOS. */
 const COVERS_BUCKET = "portfolio-covers";
+/** Proxy de ícones servido pelo mesmo domínio da API. */
+const ICON_PROXY = `${Deno.env.get("SUPABASE_URL")}/functions/v1/tech-icon`;
 /** Validade das URLs assinadas (7 dias) — muito acima do TTL de cache da CDN. */
 const SIGNED_URL_TTL = 60 * 60 * 24 * 7;
 
@@ -170,10 +172,21 @@ function buildTechResolver(
       key;
     const color =
       (input.color as string | undefined) ?? (hit?.color as string | undefined) ?? null;
-    const iconUrl =
-      (hit?.icon_url as string | undefined) ??
-      (input.iconUrl as string | undefined) ??
-      `https://cdn.simpleicons.org/${slug}${color ? `/${color.replace("#", "")}` : ""}`;
+    // 🔒 Só reaproveitamos icon_url absoluto: caminhos locais do SevenOS
+    //    (`/icons/...`, `local:`) quebram em sites externos.
+    const isAbsolute = (v?: string | null) =>
+      typeof v === "string" && /^(https?:|data:)/.test(v);
+    const registryIcon = hit?.icon_url as string | undefined;
+    const inputIcon = input.iconUrl as string | undefined;
+    // 🔒 Proxy próprio evita bloqueio de CSP/Service Worker em domínios externos.
+    const proxied = `${ICON_PROXY}?slug=${encodeURIComponent(slug)}${
+      color ? `&color=${color.replace("#", "")}` : ""
+    }`;
+    const iconUrl = isAbsolute(registryIcon)
+      ? (registryIcon as string)
+      : isAbsolute(inputIcon)
+        ? (inputIcon as string)
+        : proxied;
 
     return {
       name: (hit?.name as string | undefined) ?? name,
