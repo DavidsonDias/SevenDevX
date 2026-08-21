@@ -1672,44 +1672,74 @@ export type Database = {
       portfolio_settings: {
         Row: {
           about: Json
+          contact: Json
+          content_version: number
           created_at: string
           cv: Json
+          faqs: Json
+          flags: Json
+          footer: Json
           hero: Json
+          highlights: Json
           id: string
           is_published: boolean
           links: Json
+          navigation: Json
           profile: Json
+          pwa: Json
           seo: Json
+          services: Json
           site_key: string
           skills: Json
+          stats: Json
           updated_at: string
         }
         Insert: {
           about?: Json
+          contact?: Json
+          content_version?: number
           created_at?: string
           cv?: Json
+          faqs?: Json
+          flags?: Json
+          footer?: Json
           hero?: Json
+          highlights?: Json
           id?: string
           is_published?: boolean
           links?: Json
+          navigation?: Json
           profile?: Json
+          pwa?: Json
           seo?: Json
+          services?: Json
           site_key?: string
           skills?: Json
+          stats?: Json
           updated_at?: string
         }
         Update: {
           about?: Json
+          contact?: Json
+          content_version?: number
           created_at?: string
           cv?: Json
+          faqs?: Json
+          flags?: Json
+          footer?: Json
           hero?: Json
+          highlights?: Json
           id?: string
           is_published?: boolean
           links?: Json
+          navigation?: Json
           profile?: Json
+          pwa?: Json
           seo?: Json
+          services?: Json
           site_key?: string
           skills?: Json
+          stats?: Json
           updated_at?: string
         }
         Relationships: []
@@ -1954,6 +1984,8 @@ export type Database = {
         Row: {
           case_study_url: string | null
           category: string | null
+          category_key: string | null
+          challenges: string[]
           client_id: string | null
           client_name: string | null
           client_segment: string | null
@@ -1978,12 +2010,15 @@ export type Database = {
           is_published_on_site: boolean
           live_url: string | null
           long_description: string | null
+          metrics: Json
           pipeline_stage: Database["public"]["Enums"]["project_pipeline_stage"]
           portfolio_enabled: boolean
           portfolio_highlight: boolean
           portfolio_order: number
           probability: number | null
+          problem: string | null
           published_at: string | null
+          results: string[]
           seo_description: string | null
           seo_keywords: string[] | null
           seo_title: string | null
@@ -2000,6 +2035,8 @@ export type Database = {
         Insert: {
           case_study_url?: string | null
           category?: string | null
+          category_key?: string | null
+          challenges?: string[]
           client_id?: string | null
           client_name?: string | null
           client_segment?: string | null
@@ -2024,12 +2061,15 @@ export type Database = {
           is_published_on_site?: boolean
           live_url?: string | null
           long_description?: string | null
+          metrics?: Json
           pipeline_stage?: Database["public"]["Enums"]["project_pipeline_stage"]
           portfolio_enabled?: boolean
           portfolio_highlight?: boolean
           portfolio_order?: number
           probability?: number | null
+          problem?: string | null
           published_at?: string | null
+          results?: string[]
           seo_description?: string | null
           seo_keywords?: string[] | null
           seo_title?: string | null
@@ -2046,6 +2086,8 @@ export type Database = {
         Update: {
           case_study_url?: string | null
           category?: string | null
+          category_key?: string | null
+          challenges?: string[]
           client_id?: string | null
           client_name?: string | null
           client_segment?: string | null
@@ -2070,12 +2112,15 @@ export type Database = {
           is_published_on_site?: boolean
           live_url?: string | null
           long_description?: string | null
+          metrics?: Json
           pipeline_stage?: Database["public"]["Enums"]["project_pipeline_stage"]
           portfolio_enabled?: boolean
           portfolio_highlight?: boolean
           portfolio_order?: number
           probability?: number | null
+          problem?: string | null
           published_at?: string | null
+          results?: string[]
           seo_description?: string | null
           seo_keywords?: string[] | null
           seo_title?: string | null
