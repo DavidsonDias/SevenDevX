@@ -52,9 +52,9 @@ import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 // ⚙️ CONSTANTS & CONFIGURATION
 // ============================================================================
 
-const API_VERSION = "1.0";
+const API_VERSION = "1.1";
 const DEFAULT_SITE_KEY = "davidson";
-const CACHE_HEADER = "public, max-age=60, s-maxage=300, stale-while-revalidate=600";
+const CACHE_HEADER = "public, max-age=60, s-maxage=300, stale-while-revalidate=86400";
 
 const JSON_HEADERS = {
   ...corsHeaders,
@@ -62,50 +62,53 @@ const JSON_HEADERS = {
   "Cache-Control": CACHE_HEADER,
 };
 
-/** Bucket privado com as capas locais migradas do bundle do SevenOS. */
-const COVERS_BUCKET = "portfolio-covers";
 /** Proxy de ícones servido pelo mesmo domínio da API. */
 const ICON_PROXY = `${Deno.env.get("SUPABASE_URL")}/functions/v1/tech-icon`;
-/** Validade das URLs assinadas (7 dias) — muito acima do TTL de cache da CDN. */
-const SIGNED_URL_TTL = 60 * 60 * 24 * 7;
-
-// ============================================================================
-// 🧠 CORE LOGIC
-// ============================================================================
+/** 🔒 Proxy de capas: URL estável, sem token de expiração no payload público. */
+const COVER_PROXY = `${Deno.env.get("SUPABASE_URL")}/functions/v1/portfolio-cover`;
 
 /**
- * Resolve capas no formato `local:<arquivo>` para URLs assinadas do Storage.
- * URLs absolutas (`http`) e caminhos já públicos são devolvidos sem alteração.
+ * Enum canônico de categoria de projeto + rótulo exibível.
+ * 🔒 O portfólio faz coerção silenciosa quando recebe texto livre; aqui
+ *    normalizamos para as chaves que a UI já entende.
  */
-async function resolveCovers(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase: any,
-  covers: (string | null | undefined)[],
-): Promise<Record<string, string>> {
-  const files = [
-    ...new Set(
-      covers
-        .filter((c): c is string => typeof c === "string" && c.startsWith("local:"))
-        .map((c) => c.slice(6)),
-    ),
-  ];
-  if (files.length === 0) return {};
+const CATEGORY_MAP: Record<string, { key: string; label: string }> = {
+  saas: { key: "saas", label: "SaaS" },
+  sistema: { key: "saas", label: "Sistema Web" },
+  "sistema web": { key: "saas", label: "Sistema Web" },
+  dashboard: { key: "dashboard", label: "Dashboard" },
+  ecommerce: { key: "ecommerce", label: "E-commerce" },
+  "e-commerce": { key: "ecommerce", label: "E-commerce" },
+  loja: { key: "ecommerce", label: "E-commerce" },
+  landing: { key: "landing", label: "Landing Page" },
+  "landing page": { key: "landing", label: "Landing Page" },
+  institucional: { key: "landing", label: "Site Institucional" },
+  site: { key: "landing", label: "Site Institucional" },
+  mobile: { key: "mobile", label: "Mobile / PWA" },
+  pwa: { key: "mobile", label: "Mobile / PWA" },
+  ai: { key: "ai", label: "IA & Automação" },
+  ia: { key: "ai", label: "IA & Automação" },
+};
 
-  const { data, error } = await supabase.storage
-    .from(COVERS_BUCKET)
-    .createSignedUrls(files, SIGNED_URL_TTL);
-
-  if (error) {
-    console.error("[portfolio-content] signed urls", error);
-    return {};
-  }
-
-  const map: Record<string, string> = {};
-  for (const item of data ?? []) {
-    if (item.signedUrl && item.path) map[`local:${item.path}`] = item.signedUrl;
-  }
-  return map;
+/** Resolve categoria livre → `{ category_key, category_label }`. */
+function resolveCategory(raw?: string | null, explicit?: string | null) {
+  const source = (explicit ?? raw ?? "").trim().toLowerCase();
+  const hit = CATEGORY_MAP[source];
+  return hit ?? { key: "saas", label: raw?.trim() || "Projeto" };
 }
+
+/**
+ * Converte referências `local:<arquivo>` em URLs estáveis do proxy de capas.
+ * URLs absolutas são devolvidas sem alteração.
+ */
+function resolveCover(value?: string | null): string | null {
+  if (!value) return null;
+  if (value.startsWith("local:")) {
+    return `${COVER_PROXY}?file=${encodeURIComponent(value.slice(6))}`;
+  }
+  return value;
+}
+
 
 /** Aliases de nomes livres → slug canônico do `tech_registry` / simple-icons. */
 const TECH_ALIASES: Record<string, string> = {
@@ -199,6 +202,9 @@ function buildTechResolver(
   };
 }
 
+/** Colunas do projeto usadas tanto na listagem quanto no case study. */
+const PROJECT_COLUMNS =
+  "id, slug, title, subtitle, description, long_description, cover_image, gallery, technologies, tags, category, category_key, problem, challenges, results, metrics, live_url, github_url, case_study_url, portfolio_highlight, portfolio_order, published_at";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -215,14 +221,70 @@ Deno.serve(async (req) => {
     const siteKey = (url.searchParams.get("site") || DEFAULT_SITE_KEY).slice(0, 64);
     const includePosts = url.searchParams.get("posts") !== "false";
 
+    // 🔒 Sub-rotas: /posts/:slug e /projects/:slug (conteúdo completo)
+    const segments = url.pathname.split("/").filter(Boolean);
+    const idx = segments.indexOf("portfolio-content");
+    const sub = idx >= 0 ? segments.slice(idx + 1) : [];
+
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
+    const { data: techRows } = await supabase
+      .from("tech_registry")
+      .select("id, name, slug, category, icon_url, color").eq("is_active", true)
+      .limit(400);
+    const resolveTech = buildTechResolver(techRows ?? []);
+
+    // ---------------------------------------------------------------- posts/:slug
+    if (sub[0] === "posts" && sub[1]) {
+      const { data: post } = await supabase
+        .from("blog_posts")
+        .select("id, slug, title, excerpt, content, cover_image, tags, published_at, read_time")
+        .eq("slug", decodeURIComponent(sub[1]).slice(0, 200))
+        .eq("status", "published")
+        .maybeSingle();
+
+      if (!post) {
+        return new Response(JSON.stringify({ error: "Not found" }), {
+          status: 404,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      return new Response(
+        JSON.stringify({ ...post, cover_image: resolveCover(post.cover_image) }),
+        { headers: JSON_HEADERS },
+      );
+    }
+
+    // ------------------------------------------------------------- projects/:slug
+    if (sub[0] === "projects" && sub[1]) {
+      const { data: p } = await supabase
+        .from("projects")
+        .select(PROJECT_COLUMNS)
+        .eq("slug", decodeURIComponent(sub[1]).slice(0, 200))
+        .eq("portfolio_enabled", true)
+        .eq("status", "published")
+        .maybeSingle();
+
+      if (!p) {
+        return new Response(JSON.stringify({ error: "Not found" }), {
+          status: 404,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      return new Response(JSON.stringify(serializeProject(p, resolveTech)), {
+        headers: JSON_HEADERS,
+      });
+    }
+
+    // ------------------------------------------------------------------ payload
     const { data: settings } = await supabase
       .from("portfolio_settings")
-      .select("site_key, profile, hero, about, links, skills, seo, cv, is_published, updated_at")
+      .select(
+        "site_key, profile, hero, about, links, skills, seo, cv, navigation, services, faqs, contact, footer, stats, highlights, pwa, flags, content_version, is_published, updated_at",
+      )
       .eq("site_key", siteKey)
       .maybeSingle();
 
@@ -235,45 +297,28 @@ Deno.serve(async (req) => {
 
     const { data: projectRows } = await supabase
       .from("projects")
-      .select(
-        "id, slug, title, subtitle, description, long_description, cover_image, gallery, technologies, tags, category, live_url, github_url, case_study_url, portfolio_highlight, portfolio_order, published_at",
-      )
+      .select(PROJECT_COLUMNS)
       .eq("portfolio_enabled", true)
       .eq("status", "published")
       .order("portfolio_order", { ascending: true })
       .order("published_at", { ascending: false });
 
-    const { data: techRows } = await supabase
-      .from("tech_registry")
-      .select("id, name, slug, category, icon_url, color").eq("is_active", true)
-      .limit(200);
-
-    let posts: unknown[] = [];
+    let posts: Record<string, unknown>[] = [];
     if (includePosts) {
       const { data: postRows } = await supabase
         .from("blog_posts")
-        .select("id, slug, title, excerpt, cover_image, tags, published_at, read_time")
+        .select("id, slug, title, excerpt, content, cover_image, tags, published_at, read_time")
         .eq("status", "published")
         .order("published_at", { ascending: false })
         .limit(24);
       posts = postRows ?? [];
     }
 
-    // 🔒 Capas `local:` só existem no bundle do SevenOS — resolvidas para
-    // URLs assinadas do Storage para que sites externos consigam exibi-las.
-    const coverMap = await resolveCovers(supabase, [
-      ...(projectRows ?? []).flatMap((p) => [
-        p.cover_image,
-        ...(Array.isArray(p.gallery) ? (p.gallery as string[]) : []),
-      ]),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ...(posts as any[]).map((p) => p.cover_image),
-    ]);
-    const resolve = (c?: string | null) => (c ? coverMap[c] ?? c : null);
-    const resolveTech = buildTechResolver(techRows ?? []);
+    const contentVersion = settings?.content_version ?? 1;
 
     const payload = {
       version: API_VERSION,
+      content_version: contentVersion,
       site: siteKey,
       published: true,
       generated_at: new Date().toISOString(),
@@ -285,33 +330,31 @@ Deno.serve(async (req) => {
       skills: settings?.skills ?? [],
       seo: settings?.seo ?? {},
       cv: settings?.cv ?? {},
-      projects: (projectRows ?? []).map((p) => ({
-        id: p.id,
-        slug: p.slug,
-        title: p.title,
-        subtitle: p.subtitle,
-        description: p.description,
-        content: p.long_description,
-        cover_image: resolve(p.cover_image),
-        gallery: (Array.isArray(p.gallery) ? (p.gallery as string[]) : []).map((g) => resolve(g)),
-        technologies: (Array.isArray(p.technologies) ? p.technologies : [])
-          .map(resolveTech)
-          .filter(Boolean),
-        tags: p.tags ?? [],
-        category: p.category,
-        live_url: p.live_url,
-        github_url: p.github_url,
-        case_study_url: p.case_study_url,
-        highlight: p.portfolio_highlight === true,
-        order: p.portfolio_order ?? 0,
-        published_at: p.published_at,
-      })),
+      navigation: settings?.navigation ?? [],
+      services: settings?.services ?? [],
+      faqs: settings?.faqs ?? [],
+      contact: settings?.contact ?? {},
+      footer: settings?.footer ?? {},
+      stats: settings?.stats ?? [],
+      highlights: settings?.highlights ?? [],
+      pwa: settings?.pwa ?? {},
+      flags: settings?.flags ?? {},
+      projects: (projectRows ?? []).map((p) => serializeProject(p, resolveTech)),
       tech: (techRows ?? []).map(resolveTech).filter(Boolean),
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      posts: (posts as any[]).map((p) => ({ ...p, cover_image: resolve(p.cover_image) })),
+      posts: posts.map((p) => ({
+        ...p,
+        cover_image: resolveCover(p.cover_image as string | null),
+      })),
     };
 
-    return new Response(JSON.stringify(payload), { headers: JSON_HEADERS });
+    const etag = `W/"${siteKey}-${contentVersion}"`;
+    if (req.headers.get("if-none-match") === etag) {
+      return new Response(null, { status: 304, headers: { ...JSON_HEADERS, ETag: etag } });
+    }
+
+    return new Response(JSON.stringify(payload), {
+      headers: { ...JSON_HEADERS, ETag: etag },
+    });
   } catch (err) {
     console.error("[portfolio-content]", err);
     return new Response(JSON.stringify({ error: "Internal error" }), {
@@ -320,3 +363,44 @@ Deno.serve(async (req) => {
     });
   }
 });
+
+/**
+ * Serializa um projeto para o contrato público.
+ * 🔒 `category` é mantido (texto original) para não quebrar consumidores
+ *    antigos; `category_key` e `category_label` são os novos canônicos.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function serializeProject(p: any, resolveTech: (raw: unknown) => unknown) {
+  const category = resolveCategory(p.category, p.category_key);
+  const technologies = (Array.isArray(p.technologies) ? p.technologies : [])
+    .map(resolveTech)
+    .filter(Boolean);
+
+  return {
+    id: p.id,
+    slug: p.slug,
+    title: p.title,
+    subtitle: p.subtitle,
+    description: p.description,
+    content: p.long_description,
+    cover_image: resolveCover(p.cover_image),
+    gallery: (Array.isArray(p.gallery) ? (p.gallery as string[]) : []).map(resolveCover),
+    technologies,
+    stack: technologies,
+    tags: p.tags ?? [],
+    category: p.category,
+    category_key: category.key,
+    category_label: category.label,
+    problem: p.problem ?? null,
+    challenges: p.challenges ?? [],
+    results: p.results ?? [],
+    metrics: p.metrics ?? [],
+    live_url: p.live_url,
+    github_url: p.github_url,
+    case_study_url: p.case_study_url,
+    highlight: p.portfolio_highlight === true,
+    order: p.portfolio_order ?? 0,
+    published_at: p.published_at,
+  };
+}
+
