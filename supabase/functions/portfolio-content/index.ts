@@ -52,9 +52,9 @@ import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 // ⚙️ CONSTANTS & CONFIGURATION
 // ============================================================================
 
-const API_VERSION = "1.0";
+const API_VERSION = "1.1";
 const DEFAULT_SITE_KEY = "davidson";
-const CACHE_HEADER = "public, max-age=60, s-maxage=300, stale-while-revalidate=600";
+const CACHE_HEADER = "public, max-age=60, s-maxage=300, stale-while-revalidate=86400";
 
 const JSON_HEADERS = {
   ...corsHeaders,
@@ -62,50 +62,53 @@ const JSON_HEADERS = {
   "Cache-Control": CACHE_HEADER,
 };
 
-/** Bucket privado com as capas locais migradas do bundle do SevenOS. */
-const COVERS_BUCKET = "portfolio-covers";
 /** Proxy de ícones servido pelo mesmo domínio da API. */
 const ICON_PROXY = `${Deno.env.get("SUPABASE_URL")}/functions/v1/tech-icon`;
-/** Validade das URLs assinadas (7 dias) — muito acima do TTL de cache da CDN. */
-const SIGNED_URL_TTL = 60 * 60 * 24 * 7;
-
-// ============================================================================
-// 🧠 CORE LOGIC
-// ============================================================================
+/** 🔒 Proxy de capas: URL estável, sem token de expiração no payload público. */
+const COVER_PROXY = `${Deno.env.get("SUPABASE_URL")}/functions/v1/portfolio-cover`;
 
 /**
- * Resolve capas no formato `local:<arquivo>` para URLs assinadas do Storage.
- * URLs absolutas (`http`) e caminhos já públicos são devolvidos sem alteração.
+ * Enum canônico de categoria de projeto + rótulo exibível.
+ * 🔒 O portfólio faz coerção silenciosa quando recebe texto livre; aqui
+ *    normalizamos para as chaves que a UI já entende.
  */
-async function resolveCovers(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase: any,
-  covers: (string | null | undefined)[],
-): Promise<Record<string, string>> {
-  const files = [
-    ...new Set(
-      covers
-        .filter((c): c is string => typeof c === "string" && c.startsWith("local:"))
-        .map((c) => c.slice(6)),
-    ),
-  ];
-  if (files.length === 0) return {};
+const CATEGORY_MAP: Record<string, { key: string; label: string }> = {
+  saas: { key: "saas", label: "SaaS" },
+  sistema: { key: "saas", label: "Sistema Web" },
+  "sistema web": { key: "saas", label: "Sistema Web" },
+  dashboard: { key: "dashboard", label: "Dashboard" },
+  ecommerce: { key: "ecommerce", label: "E-commerce" },
+  "e-commerce": { key: "ecommerce", label: "E-commerce" },
+  loja: { key: "ecommerce", label: "E-commerce" },
+  landing: { key: "landing", label: "Landing Page" },
+  "landing page": { key: "landing", label: "Landing Page" },
+  institucional: { key: "landing", label: "Site Institucional" },
+  site: { key: "landing", label: "Site Institucional" },
+  mobile: { key: "mobile", label: "Mobile / PWA" },
+  pwa: { key: "mobile", label: "Mobile / PWA" },
+  ai: { key: "ai", label: "IA & Automação" },
+  ia: { key: "ai", label: "IA & Automação" },
+};
 
-  const { data, error } = await supabase.storage
-    .from(COVERS_BUCKET)
-    .createSignedUrls(files, SIGNED_URL_TTL);
-
-  if (error) {
-    console.error("[portfolio-content] signed urls", error);
-    return {};
-  }
-
-  const map: Record<string, string> = {};
-  for (const item of data ?? []) {
-    if (item.signedUrl && item.path) map[`local:${item.path}`] = item.signedUrl;
-  }
-  return map;
+/** Resolve categoria livre → `{ category_key, category_label }`. */
+function resolveCategory(raw?: string | null, explicit?: string | null) {
+  const source = (explicit ?? raw ?? "").trim().toLowerCase();
+  const hit = CATEGORY_MAP[source];
+  return hit ?? { key: "saas", label: raw?.trim() || "Projeto" };
 }
+
+/**
+ * Converte referências `local:<arquivo>` em URLs estáveis do proxy de capas.
+ * URLs absolutas são devolvidas sem alteração.
+ */
+function resolveCover(value?: string | null): string | null {
+  if (!value) return null;
+  if (value.startsWith("local:")) {
+    return `${COVER_PROXY}?file=${encodeURIComponent(value.slice(6))}`;
+  }
+  return value;
+}
+
 
 /** Aliases de nomes livres → slug canônico do `tech_registry` / simple-icons. */
 const TECH_ALIASES: Record<string, string> = {
