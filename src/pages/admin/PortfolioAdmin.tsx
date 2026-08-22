@@ -270,6 +270,30 @@ export default function PortfolioAdmin() {
           </div>
         </GlassCard>
 
+        {/* Blocos editoriais — contrato completo da API v1.1 */}
+        <GlassCard className="p-5 space-y-4">
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <div>
+              <h2 className="text-sm font-semibold uppercase tracking-wider">Blocos do site</h2>
+              <p className="text-[11px] text-muted-foreground">
+                Hero, sobre, destaques, skills, números, navegação, redes, serviços, FAQ, contato,
+                footer, SEO, PWA e feature flags — tudo servido pela API.
+              </p>
+            </div>
+            <button
+              onClick={saveSettings}
+              disabled={updateSettings.isPending}
+              className="inline-flex items-center gap-1.5 text-xs border border-foreground/30 rounded px-3 py-1.5 hover:bg-foreground/5 transition-colors disabled:opacity-50"
+            >
+              {updateSettings.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+              Salvar blocos
+            </button>
+          </div>
+          <PortfolioBlocksEditor value={blocks} onChange={setBlocks} />
+        </GlassCard>
+
+
+
         {/* Currículo — servido em /curriculo e no PDF do portfólio */}
         <GlassCard className="p-5 space-y-4">
           <div className="flex items-center justify-between gap-3 flex-wrap">
