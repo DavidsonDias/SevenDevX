@@ -38,6 +38,7 @@ import GlassCard from "@/components/GlassCard";
 import { useToast } from "@/hooks/use-toast";
 import { resolveProjectImage } from "@/data/projectImages";
 import CvEditor, { type CvData } from "@/components/admin/CvEditor";
+import PortfolioBlocksEditor, { type BlocksValue } from "@/components/admin/PortfolioBlocksEditor";
 import {
   usePortfolioProjects, useUpdatePortfolioProject, usePortfolioSettings,
   useUpdatePortfolioSettings, useReorderPortfolioProjects, PORTFOLIO_API_URL, type PortfolioProject,
