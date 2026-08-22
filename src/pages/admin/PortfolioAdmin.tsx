@@ -158,12 +158,26 @@ export default function PortfolioAdmin() {
   };
 
 
+  /**
+   * Persiste tudo em uma única escrita.
+   *
+   * 🔒 Nunca substitui um bloco inteiro: faz merge sobre o registro atual para
+   *    não apagar campos que o editor não expõe.
+   */
   const saveSettings = () =>
     updateSettings.mutate(
       {
-        profile: { name: form.name, role: form.role, email: form.email, github: form.github, linkedin: form.linkedin },
-        hero: { ...(settings?.hero ?? {}), headline: form.headline },
-        about: { ...(settings?.about ?? {}), bio: form.bio },
+        ...blocks,
+        profile: {
+          ...(settings?.profile ?? {}),
+          name: form.name,
+          role: form.role,
+          email: form.email,
+          github: form.github,
+          linkedin: form.linkedin,
+        },
+        hero: { ...(settings?.hero ?? {}), ...(blocks.hero ?? {}), headline: form.headline },
+        about: { ...(settings?.about ?? {}), ...(blocks.about ?? {}), bio: form.bio },
         cv,
       },
       {
