@@ -68,6 +68,23 @@ export type PortfolioSettings = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   cv: Record<string, any>;
 
+  /** Blocos editoriais adicionados na integração total (API v1.1). */
+  navigation: unknown[];
+  services: unknown[];
+  faqs: unknown[];
+  highlights: unknown[];
+  stats: unknown[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  contact: Record<string, any>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  footer: Record<string, any>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  pwa: Record<string, any>;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  flags: Record<string, any>;
+  /** Incrementado a cada publicação — usado no ETag da API. */
+  content_version: number;
+
   is_published: boolean;
   updated_at: string;
 };

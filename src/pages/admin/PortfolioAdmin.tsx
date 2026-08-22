@@ -38,6 +38,7 @@ import GlassCard from "@/components/GlassCard";
 import { useToast } from "@/hooks/use-toast";
 import { resolveProjectImage } from "@/data/projectImages";
 import CvEditor, { type CvData } from "@/components/admin/CvEditor";
+import PortfolioBlocksEditor, { type BlocksValue } from "@/components/admin/PortfolioBlocksEditor";
 import {
   usePortfolioProjects, useUpdatePortfolioProject, usePortfolioSettings,
   useUpdatePortfolioSettings, useReorderPortfolioProjects, PORTFOLIO_API_URL, type PortfolioProject,
@@ -83,6 +84,7 @@ export default function PortfolioAdmin() {
   const [copied, setCopied] = useState(false);
   const [form, setForm] = useState({ name: "", role: "", headline: "", bio: "", email: "", github: "", linkedin: "" });
   const [cv, setCv] = useState<CvData>({});
+  const [blocks, setBlocks] = useState<BlocksValue>({});
 
   useEffect(() => {
     if (!settings) return;
@@ -96,6 +98,23 @@ export default function PortfolioAdmin() {
       linkedin: settings.profile?.linkedin ?? "",
     });
     setCv((settings.cv ?? {}) as CvData);
+    // 🔒 Somente os blocos editoriais entram no editor — nada de metadados.
+    setBlocks({
+      hero: settings.hero ?? {},
+      about: settings.about ?? {},
+      highlights: settings.highlights ?? [],
+      skills: settings.skills ?? [],
+      stats: settings.stats ?? [],
+      navigation: settings.navigation ?? [],
+      links: settings.links ?? [],
+      services: settings.services ?? [],
+      faqs: settings.faqs ?? [],
+      contact: settings.contact ?? {},
+      footer: settings.footer ?? {},
+      seo: settings.seo ?? {},
+      pwa: settings.pwa ?? {},
+      flags: settings.flags ?? {},
+    });
   }, [settings]);
 
   const reorder = useReorderPortfolioProjects();
@@ -139,12 +158,26 @@ export default function PortfolioAdmin() {
   };
 
 
+  /**
+   * Persiste tudo em uma única escrita.
+   *
+   * 🔒 Nunca substitui um bloco inteiro: faz merge sobre o registro atual para
+   *    não apagar campos que o editor não expõe.
+   */
   const saveSettings = () =>
     updateSettings.mutate(
       {
-        profile: { name: form.name, role: form.role, email: form.email, github: form.github, linkedin: form.linkedin },
-        hero: { ...(settings?.hero ?? {}), headline: form.headline },
-        about: { ...(settings?.about ?? {}), bio: form.bio },
+        ...blocks,
+        profile: {
+          ...(settings?.profile ?? {}),
+          name: form.name,
+          role: form.role,
+          email: form.email,
+          github: form.github,
+          linkedin: form.linkedin,
+        },
+        hero: { ...(settings?.hero ?? {}), ...(blocks.hero ?? {}), headline: form.headline },
+        about: { ...(settings?.about ?? {}), ...(blocks.about ?? {}), bio: form.bio },
         cv,
       },
       {
@@ -236,6 +269,30 @@ export default function PortfolioAdmin() {
             </div>
           </div>
         </GlassCard>
+
+        {/* Blocos editoriais — contrato completo da API v1.1 */}
+        <GlassCard className="p-5 space-y-4">
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <div>
+              <h2 className="text-sm font-semibold uppercase tracking-wider">Blocos do site</h2>
+              <p className="text-[11px] text-muted-foreground">
+                Hero, sobre, destaques, skills, números, navegação, redes, serviços, FAQ, contato,
+                footer, SEO, PWA e feature flags — tudo servido pela API.
+              </p>
+            </div>
+            <button
+              onClick={saveSettings}
+              disabled={updateSettings.isPending}
+              className="inline-flex items-center gap-1.5 text-xs border border-foreground/30 rounded px-3 py-1.5 hover:bg-foreground/5 transition-colors disabled:opacity-50"
+            >
+              {updateSettings.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
+              Salvar blocos
+            </button>
+          </div>
+          <PortfolioBlocksEditor value={blocks} onChange={setBlocks} />
+        </GlassCard>
+
+
 
         {/* Currículo — servido em /curriculo e no PDF do portfólio */}
         <GlassCard className="p-5 space-y-4">
