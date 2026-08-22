@@ -83,6 +83,7 @@ export default function PortfolioAdmin() {
   const [copied, setCopied] = useState(false);
   const [form, setForm] = useState({ name: "", role: "", headline: "", bio: "", email: "", github: "", linkedin: "" });
   const [cv, setCv] = useState<CvData>({});
+  const [blocks, setBlocks] = useState<BlocksValue>({});
 
   useEffect(() => {
     if (!settings) return;
@@ -96,6 +97,23 @@ export default function PortfolioAdmin() {
       linkedin: settings.profile?.linkedin ?? "",
     });
     setCv((settings.cv ?? {}) as CvData);
+    // 🔒 Somente os blocos editoriais entram no editor — nada de metadados.
+    setBlocks({
+      hero: settings.hero ?? {},
+      about: settings.about ?? {},
+      highlights: settings.highlights ?? [],
+      skills: settings.skills ?? [],
+      stats: settings.stats ?? [],
+      navigation: settings.navigation ?? [],
+      links: settings.links ?? [],
+      services: settings.services ?? [],
+      faqs: settings.faqs ?? [],
+      contact: settings.contact ?? {},
+      footer: settings.footer ?? {},
+      seo: settings.seo ?? {},
+      pwa: settings.pwa ?? {},
+      flags: settings.flags ?? {},
+    });
   }, [settings]);
 
   const reorder = useReorderPortfolioProjects();
