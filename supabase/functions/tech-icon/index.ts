@@ -55,6 +55,58 @@ const SLUG_FALLBACKS: Record<string, string[]> = {
 };
 
 /**
+ * 🔒 Marcas cuja logo oficial é multicolorida — Simple Icons entrega apenas
+ *    versões monocromáticas, então buscamos o Devicon "original" primeiro.
+ */
+const DEVICON_SLUGS: Record<string, string> = {
+  figma: "figma/figma-original",
+  vite: "vitejs/vitejs-original",
+  vitejs: "vitejs/vitejs-original",
+  html5: "html5/html5-original",
+  css3: "css3/css3-original",
+  javascript: "javascript/javascript-original",
+  typescript: "typescript/typescript-original",
+  react: "react/react-original",
+  nodedotjs: "nodejs/nodejs-original",
+  nodejs: "nodejs/nodejs-original",
+  postgresql: "postgresql/postgresql-original",
+  mongodb: "mongodb/mongodb-original",
+  docker: "docker/docker-original",
+  git: "git/git-original",
+  tailwindcss: "tailwindcss/tailwindcss-original",
+  supabase: "supabase/supabase-original",
+  python: "python/python-original",
+  mysql: "mysql/mysql-original",
+  redis: "redis/redis-original",
+  linux: "linux/linux-original",
+  vscode: "vscode/vscode-original",
+  visualstudiocode: "vscode/vscode-original",
+  threedotjs: "threejs/threejs-original",
+  androidstudio: "androidstudio/androidstudio-original",
+  photoshop: "photoshop/photoshop-original",
+  illustrator: "illustrator/illustrator-plain",
+  blender: "blender/blender-original",
+  firebase: "firebase/firebase-plain",
+  angular: "angular/angular-original",
+  vuedotjs: "vuejs/vuejs-original",
+  swift: "swift/swift-original",
+  kotlin: "kotlin/kotlin-original",
+  php: "php/php-original",
+  laravel: "laravel/laravel-original",
+  wordpress: "wordpress/wordpress-plain",
+  sass: "sass/sass-original",
+  bootstrap: "bootstrap/bootstrap-original",
+  jest: "jest/jest-plain",
+  graphql: "graphql/graphql-plain",
+  amazonwebservices: "amazonwebservices/amazonwebservices-original-wordmark",
+  googlecloud: "googlecloud/googlecloud-original",
+  slack: "slack/slack-original",
+};
+
+const DEVICON_BASE = "https://cdn.jsdelivr.net/gh/devicons/devicon/icons";
+
+
+/**
  * 🔒 Ícones muito escuros somem em temas dark: clareia até um mínimo de
  *    luminância mantendo o matiz da marca.
  */
