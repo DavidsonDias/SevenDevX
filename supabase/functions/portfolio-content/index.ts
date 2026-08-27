@@ -357,7 +357,12 @@ Deno.serve(async (req) => {
       hero: settings?.hero ?? {},
       about: settings?.about ?? {},
       links: settings?.links ?? [],
-      skills: settings?.skills ?? [],
+      // 🔒 A Stack é administrada no SevenOS (`tech_registry.show_in_stack`).
+      //    A lista legada de `settings.skills` só é usada se nada estiver marcado.
+      skills: stack.length > 0 ? stack : (settings?.skills ?? []),
+      skills_legacy: settings?.skills ?? [],
+      tech_categories: techCategories ?? [],
+
       seo: settings?.seo ?? {},
       cv: settings?.cv ?? {},
       navigation: settings?.navigation ?? [],
