@@ -253,9 +253,19 @@ Deno.serve(async (req) => {
 
     const { data: techRows } = await supabase
       .from("tech_registry")
-      .select("id, name, slug, category, icon_url, color").eq("is_active", true)
+      .select(
+        "id, name, slug, category, category_key, icon_url, icon_dark_url, color, aliases, sort_order, is_featured, show_in_stack, show_in_projects, show_in_cv, level, tags, description, is_active",
+      )
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true })
       .limit(400);
+    const { data: techCategories } = await supabase
+      .from("tech_categories")
+      .select("key, label, color, icon, sort_order")
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true });
     const resolveTech = buildTechResolver(techRows ?? []);
+
 
     // ---------------------------------------------------------------- posts/:slug
     if (sub[0] === "posts" && sub[1]) {
