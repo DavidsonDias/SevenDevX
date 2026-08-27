@@ -155,7 +155,12 @@ function buildTechResolver(
   for (const t of registry) {
     if (t.slug) bySlug.set(normalizeTech(String(t.slug)), t);
     if (t.name) bySlug.set(normalizeTech(String(t.name)), t);
+    for (const a of (t.aliases ?? []) as string[]) {
+      const k = normalizeTech(String(a));
+      if (k && !bySlug.has(k)) bySlug.set(k, t);
+    }
   }
+
 
   return (raw: unknown) => {
     const input =
@@ -182,25 +187,40 @@ function buildTechResolver(
     const registryIcon = hit?.icon_url as string | undefined;
     const inputIcon = input.iconUrl as string | undefined;
     // 🔒 Proxy próprio evita bloqueio de CSP/Service Worker em domínios externos.
-    const proxied = `${ICON_PROXY}?slug=${encodeURIComponent(slug)}${
-      color ? `&color=${color.replace("#", "")}` : ""
-    }`;
+    //    `theme=color` preserva as logos oficiais multicoloridas (Figma, Vite…).
+    const proxied = (theme: "color" | "dark") =>
+      `${ICON_PROXY}?slug=${encodeURIComponent(slug)}&theme=${theme}${
+        color ? `&color=${color.replace("#", "")}` : ""
+      }`;
     const iconUrl = isAbsolute(registryIcon)
       ? (registryIcon as string)
       : isAbsolute(inputIcon)
         ? (inputIcon as string)
-        : proxied;
+        : proxied("dark");
+    const registryDark = hit?.icon_dark_url as string | undefined;
+    const iconDarkUrl = isAbsolute(registryDark) ? (registryDark as string) : proxied("dark");
 
     return {
+      id: (hit?.id as string | undefined) ?? null,
       name: (hit?.name as string | undefined) ?? name,
       slug,
       color,
       icon_url: iconUrl,
       iconUrl,
+      icon_dark_url: iconDarkUrl,
+      aliases: (hit?.aliases as string[] | undefined) ?? [],
       category: (hit?.category as string | undefined) ?? null,
+      category_key: (hit?.category_key as string | undefined) ?? null,
+      sort_order: (hit?.sort_order as number | undefined) ?? 0,
+      featured: Boolean(hit?.is_featured),
+      active: hit ? hit.is_active !== false : true,
+      level: (hit?.level as number | undefined) ?? null,
+      tags: (hit?.tags as string[] | undefined) ?? [],
+      description: (hit?.description as string | undefined) ?? null,
     };
   };
 }
+
 
 /** Colunas do projeto usadas tanto na listagem quanto no case study. */
 const PROJECT_COLUMNS =
@@ -233,9 +253,19 @@ Deno.serve(async (req) => {
 
     const { data: techRows } = await supabase
       .from("tech_registry")
-      .select("id, name, slug, category, icon_url, color").eq("is_active", true)
+      .select(
+        "id, name, slug, category, category_key, icon_url, icon_dark_url, color, aliases, sort_order, is_featured, show_in_stack, show_in_projects, show_in_cv, level, tags, description, is_active",
+      )
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true })
       .limit(400);
+    const { data: techCategories } = await supabase
+      .from("tech_categories")
+      .select("key, label, color, icon, sort_order")
+      .eq("is_active", true)
+      .order("sort_order", { ascending: true });
     const resolveTech = buildTechResolver(techRows ?? []);
+
 
     // ---------------------------------------------------------------- posts/:slug
     if (sub[0] === "posts" && sub[1]) {
@@ -316,6 +346,15 @@ Deno.serve(async (req) => {
 
     const contentVersion = settings?.content_version ?? 1;
 
+    // 🔒 Stack Tecnológica: só entram as tecnologias marcadas no SevenOS.
+    const stack = (techRows ?? [])
+      .filter((t) => t.show_in_stack)
+      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+      .map(resolveTech)
+      .filter(Boolean);
+
+
+
     const payload = {
       version: API_VERSION,
       content_version: contentVersion,
@@ -327,7 +366,12 @@ Deno.serve(async (req) => {
       hero: settings?.hero ?? {},
       about: settings?.about ?? {},
       links: settings?.links ?? [],
-      skills: settings?.skills ?? [],
+      // 🔒 A Stack é administrada no SevenOS (`tech_registry.show_in_stack`).
+      //    A lista legada de `settings.skills` só é usada se nada estiver marcado.
+      skills: stack.length > 0 ? stack : (settings?.skills ?? []),
+      skills_legacy: settings?.skills ?? [],
+      tech_categories: techCategories ?? [],
+
       seo: settings?.seo ?? {},
       cv: settings?.cv ?? {},
       navigation: settings?.navigation ?? [],
