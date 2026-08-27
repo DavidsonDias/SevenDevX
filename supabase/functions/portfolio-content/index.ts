@@ -196,7 +196,7 @@ function buildTechResolver(
       ? (registryIcon as string)
       : isAbsolute(inputIcon)
         ? (inputIcon as string)
-        : proxied("color");
+        : proxied("dark");
     const registryDark = hit?.icon_dark_url as string | undefined;
     const iconDarkUrl = isAbsolute(registryDark) ? (registryDark as string) : proxied("dark");
 
