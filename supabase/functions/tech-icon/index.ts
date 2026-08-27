@@ -138,6 +138,18 @@ Deno.serve(async (req) => {
 
   if (!slug) return new Response(fallbackSvg("#8B5CF6"), { headers });
 
+  // 1️⃣ Logo oficial multicolorida (Devicon) — preserva HTML laranja, Figma etc.
+  const devicon = DEVICON_SLUGS[slug];
+  if (devicon) {
+    try {
+      const upstream = await fetch(`${DEVICON_BASE}/${devicon}.svg`);
+      if (upstream.ok) return new Response(await upstream.text(), { headers });
+    } catch (err) {
+      console.error("[tech-icon] devicon", slug, err);
+    }
+  }
+
+  // 2️⃣ Simple Icons com a cor da marca (ajustada para o tema escuro).
   const candidates = SLUG_FALLBACKS[slug] ?? [slug];
   for (const candidate of candidates) {
     try {
@@ -150,6 +162,15 @@ Deno.serve(async (req) => {
     }
   }
 
+  // 3️⃣ Última tentativa: Devicon genérico por slug.
+  for (const variant of ["original", "plain"]) {
+    try {
+      const upstream = await fetch(`${DEVICON_BASE}/${slug}/${slug}-${variant}.svg`);
+      if (upstream.ok) return new Response(await upstream.text(), { headers });
+    } catch { /* ignora */ }
+  }
+
   return new Response(fallbackSvg(color ? `#${color}` : "#8B5CF6"), { headers });
 });
+
 
