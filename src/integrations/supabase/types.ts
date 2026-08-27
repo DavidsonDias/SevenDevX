@@ -3065,43 +3065,109 @@ export type Database = {
         }
         Relationships: []
       }
+      tech_categories: {
+        Row: {
+          color: string
+          created_at: string
+          icon: string | null
+          id: string
+          is_active: boolean
+          key: string
+          label: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          key: string
+          label: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          key?: string
+          label?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       tech_registry: {
         Row: {
+          aliases: string[]
           category: string | null
+          category_key: string | null
           color: string
           created_at: string
           description: string | null
+          icon_dark_url: string | null
           icon_url: string | null
           id: string
           is_active: boolean
+          is_featured: boolean
+          level: number | null
           name: string
+          show_in_cv: boolean
+          show_in_projects: boolean
+          show_in_stack: boolean
           slug: string
+          sort_order: number
+          tags: string[]
           updated_at: string
           usage_count: number
         }
         Insert: {
+          aliases?: string[]
           category?: string | null
+          category_key?: string | null
           color?: string
           created_at?: string
           description?: string | null
+          icon_dark_url?: string | null
           icon_url?: string | null
           id?: string
           is_active?: boolean
+          is_featured?: boolean
+          level?: number | null
           name: string
+          show_in_cv?: boolean
+          show_in_projects?: boolean
+          show_in_stack?: boolean
           slug: string
+          sort_order?: number
+          tags?: string[]
           updated_at?: string
           usage_count?: number
         }
         Update: {
+          aliases?: string[]
           category?: string | null
+          category_key?: string | null
           color?: string
           created_at?: string
           description?: string | null
+          icon_dark_url?: string | null
           icon_url?: string | null
           id?: string
           is_active?: boolean
+          is_featured?: boolean
+          level?: number | null
           name?: string
+          show_in_cv?: boolean
+          show_in_projects?: boolean
+          show_in_stack?: boolean
           slug?: string
+          sort_order?: number
+          tags?: string[]
           updated_at?: string
           usage_count?: number
         }
