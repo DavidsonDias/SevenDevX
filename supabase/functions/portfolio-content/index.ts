@@ -155,7 +155,12 @@ function buildTechResolver(
   for (const t of registry) {
     if (t.slug) bySlug.set(normalizeTech(String(t.slug)), t);
     if (t.name) bySlug.set(normalizeTech(String(t.name)), t);
+    for (const a of (t.aliases ?? []) as string[]) {
+      const k = normalizeTech(String(a));
+      if (k && !bySlug.has(k)) bySlug.set(k, t);
+    }
   }
+
 
   return (raw: unknown) => {
     const input =
