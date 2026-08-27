@@ -39,6 +39,7 @@ import { useToast } from "@/hooks/use-toast";
 import { resolveProjectImage } from "@/data/projectImages";
 import CvEditor, { type CvData } from "@/components/admin/CvEditor";
 import PortfolioBlocksEditor, { type BlocksValue } from "@/components/admin/PortfolioBlocksEditor";
+import PortfolioStackEditor from "@/components/admin/PortfolioStackEditor";
 import {
   usePortfolioProjects, useUpdatePortfolioProject, usePortfolioSettings,
   useUpdatePortfolioSettings, useReorderPortfolioProjects, PORTFOLIO_API_URL, type PortfolioProject,
@@ -290,6 +291,18 @@ export default function PortfolioAdmin() {
             </button>
           </div>
           <PortfolioBlocksEditor value={blocks} onChange={setBlocks} />
+        </GlassCard>
+
+        {/* Stack Tecnológica — administra o catálogo canônico (tech_registry) */}
+        <GlassCard className="p-4 sm:p-5 space-y-4">
+          <div>
+            <h2 className="text-sm font-semibold uppercase tracking-wider">Stack Tecnológica</h2>
+            <p className="text-[11px] text-muted-foreground">
+              Logos, cores, categorias, ordem, destaque e visibilidade — publicado na API
+              sem precisar de deploy no portfólio.
+            </p>
+          </div>
+          <PortfolioStackEditor />
         </GlassCard>
 
 
