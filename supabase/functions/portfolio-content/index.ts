@@ -346,6 +346,15 @@ Deno.serve(async (req) => {
 
     const contentVersion = settings?.content_version ?? 1;
 
+    // 🔒 Stack Tecnológica: só entram as tecnologias marcadas no SevenOS.
+    const stack = (techRows ?? [])
+      .filter((t) => t.show_in_stack)
+      .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+      .map(resolveTech)
+      .filter(Boolean);
+
+
+
     const payload = {
       version: API_VERSION,
       content_version: contentVersion,
