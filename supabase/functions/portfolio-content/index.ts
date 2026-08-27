@@ -187,25 +187,40 @@ function buildTechResolver(
     const registryIcon = hit?.icon_url as string | undefined;
     const inputIcon = input.iconUrl as string | undefined;
     // 🔒 Proxy próprio evita bloqueio de CSP/Service Worker em domínios externos.
-    const proxied = `${ICON_PROXY}?slug=${encodeURIComponent(slug)}${
-      color ? `&color=${color.replace("#", "")}` : ""
-    }`;
+    //    `theme=color` preserva as logos oficiais multicoloridas (Figma, Vite…).
+    const proxied = (theme: "color" | "dark") =>
+      `${ICON_PROXY}?slug=${encodeURIComponent(slug)}&theme=${theme}${
+        color ? `&color=${color.replace("#", "")}` : ""
+      }`;
     const iconUrl = isAbsolute(registryIcon)
       ? (registryIcon as string)
       : isAbsolute(inputIcon)
         ? (inputIcon as string)
-        : proxied;
+        : proxied("color");
+    const registryDark = hit?.icon_dark_url as string | undefined;
+    const iconDarkUrl = isAbsolute(registryDark) ? (registryDark as string) : proxied("dark");
 
     return {
+      id: (hit?.id as string | undefined) ?? null,
       name: (hit?.name as string | undefined) ?? name,
       slug,
       color,
       icon_url: iconUrl,
       iconUrl,
+      icon_dark_url: iconDarkUrl,
+      aliases: (hit?.aliases as string[] | undefined) ?? [],
       category: (hit?.category as string | undefined) ?? null,
+      category_key: (hit?.category_key as string | undefined) ?? null,
+      sort_order: (hit?.sort_order as number | undefined) ?? 0,
+      featured: Boolean(hit?.is_featured),
+      active: hit ? hit.is_active !== false : true,
+      level: (hit?.level as number | undefined) ?? null,
+      tags: (hit?.tags as string[] | undefined) ?? [],
+      description: (hit?.description as string | undefined) ?? null,
     };
   };
 }
+
 
 /** Colunas do projeto usadas tanto na listagem quanto no case study. */
 const PROJECT_COLUMNS =
