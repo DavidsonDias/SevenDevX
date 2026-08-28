@@ -9,9 +9,9 @@
  * @status Active
  *
  * @description
- * Console do Portfólio Davidson: define quais projetos do SevenOS são
- * publicados no site pessoal, sua ordem e destaque, e edita o conteúdo
- * de perfil/hero servido pela API pública `portfolio-content`.
+ * Console do Portfólio Davidson refatorado como CMS: shell de navegação
+ * por áreas (visão geral, identidade, conteúdo, stack, carreira, projetos
+ * e configurações), barra de publicação e listagens com edição em drawer.
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🔒 REGRAS DE NEGÓCIO E INVARIANTES                                  │
@@ -19,8 +19,9 @@
  *
  * ✅ Rota protegida por `ProtectedRoute`; a autoridade final é a RLS
  * 🔒 Somente projetos com status `published` aparecem na API pública
+ * 🔒 Publicar salva o conteúdo e incrementa `content_version` (ETag da API)
  *
- * @updated 2026-08-05
+ * @updated 2026-08-28
  * @license Proprietary — SevenDevX
  * ═══════════════════════════════════════════════════════════════════════
  */
@@ -29,47 +30,42 @@
 // 📦 IMPORTS
 // ============================================================================
 
-import { useMemo, useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
-  Globe, Star, Copy, Check, ExternalLink, Loader2, Save, Eye, EyeOff, ArrowUp, ArrowDown,
+  Globe, Copy, Check, ExternalLink, Loader2, Save, Eye, EyeOff, LayoutDashboard,
+  UserCircle, FileText, Layers, Briefcase, FolderKanban, Settings2, Upload,
 } from "lucide-react";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import GlassCard from "@/components/GlassCard";
 import { useToast } from "@/hooks/use-toast";
-import { resolveProjectImage } from "@/data/projectImages";
-import CvEditor, { type CvData } from "@/components/admin/CvEditor";
+import { Button } from "@/components/ui/button";
 import PortfolioBlocksEditor, { type BlocksValue } from "@/components/admin/PortfolioBlocksEditor";
-import PortfolioStackEditor from "@/components/admin/PortfolioStackEditor";
+import type { CvData } from "@/components/admin/CvEditor";
+import PortfolioDashboard from "@/components/admin/portfolio/PortfolioDashboard";
+import StackAdmin from "@/components/admin/portfolio/StackAdmin";
+import ProjectsAdmin from "@/components/admin/portfolio/ProjectsAdmin";
+import CareerAdmin from "@/components/admin/portfolio/CareerAdmin";
+import { Field } from "@/components/admin/portfolio/fields";
+import type { SaveState } from "@/components/admin/portfolio/EditorDrawer";
 import {
-  usePortfolioProjects, useUpdatePortfolioProject, usePortfolioSettings,
-  useUpdatePortfolioSettings, useReorderPortfolioProjects, PORTFOLIO_API_URL, type PortfolioProject,
+  usePortfolioSettings, useUpdatePortfolioSettings, PORTFOLIO_API_URL,
 } from "@/hooks/usePortfolio";
 
 // ============================================================================
-// 🎨 INTERNAL COMPONENTS
+// 🧩 TYPES & CONTRACTS
 // ============================================================================
 
-const Field = ({ label, value, onChange, textarea }: {
-  label: string; value: string; onChange: (v: string) => void; textarea?: boolean;
-}) => (
-  <label className="block space-y-1.5">
-    <span className="text-[11px] uppercase tracking-wider text-muted-foreground">{label}</span>
-    {textarea ? (
-      <textarea
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        rows={3}
-        className="w-full bg-background/40 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-foreground/40 transition-colors"
-      />
-    ) : (
-      <input
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full bg-background/40 border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-foreground/40 transition-colors"
-      />
-    )}
-  </label>
-);
+const AREAS = [
+  { key: "overview", label: "Visão geral", icon: LayoutDashboard },
+  { key: "identity", label: "Identidade", icon: UserCircle },
+  { key: "content", label: "Conteúdo", icon: FileText },
+  { key: "stack", label: "Stack", icon: Layers },
+  { key: "career", label: "Carreira", icon: Briefcase },
+  { key: "projects", label: "Projetos", icon: FolderKanban },
+  { key: "settings", label: "Configurações", icon: Settings2 },
+] as const;
+
+type Area = (typeof AREAS)[number]["key"];
 
 // ============================================================================
 // 🏗️ MAIN COMPONENT
@@ -77,19 +73,20 @@ const Field = ({ label, value, onChange, textarea }: {
 
 export default function PortfolioAdmin() {
   const { toast } = useToast();
-  const { data: projects = [], isLoading } = usePortfolioProjects();
-  const updateProject = useUpdatePortfolioProject();
   const { data: settings } = usePortfolioSettings();
   const updateSettings = useUpdatePortfolioSettings();
 
+  const [area, setArea] = useState<Area>("overview");
   const [copied, setCopied] = useState(false);
   const [form, setForm] = useState({ name: "", role: "", headline: "", bio: "", email: "", github: "", linkedin: "" });
   const [cv, setCv] = useState<CvData>({});
   const [blocks, setBlocks] = useState<BlocksValue>({});
+  const [baseline, setBaseline] = useState("");
+  const [state, setState] = useState<SaveState>("idle");
 
   useEffect(() => {
     if (!settings) return;
-    setForm({
+    const nextForm = {
       name: settings.profile?.name ?? "",
       role: settings.profile?.role ?? "",
       headline: settings.hero?.headline ?? "",
@@ -97,10 +94,10 @@ export default function PortfolioAdmin() {
       email: settings.profile?.email ?? "",
       github: settings.profile?.github ?? "",
       linkedin: settings.profile?.linkedin ?? "",
-    });
-    setCv((settings.cv ?? {}) as CvData);
+    };
+    const nextCv = (settings.cv ?? {}) as CvData;
     // 🔒 Somente os blocos editoriais entram no editor — nada de metadados.
-    setBlocks({
+    const nextBlocks: BlocksValue = {
       hero: settings.hero ?? {},
       about: settings.about ?? {},
       highlights: settings.highlights ?? [],
@@ -115,49 +112,19 @@ export default function PortfolioAdmin() {
       seo: settings.seo ?? {},
       pwa: settings.pwa ?? {},
       flags: settings.flags ?? {},
-    });
+    };
+    setForm(nextForm);
+    setCv(nextCv);
+    setBlocks(nextBlocks);
+    setBaseline(JSON.stringify({ nextForm, nextCv, nextBlocks }));
+    setState("idle");
   }, [settings]);
 
-  const reorder = useReorderPortfolioProjects();
-
-  /** Projetos publicados no portfólio, na ordem exata servida pela API. */
-  const enabled = useMemo(
-    () =>
-      projects
-        .filter((p) => p.portfolio_enabled)
-        .sort(
-          (a, b) =>
-            (a.portfolio_order ?? 0) - (b.portfolio_order ?? 0) || a.title.localeCompare(b.title),
-        ),
-    [projects],
+  /** Alterações locais ainda não persistidas no banco. */
+  const dirty = useMemo(
+    () => baseline !== "" && baseline !== JSON.stringify({ nextForm: form, nextCv: cv, nextBlocks: blocks }),
+    [baseline, form, cv, blocks],
   );
-
-  /** Projetos ainda fora do portfólio. */
-  const available = useMemo(() => projects.filter((p) => !p.portfolio_enabled), [projects]);
-
-  const toggle = (p: PortfolioProject) =>
-    updateProject.mutate(
-      {
-        id: p.id,
-        patch: {
-          portfolio_enabled: !p.portfolio_enabled,
-          ...(p.portfolio_enabled ? {} : { portfolio_order: enabled.length + 1 }),
-        },
-      },
-      { onError: () => toast({ title: "Falha ao atualizar", variant: "destructive" }) },
-    );
-
-  /** Reposiciona um projeto para o índice `to` (0-based) e normaliza 1..n. */
-  const moveTo = (from: number, to: number) => {
-    if (to < 0 || to >= enabled.length || to === from) return;
-    const ids = enabled.map((p) => p.id);
-    const [moved] = ids.splice(from, 1);
-    ids.splice(to, 0, moved);
-    reorder.mutate(ids, {
-      onError: () => toast({ title: "Falha ao reordenar", variant: "destructive" }),
-    });
-  };
-
 
   /**
    * Persiste tudo em uma única escrita.
@@ -165,7 +132,8 @@ export default function PortfolioAdmin() {
    * 🔒 Nunca substitui um bloco inteiro: faz merge sobre o registro atual para
    *    não apagar campos que o editor não expõe.
    */
-  const saveSettings = () =>
+  const saveSettings = (publish = false) => {
+    setState("saving");
     updateSettings.mutate(
       {
         ...blocks,
@@ -180,12 +148,44 @@ export default function PortfolioAdmin() {
         hero: { ...(settings?.hero ?? {}), ...(blocks.hero ?? {}), headline: form.headline },
         about: { ...(settings?.about ?? {}), ...(blocks.about ?? {}), bio: form.bio },
         cv,
+        ...(publish ? { content_version: (settings?.content_version ?? 0) + 1 } : {}),
       },
       {
-        onSuccess: () => toast({ title: "Conteúdo do portfólio salvo" }),
-        onError: () => toast({ title: "Falha ao salvar", variant: "destructive" }),
+        onSuccess: () => {
+          setState("saved");
+          toast({ title: publish ? "Portfólio publicado" : "Conteúdo salvo" });
+        },
+        onError: () => {
+          setState("error");
+          toast({ title: "Falha ao salvar", variant: "destructive" });
+        },
       },
     );
+  };
+
+  const discard = () => {
+    if (!settings) return;
+    setBaseline("");
+    // Reidrata a partir do último estado persistido.
+    setForm({
+      name: settings.profile?.name ?? "",
+      role: settings.profile?.role ?? "",
+      headline: settings.hero?.headline ?? "",
+      bio: settings.about?.bio ?? "",
+      email: settings.profile?.email ?? "",
+      github: settings.profile?.github ?? "",
+      linkedin: settings.profile?.linkedin ?? "",
+    });
+    setCv((settings.cv ?? {}) as CvData);
+    setBlocks({
+      hero: settings.hero ?? {}, about: settings.about ?? {}, highlights: settings.highlights ?? [],
+      skills: settings.skills ?? [], stats: settings.stats ?? [], navigation: settings.navigation ?? [],
+      links: settings.links ?? [], services: settings.services ?? [], faqs: settings.faqs ?? [],
+      contact: settings.contact ?? {}, footer: settings.footer ?? {}, seo: settings.seo ?? {},
+      pwa: settings.pwa ?? {}, flags: settings.flags ?? {},
+    });
+    setState("idle");
+  };
 
   const copyUrl = async () => {
     await navigator.clipboard.writeText(PORTFOLIO_API_URL);
@@ -198,249 +198,153 @@ export default function PortfolioAdmin() {
       title="Portfólio Davidson"
       subtitle="CMS headless do site pessoal — alimentado pelo SevenOS"
     >
-      <div className="space-y-6">
-        {/* Endpoint público */}
-        <GlassCard className="p-5">
-          <div className="flex items-start gap-3">
-            <Globe className="w-5 h-5 mt-0.5 text-muted-foreground shrink-0" />
-            <div className="min-w-0 flex-1 space-y-2">
-              <h2 className="text-sm font-semibold uppercase tracking-wider">API pública de conteúdo</h2>
-              <p className="text-xs text-muted-foreground">
-                O site do portfólio consome este endpoint (somente leitura, cache de 5 min na CDN).
-                Nenhuma credencial é necessária.
-              </p>
-              <div className="flex items-center gap-2 flex-wrap">
-                <code className="text-[11px] bg-background/50 border border-border rounded px-2 py-1.5 break-all">
-                  GET {PORTFOLIO_API_URL}
-                </code>
-                <button
-                  onClick={copyUrl}
-                  className="inline-flex items-center gap-1.5 text-xs border border-border rounded px-2.5 py-1.5 hover:bg-foreground/5 transition-colors"
-                >
-                  {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                  {copied ? "Copiado" : "Copiar"}
-                </button>
-                <a
-                  href={PORTFOLIO_API_URL}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 text-xs border border-border rounded px-2.5 py-1.5 hover:bg-foreground/5 transition-colors"
-                >
-                  <ExternalLink className="w-3.5 h-3.5" /> Testar
-                </a>
-              </div>
-              <p className="text-[11px] text-muted-foreground">
-                Retorna: <span className="font-mono">profile · hero · about · links · skills · projects · tech · posts</span>
-              </p>
-            </div>
-          </div>
-        </GlassCard>
+      <div className="space-y-5">
+        {/* ── Navegação por áreas ─────────────────────────────── */}
+        <nav aria-label="Áreas do portfólio" className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+          {AREAS.map(({ key, label, icon: Icon }) => (
+            <button
+              key={key}
+              onClick={() => setArea(key)}
+              aria-current={area === key ? "page" : undefined}
+              className={`shrink-0 inline-flex items-center gap-1.5 min-h-11 rounded-full border px-4 text-[11px] uppercase tracking-wider transition-colors focus-visible:ring-1 focus-visible:ring-foreground/40 ${
+                area === key ? "border-foreground bg-foreground/10" : "border-border text-muted-foreground hover:bg-foreground/5"
+              }`}
+            >
+              <Icon className="w-3.5 h-3.5" /> {label}
+            </button>
+          ))}
+        </nav>
 
-        {/* Conteúdo do site */}
-        <GlassCard className="p-5 space-y-4">
-          <div className="flex items-center justify-between gap-3 flex-wrap">
-            <h2 className="text-sm font-semibold uppercase tracking-wider">Conteúdo do site</h2>
+        {/* ── Barra de publicação ─────────────────────────────── */}
+        {dirty && (
+          <div
+            role="status"
+            className="sticky top-2 z-20 rounded-xl border border-foreground/30 bg-background/80 backdrop-blur px-4 py-3 flex items-center justify-between gap-3 flex-wrap"
+          >
+            <span className="text-xs uppercase tracking-wider">Alterações não publicadas</span>
             <div className="flex items-center gap-2">
-              <button
-                onClick={() => updateSettings.mutate({ is_published: !(settings?.is_published ?? true) })}
-                className="inline-flex items-center gap-1.5 text-xs border border-border rounded px-2.5 py-1.5 hover:bg-foreground/5 transition-colors"
-              >
-                {settings?.is_published === false ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                {settings?.is_published === false ? "Despublicado" : "Publicado"}
-              </button>
-              <button
-                onClick={saveSettings}
-                disabled={updateSettings.isPending}
-                className="inline-flex items-center gap-1.5 text-xs border border-foreground/30 rounded px-3 py-1.5 hover:bg-foreground/5 transition-colors disabled:opacity-50"
-              >
-                {updateSettings.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
-                Salvar
-              </button>
+              <Button variant="ghost" size="sm" className="min-h-11" onClick={discard}>Descartar</Button>
+              <Button variant="outline" size="sm" className="min-h-11" onClick={() => saveSettings(false)} disabled={state === "saving"}>
+                {state === "saving" ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Salvar
+              </Button>
+              <Button size="sm" className="min-h-11" onClick={() => saveSettings(true)} disabled={state === "saving"}>
+                <Upload className="w-4 h-4" /> Publicar
+              </Button>
             </div>
           </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Nome" value={form.name} onChange={(v) => setForm({ ...form, name: v })} />
-            <Field label="Cargo / Papel" value={form.role} onChange={(v) => setForm({ ...form, role: v })} />
-            <Field label="E-mail" value={form.email} onChange={(v) => setForm({ ...form, email: v })} />
-            <Field label="GitHub" value={form.github} onChange={(v) => setForm({ ...form, github: v })} />
-            <Field label="LinkedIn" value={form.linkedin} onChange={(v) => setForm({ ...form, linkedin: v })} />
-            <Field label="Headline do hero" value={form.headline} onChange={(v) => setForm({ ...form, headline: v })} />
-            <div className="sm:col-span-2">
-              <Field label="Bio (sobre)" value={form.bio} onChange={(v) => setForm({ ...form, bio: v })} textarea />
-            </div>
-          </div>
-        </GlassCard>
+        )}
 
-        {/* Blocos editoriais — contrato completo da API v1.1 */}
-        <GlassCard className="p-5 space-y-4">
-          <div className="flex items-center justify-between gap-3 flex-wrap">
+        {/* ── VISÃO GERAL ─────────────────────────────────────── */}
+        {area === "overview" && (
+          <GlassCard className="p-4 sm:p-5">
+            <PortfolioDashboard
+              settings={settings ?? null}
+              onNavigate={(k) => setArea((k === "seo" ? "content" : k) as Area)}
+            />
+          </GlassCard>
+        )}
+
+        {/* ── IDENTIDADE ──────────────────────────────────────── */}
+        {area === "identity" && (
+          <GlassCard className="p-4 sm:p-5 space-y-4">
+            <h2 className="text-sm font-semibold uppercase tracking-wider">Identidade</h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Nome" value={form.name} onChange={(v) => setForm({ ...form, name: v })} />
+              <Field label="Cargo / Papel" value={form.role} onChange={(v) => setForm({ ...form, role: v })} />
+              <Field label="E-mail" value={form.email} onChange={(v) => setForm({ ...form, email: v })} />
+              <Field label="GitHub" value={form.github} onChange={(v) => setForm({ ...form, github: v })} />
+              <Field label="LinkedIn" value={form.linkedin} onChange={(v) => setForm({ ...form, linkedin: v })} />
+              <Field label="Headline do hero" value={form.headline} onChange={(v) => setForm({ ...form, headline: v })} />
+              <div className="sm:col-span-2">
+                <Field label="Bio (sobre)" value={form.bio} onChange={(v) => setForm({ ...form, bio: v })} textarea />
+              </div>
+            </div>
+          </GlassCard>
+        )}
+
+        {/* ── CONTEÚDO (blocos, SEO, PWA, flags) ──────────────── */}
+        {area === "content" && (
+          <GlassCard className="p-4 sm:p-5 space-y-4">
             <div>
               <h2 className="text-sm font-semibold uppercase tracking-wider">Blocos do site</h2>
               <p className="text-[11px] text-muted-foreground">
-                Hero, sobre, destaques, skills, números, navegação, redes, serviços, FAQ, contato,
+                Hero, sobre, destaques, números, navegação, redes, serviços, FAQ, contato,
                 footer, SEO, PWA e feature flags — tudo servido pela API.
               </p>
             </div>
-            <button
-              onClick={saveSettings}
-              disabled={updateSettings.isPending}
-              className="inline-flex items-center gap-1.5 text-xs border border-foreground/30 rounded px-3 py-1.5 hover:bg-foreground/5 transition-colors disabled:opacity-50"
-            >
-              {updateSettings.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
-              Salvar blocos
-            </button>
-          </div>
-          <PortfolioBlocksEditor value={blocks} onChange={setBlocks} />
-        </GlassCard>
+            <PortfolioBlocksEditor value={blocks} onChange={setBlocks} />
+          </GlassCard>
+        )}
 
-        {/* Stack Tecnológica — administra o catálogo canônico (tech_registry) */}
-        <GlassCard className="p-4 sm:p-5 space-y-4">
-          <div>
-            <h2 className="text-sm font-semibold uppercase tracking-wider">Stack Tecnológica</h2>
-            <p className="text-[11px] text-muted-foreground">
-              Logos, cores, categorias, ordem, destaque e visibilidade — publicado na API
-              sem precisar de deploy no portfólio.
-            </p>
-          </div>
-          <PortfolioStackEditor />
-        </GlassCard>
+        {/* ── STACK ───────────────────────────────────────────── */}
+        {area === "stack" && (
+          <GlassCard className="p-4 sm:p-5">
+            <StackAdmin />
+          </GlassCard>
+        )}
 
+        {/* ── CARREIRA ────────────────────────────────────────── */}
+        {area === "career" && (
+          <GlassCard className="p-4 sm:p-5">
+            <CareerAdmin
+              value={cv}
+              onChange={setCv}
+              onSave={() => saveSettings(false)}
+              state={dirty && state !== "saving" ? "dirty" : state}
+              dirty={dirty}
+            />
+          </GlassCard>
+        )}
 
+        {/* ── PROJETOS ────────────────────────────────────────── */}
+        {area === "projects" && (
+          <GlassCard className="p-4 sm:p-5">
+            <ProjectsAdmin />
+          </GlassCard>
+        )}
 
-        {/* Currículo — servido em /curriculo e no PDF do portfólio */}
-        <GlassCard className="p-5 space-y-4">
-          <div className="flex items-center justify-between gap-3 flex-wrap">
-            <div>
-              <h2 className="text-sm font-semibold uppercase tracking-wider">Currículo</h2>
-              <p className="text-[11px] text-muted-foreground">
-                Alimenta a página <span className="font-mono">/curriculo</span> e o PDF do portfólio.
-              </p>
+        {/* ── CONFIGURAÇÕES ───────────────────────────────────── */}
+        {area === "settings" && (
+          <GlassCard className="p-4 sm:p-5">
+            <div className="flex items-start gap-3">
+              <Globe className="w-5 h-5 mt-0.5 text-muted-foreground shrink-0" />
+              <div className="min-w-0 flex-1 space-y-3">
+                <h2 className="text-sm font-semibold uppercase tracking-wider">API pública de conteúdo</h2>
+                <p className="text-xs text-muted-foreground">
+                  O site do portfólio consome este endpoint (somente leitura, cache de 5 min na CDN).
+                  Nenhuma credencial é necessária.
+                </p>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <code className="text-[11px] bg-background/50 border border-border rounded px-2 py-1.5 break-all">
+                    GET {PORTFOLIO_API_URL}
+                  </code>
+                  <Button variant="outline" size="sm" className="min-h-11" onClick={copyUrl}>
+                    {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                    {copied ? "Copiado" : "Copiar"}
+                  </Button>
+                  <Button asChild variant="outline" size="sm" className="min-h-11">
+                    <a href={PORTFOLIO_API_URL} target="_blank" rel="noreferrer">
+                      <ExternalLink className="w-3.5 h-3.5" /> Testar
+                    </a>
+                  </Button>
+                </div>
+
+                <div className="pt-2 border-t border-border flex items-center gap-2 flex-wrap">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="min-h-11"
+                    onClick={() => updateSettings.mutate({ is_published: !(settings?.is_published ?? true) })}
+                  >
+                    {settings?.is_published === false ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                    {settings?.is_published === false ? "Despublicado" : "Publicado"}
+                  </Button>
+                  <span className="text-[11px] text-muted-foreground">
+                    Versão do conteúdo: {settings?.content_version ?? 0}
+                  </span>
+                </div>
+              </div>
             </div>
-            <button
-              onClick={saveSettings}
-              disabled={updateSettings.isPending}
-              className="inline-flex items-center gap-1.5 text-xs border border-foreground/30 rounded px-3 py-1.5 hover:bg-foreground/5 transition-colors disabled:opacity-50"
-            >
-              {updateSettings.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
-              Salvar currículo
-            </button>
-          </div>
-          <CvEditor value={cv} onChange={setCv} />
-        </GlassCard>
-
-        {/* Projetos publicados — ordem exata da API */}
-        <GlassCard className="p-5 space-y-4">
-          <div className="flex items-center justify-between gap-3 flex-wrap">
-            <h2 className="text-sm font-semibold uppercase tracking-wider">Ordem no portfólio</h2>
-            <span className="text-xs text-muted-foreground">
-              {enabled.length} publicados de {projects.length}
-              {reorder.isPending ? " · salvando…" : ""}
-            </span>
-          </div>
-
-          {isLoading ? (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground py-8 justify-center">
-              <Loader2 className="w-4 h-4 animate-spin" /> Carregando projetos…
-            </div>
-          ) : enabled.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-6 text-center">
-              Nenhum projeto no portfólio ainda — adicione abaixo.
-            </p>
-          ) : (
-            <ul className="space-y-2">
-              {enabled.map((p, i) => (
-                <li
-                  key={p.id}
-                  className="flex items-center gap-3 rounded-lg border border-foreground/25 bg-foreground/[0.03] p-3"
-                >
-                  <input
-                    type="number"
-                    min={1}
-                    max={enabled.length}
-                    value={i + 1}
-                    onChange={(e) => moveTo(i, Number(e.target.value) - 1)}
-                    aria-label={`Posição de ${p.title}`}
-                    className="w-12 shrink-0 bg-background/40 border border-border rounded text-center text-xs py-1.5 outline-none focus:border-foreground/40"
-                  />
-
-                  <div className="w-12 h-12 rounded-md overflow-hidden bg-background/50 border border-border shrink-0">
-                    <img
-                      src={resolveProjectImage(p.cover_image)}
-                      alt={p.title}
-                      loading="lazy"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium truncate">{p.title}</p>
-                    <p className="text-[11px] text-muted-foreground truncate">
-                      {p.category || "sem categoria"} · {p.status}
-                      {p.status !== "published" ? " · não sairá na API" : ""}
-                    </p>
-                  </div>
-
-                  <button
-                    onClick={() => updateProject.mutate({ id: p.id, patch: { portfolio_highlight: !p.portfolio_highlight } })}
-                    aria-label="Destacar projeto"
-                    className={`p-1.5 rounded border transition-colors ${
-                      p.portfolio_highlight ? "border-foreground/40 text-foreground" : "border-border text-muted-foreground hover:bg-foreground/5"
-                    }`}
-                  >
-                    <Star className="w-3.5 h-3.5" fill={p.portfolio_highlight ? "currentColor" : "none"} />
-                  </button>
-
-                  <div className="flex flex-col">
-                    <button onClick={() => moveTo(i, i - 1)} disabled={i === 0} aria-label="Subir" className="p-0.5 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30">
-                      <ArrowUp className="w-3.5 h-3.5" />
-                    </button>
-                    <button onClick={() => moveTo(i, i + 1)} disabled={i === enabled.length - 1} aria-label="Descer" className="p-0.5 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30">
-                      <ArrowDown className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-
-                  <button
-                    onClick={() => toggle(p)}
-                    className="text-[11px] uppercase tracking-wider border border-foreground/30 rounded px-2.5 py-1.5 hover:bg-foreground/5 transition-colors"
-                  >
-                    Remover
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </GlassCard>
-
-        {/* Projetos disponíveis */}
-        {!isLoading && available.length > 0 && (
-          <GlassCard className="p-5 space-y-4">
-            <h2 className="text-sm font-semibold uppercase tracking-wider">Disponíveis</h2>
-            <ul className="space-y-2">
-              {available.map((p) => (
-                <li key={p.id} className="flex items-center gap-3 rounded-lg border border-border p-3">
-                  <div className="w-12 h-12 rounded-md overflow-hidden bg-background/50 border border-border shrink-0">
-                    <img
-                      src={resolveProjectImage(p.cover_image)}
-                      alt={p.title}
-                      loading="lazy"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium truncate">{p.title}</p>
-                    <p className="text-[11px] text-muted-foreground truncate">
-                      {p.category || "sem categoria"} · {p.status}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => toggle(p)}
-                    className="text-[11px] uppercase tracking-wider border border-border text-muted-foreground rounded px-2.5 py-1.5 hover:bg-foreground/5 transition-colors"
-                  >
-                    Adicionar
-                  </button>
-                </li>
-              ))}
-            </ul>
           </GlassCard>
         )}
       </div>
