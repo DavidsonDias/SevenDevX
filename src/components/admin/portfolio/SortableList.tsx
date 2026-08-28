@@ -29,7 +29,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import {
   DndContext, closestCenter, KeyboardSensor, PointerSensor, TouchSensor,
   useSensor, useSensors, type DragEndEvent,
@@ -63,30 +63,22 @@ export type SortableListProps<T> = {
 export function PositionInput({
   index, total, onMove, label,
 }: { index: number; total: number; onMove: (to: number) => void; label: string }) {
-  const [draft, setDraft] = useState<string>(String(index + 1));
-
-  // 🔒 Mantém o input sincronizado quando a lista é reordenada por outro caminho.
-  const shown = document.activeElement instanceof HTMLInputElement && document.activeElement.dataset.pos === label
-    ? draft
-    : String(index + 1);
-
   const commit = (raw: string) => {
     const n = Number(raw);
-    if (!Number.isFinite(n)) return;
+    if (!Number.isFinite(n) || raw.trim() === "") return;
     const clamped = Math.min(Math.max(Math.round(n), 1), total);
     if (clamped - 1 !== index) onMove(clamped - 1);
   };
 
   return (
     <input
+      key={index}
       type="number"
       inputMode="numeric"
       min={1}
       max={total}
-      data-pos={label}
-      value={shown}
+      defaultValue={index + 1}
       aria-label={`Posição de ${label}`}
-      onChange={(e) => setDraft(e.target.value)}
       onBlur={(e) => commit(e.target.value)}
       onKeyDown={(e) => {
         if (e.key === "Enter") (e.target as HTMLInputElement).blur();
@@ -114,7 +106,6 @@ function Row<T>({
     <div className="flex items-center gap-1.5 shrink-0">
       <button
         type="button"
-        ref={setNodeRef as unknown as React.Ref<HTMLButtonElement>}
         {...attributes}
         {...listeners}
         aria-label={`Arrastar para reordenar (posição ${index + 1} de ${total})`}
@@ -129,6 +120,7 @@ function Row<T>({
 
   return (
     <li
+      ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
       className={isDragging ? "relative z-10 opacity-80" : undefined}
     >
