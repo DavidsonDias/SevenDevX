@@ -39,11 +39,34 @@ export type CvExperience = {
   period: string;
   location?: string;
   description: string;
+  /** Campos editoriais adicionais expostos pelo CMS de Carreira. */
+  start?: string;
+  end?: string;
+  current?: boolean;
+  bullets?: string[];
+  technologies?: string[];
+  category?: string;
+  logo?: string;
 };
 
-export type CvEducation = { course: string; school: string; period: string };
+export type CvEducation = {
+  course: string;
+  school: string;
+  period: string;
+  start?: string;
+  end?: string;
+  description?: string;
+  logo?: string;
+};
 
-export type CvCertification = { name: string; issuer: string; year: string };
+export type CvCertification = {
+  name: string;
+  issuer: string;
+  year: string;
+  url?: string;
+  credential_id?: string;
+  logo?: string;
+};
 
 export type CvData = {
   summary?: string;
