@@ -139,11 +139,6 @@ export default function StackAdmin() {
 
   const sortable = filter === "stack" && !q.trim() && cat === "all";
 
-  const patch = (t: StackTech, p: Partial<StackTech>) =>
-    update.mutate({ id: t.id, patch: p }, {
-      onError: () => toast({ title: "Falha ao atualizar", variant: "destructive" }),
-    });
-
   const persistOrder = (ids: string[]) =>
     reorder.mutate(ids, { onError: () => toast({ title: "Falha ao reordenar", variant: "destructive" }) });
 
@@ -445,9 +440,6 @@ export default function StackAdmin() {
           </>
         )}
       </EditorDrawer>
-
-      {/* Mantém referência explícita à mutação usada nos toggles rápidos. */}
-      <span className="sr-only">{update.isPending ? "Salvando" : ""}{patch ? "" : ""}</span>
     </div>
   );
 }
