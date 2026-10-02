@@ -89,6 +89,8 @@
 import { useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { PUBLIC_PROJECT_FIELDS } from "@/lib/publicProjectFields";
+import { publicSupabase } from "@/integrations/supabase/publicClient";
 import { type Project } from "@/data/projects";
 import { resolveProjectImage } from "@/data/projectImages";
 import {
@@ -274,9 +276,9 @@ const sortProjects = (rows: DbProject[]): DbProject[] =>
  * @throws {PostgrestError} Propagado para o React Query tratar como erro de query.
  */
 const fetchPublishedProjects = async (): Promise<UIProject[]> => {
-  const { data, error } = await supabase
+  const { data, error } = await publicSupabase
     .from("projects")
-    .select("*")
+    .select(PUBLIC_PROJECT_FIELDS)
     .eq("is_published_on_site", true)
     .eq("status", "published");
   if (error) throw error;
@@ -401,10 +403,12 @@ export const useProjectBySlug = (slug?: string) => {
     queryKey: ["projects", "slug", slug],
     enabled: !!slug,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await publicSupabase
         .from("projects")
-        .select("*")
+        .select(PUBLIC_PROJECT_FIELDS)
         .eq("slug", slug!)
+        .eq("is_published_on_site", true)
+        .eq("status", "published")
         .maybeSingle();
       if (error) throw error;
       if (!data) return null;

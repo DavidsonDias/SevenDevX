@@ -24,6 +24,8 @@
  */
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { PUBLIC_PROJECT_FIELDS } from "@/lib/publicProjectFields";
+import { publicSupabase } from "@/integrations/supabase/publicClient";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sb = supabase as any;
@@ -169,6 +171,7 @@ const EMPTY: SitePageData = {
 // ============================================================================
 
 export function useSitePage() {
+  const publicDb = publicSupabase as any;
   const [data, setData] = useState<SitePageData>(EMPTY);
   const [loading, setLoading] = useState(true);
 
@@ -182,7 +185,7 @@ export function useSitePage() {
         sb.from("site_page_process_steps").select("*").eq("is_active", true).order("sort_order"),
         sb.from("site_page_comparison_rows").select("*").eq("is_active", true).order("sort_order"),
         sb.from("site_page_roi_metrics").select("*").eq("is_active", true).order("sort_order"),
-        sb.from("site_page_projects").select("*, project:projects(*)").eq("is_active", true).order("sort_order"),
+        publicDb.from("site_page_projects").select(`*, project:projects!inner(${PUBLIC_PROJECT_FIELDS})`).eq("is_active", true).eq("project.is_published_on_site", true).eq("project.status", "published").order("sort_order"),
         sb.from("site_page_tech").select("*, tech:tech_registry(*)").eq("is_active", true).order("sort_order"),
         sb.from("site_page_faqs").select("*, faq:faq_items(*)").eq("is_active", true).order("sort_order"),
       ]);
