@@ -17,7 +17,11 @@ Também foram executados `npm run typecheck` e `npm run build -- --configLoader 
 
 ## Limites da implantação
 
-Quatro funções foram implantadas inicialmente no novo Supabase, com verificação JWT: ai-contract-summarize, ai-engine, logo-variations-ai e lead-score-ai. Chamadas sem autenticação retornaram 401. Isso não substitui um teste autenticado completo.
+Oito funções de IA foram implantadas com verificação JWT: ai-contract-summarize, ai-engine, logo-variations-ai, lead-score-ai, ai-ops, ai-ops-autonomous, citation-monitor e project-generator. Chamadas sem autenticação retornaram 401. Isso não substitui testes completos com usuários autenticados.
+
+openai-test usa autorização própria por chave secreta Supabase ou JWT de administrador, com verificação JWT do gateway desativada para aceitar chaves opacas modernas. Requisições não autorizadas retornam 401. Consulta somente /v1/models, sem gerar conteúdo. A conexão real retornou 200 e confirmou disponibilidade dos dois modelos configurados. Não devolve chaves nem mensagens brutas de erro do provedor.
+
+Auth: o trigger de cadastro cria perfil e papel user, sem promover automaticamente a admin. A consulta has_role foi liberada apenas para authenticated; demais grants permanecem isolados. Testes transacionais do cadastro foram revertidos e não deixaram contas de teste. O aviso do advisor sobre SECURITY DEFINER em has_role corresponde a essa consulta intencional; proteção contra senhas vazadas continua pendente.
 
 A migração não ativa crons, notificações, pagamentos ou a troca do frontend de produção. Grants, Storage e Auth exigem validação antes da liberação da aplicação. ai-chat ainda precisa de revisão de autorização das conversas; automation-runner possui ações externas que precisam de revisão.
 
