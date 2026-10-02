@@ -71,7 +71,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { CheckCircle2, X, Loader2, AlertTriangle, Zap, RotateCw, BookOpen } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import LogoRenderer from "@/components/ui/logo/LogoRenderer";
 import { useScrollLock } from "@/hooks/useScrollLock";
@@ -106,7 +105,7 @@ const STEPS_BY_PROVIDER: Record<string, string[]> = {
   figma: ["Validar token", "Buscar usuário", "Listar teams"],
   whatsapp: ["Validar Phone ID", "Verificar display name", "Verificar webhook subscriptions"],
   stripe: ["Validar secret key", "Buscar account info", "Verificar balance", "Listar customers", "Webhook secret"],
-  openai: ["Validar API key", "Listar modelos disponíveis", "Chat completion teste"],
+  openai: ["Validar API key", "Verificar modelo de texto", "Verificar modelo de imagem (sem geração)"],
   resend: ["Validar API key", "Listar domínios", "Listar API keys", "Verificar domínios verificados"],
   slack: ["Validar bot token", "Buscar workspace info", "Listar conversations", "Signing secret"],
   discord: ["Validar bot token", "Buscar bot user", "Listar guilds", "Application info"],
@@ -119,12 +118,13 @@ const DEFAULT_STEPS = ["Validar secrets", "Executar teste real", "Analisar respo
 // ============================================================================
 
 export default function GuidedConnectionTest({
-  provider, open, onClose, onOpenGuide,
+  provider, open, onClose, onOpenGuide, onTest,
 }: {
   provider: IntegrationProvider | null;
   open: boolean;
   onClose: () => void;
   onOpenGuide?: () => void;
+  onTest: (provider: IntegrationProvider) => Promise<ConnectionTestResult>;
 }) {
   useScrollLock(open && !!provider);
   const [statuses, setStatuses] = useState<StepStatus[]>([]);
@@ -164,23 +164,8 @@ export default function GuidedConnectionTest({
 
     try {
       const t0 = Date.now();
-      const { data, error } = await supabase.functions.invoke(fnName, { body: { provider_id: provider.id } });
+      const res = await onTest(provider);
       clearInterval(interval);
-
-      if (error) {
-        let detail = error.message;
-        try {
-          const response = (error as any)?.context?.response;
-          const json = response ? await response.clone().json() : null;
-          detail = json?.error || json?.checks?.at?.(-1)?.detail || detail;
-          if (json?.checks) {
-            setStatuses(labels.map((_, idx) => (json.checks[idx]?.ok ? "ok" : "fail")));
-            setDetails(labels.map((_, idx) => json.checks[idx]?.detail || ""));
-          }
-        } catch {}
-        throw new Error(detail);
-      }
-      const res = data as ConnectionTestResult;
       setResult(res);
 
       const checks = res.checks || [];

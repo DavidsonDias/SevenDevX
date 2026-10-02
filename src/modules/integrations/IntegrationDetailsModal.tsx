@@ -291,6 +291,7 @@ export default function IntegrationDetailsModal({
       </motion.div>
       <SetupGuideDrawer providerId={provider.id} open={guideOpen} onClose={() => setGuideOpen(false)} />
       <GuidedConnectionTest
+        onTest={testConnection.mutateAsync}
         provider={provider}
         open={wizardOpen}
         onClose={() => setWizardOpen(false)}

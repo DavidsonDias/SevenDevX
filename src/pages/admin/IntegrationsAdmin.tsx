@@ -396,6 +396,7 @@ export default function IntegrationsAdmin() {
       <IntegrationMarketplaceModal open={marketOpen} onClose={() => setMarketOpen(false)} />
       <GuidedConnectionTest
         provider={wizard}
+        onTest={testConnection.mutateAsync}
         open={!!wizard}
         onClose={() => setWizard(null)}
         onOpenGuide={() => { if (wizard) setGuideId(wizard.id); }}
