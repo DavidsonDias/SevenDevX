@@ -260,4 +260,3 @@ serve(async (req) => {
 // 🌐 Falhas de API externa são tratadas e devolvidas como erro, sem derrubar o fluxo.
 // ✅ Toda resposta inclui os headers de CORS previstos, inclusive nos caminhos de erro.
 //
-

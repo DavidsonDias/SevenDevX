@@ -27,4 +27,3 @@ assert.ok(logo.includes("openAIRequest('images/generations'"));
 assert.ok(logo.includes('b64_json'));
 assert.ok(!logo.includes('modalities:'));
 console.log('PASS: missing key blocks requests; authorization, streaming body and provider errors preserved; model configuration and image contract verified. No external requests.');
-

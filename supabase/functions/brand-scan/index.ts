@@ -370,4 +370,3 @@ Deno.serve(async (req) => {
     return jsonRes({ error: (e as Error).message }, 500);
   }
 });
-

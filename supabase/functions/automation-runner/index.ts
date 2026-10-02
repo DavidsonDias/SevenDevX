@@ -313,4 +313,3 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: String(e?.message ?? e) }), { status: 500, headers: corsHeaders });
   }
 });
-

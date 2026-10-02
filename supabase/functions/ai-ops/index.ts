@@ -196,4 +196,3 @@ Responda em markdown enxuto com seções: 📊 Status, 🚨 Alertas, ✅ Ações
     return new Response(JSON.stringify({ error: e?.message || 'internal_error' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
 });
-

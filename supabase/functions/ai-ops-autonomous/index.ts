@@ -249,4 +249,3 @@ Retorne JSON: { "suggested_value_brl": número, "probability": 0-100, "expected_
     return new Response(JSON.stringify({ error: e?.message }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
 });
-
