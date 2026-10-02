@@ -1,3 +1,4 @@
+import { openAIRequest, textModel } from '../_shared/openai.ts';
 /**
  * 🚀 ai-chat/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -36,7 +37,7 @@
  * │ 🌐 API EXTERNA                                                      │
  * └─────────────────────────────────────────────────────────────────────┘
  *
- * 🌐 ai.gateway.lovable.dev
+ * 🌐 api.openai.com
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🔐 SEGURANÇA                                                        │
@@ -143,9 +144,9 @@ serve(async (req) => {
     
     console.log(`[AI-Chat] Processing request - Conversation: ${safeConversationId}, Messages: ${messages.length}`);
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      console.error("[AI-Chat] LOVABLE_API_KEY not configured");
+    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
+    if (!OPENAI_API_KEY) {
+      console.error("[AI-Chat] OPENAI_API_KEY not configured");
       throw new Error("AI service not configured");
     }
 
@@ -182,15 +183,15 @@ serve(async (req) => {
       }
     }
 
-    // Call Lovable AI Gateway with streaming
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    // Call OpenAI API with streaming
+    const response = await openAIRequest('chat/completions', {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: textModel(),
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           ...messages,
@@ -259,3 +260,4 @@ serve(async (req) => {
 // 🌐 Falhas de API externa são tratadas e devolvidas como erro, sem derrubar o fluxo.
 // ✅ Toda resposta inclui os headers de CORS previstos, inclusive nos caminhos de erro.
 //
+

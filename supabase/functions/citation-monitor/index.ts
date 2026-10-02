@@ -1,3 +1,4 @@
+import { openAIRequest, textModel } from '../_shared/openai.ts';
 /**
  * 🚀 citation-monitor/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -38,7 +39,7 @@
  * │ 🌐 API EXTERNA                                                      │
  * └─────────────────────────────────────────────────────────────────────┘
  *
- * 🌐 ai.gateway.lovable.dev
+ * 🌐 api.openai.com
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🔐 SEGURANÇA                                                        │
@@ -70,7 +71,7 @@
  */
 
 // Citation Monitor — Edge Function
-// Pergunta para o Lovable AI Gateway (vários modelos) sobre a SevenDevX
+// Pergunta para o OpenAI API (vários modelos) sobre a SevenDevX
 // e registra automaticamente em `ai_citations` se foi mencionada.
 //
 // Pode ser chamada manualmente (POST sem body) ou via cron job.
@@ -86,15 +87,12 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 // ⚙️ CONSTANTS & CONFIGURATION
 // ============================================================================
 
-const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_ROLE = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
 // Modelos padrão (sobrescritos pelas settings se presentes)
-const DEFAULT_MODELS: { id: string; label: string }[] = [
-  { id: 'google/gemini-2.5-flash', label: 'Gemini' },
-  { id: 'openai/gpt-5-mini', label: 'ChatGPT' },
-];
+const DEFAULT_MODELS = [{ id: textModel(), label: `OpenAI (${textModel()})` }];
 
 // ============================================================================
 // 🔒 BUSINESS RULES & INVARIANTS
@@ -113,11 +111,6 @@ const DEFAULT_MODELS: { id: string; label: string }[] = [
 // 🧠 BUSINESS LOGIC
 // ============================================================================
 
-function modelLabel(id: string): string {
-  if (id.startsWith('google/gemini')) return id.includes('pro') ? 'Gemini Pro' : 'Gemini';
-  if (id.startsWith('openai/gpt')) return id.includes('5-mini') ? 'ChatGPT' : 'ChatGPT (GPT-5)';
-  return id;
-}
 
 // Perguntas padrão (sobrescritas pelas settings se presentes)
 const DEFAULT_QUERIES = [
@@ -144,10 +137,10 @@ function detectSentiment(text: string, mentioned: boolean): 'positive' | 'neutra
 
 async function askModel(model: string, query: string): Promise<string | null> {
   try {
-    const r = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const r = await openAIRequest('chat/completions', {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -173,8 +166,8 @@ async function askModel(model: string, query: string): Promise<string | null> {
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
-  if (!LOVABLE_API_KEY) {
-    return new Response(JSON.stringify({ error: 'Missing LOVABLE_API_KEY' }), {
+  if (!OPENAI_API_KEY) {
+    return new Response(JSON.stringify({ error: 'Missing OPENAI_API_KEY' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -220,10 +213,8 @@ Deno.serve(async (req) => {
   const settingsQueries: string[] | undefined = Array.isArray(settings?.queries) ? (settings!.queries as string[]) : undefined;
   const queries = customQueries?.length ? customQueries : (settingsQueries?.length ? settingsQueries : DEFAULT_QUERIES);
 
-  const settingsModels: string[] | undefined = Array.isArray(settings?.models) ? (settings!.models as string[]) : undefined;
-  const MODELS = (settingsModels?.length
-    ? settingsModels.map((id) => ({ id, label: modelLabel(id) }))
-    : DEFAULT_MODELS);
+  // Legacy Gemini settings cannot be sent to OpenAI or mislabeled as Gemini results.
+  const MODELS = DEFAULT_MODELS;
 
   const results: any[] = [];
   let mentions = 0;
@@ -277,3 +268,4 @@ Deno.serve(async (req) => {
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
 });
+

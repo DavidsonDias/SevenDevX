@@ -1,3 +1,4 @@
+import { openAIRequest, imageModel } from '../_shared/openai.ts';
 /**
  * 🚀 logo-variations-ai/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -38,7 +39,7 @@
  * │ 🌐 API EXTERNA                                                      │
  * └─────────────────────────────────────────────────────────────────────┘
  *
- * 🌐 ai.gateway.lovable.dev
+ * 🌐 api.openai.com
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🔐 SEGURANÇA                                                        │
@@ -96,7 +97,7 @@
  * @see supabase/functions/README.md
  * ═══════════════════════════════════════════════════════════════════════
  */
-// 🎨 logo-variations-ai — gera variações de logo via Lovable AI (Gemini image)
+// 🎨 logo-variations-ai — gera variações de logo via OpenAI Images
 // Variantes: iconmark, horizontal, vertical, monochrome
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
@@ -108,7 +109,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')!;
+const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY')!;
 
 const VARIANT_PROMPTS: Record<string, string> = {
   iconmark: "Produce ONLY the abstract icon/mark (no text), centered on a transparent-looking white background, premium minimal vector style, flat, geometric, instantly recognizable",
@@ -135,20 +136,22 @@ const VARIANT_PROMPTS: Record<string, string> = {
 // ============================================================================
 
 async function genImage(prompt: string): Promise<string | null> {
-  const res = await fetch("https://ai.gateway.lovable.dev/v1/images/generations", {
+  const res = await openAIRequest('images/generations', {
     method: "POST",
-    headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+    headers: { Authorization: `Bearer ${OPENAI_API_KEY}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      model: "google/gemini-2.5-flash-image",
-      messages: [{ role: "user", content: prompt }],
-      modalities: ["image", "text"],
+      model: imageModel(),
+      prompt,
+      n: 1,
+      size: "1024x1024",
+      quality: "medium",
+      output_format: "png",
     }),
   });
   if (!res.ok) return null;
   const j = await res.json();
-  const b64 = j?.data?.[0]?.b64_json
-    ?? j?.choices?.[0]?.message?.images?.[0]?.image_url?.url?.split(',')?.[1];
-  return b64 || null;
+  const b64 = j?.data?.[0]?.b64_json;
+  return typeof b64 === "string" ? b64 : null;
 }
 
 // ============================================================================
@@ -188,7 +191,7 @@ Deno.serve(async (req) => {
       const { data: row } = await supa.from('logo_variations').insert({
         slug: slug || name.toLowerCase().replace(/\s+/g,'-'),
         name, variant_kind: k, image_url: pub.publicUrl,
-        prompt, ai_model: 'google/gemini-2.5-flash-image', generated_by: u.user.id,
+        prompt, ai_model: imageModel(), generated_by: u.user.id,
       }).select().single();
       results.push({ kind: k, image_url: pub.publicUrl, id: row?.id });
     }

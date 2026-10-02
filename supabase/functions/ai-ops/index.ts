@@ -1,3 +1,4 @@
+import { openAIRequest, textModel } from '../_shared/openai.ts';
 /**
  * 🚀 ai-ops/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -38,7 +39,7 @@
  * │ 🌐 API EXTERNA                                                      │
  * └─────────────────────────────────────────────────────────────────────┘
  *
- * 🌐 ai.gateway.lovable.dev
+ * 🌐 api.openai.com
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🔐 SEGURANÇA                                                        │
@@ -96,7 +97,7 @@
  * @see supabase/functions/README.md
  * ═══════════════════════════════════════════════════════════════════════
  */
-// AI Ops assistant: analyzes recent events/logs/incidents via Lovable AI Gateway. Admin-only.
+// AI Ops assistant: analyzes recent events/logs/incidents via OpenAI API. Admin-only.
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
@@ -107,7 +108,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')!;
+const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY')!;
 
 // ============================================================================
 // 🔒 BUSINESS RULES & INVARIANTS
@@ -176,11 +177,11 @@ Pergunta do operador: ${question || 'Resuma o estado atual do sistema, destaque 
 
 Responda em markdown enxuto com seções: 📊 Status, 🚨 Alertas, ✅ Ações sugeridas.`;
 
-    const resp = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const resp = await openAIRequest('chat/completions', {
       method: 'POST',
-      headers: { 'Authorization': `Bearer ${LOVABLE_API_KEY}`, 'Content-Type': 'application/json' },
+      headers: { 'Authorization': `Bearer ${OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
+        model: textModel(),
         messages: [{ role: 'user', content: prompt }],
       }),
     });
@@ -195,3 +196,4 @@ Responda em markdown enxuto com seções: 📊 Status, 🚨 Alertas, ✅ Ações
     return new Response(JSON.stringify({ error: e?.message || 'internal_error' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
 });
+

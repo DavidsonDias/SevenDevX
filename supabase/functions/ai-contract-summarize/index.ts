@@ -1,3 +1,4 @@
+import { openAIRequest, textModel } from '../_shared/openai.ts';
 /**
  * 🚀 ai-contract-summarize/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -37,7 +38,7 @@
  * │ 🌐 API EXTERNA                                                      │
  * └─────────────────────────────────────────────────────────────────────┘
  *
- * 🌐 ai.gateway.lovable.dev
+ * 🌐 api.openai.com
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🔐 SEGURANÇA                                                        │
@@ -96,7 +97,7 @@
  * ═══════════════════════════════════════════════════════════════════════
  */
 // AI Contract Summarizer — analisa texto longo de contrato e devolve resumo + riscos + checklist.
-// Admin only. Usa Lovable AI Gateway (Gemini Flash).
+// Admin only. Usa OpenAI API (Gemini Flash).
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
@@ -106,7 +107,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
-const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')!;
+const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY')!;
 
 const SYSTEM = `Você é um advogado sênior especializado em contratos de tecnologia (desenvolvimento de software, SaaS, licenciamento, NDA). Analise o contrato fornecido e retorne APENAS JSON válido com a seguinte estrutura:
 {
@@ -162,11 +163,11 @@ Deno.serve(async (req) => {
     }
     const truncated = text.length > 40000 ? text.slice(0, 40000) : text;
 
-    const r = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    const r = await openAIRequest('chat/completions', {
       method: 'POST',
-      headers: { 'Authorization': `Bearer ${LOVABLE_API_KEY}`, 'Content-Type': 'application/json' },
+      headers: { 'Authorization': `Bearer ${OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'google/gemini-2.5-flash',
+        model: textModel(),
         messages: [
           { role: 'system', content: SYSTEM },
           { role: 'user', content: `Contrato:\n\n${truncated}` },
@@ -190,3 +191,4 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ error: e?.message || 'unknown' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
 });
+
