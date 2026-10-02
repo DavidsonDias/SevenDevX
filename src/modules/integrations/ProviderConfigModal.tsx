@@ -406,7 +406,7 @@ export default function ProviderConfigModal({ provider, open, onClose, onOpenGui
               {secret_refs.length > 0 && (
                 <div className="mt-3 text-[11px] text-white/50 px-3 py-2.5 rounded-lg border border-white/10 bg-white/[0.03] leading-relaxed">
                   Por segurança, valores não são exibidos. Para adicionar/atualizar, abra{" "}
-                  <span className="text-white">Configurações → Secrets</span> no Lovable Cloud.
+                  <span className="text-white">Edge Functions → Secrets</span> no painel do Supabase da SevenDevX.
                   Depois clique em <span className="text-white">Verificar</span> para confirmar.
                 </div>
               )}

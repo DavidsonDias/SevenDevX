@@ -28,7 +28,21 @@ Deno.serve(async (req: Request) => {
     if (!response.ok) return new Response(JSON.stringify({ ok: false, provider_status: response.status }), { status: 502, headers });
     const data = await response.json();
     const ids = new Set((data.data || []).map((model: { id: string }) => model.id));
-    return new Response(JSON.stringify({ ok: true, authentication: 'verified', text_model: textModel(), text_model_available: ids.has(textModel()), image_model: imageModel(), image_model_available: ids.has(imageModel()), generated_content: false }), { headers });
+    const textAvailable = ids.has(textModel());
+    const imageAvailable = ids.has(imageModel());
+    return new Response(JSON.stringify({
+      ok: textAvailable && imageAvailable,
+      authentication: 'verified',
+      text_model: textModel(), text_model_available: textAvailable,
+      image_model: imageModel(), image_model_available: imageAvailable,
+      generated_content: false,
+      checks: [
+        { name: 'Validar API key', ok: true, detail: 'Autenticação confirmada' },
+        { name: 'Verificar modelo de texto', ok: textAvailable, detail: textModel() },
+        { name: 'Verificar modelo de imagem (sem geração)', ok: imageAvailable, detail: imageModel() },
+      ],
+      ...(!textAvailable || !imageAvailable ? { error: 'Modelo configurado indisponível' } : {}),
+    }), { headers });
   } catch {
     return new Response(JSON.stringify({ ok: false, error: 'Provider connection failed' }), { status: 502, headers });
   }

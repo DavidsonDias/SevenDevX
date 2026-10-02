@@ -254,10 +254,11 @@ export const useIntegrations = () => {
           // FunctionsHttpError esconde o corpo da resposta em `context`.
           // O clone() é obrigatório: o body só pode ser lido uma vez e o SDK
           // pode consumi-lo depois. Falha na leitura cai no message genérico.
-          status_code = (error as any)?.context?.response?.status;
+          const errorResponse = (error as any)?.context;
+          const response = errorResponse instanceof Response ? errorResponse : errorResponse?.response;
+          status_code = response?.status;
           let detail = error.message;
           try {
-            const response = (error as any)?.context?.response;
             const json = response ? await response.clone().json() : null;
             detail = json?.error || json?.checks?.at?.(-1)?.detail || detail;
           } catch {}
