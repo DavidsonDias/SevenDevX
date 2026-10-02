@@ -69,7 +69,7 @@
  * - Diagnóstico contextual + retry inteligente
  */
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CheckCircle2, X, Loader2, AlertTriangle, Zap, RotateCw, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import LogoRenderer from "@/components/ui/logo/LogoRenderer";
@@ -134,7 +134,15 @@ export default function GuidedConnectionTest({
   const [result, setResult] = useState<ConnectionTestResult | null>(null);
 
   const cat = provider ? findCatalogProvider(provider.id) : null;
-  const labels = provider ? STEPS_BY_PROVIDER[provider.id] ?? DEFAULT_STEPS : [];
+  const labels = result?.checks?.length
+    ? result.checks.map((check) => check.name)
+    : provider ? STEPS_BY_PROVIDER[provider.id] ?? DEFAULT_STEPS : [];
+  useEffect(() => {
+    setStatuses([]);
+    setDetails([]);
+    setLatencies([]);
+    setResult(null);
+  }, [provider?.id, open]);
 
   const reset = () => {
     setStatuses(labels.map(() => "pending"));
