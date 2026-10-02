@@ -1,3 +1,4 @@
+import { openAIRequest, textModel } from '../_shared/openai.ts';
 /**
  * 🚀 project-generator/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -38,7 +39,7 @@
  * │ 🌐 API EXTERNA                                                      │
  * └─────────────────────────────────────────────────────────────────────┘
  *
- * 🌐 ai.gateway.lovable.dev
+ * 🌐 api.openai.com
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🔐 SEGURANÇA                                                        │
@@ -147,7 +148,7 @@ const slugify = (s: string) =>
 
 async function callAI(apiKey: string, system: string, user: string, schema?: any) {
   const body: any = {
-    model: "google/gemini-2.5-flash",
+    model: textModel(),
     messages: [
       { role: "system", content: system },
       { role: "user", content: user },
@@ -157,7 +158,7 @@ async function callAI(apiKey: string, system: string, user: string, schema?: any
     body.tools = [{ type: "function", function: schema }];
     body.tool_choice = { type: "function", function: { name: schema.name } };
   }
-  const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+  const resp = await openAIRequest('chat/completions', {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify(body),
@@ -182,10 +183,10 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const apiKey = Deno.env.get("LOVABLE_API_KEY");
+    const apiKey = Deno.env.get("OPENAI_API_KEY");
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
     const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    if (!apiKey) throw new Error("LOVABLE_API_KEY not configured");
+    if (!apiKey) throw new Error("OPENAI_API_KEY not configured");
 
     // Validate caller is admin (use anon client + JWT)
     const authHeader = req.headers.get("Authorization") || "";
@@ -373,7 +374,7 @@ Deno.serve(async (req) => {
             title: d.title,
             content,
             generated_by_ai: true,
-            ai_model: "google/gemini-2.5-flash",
+            ai_model: textModel(),
             created_by: user.id,
             metadata: { estimate },
           });
@@ -402,7 +403,7 @@ Deno.serve(async (req) => {
         user_id: user.id,
         user_email: user.email,
         function_name: "project-generator",
-        model: "google/gemini-2.5-flash",
+        model: textModel(),
         prompt_chars: briefing.length,
         output_chars: JSON.stringify(estimate).length,
         success: true,

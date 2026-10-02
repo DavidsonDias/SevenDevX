@@ -1,3 +1,4 @@
+import { openAIRequest, textModel } from '../_shared/openai.ts';
 /**
  * 🚀 brand-scan/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -37,7 +38,7 @@
  * │ 🌐 API EXTERNA                                                      │
  * └─────────────────────────────────────────────────────────────────────┘
  *
- * 🌐 ai.gateway.lovable.dev
+ * 🌐 api.openai.com
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🔐 SEGURANÇA                                                        │
@@ -106,7 +107,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")!;
-const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY") || "";
+const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY") || "";
 
 const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36 SevenOS-BrandScan/3.0";
 
@@ -219,13 +220,13 @@ async function fetchText(url: string, timeoutMs = 6000): Promise<string | null> 
 }
 
 async function aiBrandSummary(payload: any): Promise<{ summary?: string; suggestedPalette?: string[]; personality?: string[] } | null> {
-  if (!LOVABLE_API_KEY) return null;
+  if (!OPENAI_API_KEY) return null;
   try {
-    const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const r = await openAIRequest('chat/completions', {
       method: "POST",
-      headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+      headers: { Authorization: `Bearer ${OPENAI_API_KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash-lite",
+        model: textModel(),
         messages: [{
           role: "user",
           content: `Analise esta identidade de marca. Retorne JSON puro {summary (2 frases pt-BR), suggestedPalette:[6 hex], personality:[3 adjetivos]}. Dados:\n${JSON.stringify(payload).slice(0, 3800)}`,

@@ -1,3 +1,4 @@
+import { openAIRequest, textModel } from '../_shared/openai.ts';
 /**
  * 🚀 ai-engine/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -37,7 +38,7 @@
  * │ 🌐 API EXTERNA                                                      │
  * └─────────────────────────────────────────────────────────────────────┘
  *
- * 🌐 ai.gateway.lovable.dev
+ * 🌐 api.openai.com
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🔐 SEGURANÇA                                                        │
@@ -95,7 +96,7 @@
  * @see supabase/functions/README.md
  * ═══════════════════════════════════════════════════════════════════════
  */
-// AI Engine — generates briefings, proposals, scopes, summaries, contracts via Lovable AI Gateway
+// AI Engine — generates briefings, proposals, scopes, summaries, contracts via OpenAI API
 // deno-lint-ignore-file no-explicit-any
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
@@ -178,8 +179,8 @@ Deno.serve(async (req) => {
       });
     }
 
-    const apiKey = Deno.env.get("LOVABLE_API_KEY");
-    if (!apiKey) throw new Error("LOVABLE_API_KEY not configured");
+    const apiKey = Deno.env.get("OPENAI_API_KEY");
+    if (!apiKey) throw new Error("OPENAI_API_KEY not configured");
 
     const { task, context, model } = await req.json();
     const system = SYSTEM_PROMPTS[task];
@@ -197,11 +198,11 @@ Deno.serve(async (req) => {
 
     const userMsg = JSON.stringify(enrichedContext, null, 2);
 
-    const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const resp = await openAIRequest('chat/completions', {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: model || "google/gemini-2.5-flash",
+        model: textModel(),
         messages: [
           { role: "system", content: system },
           { role: "user", content: userMsg },

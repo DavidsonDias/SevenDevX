@@ -1,3 +1,4 @@
+import { openAIRequest } from '../_shared/openai.ts';
 /**
  * 🚀 health-collector/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -37,7 +38,7 @@
  * │ 🌐 API EXTERNA                                                      │
  * └─────────────────────────────────────────────────────────────────────┘
  *
- * 🌐 ai.gateway.lovable.dev
+ * 🌐 api.openai.com
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🔐 SEGURANÇA                                                        │
@@ -104,7 +105,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY');
+const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY');
 const CRON_SECRET = Deno.env.get('CRON_SECRET') ?? '';
 
 // ============================================================================
@@ -164,9 +165,9 @@ Deno.serve(async (req) => {
         return r.status < 500;
       }),
       check('ai_gateway', async () => {
-        if (!LOVABLE_API_KEY) return false;
-        const r = await fetch('https://ai.gateway.lovable.dev/v1/models', {
-          headers: { Authorization: `Bearer ${LOVABLE_API_KEY}` },
+        if (!OPENAI_API_KEY) return false;
+        const r = await openAIRequest('models', {
+          headers: { Authorization: `Bearer ${OPENAI_API_KEY}` },
         });
         return r.ok;
       }),

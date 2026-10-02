@@ -1,3 +1,4 @@
+import { openAIRequest, textModel } from '../_shared/openai.ts';
 /**
  * 🚀 ai-ops-autonomous/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -38,7 +39,7 @@
  * │ 🌐 API EXTERNA                                                      │
  * └─────────────────────────────────────────────────────────────────────┘
  *
- * 🌐 ai.gateway.lovable.dev
+ * 🌐 api.openai.com
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🔐 SEGURANÇA                                                        │
@@ -107,7 +108,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')!;
+const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY')!;
 
 // ============================================================================
 // 🔒 BUSINESS RULES & INVARIANTS
@@ -127,11 +128,11 @@ const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')!;
 // ============================================================================
 
 async function ai(prompt: string, system = 'Você é um analista de negócios sênior da SevenDevX. Responda APENAS com JSON válido.') {
-  const r = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+  const r = await openAIRequest('chat/completions', {
     method: 'POST',
-    headers: { 'Authorization': `Bearer ${LOVABLE_API_KEY}`, 'Content-Type': 'application/json' },
+    headers: { 'Authorization': `Bearer ${OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'google/gemini-2.5-flash',
+      model: textModel(),
       messages: [{ role: 'system', content: system }, { role: 'user', content: prompt }],
       response_format: { type: 'json_object' },
     }),

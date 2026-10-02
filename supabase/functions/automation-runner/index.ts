@@ -1,3 +1,4 @@
+import { openAIRequest, textModel } from '../_shared/openai.ts';
 /**
  * 🚀 automation-runner/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -36,7 +37,7 @@
  * │ 🌐 API EXTERNA                                                      │
  * └─────────────────────────────────────────────────────────────────────┘
  *
- * 🌐 ai.gateway.lovable.dev
+ * 🌐 api.openai.com
  *
  * ┌─────────────────────────────────────────────────────────────────────┐
  * │ 🔐 SEGURANÇA                                                        │
@@ -108,7 +109,7 @@ const corsHeaders = {
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
 
 // ============================================================================
 // 🔒 BUSINESS RULES & INVARIANTS
@@ -198,12 +199,12 @@ async function runAction(act: any, payload: any, sb: any): Promise<any> {
       return { ok: res.ok };
     }
     case "ai.summarize": {
-      if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY missing");
+      if (!OPENAI_API_KEY) throw new Error("OPENAI_API_KEY missing");
       const prompt = `${params.prompt ?? "Resuma:"}\n\n${JSON.stringify(payload)}`;
-      const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      const res = await openAIRequest('chat/completions', {
         method: "POST",
-        headers: { "Content-Type": "application/json", Authorization: `Bearer ${LOVABLE_API_KEY}` },
-        body: JSON.stringify({ model: params.model ?? "google/gemini-2.5-flash", messages: [{ role: "user", content: prompt }] }),
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${OPENAI_API_KEY}` },
+        body: JSON.stringify({ model: textModel(), messages: [{ role: "user", content: prompt }] }),
       });
       const j = await res.json();
       return { ok: res.ok, content: j.choices?.[0]?.message?.content };
