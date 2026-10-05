@@ -73,7 +73,9 @@ WHERE routine_schema='public' AND grantee IN ('PUBLIC','anon','authenticated','s
 ORDER BY routine_name,grantee;
 
 SELECT pubname,schemaname,tablename FROM pg_publication_tables ORDER BY pubname,schemaname,tablename;
-SELECT jobid,jobname,schedule,active,database,username,command FROM cron.job ORDER BY jobid;
+-- O comando pode conter headers ou credenciais; inventarie apenas sua assinatura.
+SELECT jobid,jobname,schedule,active,database,username,md5(command) AS command_md5
+FROM cron.job ORDER BY jobid;
 
 SELECT id,name,public,file_size_limit,allowed_mime_types,created_at,updated_at
 FROM storage.buckets ORDER BY id;
@@ -89,5 +91,6 @@ SELECT provider,count(*) FROM auth.identities GROUP BY provider ORDER BY provide
 SELECT count(*) AS mfa_factors FROM auth.mfa_factors;
 SELECT role,count(*) FROM public.user_roles GROUP BY role ORDER BY role;
 
-SELECT version,name,created_by,idempotency_key FROM supabase_migrations.schema_migrations ORDER BY version;
+-- Não exponha created_by: em alguns ambientes ele contém identificador pessoal.
+SELECT version,name,idempotency_key FROM supabase_migrations.schema_migrations ORDER BY version;
 COMMIT;
