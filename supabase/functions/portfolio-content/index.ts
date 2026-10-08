@@ -183,7 +183,8 @@ function buildTechResolver(
     // 🔒 Só reaproveitamos icon_url absoluto: caminhos locais do SevenOS
     //    (`/icons/...`, `local:`) quebram em sites externos.
     const isAbsolute = (v?: string | null) =>
-      typeof v === "string" && /^(https?:|data:)/.test(v);
+      typeof v === "string" && /^(https?:|data:)/.test(v) &&
+      !v.startsWith("https://phdmdnopdlfywymptimy.supabase.co/");
     const registryIcon = hit?.icon_url as string | undefined;
     const inputIcon = input.iconUrl as string | undefined;
     // 🔒 Proxy próprio evita bloqueio de CSP/Service Worker em domínios externos.
