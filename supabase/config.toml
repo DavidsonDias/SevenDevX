@@ -36,3 +36,10 @@ verify_jwt = false
 
 [functions.provider-secrets-check]
 verify_jwt = false
+
+# Read-only portfolio CMS and already-public cover assets.
+[functions.portfolio-content]
+verify_jwt = false
+
+[functions.portfolio-cover]
+verify_jwt = false
