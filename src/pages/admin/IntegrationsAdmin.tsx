@@ -269,7 +269,7 @@ export default function IntegrationsAdmin() {
   }, [providers, testConnection]);
 
   const stats = useMemo(() => {
-    const active = providers.filter((p) => p.is_active).length;
+    const connected = providers.filter((p) => p.is_connected).length;
     const offline = providers.filter((p) => p.health_status === "offline").length;
     const operational = providers.filter((p) => p.health_status === "operational").length;
     const lastSync = providers
@@ -277,7 +277,7 @@ export default function IntegrationsAdmin() {
       .filter(Boolean)
       .sort()
       .pop();
-    return { active, offline, operational, total: providers.length, lastSync };
+    return { connected, offline, operational, total: providers.length, lastSync };
   }, [providers]);
 
   const filtered = providers.filter((p) => {
@@ -306,7 +306,7 @@ export default function IntegrationsAdmin() {
     >
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-8">
-        <Kpi icon={Plug} label="Conectadas" value={stats.active} hint={`${stats.total} totais`} />
+        <Kpi icon={Plug} label="Conectadas" value={stats.connected} hint={`${stats.total} totais`} />
         <Kpi icon={CheckCircle2} label="Operacionais" value={stats.operational} />
         <Kpi icon={AlertTriangle} label="Falhas" value={stats.offline} hint="health offline" />
         <Kpi icon={Activity} label="Requests 24h" value="—" hint="em breve" />
