@@ -1,3 +1,38 @@
 project_id = "ajxsfjmcpolfgzpzpehl"
+
 [functions.tech-icon]
+verify_jwt = false
+
+# Diagnostics validate the user JWT and admin role inside each handler.
+[functions.openai-test]
+verify_jwt = false
+
+[functions.github-test]
+verify_jwt = false
+
+[functions.vercel-test]
+verify_jwt = false
+
+[functions.figma-test]
+verify_jwt = false
+
+[functions.whatsapp-test]
+verify_jwt = false
+
+[functions.resend-test]
+verify_jwt = false
+
+[functions.slack-test]
+verify_jwt = false
+
+[functions.discord-test]
+verify_jwt = false
+
+[functions.stripe-test]
+verify_jwt = false
+
+[functions.provider-test]
+verify_jwt = false
+
+[functions.provider-secrets-check]
 verify_jwt = false
