@@ -251,6 +251,23 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
+    const { data: settings, error: settingsError } = await supabase
+      .from("portfolio_settings")
+      .select(
+        "site_key, profile, hero, about, links, skills, seo, cv, navigation, services, faqs, contact, footer, stats, highlights, pwa, flags, content_version, is_published, updated_at",
+      )
+      .eq("site_key", siteKey)
+      .maybeSingle();
+
+    if (settingsError) throw settingsError;
+
+    if (!settings || settings.is_published !== true) {
+      return new Response(
+        JSON.stringify({ version: API_VERSION, site: siteKey, published: false, projects: [], posts: [] }),
+        { status: sub.length ? 404 : 200, headers: { ...JSON_HEADERS, "Cache-Control": "no-store" } },
+      );
+    }
+
     const { data: techRows } = await supabase
       .from("tech_registry")
       .select(
@@ -310,21 +327,6 @@ Deno.serve(async (req) => {
     }
 
     // ------------------------------------------------------------------ payload
-    const { data: settings } = await supabase
-      .from("portfolio_settings")
-      .select(
-        "site_key, profile, hero, about, links, skills, seo, cv, navigation, services, faqs, contact, footer, stats, highlights, pwa, flags, content_version, is_published, updated_at",
-      )
-      .eq("site_key", siteKey)
-      .maybeSingle();
-
-    if (settings && settings.is_published === false) {
-      return new Response(
-        JSON.stringify({ version: API_VERSION, site: siteKey, published: false, projects: [], posts: [] }),
-        { headers: JSON_HEADERS },
-      );
-    }
-
     const { data: projectRows } = await supabase
       .from("projects")
       .select(PROJECT_COLUMNS)
@@ -391,7 +393,10 @@ Deno.serve(async (req) => {
       })),
     };
 
-    const etag = `W/"${siteKey}-${contentVersion}"`;
+    const { generated_at: _generatedAt, ...cacheContent } = payload;
+    const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(JSON.stringify(cacheContent)));
+    const hash = Array.from(new Uint8Array(digest), (b) => b.toString(16).padStart(2, "0")).join("");
+    const etag = `W/"${hash}"`;
     if (req.headers.get("if-none-match") === etag) {
       return new Response(null, { status: 304, headers: { ...JSON_HEADERS, ETag: etag } });
     }
