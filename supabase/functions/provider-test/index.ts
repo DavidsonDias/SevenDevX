@@ -155,6 +155,18 @@ const SPECS: Record<string, ProviderSpec> = {
     const r = await timed("Listar modelos", () => fetch("https://api.openai.com/v1/models", { headers: { Authorization: `Bearer ${s.OPENAI_API_KEY}` } }), (_r, d) => `${(d.data || []).length} modelos`);
     return { checks: [r.check], payload: { models: (r.data.data || []).slice(0, 3).map((m: any) => m.id) } };
   } },
+  cohere: { name: "Cohere", secrets: ["COHERE_API_KEY"], test: async (s) => {
+    const r = await timed("Listar modelos", () => fetch("https://api.cohere.com/v1/models?page_size=3", {
+      headers: { Authorization: `Bearer ${s.COHERE_API_KEY}` },
+      signal: AbortSignal.timeout(10000),
+    }), (_r, d) => `${Array.isArray(d.models) ? d.models.length : 0} modelos`);
+    const models = Array.isArray(r.data?.models) ? r.data.models : [];
+    if (r.check.ok && !Array.isArray(r.data?.models)) {
+      r.check.ok = false;
+      r.check.detail = "Resposta inválida do provider";
+    }
+    return { checks: [r.check], payload: { models: models.slice(0, 3).map((m: { name: string }) => m.name) } };
+  } },
   gemini: { name: "Google Gemini", secrets: ["GEMINI_API_KEY"], test: async (s) => {
     const r = await timed("Validar API key", () => fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${s.GEMINI_API_KEY}`), (_r, d) => `${(d.models || []).length} modelos`);
     return { checks: [r.check], payload: { models: (r.data.models || []).slice(0, 3).map((m: any) => m.name) } };
