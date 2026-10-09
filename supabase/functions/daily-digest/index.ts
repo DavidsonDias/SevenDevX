@@ -183,7 +183,7 @@ Deno.serve(async (req) => {
         </div>
         ${leads?.length ? `<h2 style="font-size:14px;text-transform:uppercase;letter-spacing:.15em;color:#888;margin:24px 0 12px">Top leads</h2>${leads.slice(0,5).map((l:any)=>`<div style="padding:10px 12px;background:#0f0f0f;border:1px solid #1f1f1f;border-radius:8px;margin-bottom:6px;display:flex;justify-content:space-between"><span>${l.name||l.email} ${l.company?`· <span style="color:#888">${l.company}</span>`:''}</span><span style="color:#3b82f6;font-weight:600">${l.lead_score||0}</span></div>`).join('')}` : ''}
         ${stale?.length ? `<h2 style="font-size:14px;text-transform:uppercase;letter-spacing:.15em;color:#888;margin:24px 0 12px">Parados há +7 dias</h2>${stale.slice(0,5).map((s:any)=>`<div style="padding:10px 12px;background:#0f0f0f;border:1px solid #1f1f1f;border-radius:8px;margin-bottom:6px"><strong>${s.title}</strong> <span style="color:#888">· ${s.days_idle}d</span></div>`).join('')}` : ''}
-        <div style="margin-top:32px;padding-top:24px;border-top:1px solid #222;text-align:center"><a href="https://sevendevx.lovable.app/admin" style="display:inline-block;padding:12px 24px;background:#3b82f6;color:#fff;text-decoration:none;border-radius:8px;font-weight:600">Abrir SevenOS</a></div>
+        <div style="margin-top:32px;padding-top:24px;border-top:1px solid #222;text-align:center"><a href="https://www.sevendevx.com/admin" style="display:inline-block;padding:12px 24px;background:#3b82f6;color:#fff;text-decoration:none;border-radius:8px;font-weight:600">Abrir SevenOS</a></div>
         <p style="color:#555;font-size:11px;text-align:center;margin-top:24px">Você recebe este digest por ser admin. Desabilite em /admin/settings.</p>
       </div>`;
 
