@@ -220,7 +220,7 @@ Deno.serve(async (req) => {
         ` : ''}
 
         <div style="margin-top:36px;padding-top:24px;border-top:1px solid #1a1a1a;text-align:center">
-          <a href="https://sevendevx.lovable.app/admin" style="display:inline-block;padding:14px 28px;background:#3b82f6;color:#fff;text-decoration:none;border-radius:10px;font-weight:600;letter-spacing:.02em">Abrir SevenOS</a>
+          <a href="https://www.sevendevx.com/admin" style="display:inline-block;padding:14px 28px;background:#3b82f6;color:#fff;text-decoration:none;border-radius:10px;font-weight:600;letter-spacing:.02em">Abrir SevenOS</a>
         </div>
         <p style="color:#444;font-size:10px;text-align:center;margin-top:20px;letter-spacing:.1em;text-transform:uppercase">Weekly Intelligence · desabilite em /admin/settings</p>
       </div>`;

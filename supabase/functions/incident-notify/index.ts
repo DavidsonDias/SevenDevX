@@ -153,7 +153,7 @@ Deno.serve(async (req) => {
     const sev = (inc.severity || 'medium').toLowerCase();
     const title = `🚨 ${sev.toUpperCase()} · ${inc.title || 'Novo incident'}`;
     const desc = inc.description || inc.impact || 'Incident aberto pelo SevenOS.';
-    const url = `https://sevendevx.lovable.app/admin/incidents`;
+    const url = `https://www.sevendevx.com/admin/incidents`;
     const results: any = {};
 
     // Discord
