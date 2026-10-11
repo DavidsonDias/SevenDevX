@@ -127,7 +127,7 @@ export default function SecurityAdmin() {
   const [saving, setSaving] = useState(false);
   const [audit, setAudit] = useState<AuditRow[]>([]);
   const [sessionsCount, setSessionsCount] = useState(0);
-  const [mfaCount, setMfaCount] = useState(0);
+  const [mfaCount, setMfaCount] = useState<number | string>("—");
   const [newIp, setNewIp] = useState("");
 
   const pwd = useMemo(() => ({ ...DEFAULT_PWD, ...(settings.password_policy ?? {}) }), [settings]);
@@ -152,10 +152,10 @@ export default function SecurityAdmin() {
         .order("occurred_at", { ascending: false })
         .limit(8);
       const s: any = await (supabase.from("admin_sessions") as any).select("*", { count: "exact", head: true }).filter("revoked_at", "is", null);
-      const m: any = await (supabase.from("user_mfa") as any).select("*", { count: "exact", head: true }).eq("enabled", true);
+      const m = await supabase.rpc("admin_mfa_count" as never);
       setAudit(((a.data as unknown) as AuditRow[]) ?? []);
       setSessionsCount(s.count ?? 0);
-      setMfaCount(m.count ?? 0);
+      setMfaCount(m.error ? "Indisponível" : Number(m.data));
     })();
   }, []);
 
@@ -422,3 +422,4 @@ function Toggle({ label, checked, onChange }: any) {
     </button>
   );
 }
+
