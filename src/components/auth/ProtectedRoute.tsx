@@ -62,6 +62,7 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { MfaGate } from "./MfaGate";
 
 // ============================================================================
 // 🧩 TYPES & CONTRACTS
@@ -112,7 +113,7 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
     );
   }
 
-  return <>{children}</>;
+  return <MfaGate>{children}</MfaGate>;
 };
 
 // ============================================================================
@@ -120,3 +121,4 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
 // ============================================================================
 
 export default ProtectedRoute;
+

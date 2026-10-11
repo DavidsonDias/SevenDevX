@@ -1,55 +1,49 @@
-/**
- * useMfa.ts — SevenDevX
- * ─────────────────────────────────────────────────────────────────────
- * @file src/hooks/useMfa.ts
- * @module Hooks
- *
- * @description
- * Enrolamento e verificação de TOTP; segredos nunca são expostos ao cliente.
- *
- * @remarks Cache e invalidação via React Query; efeitos colaterais concentrados nas mutations.
- *
- * @see src/hooks/README.md
- * ─────────────────────────────────────────────────────────────────────
- */
-
-/**
- * 🔐 useMfa — estado do TOTP do usuário atual.
- */
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
-
 export function useMfa() {
   const [enabled, setEnabled] = useState(false);
   const [loading, setLoading] = useState(true);
-
+  const [error, setError] = useState<string | null>(null);
   const load = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase.from("user_mfa").select("enabled_at").maybeSingle();
-    setEnabled(!!data?.enabled_at);
-    setLoading(false);
+    try {
+      const result = await supabase.auth.mfa.listFactors();
+      if (result.error) throw result.error;
+      setEnabled(result.data.totp.length > 0);
+      setError(null);
+    } catch {
+      setError("Não foi possível verificar o autenticador. Tente novamente.");
+    } finally { setLoading(false); }
   }, []);
-
-  useEffect(() => { load(); }, [load]);
-
+  useEffect(() => { void load(); }, [load]);
   const enroll = useCallback(async () => {
-    const { data, error } = await supabase.functions.invoke("mfa-enroll", { body: {} });
+    const { data, error } = await supabase.auth.mfa.enroll({ factorType: "totp", issuer: "SevenDevX" });
     if (error) throw error;
-    return data as { secret: string; otpauth: string; backup_codes: string[] };
+    return { id: data.id, secret: data.totp.secret, qr_code: data.totp.qr_code };
   }, []);
-
-  const verify = useCallback(async (code: string) => {
-    const { data, error } = await supabase.functions.invoke("mfa-verify", { body: { code } });
-    if (error) throw error;
-    if ((data as any)?.verified) await load();
-    return data as { verified: boolean; used_backup?: boolean };
+  const verify = useCallback(async (factorId: string, code: string) => {
+    if (!/^\d{6}$/.test(code)) throw new Error("Informe os seis dígitos do autenticador.");
+    const result = await supabase.auth.mfa.challengeAndVerify({ factorId, code });
+    if (result.error) throw result.error;
+    await load();
+    return { verified: true };
   }, [load]);
-
   const disable = useCallback(async () => {
-    const { error } = await supabase.functions.invoke("mfa-disable", { body: {} });
-    if (!error) await load();
-    return !error;
+    const assurance = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+    if (assurance.error) throw assurance.error;
+    if (assurance.data.currentLevel !== "aal2") throw new Error("Confirme o autenticador antes de desativá-lo.");
+    const factors = await supabase.auth.mfa.listFactors();
+    if (factors.error) throw factors.error;
+    for (const factor of factors.data.totp) {
+      const result = await supabase.auth.mfa.unenroll({ factorId: factor.id });
+      if (result.error) throw result.error;
+    }
+    const refreshed = await supabase.auth.refreshSession();
+    if (refreshed.error) throw refreshed.error;
+    await load();
+    return true;
   }, [load]);
-
-  return { enabled, loading, enroll, verify, disable, reload: load };
+  return { enabled, loading, error, enroll, verify, disable, reload: load };
 }
+
+
