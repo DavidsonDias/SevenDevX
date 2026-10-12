@@ -8,15 +8,31 @@ export default function MfaAdmin() {
   const [enrollment, setEnrollment] = useState<Awaited<ReturnType<typeof mfa.enroll>> | null>(null);
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
   const run = async (action: () => Promise<void>) => {
     setBusy(true);
+    setActionError(null);
     try { await action(); }
-    catch { toast({ title: "Não foi possível concluir", description: "Confira o código e tente novamente. A desativação exige uma sessão confirmada pelo autenticador.", variant: "destructive" }); }
+    catch (error) {
+      const errorCode = error && typeof error === "object" && "code" in error ? String(error.code) : "";
+      const messages: Record<string, string> = {
+        mfa_factor_name_conflict: "Já existe um cadastro pendente com esse nome. Atualize esta página para carregar a correção e iniciar um novo cadastro.",
+        mfa_verification_failed: "O código não corresponde a este cadastro. Use o código do QR exibido nesta página, aguarde um novo código e confira se o horário do celular está automático.",
+        mfa_verification_rejected: "O código foi rejeitado. Aguarde um novo código do autenticador e tente novamente.",
+        mfa_challenge_expired: "A confirmação expirou. Digite um novo código do autenticador e tente novamente.",
+        mfa_factor_not_found: "Este cadastro não está mais disponível. Atualize a página e inicie novamente.",
+        too_many_enrolled_mfa_factors: "O limite de autenticadores foi atingido. Solicite ajuda à administração antes de remover qualquer cadastro.",
+      };
+      const description = messages[errorCode] ?? "Não foi possível concluir esta operação. Verifique sua conexão e tente novamente. Para desativar, confirme primeiro a sessão pelo autenticador.";
+      setActionError(description);
+      toast({ title: "Não foi possível concluir", description, variant: "destructive" });
+    }
     finally { setBusy(false); }
   };
   return <AdminPageShell title="Autenticação 2FA" subtitle="Proteja sua conta com um aplicativo autenticador">
     {mfa.loading ? <p role="status">Verificando autenticação…</p> : mfa.error ? <div role="alert"><p>{mfa.error}</p><button onClick={() => void mfa.reload()}>Tentar novamente</button></div> :
     <div className="max-w-2xl space-y-5">
+      {actionError && <p role="alert" className="rounded-xl border border-red-500/40 p-4">{actionError}</p>}
       <p>{mfa.enabled ? "Autenticador ativado nesta conta." : "Autenticador ainda não ativado."}</p>
       {!mfa.enabled && !enrollment && <button disabled={busy} onClick={() => void run(async () => { setEnrollment(await mfa.enroll()); })} className="px-5 py-3 rounded-xl bg-white text-black disabled:opacity-40">Ativar autenticador</button>}
       {enrollment && <form className="space-y-4" onSubmit={event => { event.preventDefault(); void run(async () => { await mfa.verify(enrollment.id, code); setEnrollment(null); setCode(""); toast({ title: "Autenticador ativado" }); }); }}>

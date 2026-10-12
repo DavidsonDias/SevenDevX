@@ -17,7 +17,7 @@ export function useMfa() {
   }, []);
   useEffect(() => { void load(); }, [load]);
   const enroll = useCallback(async () => {
-    const { data, error } = await supabase.auth.mfa.enroll({ factorType: "totp", issuer: "SevenDevX" });
+    const { data, error } = await supabase.auth.mfa.enroll({ factorType: "totp", issuer: "SevenDevX", friendlyName: `SevenDevX ${crypto.randomUUID()}` });
     if (error) throw error;
     const qr = data.totp.qr_code;
     const qrCode = qr.startsWith("data:image/svg+xml;")

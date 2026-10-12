@@ -50,4 +50,13 @@ test('SDK data URI is not wrapped a second time', async () => {
   assert.equal((await hook.enroll()).qr_code, qr);
 });
 
+test('restarting enrollment assigns distinct names without removing existing factors', async () => {
+  const { hook, calls } = fixture();
+  await hook.enroll();
+  await hook.enroll();
+  const enrollments = calls.filter(call => call[0] === 'enroll');
+  assert.notEqual(enrollments[0][1].friendlyName, enrollments[1][1].friendlyName);
+  assert.equal(calls.filter(call => call[0] === 'unenroll').length, 0);
+});
+
 
