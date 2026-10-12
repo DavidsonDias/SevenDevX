@@ -19,7 +19,11 @@ export function useMfa() {
   const enroll = useCallback(async () => {
     const { data, error } = await supabase.auth.mfa.enroll({ factorType: "totp", issuer: "SevenDevX" });
     if (error) throw error;
-    return { id: data.id, secret: data.totp.secret, qr_code: data.totp.qr_code };
+    const qr = data.totp.qr_code;
+    const qrCode = qr.startsWith("data:image/svg+xml;")
+      ? qr
+      : `data:image/svg+xml;charset=utf-8,${encodeURIComponent(qr)}`;
+    return { id: data.id, secret: data.totp.secret, qr_code: qrCode };
   }, []);
   const verify = useCallback(async (factorId: string, code: string) => {
     if (!/^\d{6}$/.test(code)) throw new Error("Informe os seis dígitos do autenticador.");

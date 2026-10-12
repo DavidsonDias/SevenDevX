@@ -23,7 +23,7 @@ function fixture(overrides = {}) {
 }
 test('enrollment uses native TOTP and retains factor ID for verification', async () => {
   const { hook, calls } = fixture();
-  assert.deepEqual(await hook.enroll(), { id: 'factor', secret: 'test-secret', qr_code: '<svg/>' });
+  assert.deepEqual(await hook.enroll(), { id: 'factor', secret: 'test-secret', qr_code: 'data:image/svg+xml;charset=utf-8,%3Csvg%2F%3E' });
   assert.equal(calls[0][1].factorType, 'totp');
 });
 test('invalid code cannot reach Auth verification', async () => {
@@ -43,6 +43,11 @@ test('AAL1 cannot remove a verified authenticator', async () => {
 test('factor enrollment errors are propagated', async () => {
   const { hook } = fixture({ enroll: async () => ({ error: new Error('disabled provider') }) });
   await assert.rejects(hook.enroll(), /disabled provider/);
+});
+test('SDK data URI is not wrapped a second time', async () => {
+  const qr = 'data:image/svg+xml;utf-8,<svg/>';
+  const { hook } = fixture({ enroll: async () => ({ data: { id: 'factor', totp: { secret: 'test-secret', qr_code: qr } }, error: null }) });
+  assert.equal((await hook.enroll()).qr_code, qr);
 });
 
 
