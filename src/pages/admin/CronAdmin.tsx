@@ -135,14 +135,21 @@ const MANUAL_TRIGGERS = [
 function CronInner() {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [running, setRunning] = useState<string | null>(null);
 
   const load = async () => {
     setLoading(true);
-    const { data, error } = await supabase.rpc("fn_cron_status" as any);
-    if (error) toast({ title: "Erro ao carregar", description: error.message, variant: "destructive" });
-    setJobs(((data as any) ?? []) as Job[]);
-    setLoading(false);
+    setLoadError(null);
+    try {
+      const { data, error } = await supabase.rpc("fn_cron_status" as any);
+      if (error) throw error;
+      setJobs(((data as any) ?? []) as Job[]);
+    } catch {
+      setLoadError("Não foi possível consultar os agendamentos. Verifique a configuração do serviço e as permissões de acesso. A ausência de resultados não confirma que não existem jobs.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { load(); }, []);
@@ -202,6 +209,8 @@ function CronInner() {
         </h3>
         {loading ? (
           <div className="py-12 text-center text-white/40"><Loader2 className="w-5 h-5 animate-spin mx-auto" /></div>
+        ) : loadError ? (
+          <div role="alert" className="p-4 border border-amber-400/30 rounded-xl text-sm text-amber-200">{loadError}</div>
         ) : jobs.length === 0 ? (
           <div className="py-10 text-center text-white/40 border border-white/10 rounded-xl text-sm">
             <Clock className="w-6 h-6 mx-auto mb-2 opacity-40" /> Nenhum job agendado
@@ -258,3 +267,4 @@ export default function CronAdmin() {
     </ProtectedRoute>
   );
 }
+
