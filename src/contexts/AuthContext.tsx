@@ -43,7 +43,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
-import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useSessionTracker } from "@/hooks/useSessionTracker";
@@ -101,6 +101,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const authRevision = useRef(0);
   useSessionTracker(user?.id);
 
   const checkAdminRole = useCallback(async (userId: string) => {
@@ -121,13 +122,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!mounted) return;
+      const revision = ++authRevision.current;
       setSession(session);
       setUser(session?.user ?? null);
+      setIsAdmin(false);
+      setIsLoading(!!session?.user);
 
       if (session?.user) {
         setTimeout(() => {
           checkAdminRole(session.user.id).then((admin) => {
-            if (mounted) setIsAdmin(admin);
+            if (mounted && revision === authRevision.current) {
+              setIsAdmin(admin);
+              setIsLoading(false);
+            }
           });
         }, 0);
       } else {
@@ -136,17 +143,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     (async () => {
+      const revision = authRevision.current;
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        if (!mounted) return;
+        if (!mounted || revision !== authRevision.current) return;
         setSession(session);
         setUser(session?.user ?? null);
         if (session?.user) {
           const admin = await checkAdminRole(session.user.id);
-          if (mounted) setIsAdmin(admin);
+          if (mounted && revision === authRevision.current) setIsAdmin(admin);
         }
       } finally {
-        if (mounted) setIsLoading(false);
+        if (mounted && revision === authRevision.current) setIsLoading(false);
       }
     })();
 
@@ -192,3 +200,4 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     </AuthContext.Provider>
   );
 }
+

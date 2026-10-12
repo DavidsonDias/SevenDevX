@@ -62,6 +62,7 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { MfaGate } from "./MfaGate";
 
 // ============================================================================
 // 🧩 TYPES & CONTRACTS
@@ -94,6 +95,7 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
 
   if (requiredRole === "admin" && !isAdmin) {
     return (
+      <MfaGate>
       <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-6">
         <div className="text-center space-y-4 max-w-md">
           <div className="text-6xl">🔒</div>
@@ -109,10 +111,11 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
           </a>
         </div>
       </div>
+      </MfaGate>
     );
   }
 
-  return <>{children}</>;
+  return <MfaGate>{children}</MfaGate>;
 };
 
 // ============================================================================
@@ -120,3 +123,4 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
 // ============================================================================
 
 export default ProtectedRoute;
+
