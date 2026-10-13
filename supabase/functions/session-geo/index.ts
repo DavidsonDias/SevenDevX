@@ -95,8 +95,8 @@
  * ═══════════════════════════════════════════════════════════════════════
  */
 // 🌍 Session Geo — enriquece sessão atual com país/cidade/ISP via ipapi.co.
-import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
-import { createClient } from 'npm:@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2.49.1';
+const corsHeaders = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type', 'Content-Type': 'application/json' };
 
 // ============================================================================
 // ⚙️ CONSTANTS & CONFIGURATION
@@ -125,26 +125,36 @@ const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  if (req.method !== 'POST') return new Response(JSON.stringify({ error: 'POST required' }), { status: 405, headers: corsHeaders });
   try {
     const authHeader = req.headers.get('Authorization') || '';
+    if (!authHeader.startsWith('Bearer ')) return new Response(JSON.stringify({ error: 'unauthorized' }), { status: 401, headers: corsHeaders });
     const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { global: { headers: { Authorization: authHeader } } });
     const { data: { user } } = await userClient.auth.getUser();
     if (!user) return new Response(JSON.stringify({ error: 'unauthorized' }), { status: 401, headers: corsHeaders });
+    const { data: admin, error: roleError } = await userClient.rpc('has_role', { _user_id: user.id, _role: 'admin' });
+    if (roleError || admin !== true) return new Response(JSON.stringify({ error: 'forbidden' }), { status: 403, headers: corsHeaders });
 
-    const { session_id } = await req.json();
+    let payload;
+    try { payload = await req.json(); } catch { return new Response(JSON.stringify({ error: 'invalid JSON' }), { status: 400, headers: corsHeaders }); }
+    const session_id = payload?.session_id;
+    if (typeof session_id !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(session_id)) return new Response(JSON.stringify({ error: 'invalid session_id' }), { status: 400, headers: corsHeaders });
+    const supa = createClient(SUPABASE_URL, SERVICE_KEY);
+    const { data: owned, error: ownershipError } = await supa.from('admin_sessions').select('id').eq('id', session_id).eq('user_id', user.id).is('revoked_at', null).maybeSingle();
+    if (ownershipError) throw new Error('Session lookup failed');
+    if (!owned) return new Response(JSON.stringify({ error: 'session not found' }), { status: 404, headers: corsHeaders });
     const ip = (req.headers.get('x-forwarded-for') ?? '').split(',')[0].trim() || req.headers.get('cf-connecting-ip') || '';
 
     let geo: any = {};
     if (ip) {
       try {
-        const r = await fetch(`https://ipapi.co/${ip}/json/`);
+        const r = await fetch(`https://ipapi.co/${encodeURIComponent(ip)}/json/`, { signal: AbortSignal.timeout(5000) });
         if (r.ok) geo = await r.json();
       } catch {}
     }
 
-    const supa = createClient(SUPABASE_URL, SERVICE_KEY);
     // detect suspicious: country change in last hour
-    const { data: recent } = await supa
+    const { data: recent, error: historyError } = await supa
       .from('admin_sessions')
       .select('country, last_seen_at')
       .eq('user_id', user.id)
@@ -152,10 +162,11 @@ Deno.serve(async (req) => {
       .neq('id', session_id)
       .order('last_seen_at', { ascending: false })
       .limit(1);
+    if (historyError) throw new Error('Session history failed');
 
     const suspicious = !!(geo.country_code && recent?.[0]?.country && recent[0].country !== geo.country_code);
 
-    await supa.from('admin_sessions').update({
+    const { data: updated, error: updateError } = await supa.from('admin_sessions').update({
       ip,
       country: geo.country_code ?? null,
       city: geo.city ?? null,
@@ -165,10 +176,12 @@ Deno.serve(async (req) => {
       isp: geo.org ?? null,
       is_suspicious: suspicious,
       geo_checked_at: new Date().toISOString(),
-    }).eq('id', session_id).eq('user_id', user.id);
+    }).eq('id', session_id).eq('user_id', user.id).is('revoked_at', null).select('id');
+    if (updateError) throw new Error('Session update failed');
+    if (!updated?.length) return new Response(JSON.stringify({ error: 'session not found' }), { status: 404, headers: corsHeaders });
 
     if (suspicious) {
-      await supa.from('notifications').insert({
+      const { error: notificationError } = await supa.from('notifications').insert({
         user_id: user.id,
         type: 'session.suspicious',
         title: 'Login suspeito detectado',
@@ -177,12 +190,13 @@ Deno.serve(async (req) => {
         severity: 'error',
         payload: { session_id, geo },
       });
+      if (notificationError) throw new Error('Notification persistence failed');
     }
 
     return new Response(JSON.stringify({ ok: true, geo, suspicious }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
-  } catch (e: any) {
-    return new Response(JSON.stringify({ error: e?.message || 'error' }), { status: 500, headers: corsHeaders });
+  } catch {
+    return new Response(JSON.stringify({ error: 'Session enrichment failed' }), { status: 500, headers: corsHeaders });
   }
 });
