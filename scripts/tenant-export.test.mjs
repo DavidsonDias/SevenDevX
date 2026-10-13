@@ -42,3 +42,20 @@ test('required bucket collection preserves downloaded bytes',async()=>{
  const files=[];const client={storage:{from:()=>({list:async()=>({data:[{name:'cover.jpg',id:'id',metadata:{size:5}}],error:null}),download:async()=>({data:new Blob(['cover']),error:null})})}};
  assert.equal(await collect(client,'portfolio-covers','',files),1);assert.equal(files[0].name,'storage/portfolio-covers/cover.jpg');assert.equal(new TextDecoder().decode(files[0].data),'cover');
 });
+test('archive byte and entry limits remain failed even if a caller catches overflow',()=>{
+ const create=new Function('Deno','createClient','crypto','exports',compiled+';return createArchiveFiles;')({env:{get:()=> 'test'},serve:()=>{}},()=>({}),webcrypto,{});
+ const files=create();const chunk=new Uint8Array(1024*1024);for(let i=0;i<24;i++)files.push({name:`${i}`,data:chunk});assert.throws(()=>files.push({name:'overflow',data:new Uint8Array(1)}));assert.equal(files.length,24);assert.throws(()=>files.assertBudget());assert.throws(()=>files.push({name:'empty',data:new Uint8Array()}));
+ const entries=create();for(let i=0;i<4000;i++)entries.push({name:`${i}`,data:new Uint8Array()});assert.throws(()=>entries.push({name:'overflow',data:new Uint8Array()}));assert.throws(()=>entries.assertBudget());
+});
+test('SDK fetch wrapper combines timeout with caller cancellation',async()=>{
+ let options;
+ const timed=new Function('Deno','createClient','crypto','exports','fetch',compiled+';return timedFetch;')({env:{get:()=> 'test'},serve:()=>{}},()=>({}),webcrypto,{},async(_input,init)=>{options=init;return new Response('{}');});
+ const controller=new AbortController();await timed('https://example.invalid',{signal:controller.signal});assert.ok(options.signal);controller.abort();assert.equal(options.signal.aborted,true);
+});
+test('database snapshot queries enforce aggregate byte and row budgets',async()=>{
+ const read=new Function('Deno','createClient','crypto','exports',compiled+';return fetchAllRows;')({env:{get:()=> 'test'},serve:()=>{}},()=>({}),webcrypto,{});
+ const client={from:()=>({select:()=>({range:async()=>({data:[{id:'test'}],error:null})})})};
+ await assert.rejects(read(client,'projects',{bytes:8*1024*1024,rows:0}));
+ await assert.rejects(read(client,'projects',{bytes:0,rows:20000}));
+ const budget={bytes:0,rows:0};assert.equal((await read(client,'projects',budget)).length,1);assert.equal(budget.rows,1);assert.ok(budget.bytes>0);
+});

@@ -149,6 +149,27 @@ const ALL_BUCKETS = ['blog-images', 'project-images', 'portfolio-covers', 'tech-
 const ASSET_EXT_RE = /\.(svg|png|jpe?g|webp|gif|ico|avif|bmp|pdf|docx?|xlsx?|pptx?|csv|md|txt|json|mp4|webm|mov|mp3|wav|ogg|glb|gltf|zip)$/i;
 const MAX_LINKED_ASSET_BYTES = 35 * 1024 * 1024;
 const EXTERNAL_ASSET_HOSTS = new Set(['images.unsplash.com', 'cdn.jsdelivr.net', 'raw.githubusercontent.com', 'avatars.githubusercontent.com']);
+const MAX_ARCHIVE_PAYLOAD_BYTES = 24 * 1024 * 1024;
+function createArchiveFiles() {
+  const files: { name: string; data: Uint8Array }[] = [];
+  let bytes = 0;
+  let failed = false;
+  const originalPush = files.push.bind(files);
+  files.push = (...items) => {
+    const added = items.reduce((total, item) => total + item.data.byteLength, 0);
+    if (failed || bytes + added > MAX_ARCHIVE_PAYLOAD_BYTES || files.length + items.length > 4000) {
+      failed = true;
+      throw new Error('Archive resource limit reached');
+    }
+    bytes += added;
+    return originalPush(...items);
+  };
+  return Object.assign(files, { assertBudget: () => { if (failed) throw new Error('Archive resource limit reached'); } });
+}
+const timedFetch: typeof fetch = (input, init) => {
+  const signal = init?.signal ?? (input instanceof Request ? input.signal : undefined);
+  return fetch(input, { ...init, signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(10000)]) : AbortSignal.timeout(10000) });
+};
 
 // ─── CRC32 + ZIP builder ───
 const CRC_TABLE = (() => {
@@ -387,8 +408,10 @@ async function collectBucketFiles(supa: any, bucket: string, prefix = '', out: {
       if (isFolder) {
         n += await collectBucketFiles(supa, bucket, p, out, depth + 1);
       } else {
+        if (Number(item.metadata?.size) > MAX_ARCHIVE_PAYLOAD_BYTES) throw new Error('Storage file exceeds archive budget');
         const { data: blob, error: downloadError } = await supa.storage.from(bucket).download(p);
         if (downloadError || !blob) throw new Error('Storage download failed');
+        if (blob.size > MAX_ARCHIVE_PAYLOAD_BYTES) throw new Error('Storage file exceeds archive budget');
         out.push({ name: `storage/${bucket}/${p}`, data: new Uint8Array(await blob.arrayBuffer()) });
         n++;
       }
@@ -487,11 +510,14 @@ function iconBadgeSvg(label: string, color: string, subtitle?: string): string {
 </svg>`;
 }
 
-async function fetchAllRows(supa: any, table: string): Promise<any[]> {
+async function fetchAllRows(supa: any, table: string, budget: { bytes: number; rows: number }): Promise<any[]> {
   const out: any[] = [];
   for (let offset = 0; ; offset += 1000) {
     const { data, error } = await supa.from(table).select('*').range(offset, offset + 999);
     if (error) throw error;
+    budget.bytes += new TextEncoder().encode(JSON.stringify(data ?? [])).byteLength;
+    budget.rows += data?.length ?? 0;
+    if (budget.bytes > 8 * 1024 * 1024 || budget.rows > 20000 || out.length + (data?.length ?? 0) > 10000) throw new Error('Snapshot query budget exceeded');
     out.push(...(data ?? []));
     if (!data || data.length < 1000) break;
   }
@@ -513,6 +539,7 @@ async function addStorageAsset(
   try {
     const { data: blob, error } = await supa.storage.from(bucket).download(path);
     if (error || !blob) return false;
+    if (blob.size > MAX_ARCHIVE_PAYLOAD_BYTES) throw new Error('Storage file exceeds archive budget');
     const bytes = new Uint8Array(await blob.arrayBuffer());
     const name = safeFileName(preferredName || path, 'asset.bin');
     files.push({ name: `${targetFolder}/${name}`, data: bytes });
@@ -632,7 +659,7 @@ Deno.serve(async (req) => {
   try {
     const authHeader = req.headers.get('Authorization') || '';
     if (!authHeader.startsWith('Bearer ')) return new Response(JSON.stringify({ error: 'unauthorized' }), { status: 401, headers: corsHeaders });
-    const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { global: { headers: { Authorization: authHeader } } });
+    const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { global: { headers: { Authorization: authHeader }, fetch: timedFetch } });
     const { data: { user } } = await userClient.auth.getUser();
     if (!user) return new Response(JSON.stringify({ error: 'unauthorized' }), { status: 401, headers: corsHeaders });
     const { data: isAdmin, error: roleError } = await userClient.rpc('has_role', { _user_id: user.id, _role: 'admin' });
@@ -643,15 +670,16 @@ Deno.serve(async (req) => {
     if (onlyDomain !== undefined && (typeof onlyDomain !== 'string' || !Object.hasOwn(DOMAINS, onlyDomain))) return new Response(JSON.stringify({ error: 'invalid domain' }), { status: 400, headers: corsHeaders });
     const includeFiles: boolean = body?.include_files !== false;
 
-    const supa = createClient(SUPABASE_URL, SERVICE_KEY);
+    const supa = createClient(SUPABASE_URL, SERVICE_KEY, { global: { fetch: timedFetch } });
     const enc = new TextEncoder();
-    const files: { name: string; data: Uint8Array }[] = [];
+    const files = createArchiveFiles();
     const summary: Record<string, { tables: Record<string, number>; total: number }> = {};
     const allTables: string[] = [];
     const fullDump: Record<string, any[]> = {};
     const searchIndex: any[] = [];
     const seenAssets = new Set<string>();
     const exportWarnings: string[] = [];
+    const queryBudget = { bytes: 0, rows: 0 };
     if (includeFiles) exportWarnings.push('External assets are restricted to trusted HTTPS hosts; redirects and unsupported hosts are not downloaded. Original references remain in exported JSON.');
 
     // 🧠 Inventário definitivo: usa todas as seções conhecidas + tenta descobrir extras.
@@ -681,7 +709,7 @@ Deno.serve(async (req) => {
       let totalRows = 0;
       for (const t of tables) {
         try {
-          const rows = await fetchAllRows(supa, t);
+          const rows = await fetchAllRows(supa, t, queryBudget);
           domainDump[t] = rows;
           fullDump[t] = rows;
           counts[t] = rows.length;
@@ -689,9 +717,8 @@ Deno.serve(async (req) => {
           if (!allTables.includes(t)) allTables.push(t);
           // CSV por tabela
           if (rows.length) files.push({ name: `${domain}/csv/${t}.csv`, data: enc.encode(toCsv(rows)) });
-        } catch (e: any) {
-          const msg = e?.message || 'fail';
-          domainDump[t] = { _error: msg }; counts[t] = 0; exportWarnings.push(`${domain}/${t}: ${msg}`);
+        } catch {
+          throw new Error(`Required table export failed: ${t}`);
         }
       }
       summary[domain] = { tables: counts, total: totalRows };
@@ -1025,7 +1052,9 @@ Suba o ZIP em **/admin/restore** e selecione o que restaurar.
 `),
     });
 
+    files.assertBudget();
     const zip = buildZip(files);
+    if (zip.byteLength > 32 * 1024 * 1024) throw new Error('Archive size unsupported');
     const checksum = await sha256Hex(zip);
     const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
     const path = `${user.id}/${stamp}${onlyDomain ? `-${onlyDomain}` : '-full'}.zip`;
