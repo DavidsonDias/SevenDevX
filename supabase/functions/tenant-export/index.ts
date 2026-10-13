@@ -148,6 +148,7 @@ const DOMAIN_BUCKETS: Record<string, string[]> = {
 const ALL_BUCKETS = ['blog-images', 'project-images', 'tech-icons', 'attachments'];
 const ASSET_EXT_RE = /\.(svg|png|jpe?g|webp|gif|ico|avif|bmp|pdf|docx?|xlsx?|pptx?|csv|md|txt|json|mp4|webm|mov|mp3|wav|ogg|glb|gltf|zip)$/i;
 const MAX_LINKED_ASSET_BYTES = 35 * 1024 * 1024;
+const EXTERNAL_ASSET_HOSTS = new Set(['images.unsplash.com', 'cdn.jsdelivr.net', 'raw.githubusercontent.com', 'avatars.githubusercontent.com']);
 
 // ─── CRC32 + ZIP builder ───
 const CRC_TABLE = (() => {
@@ -437,10 +438,11 @@ function isDownloadableUrl(v: string): boolean {
   if (v.trim().startsWith('<svg')) return true;
   try {
     const u = new URL(v);
-    if (!['http:', 'https:'].includes(u.protocol)) return false;
+    if (u.protocol !== 'https:' || u.username || u.password || (u.port && u.port !== '443')) return false;
     const h = u.hostname.toLowerCase();
     if (h === 'localhost' || h === '127.0.0.1' || h === '0.0.0.0' || h.endsWith('.local')) return false;
     if (/^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[0-1])\.)/.test(h)) return false;
+    if (!EXTERNAL_ASSET_HOSTS.has(h) && h !== new URL(SUPABASE_URL).hostname) return false;
     return /\/storage\/v1\/object\//.test(u.pathname) || /\/__l5e\/assets-v1\//.test(u.pathname) || ASSET_EXT_RE.test(u.pathname);
   } catch { return false; }
 }
@@ -554,11 +556,26 @@ async function addUrlAsset(
   if (!isDownloadableUrl(url)) return false;
   seen.add(url);
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, { redirect: 'error', signal: AbortSignal.timeout(10000) });
     if (!res.ok) return false;
     const len = Number(res.headers.get('content-length') || 0);
     if (len > MAX_LINKED_ASSET_BYTES) return false;
-    const bytes = new Uint8Array(await res.arrayBuffer());
+    if (!res.body) return false;
+    const reader = res.body.getReader();
+    const chunks: Uint8Array[] = [];
+    let received = 0;
+    try {
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        received += value.length;
+        if (received > MAX_LINKED_ASSET_BYTES) { await reader.cancel(); return false; }
+        chunks.push(value);
+      }
+    } finally { reader.releaseLock(); }
+    const bytes = new Uint8Array(received);
+    let cursor = 0;
+    for (const chunk of chunks) { bytes.set(chunk, cursor); cursor += chunk.length; }
     if (bytes.byteLength > MAX_LINKED_ASSET_BYTES) return false;
     let name = safeFileName(preferredName || url, 'asset');
     if (!ASSET_EXT_RE.test(name)) name += `.${guessExtFromContentType(res.headers.get('content-type'))}`;
@@ -637,6 +654,7 @@ Deno.serve(async (req) => {
     const searchIndex: any[] = [];
     const seenAssets = new Set<string>();
     const exportWarnings: string[] = [];
+    if (includeFiles) exportWarnings.push('External assets are restricted to trusted HTTPS hosts; redirects and unsupported hosts are not downloaded. Original references remain in exported JSON.');
 
     // 🧠 Inventário definitivo: usa todas as seções conhecidas + tenta descobrir extras.
     let domainsToRun: Record<string, string[]>;

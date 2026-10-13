@@ -13,6 +13,13 @@ const row={id:'00000000-0000-0000-0000-000000000001',name:'test'};
 test('JSON and compressed or stored ZIP domain exports decode identically',()=>{const data=enc.encode(JSON.stringify({projects:[row]}));assert.deepEqual(decode(data,['projects']).projects,[row]);for(const level of [0,6]) assert.deepEqual(decode(zipSync({'projects/data.json':data,'storage/test.jpg':enc.encode('ignored')},{level}),['projects']).projects,[row]);});
 test('missing, errored, conflicting tables and row identities are refused',()=>{for(const value of [{},{projects:{_error:'failed'}},{projects:[row,row]},{projects:[{id:'invalid'}]}]) assert.throws(()=>decode(enc.encode(JSON.stringify(value)),['projects']));const data=enc.encode(JSON.stringify({projects:[]}));assert.throws(()=>decode(zipSync({'a/data.json':data,'b/data.json':enc.encode(JSON.stringify({projects:[row]}))}),['projects']));assert.deepEqual(decode(zipSync({'a/data.json':data,'b/data.json':data}),['projects']).projects,[]);});
 test('oversized archives are refused',()=>{assert.throws(()=>decode(new Uint8Array(32*1024*1024+1),['projects']));});
+test('valid JSON with a changed ZIP CRC, truncated directory or mismatched local name is refused',()=>{
+ const archive=zipSync({'projects/data.json':enc.encode(JSON.stringify({projects:[row]}))},{level:0});
+ const damaged=archive.slice();const view=new DataView(damaged.buffer);let central=0;for(let i=0;i<damaged.length-4;i++)if(view.getUint32(i,true)===0x02014b50){central=i;break;}
+ view.setUint32(central+16,0,true);assert.throws(()=>decode(damaged,['projects']));
+ assert.throws(()=>decode(archive.subarray(0,archive.length-3),['projects']));
+ const mismatch=archive.slice();mismatch[30]=120;assert.throws(()=>decode(mismatch,['projects']));
+});
 function fixture({writeError=null,jobError=null,completionError=null,admin=true,invalidSnapshot=false}={}){
  let handler,writes=0,statuses=[],kind,table;
  const chain={select:()=>chain,eq:()=>chain,single:async()=>table==='tenant_backups'?{data:{storage_path:'test.zip',size_bytes:40,metadata:{}},error:null}:{data:{id:'job'},error:jobError},
