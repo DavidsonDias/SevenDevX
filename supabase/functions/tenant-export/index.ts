@@ -121,7 +121,10 @@ const PUBLIC_TABLES = [
   'services_cms', 'stage_checklist_items', 'stage_documents', 'system_settings', 'tag_registry',
   'team_members', 'tech_registry', 'tenant_backups', 'time_entries', 'transactions',
   'user_integration_favorites', 'user_mfa', 'user_roles', 'vercel_deploy_alerts', 'webhook_deliveries',
-  'webhook_dlq', 'webhooks', 'whatsapp_messages', 'whatsapp_threads'
+  'webhook_dlq', 'webhooks', 'whatsapp_messages', 'whatsapp_threads',
+  'portfolio_settings', 'tech_categories', 'site_page_comparison_rows', 'site_page_config',
+  'site_page_diagnostics', 'site_page_differentials', 'site_page_faqs', 'site_page_metrics',
+  'site_page_process_steps', 'site_page_projects', 'site_page_roi_metrics', 'site_page_tech', 'site_page_versions'
 ];
 
 // ⚙️ Mapeamento domínio → tabelas conhecidas
@@ -968,6 +971,7 @@ Deno.serve(async (req) => {
       storage_buckets_in_scope: includeFiles ? (onlyDomain ? DOMAIN_BUCKETS[onlyDomain] || [] : ALL_BUCKETS) : [],
       storage_buckets_excluded: ['backups', 'database_export_02_10_26', 'database_export_27_09_26'],
       storage_exclusion_reason: 'Existing backup archives and database dumps are preserved separately, not recursively embedded in application exports.',
+      database_scope: 'Explicit public-table application inventory; Auth schemas, grants, policies, triggers and infrastructure require a separate database backup.',
       warnings: exportWarnings,
     };
     files.push({ name: 'manifest.json', data: enc.encode(JSON.stringify(manifest, null, 2)) });

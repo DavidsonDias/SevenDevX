@@ -59,3 +59,8 @@ test('database snapshot queries enforce aggregate byte and row budgets',async()=
  await assert.rejects(read(client,'projects',{bytes:0,rows:20000}));
  const budget={bytes:0,rows:0};assert.equal((await read(client,'projects',budget)).length,1);assert.equal(budget.rows,1);assert.ok(budget.bytes>0);
 });
+test('explicit inventory covers the 80 public tables audited after migration',()=>{
+ const tables=new Function('Deno','createClient','crypto','exports',compiled+';return PUBLIC_TABLES;')({env:{get:()=> 'test'},serve:()=>{}},()=>({}),webcrypto,{});
+ assert.equal(new Set(tables).size,80);assert.equal(tables.length,80);
+ for(const name of ['portfolio_settings','tech_categories','site_page_config','site_page_versions','site_page_projects'])assert.ok(tables.includes(name));
+});
