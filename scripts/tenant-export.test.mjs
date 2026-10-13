@@ -27,3 +27,18 @@ test('external downloads use redirect refusal and timeout and retain exact bytes
  const add=new Function('Deno','createClient','crypto','exports','fetch',compiled+';return addUrlAsset;')({env:{get:()=> 'https://example.supabase.co'},serve:()=>{}},()=>({}),webcrypto,{},async(_url,opts)=>{options=opts;return new Response('image',{headers:{'Content-Type':'image/jpeg'}});});
  const files=[];assert.equal(await add({},files,'https://images.unsplash.com/a.jpg','assets',new Set()),true);assert.equal(options.redirect,'error');assert.ok(options.signal);assert.equal(new TextDecoder().decode(files[0].data),'image');
 });
+test('application export includes portfolio covers and declares archive exclusions',()=>{
+ const config=new Function('Deno','createClient','crypto','exports',compiled+';return {ALL_BUCKETS,DOMAIN_BUCKETS};')({env:{get:()=> 'test'},serve:()=>{}},()=>({}),webcrypto,{});
+ assert.ok(config.ALL_BUCKETS.includes('portfolio-covers'));assert.ok(config.DOMAIN_BUCKETS.projects.includes('portfolio-covers'));assert.ok(config.DOMAIN_BUCKETS.branding.includes('portfolio-covers'));assert.equal(config.ALL_BUCKETS.includes('backups'),false);
+});
+test('required bucket listing and download failures are propagated',async()=>{
+ const collect=new Function('Deno','createClient','crypto','exports',compiled+';return collectBucketFiles;')({env:{get:()=> 'test'},serve:()=>{}},()=>({}),webcrypto,{});
+ const client=({list,download})=>({storage:{from:()=>({list,download})}});
+ await assert.rejects(collect(client({list:async()=>({error:new Error('failed')})}),'portfolio-covers'));
+ await assert.rejects(collect(client({list:async()=>({data:[{name:'cover.jpg',id:'id',metadata:{size:5}}],error:null}),download:async()=>({error:new Error('failed')})}),'portfolio-covers'));
+});
+test('required bucket collection preserves downloaded bytes',async()=>{
+ const collect=new Function('Deno','createClient','crypto','exports',compiled+';return collectBucketFiles;')({env:{get:()=> 'test'},serve:()=>{}},()=>({}),webcrypto,{});
+ const files=[];const client={storage:{from:()=>({list:async()=>({data:[{name:'cover.jpg',id:'id',metadata:{size:5}}],error:null}),download:async()=>({data:new Blob(['cover']),error:null})})}};
+ assert.equal(await collect(client,'portfolio-covers','',files),1);assert.equal(files[0].name,'storage/portfolio-covers/cover.jpg');assert.equal(new TextDecoder().decode(files[0].data),'cover');
+});

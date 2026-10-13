@@ -139,13 +139,13 @@ const DOMAINS: Record<string, string[]> = {
 };
 
 const DOMAIN_BUCKETS: Record<string, string[]> = {
-  projects: ['project-images', 'attachments'],
+  projects: ['project-images', 'portfolio-covers', 'attachments'],
   registry: ['tech-icons'],
   cms: ['blog-images'],
-  branding: ['project-images', 'tech-icons'],
+  branding: ['project-images', 'portfolio-covers', 'tech-icons'],
   crm: ['attachments'],
 };
-const ALL_BUCKETS = ['blog-images', 'project-images', 'tech-icons', 'attachments'];
+const ALL_BUCKETS = ['blog-images', 'project-images', 'portfolio-covers', 'tech-icons', 'attachments'];
 const ASSET_EXT_RE = /\.(svg|png|jpe?g|webp|gif|ico|avif|bmp|pdf|docx?|xlsx?|pptx?|csv|md|txt|json|mp4|webm|mov|mp3|wav|ogg|glb|gltf|zip)$/i;
 const MAX_LINKED_ASSET_BYTES = 35 * 1024 * 1024;
 const EXTERNAL_ASSET_HOSTS = new Set(['images.unsplash.com', 'cdn.jsdelivr.net', 'raw.githubusercontent.com', 'avatars.githubusercontent.com']);
@@ -375,24 +375,22 @@ footer{margin-top:60px;padding-top:16px;border-top:1px solid var(--line);color:v
 
 // Recursive bucket download
 async function collectBucketFiles(supa: any, bucket: string, prefix = '', out: { name: string; data: Uint8Array }[] = [], depth = 0): Promise<number> {
-  if (depth > 10) return 0;
+  if (depth > 10) throw new Error('Storage nesting limit reached');
   let n = 0;
   for (let offset = 0; ; offset += 1000) {
     const { data: list, error } = await supa.storage.from(bucket).list(prefix, { limit: 1000, offset, sortBy: { column: 'name', order: 'asc' } });
-    if (error || !list?.length) break;
+    if (error) throw new Error('Storage listing failed');
+    if (!list?.length) break;
     for (const item of list) {
       const p = prefix ? `${prefix}/${item.name}` : item.name;
       const isFolder = item.id === null || item.metadata === null || (!ASSET_EXT_RE.test(item.name) && !item.metadata?.size);
       if (isFolder) {
         n += await collectBucketFiles(supa, bucket, p, out, depth + 1);
       } else {
-        try {
-          const { data: blob } = await supa.storage.from(bucket).download(p);
-          if (blob) {
-            out.push({ name: `storage/${bucket}/${p}`, data: new Uint8Array(await blob.arrayBuffer()) });
-            n++;
-          }
-        } catch { /* skip */ }
+        const { data: blob, error: downloadError } = await supa.storage.from(bucket).download(p);
+        if (downloadError || !blob) throw new Error('Storage download failed');
+        out.push({ name: `storage/${bucket}/${p}`, data: new Uint8Array(await blob.arrayBuffer()) });
+        n++;
       }
     }
     if (list.length < 1000) break;
@@ -869,7 +867,7 @@ Deno.serve(async (req) => {
         try {
           const n = await collectBucketFiles(supa, b, '', files);
           storageInv[b] = { downloaded: n };
-        } catch (e: any) { storageInv[b] = { _error: e?.message || 'fail' }; }
+        } catch { throw new Error(`Required storage bucket export failed: ${b}`); }
       }
       files.push({ name: 'storage-inventory.json', data: enc.encode(JSON.stringify(storageInv, null, 2)) });
       summary.storage = {
@@ -940,6 +938,9 @@ Deno.serve(async (req) => {
       totals: { tables: allTables.length, rows: totalRows, files: totalFiles, zip_entries: files.length },
       formats: ['json', 'csv', 'markdown', 'html', 'doc', 'pdf', 'svg', 'original-assets'],
       includes_binaries: includeFiles,
+      storage_buckets_in_scope: includeFiles ? (onlyDomain ? DOMAIN_BUCKETS[onlyDomain] || [] : ALL_BUCKETS) : [],
+      storage_buckets_excluded: ['backups', 'database_export_02_10_26', 'database_export_27_09_26'],
+      storage_exclusion_reason: 'Existing backup archives and database dumps are preserved separately, not recursively embedded in application exports.',
       warnings: exportWarnings,
     };
     files.push({ name: 'manifest.json', data: enc.encode(JSON.stringify(manifest, null, 2)) });
