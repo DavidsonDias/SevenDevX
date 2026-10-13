@@ -96,8 +96,12 @@ import { openAIRequest } from '../_shared/openai.ts';
  * ═══════════════════════════════════════════════════════════════════════
  */
 // 🩺 Health Collector — pinga serviços críticos e salva snapshot.
-import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
-import { createClient } from 'npm:@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2.49.1';
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+};
 
 // ============================================================================
 // ⚙️ CONSTANTS & CONFIGURATION
@@ -127,14 +131,17 @@ const CRON_SECRET = Deno.env.get('CRON_SECRET') ?? '';
 
 async function check(name: string, fn: () => Promise<boolean>): Promise<any> {
   const t0 = Date.now();
+  let timer: ReturnType<typeof setTimeout> | undefined;
   try {
     const ok = await Promise.race([
       fn(),
-      new Promise<boolean>((_, rej) => setTimeout(() => rej(new Error('timeout')), 8000)),
+      new Promise<boolean>((_, rej) => { timer = setTimeout(() => rej(new Error('timeout')), 8000); }),
     ]);
     return { service_name: name, status: ok ? 'up' : 'down', latency_ms: Date.now() - t0 };
   } catch (e: any) {
     return { service_name: name, status: 'down', latency_ms: Date.now() - t0, error: e?.message?.slice(0, 200) };
+  } finally {
+    clearTimeout(timer);
   }
 }
 
@@ -144,9 +151,18 @@ async function check(name: string, fn: () => Promise<boolean>): Promise<any> {
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  if (req.method !== 'POST') return new Response(JSON.stringify({ error: 'POST required' }), { status: 405, headers: corsHeaders });
   const auth = req.headers.get('Authorization') || '';
   const provided = auth.replace(/^Bearer\s+/i, '');
-  const okAuth = (CRON_SECRET && provided === CRON_SECRET) || (SERVICE_KEY && provided === SERVICE_KEY);
+  let okAuth = !!((CRON_SECRET && provided === CRON_SECRET) || (SERVICE_KEY && provided === SERVICE_KEY));
+  if (!okAuth && provided) {
+    const userClient = createClient(SUPABASE_URL, Deno.env.get('SUPABASE_ANON_KEY')!, { global: { headers: { Authorization: auth } } });
+    const { data, error } = await userClient.auth.getUser();
+    if (!error && data?.user) {
+      const role = await userClient.rpc('has_role', { _user_id: data.user.id, _role: 'admin' });
+      okAuth = !role.error && role.data === true;
+    }
+  }
   if (!okAuth) {
     return new Response(JSON.stringify({ error: 'unauthorized' }), {
       status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -161,13 +177,17 @@ Deno.serve(async (req) => {
         return !error;
       }),
       check('edge_functions', async () => {
-        const r = await fetch(`${SUPABASE_URL}/functions/v1/push-public-key`);
-        return r.status < 500;
+        const r = await fetch(`${SUPABASE_URL}/functions/v1/push-public-key`, {
+          headers: { Authorization: `Bearer ${SERVICE_KEY}`, apikey: SERVICE_KEY },
+          signal: AbortSignal.timeout(7000),
+        });
+        return r.ok;
       }),
       check('ai_gateway', async () => {
         if (!OPENAI_API_KEY) return false;
         const r = await openAIRequest('models', {
           headers: { Authorization: `Bearer ${OPENAI_API_KEY}` },
+          signal: AbortSignal.timeout(7000),
         });
         return r.ok;
       }),
@@ -177,19 +197,21 @@ Deno.serve(async (req) => {
       }),
     ]);
 
-    await supa.from('service_health_snapshots').insert(checks);
+    const saved = await supa.from('service_health_snapshots').insert(checks);
+    if (saved.error) throw new Error('Snapshot persistence failed');
 
     // auto-create incident on consecutive down (last 2 snapshots)
     for (const c of checks) {
       if (c.status === 'down') {
-        const { data: prev } = await supa
+        const { data: prev, error: historyError } = await supa
           .from('service_health_snapshots')
           .select('status')
           .eq('service_name', c.service_name)
           .order('checked_at', { ascending: false })
-          .limit(3);
+      .limit(3);
+        if (historyError) throw new Error('Snapshot history unavailable');
         if (prev && prev.length >= 2 && prev[1]?.status === 'down') {
-          await supa.from('notifications').insert({
+          const notified = await supa.from('notifications').insert({
             user_id: null,
             type: 'incident.detected',
             title: `Serviço fora do ar: ${c.service_name}`,
@@ -198,6 +220,7 @@ Deno.serve(async (req) => {
             severity: 'error',
             payload: c,
           });
+          if (notified.error) throw new Error('Incident notification persistence failed');
         }
       }
     }
@@ -206,6 +229,7 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e: any) {
-    return new Response(JSON.stringify({ error: e?.message || 'error' }), { status: 500, headers: corsHeaders });
+    return new Response(JSON.stringify({ error: 'Health collection failed' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
 });
+
