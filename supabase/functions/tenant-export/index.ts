@@ -95,8 +95,8 @@
 // 📦 Tenant Export v6 — Backup DEFINITIVO, inteligente e reaproveitável do SevenOS
 // Exporta TODAS as seções conhecidas, pagina 100% dos registros, resolve assets
 // linkados (logos, SVGs, imagens, PDFs), cria catálogos navegáveis e pastas por entidade.
-import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
-import { createClient } from 'npm:@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2.49.1';
+const corsHeaders = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type', 'Content-Type': 'application/json' };
 
 // ============================================================================
 // ⚙️ CONSTANTS & CONFIGURATION
@@ -613,16 +613,19 @@ function rowsToHtmlTable(rows: any[]): string {
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  if (req.method !== 'POST') return new Response(JSON.stringify({ error: 'POST required' }), { status: 405, headers: corsHeaders });
   try {
     const authHeader = req.headers.get('Authorization') || '';
+    if (!authHeader.startsWith('Bearer ')) return new Response(JSON.stringify({ error: 'unauthorized' }), { status: 401, headers: corsHeaders });
     const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { global: { headers: { Authorization: authHeader } } });
     const { data: { user } } = await userClient.auth.getUser();
     if (!user) return new Response(JSON.stringify({ error: 'unauthorized' }), { status: 401, headers: corsHeaders });
-    const { data: isAdmin } = await userClient.rpc('has_role', { _user_id: user.id, _role: 'admin' });
-    if (!isAdmin) return new Response(JSON.stringify({ error: 'forbidden' }), { status: 403, headers: corsHeaders });
+    const { data: isAdmin, error: roleError } = await userClient.rpc('has_role', { _user_id: user.id, _role: 'admin' });
+    if (roleError || isAdmin !== true) return new Response(JSON.stringify({ error: 'forbidden' }), { status: 403, headers: corsHeaders });
 
     const body = await req.json().catch(() => ({}));
     const onlyDomain: string | undefined = body?.domain;
+    if (onlyDomain !== undefined && (typeof onlyDomain !== 'string' || !Object.hasOwn(DOMAINS, onlyDomain))) return new Response(JSON.stringify({ error: 'invalid domain' }), { status: 400, headers: corsHeaders });
     const includeFiles: boolean = body?.include_files !== false;
 
     const supa = createClient(SUPABASE_URL, SERVICE_KEY);
@@ -1013,35 +1016,25 @@ Suba o ZIP em **/admin/restore** e selecione o que restaurar.
     });
     if (upErr) throw upErr;
 
-    const { data: signed } = await supa.storage.from('backups').createSignedUrl(path, 3600);
+    const { data: signed, error: signedError } = await supa.storage.from('backups').createSignedUrl(path, 3600);
+    if (signedError || !signed?.signedUrl) throw new Error('Backup download link unavailable');
 
-    await supa.from('tenant_backups').insert({
+    const { error: recordError } = await supa.from('tenant_backups').insert({
       storage_path: path, size_bytes: zip.byteLength,
       tables_included: allTables, triggered_by: user.id,
       triggered_kind: onlyDomain ? `manual:${onlyDomain}` : 'manual:full',
       status: 'completed',
       metadata: { checksum_sha256: checksum, version: 6, domains: Object.keys(domainsToRun), files: files.length, includes_binaries: includeFiles, totals: manifest.totals, warnings: exportWarnings },
     } as any);
+    if (recordError) throw new Error('Backup catalog persistence failed');
 
-    // 🧹 Retenção
-    try {
-      const { data: retSetting } = await supa.from('system_settings').select('value').eq('key', 'backup_retention_days').maybeSingle();
-      const days = Number((retSetting?.value as any)) || 0;
-      if (days > 0) {
-        const cutoff = new Date(Date.now() - days * 86400_000).toISOString();
-        const { data: old } = await supa.from('tenant_backups').select('id, storage_path').lt('created_at', cutoff);
-        if (old && old.length) {
-          await supa.storage.from('backups').remove(old.map((o: any) => o.storage_path));
-          await supa.from('tenant_backups').delete().in('id', old.map((o: any) => o.id));
-        }
-      }
-    } catch { /* ignore */ }
+    // Preservation during migration: exporting never removes previous backups.
 
     return new Response(JSON.stringify({
       ok: true, path, size: zip.byteLength, checksum, url: signed?.signedUrl,
       file_count: files.length, summary, totals: manifest.totals,
     }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-  } catch (e: any) {
-    return new Response(JSON.stringify({ error: e?.message || 'error' }), { status: 500, headers: corsHeaders });
+  } catch {
+    return new Response(JSON.stringify({ error: 'Backup export failed' }), { status: 500, headers: corsHeaders });
   }
 });
