@@ -7,11 +7,19 @@ function isPublicAddress(address: string): boolean {
   return !(a === 0 || a === 10 || a === 127 || a >= 224 || (a === 100 && b >= 64 && b <= 127) || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) || (a === 192 && (b === 168 || b === 0)) || (a === 198 && (b === 18 || b === 19 || b === 51)) || (a === 203 && b === 0));
 }
 
-export async function validatePublicUrl(raw: string): Promise<string> {
+export async function validatePublicUrl(raw: string, timeoutMs = 5000): Promise<string> {
   const url = new URL(raw);
   const host = url.hostname.toLowerCase();
   if (url.protocol !== 'https:' || url.username || url.password || (url.port && url.port !== '443') || !host.includes('.') || host.includes(':') || /^\d+(?:\.\d+)*$/.test(host) || /\.(?:localhost|local|internal|test|invalid|example)$/.test(host)) throw new Error('Unsupported scan URL');
-  const answers = await Promise.allSettled([Deno.resolveDns(host,'A'),Deno.resolveDns(host,'AAAA')]);
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let answers: PromiseSettledResult<string[]>[];
+  try {
+    answers = await Promise.race([
+      Promise.allSettled([Deno.resolveDns(host,'A'),Deno.resolveDns(host,'AAAA')]),
+      new Promise<never>((_,reject) => { timer = setTimeout(() => reject(new Error('DNS validation timed out')), timeoutMs); }),
+    ]);
+  } finally { if (timer !== undefined) clearTimeout(timer); }
+  if (answers.some(answer => answer.status === 'rejected')) throw new Error('DNS validation incomplete');
   const addresses = answers.flatMap(answer => answer.status === 'fulfilled' ? answer.value : []);
   if (!addresses.length || !addresses.every(isPublicAddress)) throw new Error('Scan target must resolve to public addresses');
   url.hash = '';
