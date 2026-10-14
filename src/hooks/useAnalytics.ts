@@ -30,7 +30,8 @@ import { getOrCreateSafeId } from "@/utils/safeStorage";
 // ⚙️ CONSTANTS & CONFIGURATION
 // ============================================================================
 
-const ANALYTICS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/track-analytics`;
+// The publishable project key is public; query transport also supports sendBeacon.
+const ANALYTICS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/track-analytics?apikey=${encodeURIComponent(import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY)}`;
 
 // ============================================================================
 // 🧠 BUSINESS LOGIC
@@ -72,7 +73,7 @@ export const useAnalytics = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
         },
         body: JSON.stringify({
           type: "pageview",
@@ -100,7 +101,7 @@ export const useAnalytics = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
         },
         body: JSON.stringify({
           type: "event",

@@ -69,8 +69,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
+import { createClient } from "npm:@supabase/supabase-js@2.49.1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -122,13 +121,38 @@ function getDeviceType(userAgent: string): string {
   return "desktop";
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
+  if (req.method !== 'POST') return new Response(JSON.stringify({ error: 'POST required' }), { status: 405, headers: corsHeaders });
 
   try {
-    const payload: AnalyticsPayload = await req.json();
+    // This is public collection, not a user session: validate the project API key.
+    const supplied = req.headers.get('apikey') || req.headers.get('authorization')?.replace(/^Bearer /, '') || new URL(req.url).searchParams.get('apikey');
+    let publishableKeys: unknown[] = [];
+    try { publishableKeys = Object.values(JSON.parse(Deno.env.get('SUPABASE_PUBLISHABLE_KEYS') || '{}')); } catch { /* fail closed */ }
+    const allowedKeys = [Deno.env.get('SUPABASE_ANON_KEY'), ...publishableKeys].filter(value => typeof value === 'string' && value.length > 0);
+    if (!supplied || !allowedKeys.includes(supplied)) return new Response(JSON.stringify({ error: 'invalid API key' }), { status: 401, headers: corsHeaders });
+    if (Number(req.headers.get('content-length')) > 16384) return new Response(JSON.stringify({ error: 'payload too large' }), { status: 413, headers: corsHeaders });
+    const reader = req.body?.getReader();
+    if (!reader) return new Response(JSON.stringify({ error: 'missing body' }), { status: 400, headers: corsHeaders });
+    const chunks: Uint8Array[] = [];
+    let length = 0;
+    try {
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        length += value.length;
+        if (length > 16384) { await reader.cancel(); return new Response(JSON.stringify({ error: 'payload too large' }), { status: 413, headers: corsHeaders }); }
+        chunks.push(value);
+      }
+    } finally { reader.releaseLock(); }
+    const body = new Uint8Array(length);
+    let offset = 0;
+    for (const chunk of chunks) { body.set(chunk, offset); offset += chunk.length; }
+    let payload: AnalyticsPayload;
+    try { payload = JSON.parse(new TextDecoder().decode(body)); } catch { return new Response(JSON.stringify({ error: 'invalid JSON' }), { status: 400, headers: corsHeaders }); }
     const userAgent = (req.headers.get("user-agent") || "").slice(0, 512);
 
     // Input validation
@@ -145,7 +169,8 @@ serve(async (req) => {
 
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    // Collection uses only public INSERT grants and RLS, never privileged credentials.
+    const supabaseKey = Deno.env.get("SUPABASE_ANON_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     if (payload.type === "pageview") {
@@ -163,7 +188,6 @@ serve(async (req) => {
       });
 
       if (error) {
-        console.error("[Analytics] Page view insert error:", error);
         throw error;
       }
 
@@ -185,11 +209,10 @@ serve(async (req) => {
       });
 
       if (error) {
-        console.error("[Analytics] Event insert error:", error);
         throw error;
       }
 
-      console.log(`[Analytics] Event recorded: ${payload.event_type}`);
+      console.log('[Analytics] Event recorded');
     }
 
     return new Response(
@@ -198,7 +221,7 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error("[Analytics] Error:", error);
+    console.error('[Analytics] Collection failed');
     return new Response(
       JSON.stringify({ error: "Failed to track analytics" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
