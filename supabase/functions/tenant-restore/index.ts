@@ -155,12 +155,15 @@ Deno.serve(async (req) => {
 
     supa = createClient(SUPABASE_URL, SERVICE_KEY);
     const { data: b, error: backupError } = await supa.from('tenant_backups').select('storage_path,size_bytes,metadata').eq('id', backup_id).single();
-    if (backupError || !b?.storage_path) throw new Error('Backup lookup failed');
-    if (!(b.size_bytes > 0 && b.size_bytes <= 32 * 1024 * 1024)) throw new Error('Backup size unsupported');
+    if (backupError || typeof b?.storage_path !== 'string' || !b.storage_path) throw new Error('Backup lookup failed');
+    if (typeof b.size_bytes !== 'number' || !(b.size_bytes > 0 && b.size_bytes <= 32 * 1024 * 1024)) throw new Error('Backup size unsupported');
     const { data: blob, error: downloadError } = await supa.storage.from('backups').download(b.storage_path);
     if (downloadError || !blob || blob.size > 32 * 1024 * 1024) throw new Error('Backup download failed');
     const bytes = new Uint8Array(await blob.arrayBuffer());
-    const expectedHash = b.metadata?.checksum_sha256;
+    const metadata = b.metadata;
+    const expectedHash = metadata && typeof metadata === 'object' && !Array.isArray(metadata)
+      ? (metadata as Record<string, unknown>).checksum_sha256 : undefined;
+    if (expectedHash !== undefined && (typeof expectedHash !== 'string' || !/^[0-9a-f]{64}$/.test(expectedHash))) throw new Error('Backup checksum invalid');
     if (expectedHash) {
       const actual = [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map(v => v.toString(16).padStart(2, '0')).join('');
       if (actual !== expectedHash) throw new Error('Backup integrity failed');
@@ -170,8 +173,9 @@ Deno.serve(async (req) => {
     const { data: job, error: jobError } = await supa.from('restore_jobs').insert({
       backup_id, selected_tables: tables, mode: 'merge', status: 'running', executed_by: u.user.id,
     }).select().single();
-    if (jobError || !job?.id) throw new Error('Restore job creation failed');
-    jobId = job.id;
+    if (jobError || typeof job?.id !== 'string' || !job.id) throw new Error('Restore job creation failed');
+    const runningJobId = job.id;
+    jobId = runningJobId;
     for (const t of tables) {
       const rows = Array.isArray(snapshot[t]) ? snapshot[t] : [];
       if (!rows.length) { log.push({ table: t, inserted: 0, skipped: true }); continue; }
@@ -186,11 +190,11 @@ Deno.serve(async (req) => {
         totalInserted += written;
       }
       log.push({ table: t, inserted });
-      const { error: progressError } = await supa.from('restore_jobs').update({ inserted_rows: totalInserted, log }).eq('id', jobId);
+      const { error: progressError } = await supa.from('restore_jobs').update({ inserted_rows: totalInserted, log }).eq('id', runningJobId);
       if (progressError) throw new Error('Progress persistence failed');
     }
 
-    const { error: completionError } = await supa.from('restore_jobs').update({ status: 'completed', progress: 100, log }).eq('id', jobId);
+    const { error: completionError } = await supa.from('restore_jobs').update({ status: 'completed', progress: 100, log }).eq('id', runningJobId);
     if (completionError) throw new Error('Completion persistence failed');
     return new Response(JSON.stringify({ ok: true, job_id: jobId, inserted: totalInserted, log }), { headers: corsHeaders });
   } catch {
