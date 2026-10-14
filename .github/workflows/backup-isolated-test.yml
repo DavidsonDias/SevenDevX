@@ -1,0 +1,36 @@
+name: Backup isolated PostgreSQL validation
+on:
+  push:
+    branches: [codex/backup-export-preservation]
+    paths:
+      - '.github/workflows/backup-isolated-test.yml'
+      - 'supabase/functions/tenant-*/**'
+      - 'scripts/tenant-*.mjs'
+permissions:
+  contents: read
+jobs:
+  restore:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: migration_restore_test
+          POSTGRES_PASSWORD: synthetic-audit-only
+        ports: ['55439:5432']
+        options: >-
+          --health-cmd 'pg_isready -U postgres'
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Install test dependencies without lifecycle scripts
+        run: npm ci --ignore-scripts
+      - name: Run backup unit tests
+        run: node --test scripts/tenant-export.test.mjs scripts/tenant-restore.test.mjs
+      - name: Run handler against isolated synthetic PostgreSQL
+        env:
+          PGPASSWORD: synthetic-audit-only
+        run: node --test scripts/tenant-restore-postgres.test.mjs
