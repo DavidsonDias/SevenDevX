@@ -1074,7 +1074,7 @@ Suba o ZIP em **/admin/restore** e selecione o que restaurar.
     const { error: recordError } = await supa.from('tenant_backups').insert({
       storage_path: path, size_bytes: zip.byteLength,
       tables_included: allTables, triggered_by: user.id,
-      triggered_kind: onlyDomain ? `manual:${onlyDomain}` : 'manual:full',
+      triggered_kind: 'manual',
       status: 'completed',
       metadata: { checksum_sha256: checksum, version: 6, domains: Object.keys(domainsToRun), files: files.length, includes_binaries: includeFiles, totals: manifest.totals, warnings: exportWarnings },
     } as any);

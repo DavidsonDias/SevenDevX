@@ -7,7 +7,7 @@ const source = fs.readFileSync(new URL('../supabase/functions/tenant-export/inde
 const compiled = ts.transpileModule(source, {compilerOptions: {module: ts.ModuleKind.CommonJS}}).outputText;
 function fixture({admin=true, signedError=null, recordError=null}={}) {
   let handler, uploads=0, records=0;
-  const chain={select:()=>chain, range:async()=>({data:[],error:null}), insert:async()=>{records++;return {error:recordError};}};
+  const chain={select:()=>chain, range:async()=>({data:[],error:null}), insert:async(payload)=>{assert.equal(payload.triggered_kind,'manual');records++;return {error:recordError};}};
   const client={auth:{getUser:async()=>({data:{user:{id:'owner',email:'test@example.invalid'}}})},rpc:async()=>({data:admin,error:null}),from:()=>chain,
     storage:{from:()=>({upload:async()=>{uploads++;return {error:null};},createSignedUrl:async()=>({data:{signedUrl:'https://example.invalid/temporary'},error:signedError}),remove:()=>{throw new Error('Backups must never be removed');}})}};
   new Function('Deno','createClient','crypto','exports',compiled)({env:{get:()=> 'test'},serve:fn=>{handler=fn;}},()=>client,webcrypto,{});
