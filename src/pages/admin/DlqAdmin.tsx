@@ -117,7 +117,7 @@ export default function DlqAdmin() {
     setLoading(true);
     setLoadError(null);
     try {
-      const { data, error } = await supabase.from("webhook_dlq").select("*, webhooks(name, url)").order("moved_at", { ascending: false });
+      const { data, error } = await supabase.from("webhook_dlq").select("id,webhook_id,event,payload,last_error,attempts,moved_at,replayed_at,webhooks(name)").order("moved_at", { ascending: false });
       if (error) throw error;
       setItems(data ?? []);
     } catch {
@@ -209,3 +209,4 @@ export default function DlqAdmin() {
     </AdminPageShell>
   );
 }
+
