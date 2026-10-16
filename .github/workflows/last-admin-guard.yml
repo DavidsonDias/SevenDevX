@@ -1,0 +1,47 @@
+name: Last administrator isolated concurrency validation
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/last-admin-guard.yml'
+      - 'supabase/migrations/*guard_last_effective_admin*'
+      - 'supabase/migrations/*require_last_admin_guard*'
+      - 'supabase/functions/admin-delete-user/**'
+      - 'scripts/last-admin-*'
+      - 'scripts/admin-delete-user.test.mjs'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/last-admin-guard.yml'
+      - 'supabase/migrations/*guard_last_effective_admin*'
+      - 'supabase/migrations/*require_last_admin_guard*'
+      - 'supabase/functions/admin-delete-user/**'
+      - 'scripts/last-admin-*'
+      - 'scripts/admin-delete-user.test.mjs'
+permissions:
+  contents: read
+jobs:
+  concurrency:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17@sha256:2d2b8998d31037bf721cfdf764d76ba74171b4fab3431b7f72c27c56ddbdf9e3
+        env:
+          POSTGRES_DB: admin_guard_test
+          POSTGRES_PASSWORD: synthetic-guard-only
+        ports: ['55440:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Install dependencies without lifecycle scripts
+        run: npm ci --ignore-scripts
+      - name: Test actual deletion handler
+        run: node --test scripts/admin-delete-user.test.mjs
+      - name: Test actual migrations under concurrent deletes, cascades and repeatable read
+        env:
+          PGPASSWORD: synthetic-guard-only
+        run: node --test scripts/last-admin-guard-postgres.test.mjs
