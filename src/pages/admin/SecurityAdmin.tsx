@@ -182,11 +182,7 @@ export default function SecurityAdmin() {
   const removeIp = (ip: string) => save("ip_allowlist", ipAllowlist.filter((i) => i !== ip), "Allowlist");
 
   const forceLogoutAll = async () => {
-    if (!confirm("Forçar logout de TODAS as sessões ativas? Todos usuários precisarão entrar de novo.")) return;
-    const { error } = await supabase.from("admin_sessions").update({ revoked_at: new Date().toISOString() } as any).is("revoked_at", null);
-    if (error) return toast({ title: "Erro", description: error.message, variant: "destructive" });
-    toast({ title: "Sessões revogadas", description: "Logout global executado." });
-    setSessionsCount(0);
+    toast({ title: "Desconexão remota indisponível", description: "Desconexão remota indisponível: os registros do painel não revogam sessões do Supabase Auth.", variant: "destructive" });
   };
 
   return (
@@ -197,7 +193,7 @@ export default function SecurityAdmin() {
         <div className="space-y-6">
           {/* Status overview */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <StatCard label="Sessões ativas" value={sessionsCount} icon={MonitorSmartphone} accent="emerald" />
+            <StatCard label="Registros de sessões" value={sessionsCount} icon={MonitorSmartphone} accent="emerald" />
             <StatCard label="Contas com 2FA" value={mfaCount} icon={KeyRound} accent="sky" />
             <StatCard label="IPs allowlist" value={ipAllowlist.length} icon={Globe} accent="violet" />
             <StatCard label="Política senha" value={`${pwd.min_length}+ chars`} icon={Lock} accent="amber" />
@@ -320,9 +316,10 @@ export default function SecurityAdmin() {
 
           {/* Emergency */}
           <Section icon={AlertOctagon} title="Ações de emergência" desc="Use apenas em incidentes confirmados" danger>
-            <button onClick={forceLogoutAll}
+            <p className="text-sm text-amber-200">Os registros do painel não comprovam sessões ativas no Supabase Auth. A desconexão remota está indisponível até validação do fluxo nativo.</p>
+            <button onClick={forceLogoutAll} disabled
               className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-red-500/40 text-red-300 text-xs font-bold uppercase tracking-wider hover:bg-red-500/10">
-              <Power className="w-4 h-4" /> Force logout global ({sessionsCount} sessões)
+              <Power className="w-4 h-4" /> Desconexão remota indisponível
             </button>
           </Section>
 

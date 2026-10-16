@@ -159,13 +159,12 @@ function SessionsInner() {
   }, [qc]);
 
   const revoke = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.rpc("admin_revoke_session" as any, { _session_id: id });
-      if (error) throw error;
+    mutationFn: async (_id: string) => {
+      throw new Error("Desconexão remota indisponível: os registros do painel não revogam sessões do Supabase Auth.");
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-sessions"] });
-      toast({ title: "Sessão encerrada" });
+      toast({ title: "Desconexão remota indisponível" });
     },
     onError: (e: any) => toast({ title: "Erro", description: e.message, variant: "destructive" }),
   });
@@ -177,29 +176,28 @@ function SessionsInner() {
 
   const revokeAll = useMutation({
     mutationFn: async () => {
-      const ids = sessions.map((s) => s.id);
-      await Promise.all(ids.map((id) => supabase.rpc("admin_revoke_session" as any, { _session_id: id })));
+      throw new Error("Desconexão remota indisponível: os registros do painel não revogam sessões do Supabase Auth.");
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-sessions"] });
-      toast({ title: "Todas as sessões foram encerradas" });
+      toast({ title: "Desconexão remota indisponível" });
     },
     onError: (e: any) => toast({ title: "Erro", description: e.message, variant: "destructive" }),
   });
 
   return (
     <AdminPageShell
-      title="Sessões Ativas"
-      subtitle={`${sessions.length} sessões registradas · ${onlineCount} online agora`}
+      title="Registros de sessões"
+      subtitle={`${sessions.length} registros do painel · ${onlineCount} recentes. Desconexão remota do Supabase Auth indisponível.`}
       actions={
         sessions.length > 1 ? (
           <button
             onClick={() => { if (confirm("Encerrar TODAS as sessões ativas?")) revokeAll.mutate(); }}
-            disabled={revokeAll.isPending}
+            disabled
             className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-red-500/30 text-red-300 text-xs uppercase tracking-wider hover:bg-red-500/10 disabled:opacity-50"
           >
             {revokeAll.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <LogOut className="w-3.5 h-3.5" />}
-            Encerrar todas
+            Desconexão indisponível
           </button>
         ) : undefined
       }
@@ -253,9 +251,10 @@ function SessionsInner() {
                       </div>
                     </div>
                     <button
+                      disabled
                       onClick={() => { if (confirm("Encerrar esta sessão?")) revoke.mutate(s.id); }}
                       className="p-2 border border-red-500/30 text-red-300 rounded-lg hover:bg-red-500/10 shrink-0"
-                      title="Encerrar"
+                      title="Desconexão remota ainda não validada"
                     >
                       <LogOut className="w-3.5 h-3.5" />
                     </button>
