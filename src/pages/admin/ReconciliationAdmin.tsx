@@ -131,7 +131,7 @@ export default function ReconciliationAdmin() {
   const [staged, setStaged] = useState<Array<{ date: string; description: string; amount: number; status: "new" | "matched" | "skip" }>>([]);
   const [fileName, setFileName] = useState<string>("");
 
-  const { data: pending = [] } = useQuery({
+  const { data: pending = [], isPending: loadingPending, isError: pendingFailed, refetch: reloadPending } = useQuery({
     queryKey: ["tx_unreconciled"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -145,7 +145,7 @@ export default function ReconciliationAdmin() {
     },
   });
 
-  const { data: reconciled = [] } = useQuery({
+  const { data: reconciled = [], isPending: loadingReconciled, isError: reconciledFailed, refetch: reloadReconciled } = useQuery({
     queryKey: ["tx_reconciled"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -163,32 +163,36 @@ export default function ReconciliationAdmin() {
 
   const markReconciled = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("transactions")
         .update({ reconciled: true, reconciled_at: new Date().toISOString() })
-        .eq("id", id);
+        .eq("id", id).select("id").maybeSingle();
       if (error) throw error;
+      if (!data) throw new Error("Nenhuma transação foi atualizada. Confira sua sessão e recarregue os dados.");
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["tx_unreconciled"] });
       qc.invalidateQueries({ queryKey: ["tx_reconciled"] });
       toast({ title: "Transação conciliada" });
     },
+    onError: () => toast({ title: "Não foi possível conciliar a transação", description: "Confira sua sessão e conexão antes de tentar novamente.", variant: "destructive" }),
   });
 
   const unmark = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("transactions")
         .update({ reconciled: false, reconciled_at: null })
-        .eq("id", id);
+        .eq("id", id).select("id").maybeSingle();
       if (error) throw error;
+      if (!data) throw new Error("Nenhuma transação foi atualizada. Confira sua sessão e recarregue os dados.");
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["tx_unreconciled"] });
       qc.invalidateQueries({ queryKey: ["tx_reconciled"] });
       toast({ title: "Reabertura concluída" });
     },
+    onError: () => toast({ title: "Não foi possível reabrir a transação", description: "Confira sua sessão e conexão antes de tentar novamente.", variant: "destructive" }),
   });
 
   const importStaged = useMutation({
@@ -252,6 +256,21 @@ export default function ReconciliationAdmin() {
     });
     setStaged(enhanced);
   };
+
+  if (pendingFailed || reconciledFailed) return (
+    <AdminPageShell title="Conciliação Bancária" subtitle="Consulta indisponível">
+      <div role="alert" className="rounded border border-amber-500/30 p-6 text-amber-300">
+        Não foi possível consultar as transações. O saldo e o estado da conciliação não estão confirmados.
+        <Button variant="outline" className="ml-3" onClick={() => { reloadPending(); reloadReconciled(); }}>Tentar novamente</Button>
+      </div>
+    </AdminPageShell>
+  );
+
+  if (loadingPending || loadingReconciled) return (
+    <AdminPageShell title="Conciliação Bancária" subtitle="Carregando transações">
+      <p role="status">Consultando os dados da conciliação…</p>
+    </AdminPageShell>
+  );
 
   return (
     <AdminPageShell title="Conciliação Bancária" subtitle="Concilia transações com extrato CSV ou marca manualmente">
