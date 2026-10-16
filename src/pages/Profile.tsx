@@ -169,7 +169,7 @@ const Profile = () => {
     setIsSendingReset(true);
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
-        redirectTo: `${window.location.origin}/auth`,
+        redirectTo: `${window.location.origin}/auth/reset`,
       });
       if (error) throw error;
       toast({ title: "E-mail enviado", description: "Verifique sua caixa de entrada para redefinir a senha." });
