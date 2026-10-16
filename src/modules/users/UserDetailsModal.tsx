@@ -136,8 +136,8 @@ export default function UserDetailsModal({
 
   if (!user) return null;
   const protectedUser = isProtected(user.email);
-  const adminCount = allUsers.filter((u) => u.roles.includes("admin") || u.roles.includes("super_admin")).length;
-  const isLastAdmin = (user.roles.includes("admin") || user.roles.includes("super_admin")) && adminCount <= 1;
+  const adminCount = allUsers.filter((u) => u.roles.includes("admin")).length;
+  const isLastAdmin = user.roles.includes("admin") && adminCount <= 1;
 
   const resetPassword = async () => {
     const { error } = await supabase.auth.resetPasswordForEmail(user.email, { redirectTo: `${window.location.origin}/auth/reset` });
@@ -153,14 +153,16 @@ export default function UserDetailsModal({
     if (!confirm(`Remover definitivamente ${user.email}? Esta ação é registrada no audit log.`)) return;
     if (!confirm(`CONFIRMAR: remover ${user.email}?`)) return;
     const { data, error } = await supabase.functions.invoke("admin-delete-user", {
-      body: { user_id: user.user_id },
+      body: { user_id: user.user_id, confirmation_email: user.email },
     });
-    if (error || (data as any)?.error) {
+    if (error || (data as any)?.error || (data as any)?.ok !== true) {
       const msg = (data as any)?.error ?? error?.message ?? "Falha ao remover";
       toast.error("Erro", { description: msg });
       return;
     }
-    toast.success(`Usuário removido: ${(data as any).deleted_email}`);
+    if ((data as any).audit_warning || (data as any).panel_session_warning) {
+      toast.warning("Usuário removido, mas há falha no registro de auditoria ou sessão do painel. Não repita a exclusão.");
+    } else toast.success(`Usuário removido: ${(data as any).deleted_email}`);
     onChanged();
     onClose();
   };

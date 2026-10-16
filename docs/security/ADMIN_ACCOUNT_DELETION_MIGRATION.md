@@ -1,0 +1,14 @@
+# Administrative account deletion migration
+
+The effective administrator role is `admin`, exactly as checked by `has_role`. A `super_admin` label alone does not satisfy that guard and is not counted as an effective administrator.
+
+- A private row counter serializes admin-role INSERT/UPDATE/DELETE mutations, including Auth deletion cascades. The AFTER trigger does not count ignored conflict inserts. Removing the last effective admin raises an exception and rolls back the transaction. Concurrent repeatable-read writers may instead receive a serialization error; the invariant remains intact.
+- The private SECURITY DEFINER trigger has an empty search_path and no public/client execution privileges. The public readiness function is SECURITY INVOKER and executable only by service_role. No Auth table schema/permissions were changed.
+- Endpoint requires a live Auth user, current admin/MFA guard, exact UUID/email target confirmation, no self-delete and the original protected-email rule. The atomic trigger must be installed/enabled. A second role check runs immediately before the Auth API call.
+- A persisted audit request is required before deletion. Audit diff.status distinguishes requested/deleted/failed/unknown. Provider5xx or network ambiguity never claims that the account survived or was deleted; verify the user list before retrying. Confirmed deletion followed by audit/panel-marker failure reports partial completion and warns against repeating.
+- Auth API deletion cascades to native sessions and roles in the examined schema. The isolated test verifies that the old access token cannot retrieve that deleted Auth user and refresh is refused. This does not cryptographically invalidate an issued JWT before expiry or certify every direct PostgREST policy. Admin-sensitive paths must still validate current roles/users, as the migrated guards do.
+- Existing Storage objects may prevent Auth deletion. This workflow does not remove/reassign files to force deletion. No real account, role or backup is deleted in validation.
+- The private counter is operational state outside current application public-table exports. Full disaster recovery must preserve/rebuild it consistently with user_roles and the trigger. Do not disable the guard during routine imports. Privileged manual TRUNCATE, disabled triggers or direct counter tampering are outside this row-mutation guard and require separate controlled recovery procedures.
+- The existing panel-only session-revocation button is not certified as global native Auth logout by these deletion tests.
+
+Validation separates actual synthetic Supabase Auth deletion, rollback-only SQL checks, handler tests and disposable PostgreSQL concurrency tests. The synthetic deletion diagnostic is restricted to the isolated project and fixed newly-created targets; it is never deployed to production.
