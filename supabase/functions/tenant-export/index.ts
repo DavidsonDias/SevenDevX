@@ -95,8 +95,8 @@
 // 📦 Tenant Export v6 — Backup DEFINITIVO, inteligente e reaproveitável do SevenOS
 // Exporta TODAS as seções conhecidas, pagina 100% dos registros, resolve assets
 // linkados (logos, SVGs, imagens, PDFs), cria catálogos navegáveis e pastas por entidade.
-import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
-import { createClient } from 'npm:@supabase/supabase-js@2';
+import { createClient } from 'npm:@supabase/supabase-js@2.49.1';
+const corsHeaders = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type', 'Content-Type': 'application/json' };
 
 // ============================================================================
 // ⚙️ CONSTANTS & CONFIGURATION
@@ -121,7 +121,10 @@ const PUBLIC_TABLES = [
   'services_cms', 'stage_checklist_items', 'stage_documents', 'system_settings', 'tag_registry',
   'team_members', 'tech_registry', 'tenant_backups', 'time_entries', 'transactions',
   'user_integration_favorites', 'user_mfa', 'user_roles', 'vercel_deploy_alerts', 'webhook_deliveries',
-  'webhook_dlq', 'webhooks', 'whatsapp_messages', 'whatsapp_threads'
+  'webhook_dlq', 'webhooks', 'whatsapp_messages', 'whatsapp_threads',
+  'portfolio_settings', 'tech_categories', 'site_page_comparison_rows', 'site_page_config',
+  'site_page_diagnostics', 'site_page_differentials', 'site_page_faqs', 'site_page_metrics',
+  'site_page_process_steps', 'site_page_projects', 'site_page_roi_metrics', 'site_page_tech', 'site_page_versions'
 ];
 
 // ⚙️ Mapeamento domínio → tabelas conhecidas
@@ -139,15 +142,37 @@ const DOMAINS: Record<string, string[]> = {
 };
 
 const DOMAIN_BUCKETS: Record<string, string[]> = {
-  projects: ['project-images', 'attachments'],
+  projects: ['project-images', 'portfolio-covers', 'attachments'],
   registry: ['tech-icons'],
   cms: ['blog-images'],
-  branding: ['project-images', 'tech-icons'],
+  branding: ['project-images', 'portfolio-covers', 'tech-icons'],
   crm: ['attachments'],
 };
-const ALL_BUCKETS = ['blog-images', 'project-images', 'tech-icons', 'attachments'];
+const ALL_BUCKETS = ['blog-images', 'project-images', 'portfolio-covers', 'tech-icons', 'attachments'];
 const ASSET_EXT_RE = /\.(svg|png|jpe?g|webp|gif|ico|avif|bmp|pdf|docx?|xlsx?|pptx?|csv|md|txt|json|mp4|webm|mov|mp3|wav|ogg|glb|gltf|zip)$/i;
 const MAX_LINKED_ASSET_BYTES = 35 * 1024 * 1024;
+const EXTERNAL_ASSET_HOSTS = new Set(['images.unsplash.com', 'cdn.jsdelivr.net', 'raw.githubusercontent.com', 'avatars.githubusercontent.com']);
+const MAX_ARCHIVE_PAYLOAD_BYTES = 24 * 1024 * 1024;
+function createArchiveFiles() {
+  const files: { name: string; data: Uint8Array }[] = [];
+  let bytes = 0;
+  let failed = false;
+  const originalPush = files.push.bind(files);
+  files.push = (...items) => {
+    const added = items.reduce((total, item) => total + item.data.byteLength, 0);
+    if (failed || bytes + added > MAX_ARCHIVE_PAYLOAD_BYTES || files.length + items.length > 4000) {
+      failed = true;
+      throw new Error('Archive resource limit reached');
+    }
+    bytes += added;
+    return originalPush(...items);
+  };
+  return Object.assign(files, { assertBudget: () => { if (failed) throw new Error('Archive resource limit reached'); } });
+}
+const timedFetch: typeof fetch = (input, init) => {
+  const signal = init?.signal ?? (input instanceof Request ? input.signal : undefined);
+  return fetch(input, { ...init, signal: signal ? AbortSignal.any([signal, AbortSignal.timeout(10000)]) : AbortSignal.timeout(10000) });
+};
 
 // ─── CRC32 + ZIP builder ───
 const CRC_TABLE = (() => {
@@ -374,24 +399,24 @@ footer{margin-top:60px;padding-top:16px;border-top:1px solid var(--line);color:v
 
 // Recursive bucket download
 async function collectBucketFiles(supa: any, bucket: string, prefix = '', out: { name: string; data: Uint8Array }[] = [], depth = 0): Promise<number> {
-  if (depth > 10) return 0;
+  if (depth > 10) throw new Error('Storage nesting limit reached');
   let n = 0;
   for (let offset = 0; ; offset += 1000) {
     const { data: list, error } = await supa.storage.from(bucket).list(prefix, { limit: 1000, offset, sortBy: { column: 'name', order: 'asc' } });
-    if (error || !list?.length) break;
+    if (error) throw new Error('Storage listing failed');
+    if (!list?.length) break;
     for (const item of list) {
       const p = prefix ? `${prefix}/${item.name}` : item.name;
       const isFolder = item.id === null || item.metadata === null || (!ASSET_EXT_RE.test(item.name) && !item.metadata?.size);
       if (isFolder) {
         n += await collectBucketFiles(supa, bucket, p, out, depth + 1);
       } else {
-        try {
-          const { data: blob } = await supa.storage.from(bucket).download(p);
-          if (blob) {
-            out.push({ name: `storage/${bucket}/${p}`, data: new Uint8Array(await blob.arrayBuffer()) });
-            n++;
-          }
-        } catch { /* skip */ }
+        if (Number(item.metadata?.size) > MAX_ARCHIVE_PAYLOAD_BYTES) throw new Error('Storage file exceeds archive budget');
+        const { data: blob, error: downloadError } = await supa.storage.from(bucket).download(p);
+        if (downloadError || !blob) throw new Error('Storage download failed');
+        if (blob.size > MAX_ARCHIVE_PAYLOAD_BYTES) throw new Error('Storage file exceeds archive budget');
+        out.push({ name: `storage/${bucket}/${p}`, data: new Uint8Array(await blob.arrayBuffer()) });
+        n++;
       }
     }
     if (list.length < 1000) break;
@@ -437,10 +462,11 @@ function isDownloadableUrl(v: string): boolean {
   if (v.trim().startsWith('<svg')) return true;
   try {
     const u = new URL(v);
-    if (!['http:', 'https:'].includes(u.protocol)) return false;
+    if (u.protocol !== 'https:' || u.username || u.password || (u.port && u.port !== '443')) return false;
     const h = u.hostname.toLowerCase();
     if (h === 'localhost' || h === '127.0.0.1' || h === '0.0.0.0' || h.endsWith('.local')) return false;
     if (/^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[0-1])\.)/.test(h)) return false;
+    if (!EXTERNAL_ASSET_HOSTS.has(h) && h !== new URL(SUPABASE_URL).hostname) return false;
     return /\/storage\/v1\/object\//.test(u.pathname) || /\/__l5e\/assets-v1\//.test(u.pathname) || ASSET_EXT_RE.test(u.pathname);
   } catch { return false; }
 }
@@ -487,11 +513,14 @@ function iconBadgeSvg(label: string, color: string, subtitle?: string): string {
 </svg>`;
 }
 
-async function fetchAllRows(supa: any, table: string): Promise<any[]> {
+async function fetchAllRows(supa: any, table: string, budget: { bytes: number; rows: number }): Promise<any[]> {
   const out: any[] = [];
   for (let offset = 0; ; offset += 1000) {
     const { data, error } = await supa.from(table).select('*').range(offset, offset + 999);
     if (error) throw error;
+    budget.bytes += new TextEncoder().encode(JSON.stringify(data ?? [])).byteLength;
+    budget.rows += data?.length ?? 0;
+    if (budget.bytes > 8 * 1024 * 1024 || budget.rows > 20000 || out.length + (data?.length ?? 0) > 10000) throw new Error('Snapshot query budget exceeded');
     out.push(...(data ?? []));
     if (!data || data.length < 1000) break;
   }
@@ -513,6 +542,7 @@ async function addStorageAsset(
   try {
     const { data: blob, error } = await supa.storage.from(bucket).download(path);
     if (error || !blob) return false;
+    if (blob.size > MAX_ARCHIVE_PAYLOAD_BYTES) throw new Error('Storage file exceeds archive budget');
     const bytes = new Uint8Array(await blob.arrayBuffer());
     const name = safeFileName(preferredName || path, 'asset.bin');
     files.push({ name: `${targetFolder}/${name}`, data: bytes });
@@ -554,11 +584,26 @@ async function addUrlAsset(
   if (!isDownloadableUrl(url)) return false;
   seen.add(url);
   try {
-    const res = await fetch(url);
+    const res = await fetch(url, { redirect: 'error', signal: AbortSignal.timeout(10000) });
     if (!res.ok) return false;
     const len = Number(res.headers.get('content-length') || 0);
     if (len > MAX_LINKED_ASSET_BYTES) return false;
-    const bytes = new Uint8Array(await res.arrayBuffer());
+    if (!res.body) return false;
+    const reader = res.body.getReader();
+    const chunks: Uint8Array[] = [];
+    let received = 0;
+    try {
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        received += value.length;
+        if (received > MAX_LINKED_ASSET_BYTES) { await reader.cancel(); return false; }
+        chunks.push(value);
+      }
+    } finally { reader.releaseLock(); }
+    const bytes = new Uint8Array(received);
+    let cursor = 0;
+    for (const chunk of chunks) { bytes.set(chunk, cursor); cursor += chunk.length; }
     if (bytes.byteLength > MAX_LINKED_ASSET_BYTES) return false;
     let name = safeFileName(preferredName || url, 'asset');
     if (!ASSET_EXT_RE.test(name)) name += `.${guessExtFromContentType(res.headers.get('content-type'))}`;
@@ -613,27 +658,32 @@ function rowsToHtmlTable(rows: any[]): string {
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  if (req.method !== 'POST') return new Response(JSON.stringify({ error: 'POST required' }), { status: 405, headers: corsHeaders });
   try {
     const authHeader = req.headers.get('Authorization') || '';
-    const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { global: { headers: { Authorization: authHeader } } });
+    if (!authHeader.startsWith('Bearer ')) return new Response(JSON.stringify({ error: 'unauthorized' }), { status: 401, headers: corsHeaders });
+    const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { global: { headers: { Authorization: authHeader }, fetch: timedFetch } });
     const { data: { user } } = await userClient.auth.getUser();
     if (!user) return new Response(JSON.stringify({ error: 'unauthorized' }), { status: 401, headers: corsHeaders });
-    const { data: isAdmin } = await userClient.rpc('has_role', { _user_id: user.id, _role: 'admin' });
-    if (!isAdmin) return new Response(JSON.stringify({ error: 'forbidden' }), { status: 403, headers: corsHeaders });
+    const { data: isAdmin, error: roleError } = await userClient.rpc('has_role', { _user_id: user.id, _role: 'admin' });
+    if (roleError || isAdmin !== true) return new Response(JSON.stringify({ error: 'forbidden' }), { status: 403, headers: corsHeaders });
 
     const body = await req.json().catch(() => ({}));
     const onlyDomain: string | undefined = body?.domain;
+    if (onlyDomain !== undefined && (typeof onlyDomain !== 'string' || !Object.hasOwn(DOMAINS, onlyDomain))) return new Response(JSON.stringify({ error: 'invalid domain' }), { status: 400, headers: corsHeaders });
     const includeFiles: boolean = body?.include_files !== false;
 
-    const supa = createClient(SUPABASE_URL, SERVICE_KEY);
+    const supa = createClient(SUPABASE_URL, SERVICE_KEY, { global: { fetch: timedFetch } });
     const enc = new TextEncoder();
-    const files: { name: string; data: Uint8Array }[] = [];
+    const files = createArchiveFiles();
     const summary: Record<string, { tables: Record<string, number>; total: number }> = {};
     const allTables: string[] = [];
     const fullDump: Record<string, any[]> = {};
     const searchIndex: any[] = [];
     const seenAssets = new Set<string>();
     const exportWarnings: string[] = [];
+    const queryBudget = { bytes: 0, rows: 0 };
+    if (includeFiles) exportWarnings.push('External assets are restricted to trusted HTTPS hosts; redirects and unsupported hosts are not downloaded. Original references remain in exported JSON.');
 
     // 🧠 Inventário definitivo: usa todas as seções conhecidas + tenta descobrir extras.
     let domainsToRun: Record<string, string[]>;
@@ -662,7 +712,7 @@ Deno.serve(async (req) => {
       let totalRows = 0;
       for (const t of tables) {
         try {
-          const rows = await fetchAllRows(supa, t);
+          const rows = await fetchAllRows(supa, t, queryBudget);
           domainDump[t] = rows;
           fullDump[t] = rows;
           counts[t] = rows.length;
@@ -670,9 +720,8 @@ Deno.serve(async (req) => {
           if (!allTables.includes(t)) allTables.push(t);
           // CSV por tabela
           if (rows.length) files.push({ name: `${domain}/csv/${t}.csv`, data: enc.encode(toCsv(rows)) });
-        } catch (e: any) {
-          const msg = e?.message || 'fail';
-          domainDump[t] = { _error: msg }; counts[t] = 0; exportWarnings.push(`${domain}/${t}: ${msg}`);
+        } catch {
+          throw new Error(`Required table export failed: ${t}`);
         }
       }
       summary[domain] = { tables: counts, total: totalRows };
@@ -848,7 +897,7 @@ Deno.serve(async (req) => {
         try {
           const n = await collectBucketFiles(supa, b, '', files);
           storageInv[b] = { downloaded: n };
-        } catch (e: any) { storageInv[b] = { _error: e?.message || 'fail' }; }
+        } catch { throw new Error(`Required storage bucket export failed: ${b}`); }
       }
       files.push({ name: 'storage-inventory.json', data: enc.encode(JSON.stringify(storageInv, null, 2)) });
       summary.storage = {
@@ -919,6 +968,10 @@ Deno.serve(async (req) => {
       totals: { tables: allTables.length, rows: totalRows, files: totalFiles, zip_entries: files.length },
       formats: ['json', 'csv', 'markdown', 'html', 'doc', 'pdf', 'svg', 'original-assets'],
       includes_binaries: includeFiles,
+      storage_buckets_in_scope: includeFiles ? (onlyDomain ? DOMAIN_BUCKETS[onlyDomain] || [] : ALL_BUCKETS) : [],
+      storage_buckets_excluded: ['backups', 'database_export_02_10_26', 'database_export_27_09_26'],
+      storage_exclusion_reason: 'Existing backup archives and database dumps are preserved separately, not recursively embedded in application exports.',
+      database_scope: 'Explicit public-table application inventory; Auth schemas, grants, policies, triggers and infrastructure require a separate database backup.',
       warnings: exportWarnings,
     };
     files.push({ name: 'manifest.json', data: enc.encode(JSON.stringify(manifest, null, 2)) });
@@ -1003,7 +1056,9 @@ Suba o ZIP em **/admin/restore** e selecione o que restaurar.
 `),
     });
 
+    files.assertBudget();
     const zip = buildZip(files);
+    if (zip.byteLength > 32 * 1024 * 1024) throw new Error('Archive size unsupported');
     const checksum = await sha256Hex(zip);
     const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
     const path = `${user.id}/${stamp}${onlyDomain ? `-${onlyDomain}` : '-full'}.zip`;
@@ -1013,35 +1068,25 @@ Suba o ZIP em **/admin/restore** e selecione o que restaurar.
     });
     if (upErr) throw upErr;
 
-    const { data: signed } = await supa.storage.from('backups').createSignedUrl(path, 3600);
+    const { data: signed, error: signedError } = await supa.storage.from('backups').createSignedUrl(path, 3600);
+    if (signedError || !signed?.signedUrl) throw new Error('Backup download link unavailable');
 
-    await supa.from('tenant_backups').insert({
+    const { error: recordError } = await supa.from('tenant_backups').insert({
       storage_path: path, size_bytes: zip.byteLength,
       tables_included: allTables, triggered_by: user.id,
-      triggered_kind: onlyDomain ? `manual:${onlyDomain}` : 'manual:full',
+      triggered_kind: 'manual',
       status: 'completed',
       metadata: { checksum_sha256: checksum, version: 6, domains: Object.keys(domainsToRun), files: files.length, includes_binaries: includeFiles, totals: manifest.totals, warnings: exportWarnings },
     } as any);
+    if (recordError) throw new Error('Backup catalog persistence failed');
 
-    // 🧹 Retenção
-    try {
-      const { data: retSetting } = await supa.from('system_settings').select('value').eq('key', 'backup_retention_days').maybeSingle();
-      const days = Number((retSetting?.value as any)) || 0;
-      if (days > 0) {
-        const cutoff = new Date(Date.now() - days * 86400_000).toISOString();
-        const { data: old } = await supa.from('tenant_backups').select('id, storage_path').lt('created_at', cutoff);
-        if (old && old.length) {
-          await supa.storage.from('backups').remove(old.map((o: any) => o.storage_path));
-          await supa.from('tenant_backups').delete().in('id', old.map((o: any) => o.id));
-        }
-      }
-    } catch { /* ignore */ }
+    // Preservation during migration: exporting never removes previous backups.
 
     return new Response(JSON.stringify({
       ok: true, path, size: zip.byteLength, checksum, url: signed?.signedUrl,
       file_count: files.length, summary, totals: manifest.totals,
     }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-  } catch (e: any) {
-    return new Response(JSON.stringify({ error: e?.message || 'error' }), { status: 500, headers: corsHeaders });
+  } catch {
+    return new Response(JSON.stringify({ error: 'Backup export failed' }), { status: 500, headers: corsHeaders });
   }
 });

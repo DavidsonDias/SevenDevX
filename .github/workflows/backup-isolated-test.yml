@@ -1,0 +1,51 @@
+name: Backup isolated PostgreSQL validation
+on:
+  push:
+    branches: [codex/backup-export-preservation]
+    paths:
+      - '.github/workflows/backup-isolated-test.yml'
+      - 'supabase/functions/tenant-*/**'
+      - 'scripts/tenant-*.mjs'
+      - 'scripts/tenant-*.ts'
+permissions:
+  contents: read
+jobs:
+  deno:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed
+        with:
+          deno-version: v2.2.8
+      - name: Check actual Edge Function types in Deno
+        run: deno check --no-config --node-modules-dir=none supabase/functions/tenant-export/index.ts supabase/functions/tenant-restore/index.ts
+      - name: Run native Deno archive tests
+        run: deno test --no-config --node-modules-dir=none scripts/tenant-snapshot.deno.test.ts
+  restore:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: postgres:17@sha256:2d2b8998d31037bf721cfdf764d76ba74171b4fab3431b7f72c27c56ddbdf9e3
+        env:
+          POSTGRES_DB: migration_restore_test
+          POSTGRES_PASSWORD: synthetic-audit-only
+        ports: ['55439:5432']
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s --health-timeout 5s --health-retries 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Install test dependencies without lifecycle scripts
+        run: npm ci --ignore-scripts
+      - name: Run backup unit tests
+        run: node --test scripts/tenant-export.test.mjs scripts/tenant-restore.test.mjs
+      - name: Run handler against isolated synthetic PostgreSQL
+        env:
+          PGPASSWORD: synthetic-audit-only
+        run: node --test scripts/tenant-restore-postgres.test.mjs
