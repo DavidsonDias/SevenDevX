@@ -144,8 +144,7 @@ export default function UserDetailsModal({
     if (error) toast.error(error.message); else toast.success("Email de reset enviado");
   };
   const revokeSessions = async () => {
-    await supabase.from("admin_sessions").update({ revoked_at: new Date().toISOString() } as any).eq("user_id", user.user_id);
-    toast.success("Sessões revogadas"); onChanged();
+    toast.error("Desconexão remota indisponível: os registros do painel não revogam sessões do Supabase Auth.");
   };
   const deleteUser = async () => {
     if (protectedUser) return toast.error("Usuário protegido — não pode ser removido");
@@ -205,7 +204,7 @@ export default function UserDetailsModal({
 
           <div className="flex-1 overflow-y-auto p-5 grid sm:grid-cols-2 gap-5">
             <section>
-              <h3 className="text-xs uppercase tracking-[0.3em] text-white/40 mb-3 flex items-center gap-2"><Monitor className="w-3.5 h-3.5" /> Sessões recentes</h3>
+              <h3 className="text-xs uppercase tracking-[0.3em] text-white/40 mb-3 flex items-center gap-2"><Monitor className="w-3.5 h-3.5" /> Registros de sessões do painel</h3>
               {sessions.length === 0 ? <p className="text-white/40 text-sm">Sem sessões registradas.</p> : (
                 <ul className="space-y-2">
                   {sessions.map((s) => {
@@ -213,7 +212,7 @@ export default function UserDetailsModal({
                     return (
                       <li key={s.id} className="p-3 rounded-lg border border-white/10 bg-white/[0.02] text-xs">
                         <div className="flex justify-between"><span className="font-mono">{s.browser || "?"} · {s.os || "?"}</span>
-                          <span className={online ? "text-emerald-300" : "text-white/40"}>{online ? "● online" : s.revoked_at ? "revogada" : "offline"}</span>
+                          <span className={online ? "text-emerald-300" : "text-white/40"}>{online ? "● online" : s.revoked_at ? "marcada no painel" : "offline"}</span>
                         </div>
                         <div className="text-white/40 mt-1">{s.ip || "—"} · {new Date(s.last_seen_at).toLocaleString("pt-BR")}</div>
                       </li>
@@ -244,8 +243,8 @@ export default function UserDetailsModal({
             <button onClick={resetPassword} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-white/15 hover:bg-white/5 text-sm">
               <KeyRound className="w-4 h-4" /> Reset senha
             </button>
-            <button onClick={revokeSessions} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-white/15 hover:bg-white/5 text-sm">
-              <Ban className="w-4 h-4" /> Revogar sessões
+            <button onClick={revokeSessions} disabled title="Desconexão remota ainda não validada" className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-white/15 hover:bg-white/5 text-sm">
+              <Ban className="w-4 h-4" /> Desconexão remota indisponível
             </button>
             <a href={`mailto:${user.email}`} className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg border border-white/15 hover:bg-white/5 text-sm">
               <Mail className="w-4 h-4" /> Email
