@@ -194,7 +194,7 @@ export default function ReconciliationAdmin() {
   const importStaged = useMutation({
     mutationFn: async () => {
       const toImport = staged.filter((s) => s.status === "new");
-      if (!toImport.length) return { imported: 0 };
+      if (!toImport.length) return { imported: 0, historyRecorded: true };
       const rows = toImport.map((s) => ({
         kind: s.amount >= 0 ? "income" : "expense",
         category: s.amount >= 0 ? "other_income" : "other_expense",
@@ -212,17 +212,23 @@ export default function ReconciliationAdmin() {
       }));
       const { error } = await supabase.from("transactions").insert(rows as any);
       if (error) throw error;
-      await supabase.from("bank_import_batches").insert({
+      let historyRecorded = false;
+      try {
+        const { error: historyError } = await supabase.from("bank_import_batches").insert({
         file_name: fileName,
         source: "csv",
         rows_total: staged.length,
         rows_imported: toImport.length,
         rows_skipped: staged.length - toImport.length,
-      });
-      return { imported: toImport.length };
+        });
+        historyRecorded = !historyError;
+      } catch {
+        // Transactions already exist. Do not invite a retry that duplicates them.
+      }
+      return { imported: toImport.length, historyRecorded };
     },
     onSuccess: (r) => {
-      toast({ title: `${r.imported} transações importadas` });
+      toast({ title: `${r.imported} transações importadas`, ...(!r.historyRecorded ? { description: "As transações foram salvas, mas o histórico do lote não foi registrado. Não importe novamente este arquivo; confira os lançamentos antes de continuar.", variant: "destructive" as const } : {}) });
       setStaged([]);
       setFileName("");
       qc.invalidateQueries({ queryKey: ["tx_unreconciled"] });

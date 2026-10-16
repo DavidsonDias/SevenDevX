@@ -116,11 +116,23 @@ const STATUS_COLOR: Record<string,string> = {
 export default function IncidentsAdmin() {
   const [list, setList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState({ title: "", description: "", severity: "minor", impact: "" });
 
-  const load = () => supabase.from("incidents").select("*").order("created_at", { ascending: false })
-    .then(({ data }) => { setList(data || []); setLoading(false); });
+  const load = async () => {
+    setLoading(true);
+    setLoadError(false);
+    try {
+      const { data, error } = await supabase.from("incidents").select("*").order("created_at", { ascending: false });
+      if (error || data === null) throw error || new Error("Missing incident response");
+      setList(data);
+    } catch {
+      setLoadError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => { load(); }, []);
 
   const create = async () => {
@@ -133,8 +145,13 @@ export default function IncidentsAdmin() {
   };
 
   const updateStatus = async (id: string, status: string) => {
-    await supabase.from("incidents").update({ status, resolved_at: status === "resolved" ? new Date().toISOString() : null } as any).eq("id", id);
-    load();
+    try {
+      const { data, error } = await supabase.from("incidents").update({ status, resolved_at: status === "resolved" ? new Date().toISOString() : null } as any).eq("id", id).select("id").maybeSingle();
+      if (error || !data) return toast.error("Não foi possível atualizar o incidente. Verifique sua sessão e tente novamente.");
+      await load();
+    } catch {
+      toast.error("Não foi possível atualizar o incidente. Verifique sua conexão.");
+    }
   };
 
   return (
@@ -165,7 +182,8 @@ export default function IncidentsAdmin() {
       )}
 
       {loading ? <div className="flex justify-center py-20"><Loader2 className="w-6 h-6 animate-spin text-white/50" /></div> :
-        list.length === 0 ? <div className="text-center py-20 text-white/40">Sem incidentes — tudo operacional ✨</div> :
+        loadError ? <div role="alert" className="text-center py-20 text-amber-400">Não foi possível consultar os incidentes. O estado operacional não está confirmado. <button onClick={load} className="underline">Tentar novamente</button></div> :
+        list.length === 0 ? <div className="text-center py-20 text-white/40">Nenhum incidente registrado.</div> :
         <div className="space-y-3">
           {list.map(i => (
             <div key={i.id} className="p-4 rounded-xl border border-white/10 hover:border-white/20 transition-colors">
