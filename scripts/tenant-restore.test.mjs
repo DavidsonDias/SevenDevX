@@ -33,3 +33,11 @@ test('failed table writes or completion persistence never return completed succe
 test('external URLs and non-admin requests never write',async()=>{const a=fixture();assert.equal((await a.run({source_url:'https://example.invalid'})).status,400);assert.equal(a.writes(),0);const b=fixture({admin:false});assert.equal((await b.run()).status,403);assert.equal(b.writes(),0);});
 test('successful restore reports completed only after checked writes',async()=>{const f=fixture();const r=await f.run();assert.equal(r.status,200);assert.equal((await r.json()).inserted,1);assert.equal(f.statuses().at(-1),'completed');});
 test('explicit overwrite confirmation is required before writes',async()=>{const f=fixture();assert.equal((await f.run({confirmed:false})).status,400);assert.equal(f.writes(),0);});
+
+
+test('selected tables follow audited foreign keys without adding unselected parents',()=>{
+ const order=new Function('Deno','createClient','decodeSnapshot','crypto','exports',compile('../supabase/functions/tenant-restore/index.ts')+';return orderRestoreTables;')({env:{get:()=> 'test'},serve:()=>{}},()=>({}),()=>({}),webcrypto,{});
+ assert.deepEqual(order(['projects','clients','contacts']),['contacts','clients','projects']);
+ assert.deepEqual(order(['projects']),['projects']);
+ for(const [child,parent] of [['blog_posts','blog_categories'],['faq_items','faq_categories'],['process_template_stages','process_templates']]) assert.deepEqual(order([child,parent]),[parent,child]);
+});

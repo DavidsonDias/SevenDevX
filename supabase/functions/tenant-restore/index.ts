@@ -113,6 +113,25 @@ const RESTORABLE = new Set([
   'process_templates', 'process_template_stages',
 ]);
 
+// Public-table foreign keys audited in the migrated schema. Auth parents must already exist.
+function orderRestoreTables(selected: string[]): string[] {
+  const parents: Record<string, string[]> = {
+    clients: ['contacts'], projects: ['clients'], blog_posts: ['blog_categories'],
+    faq_items: ['faq_categories'], process_template_stages: ['process_templates'],
+  };
+  const included = new Set(selected);
+  const ordered: string[] = [];
+  const visited = new Set<string>();
+  const visit = (table: string) => {
+    if (visited.has(table)) return;
+    visited.add(table);
+    for (const parent of parents[table] ?? []) if (included.has(parent)) visit(parent);
+    ordered.push(table);
+  };
+  selected.forEach(visit);
+  return ordered;
+}
+
 // ============================================================================
 // 🔒 BUSINESS RULES & INVARIANTS
 // ============================================================================
@@ -150,7 +169,7 @@ Deno.serve(async (req) => {
     if (confirmed !== true) return new Response(JSON.stringify({ error: 'explicit_confirmation_required' }), { status: 400, headers: corsHeaders });
     if (typeof backup_id !== 'string' || !/^[0-9a-f-]{36}$/i.test(backup_id) || source_url || (mode && mode !== 'merge')) return new Response(JSON.stringify({ error: 'invalid_source_or_mode' }), { status: 400, headers: corsHeaders });
     if (!Array.isArray(selected_tables) || selected_tables.some(t => typeof t !== 'string' || !RESTORABLE.has(t))) return new Response(JSON.stringify({ error: 'invalid_tables' }), { status: 400, headers: corsHeaders });
-    const tables = [...new Set<string>(selected_tables)];
+    const tables = orderRestoreTables([...new Set<string>(selected_tables)]);
     if (!tables.length) return new Response(JSON.stringify({ error: 'no_valid_tables' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
     supa = createClient(SUPABASE_URL, SERVICE_KEY);
