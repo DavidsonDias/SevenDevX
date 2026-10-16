@@ -13,9 +13,17 @@ export async function validatePublicUrl(raw: string, timeoutMs = 5000): Promise<
   if (url.protocol !== 'https:' || url.username || url.password || (url.port && url.port !== '443') || !host.includes('.') || host.includes(':') || /^\d+(?:\.\d+)*$/.test(host) || /\.(?:localhost|local|internal|test|invalid|example)$/.test(host)) throw new Error('Unsupported scan URL');
   let timer: ReturnType<typeof setTimeout> | undefined;
   let answers: PromiseSettledResult<string[]>[];
+  const resolve = async (type: 'A' | 'AAAA'): Promise<string[]> => {
+    try { return await Deno.resolveDns(`${host}.`, type); }
+    catch (error) {
+      // One address family may have no records; operational failures still fail closed.
+      if (error instanceof Error && error.name === 'NotFound') return [];
+      throw error;
+    }
+  };
   try {
     answers = await Promise.race([
-      Promise.allSettled([Deno.resolveDns(host,'A'),Deno.resolveDns(host,'AAAA')]),
+      Promise.allSettled([resolve('A'), resolve('AAAA')]),
       new Promise<never>((_,reject) => { timer = setTimeout(() => reject(new Error('DNS validation timed out')), timeoutMs); }),
     ]);
   } finally { if (timer !== undefined) clearTimeout(timer); }

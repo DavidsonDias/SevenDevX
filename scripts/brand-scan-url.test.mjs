@@ -15,3 +15,16 @@ test('partial DNS failure and stalled resolution cannot authorize scanning',asyn
  await assert.rejects(exports.validatePublicUrl('https://example.com',10));
  }
 });
+
+test('missing AAAA records permit public A but absent records in both families refuse',async()=>{
+ for(const hasA of [true,false]){
+  const exports={};
+  new Function('Deno','exports',code)({resolveDns:async(host,type)=>{
+   assert.equal(host,'example.com.');
+   if(type==='A' && hasA)return ['8.8.8.8'];
+   const e=new Error('no records');e.name='NotFound';throw e;
+  }},exports);
+  if(hasA)assert.equal(await exports.validatePublicUrl('https://example.com'),'https://example.com/');
+  else await assert.rejects(exports.validatePublicUrl('https://example.com'));
+ }
+});
