@@ -140,7 +140,7 @@ export default function UserDetailsModal({
   const isLastAdmin = (user.roles.includes("admin") || user.roles.includes("super_admin")) && adminCount <= 1;
 
   const resetPassword = async () => {
-    const { error } = await supabase.auth.resetPasswordForEmail(user.email, { redirectTo: `${window.location.origin}/auth` });
+    const { error } = await supabase.auth.resetPasswordForEmail(user.email, { redirectTo: `${window.location.origin}/auth/reset` });
     if (error) toast.error(error.message); else toast.success("Email de reset enviado");
   };
   const revokeSessions = async () => {
