@@ -219,7 +219,7 @@ async function fetchText(url: string, timeoutMs = 6000): Promise<string | null> 
 }
 
 async function aiBrandSummary(payload: any): Promise<{ summary?: string; suggestedPalette?: string[]; personality?: string[] } | null> {
-  if (!OPENAI_API_KEY) return null;
+  if (!OPENAI_API_KEY) { console.warn('brand_scan_ai_not_configured'); return null; }
   try {
     const r = await openAIRequest('chat/completions', {
       method: "POST",
@@ -233,11 +233,16 @@ async function aiBrandSummary(payload: any): Promise<{ summary?: string; suggest
       }),
     });
     const j = await r.json();
+    if (!r.ok) {
+      const code = typeof j?.error?.code === 'string' && /^[a-z_]{1,80}$/.test(j.error.code) ? j.error.code : 'unknown';
+      console.warn('brand_scan_ai_provider_error', JSON.stringify({ status: r.status, code }));
+      return null;
+    }
     const txt = j?.choices?.[0]?.message?.content || "";
     const m = txt.match(/\{[\s\S]*\}/);
-    if (!m) return null;
+    if (!m) { console.warn('brand_scan_ai_invalid_response'); return null; }
     return JSON.parse(m[0]);
-  } catch { return null; }
+  } catch (error) { console.warn('brand_scan_ai_unavailable', error instanceof Error ? error.name : 'unknown'); return null; }
 }
 
 Deno.serve(async (req) => {
