@@ -1,10 +1,18 @@
 function isPublicAddress(address: string): boolean {
   const value = address.toLowerCase();
-  if (value.includes(':')) return /^[23][0-9a-f]{3}:/.test(value) && !value.startsWith('2001:db8:');
+  if (value.includes(':')) {
+    let normalized: string;
+    try { normalized = new URL(`http://[${value}]/`).hostname.slice(1, -1); } catch { return false; }
+    if (!/^[23][0-9a-f]{3}:/.test(normalized)) return false;
+    const words = normalized.split(':');
+    const second = parseInt(words[1] || '0', 16);
+    // Exclude protocol/transition networks that can embed private IPv4 destinations.
+    return !(words[0] === '2002' || (words[0] === '2001' && (second < 0x200 || second === 0xdb8)) || (words[0] === '3fff' && second < 0x1000));
+  }
   const parts = value.split('.').map(Number);
   if (parts.length !== 4 || parts.some(n => !Number.isInteger(n) || n < 0 || n > 255)) return false;
   const [a,b] = parts;
-  return !(a === 0 || a === 10 || a === 127 || a >= 224 || (a === 100 && b >= 64 && b <= 127) || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) || (a === 192 && (b === 168 || b === 0)) || (a === 198 && (b === 18 || b === 19 || b === 51)) || (a === 203 && b === 0));
+  return !(a === 0 || a === 10 || a === 127 || a >= 224 || (a === 100 && b >= 64 && b <= 127) || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) || (a === 192 && (b === 168 || b === 0 || (b === 88 && parts[2] === 99))) || (a === 198 && (b === 18 || b === 19 || b === 51)) || (a === 203 && b === 0));
 }
 
 export async function resolvePublicTarget(raw: string, timeoutMs = 5000): Promise<{url: string; addresses: string[]}> {
