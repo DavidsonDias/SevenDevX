@@ -76,6 +76,7 @@ import { useToast } from "@/hooks/use-toast";
 import SEOHead from "@/components/SEOHead";
 import GlassCard from "@/components/GlassCard";
 import { getAuthErrorToast } from "@/utils/authErrors";
+import { safeAuthRedirect } from "@/utils/authRedirect";
 
 const loginSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -112,7 +113,7 @@ const Auth = () => {
 
   useEffect(() => {
     if (user && !authLoading) {
-      navigate(searchParams.get("redirect") || "/");
+      navigate(safeAuthRedirect(searchParams.get("redirect")));
     }
   }, [user, authLoading, navigate, searchParams]);
 
@@ -146,7 +147,7 @@ const Auth = () => {
         }
         if (data?.session) {
           toast({ title: "Bem-vindo!", description: "Login realizado com sucesso" });
-          navigate(searchParams.get("redirect") || "/");
+          navigate(safeAuthRedirect(searchParams.get("redirect")));
         }
       } else {
         const result = signupSchema.safeParse(formData);
@@ -167,7 +168,7 @@ const Auth = () => {
         }
         if (data?.session) {
           toast({ title: "Bem-vindo!", description: "Conta criada com sucesso" });
-          navigate(searchParams.get("redirect") || "/");
+          navigate(safeAuthRedirect(searchParams.get("redirect")));
         } else {
           toast({ title: "Conta criada!", description: "Verifique seu email para confirmar a conta." });
           setMode("login");
