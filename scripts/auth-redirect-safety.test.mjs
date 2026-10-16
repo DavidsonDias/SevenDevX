@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import ts from 'typescript';
+const source=fs.readFileSync(new URL('../src/utils/authRedirect.ts',import.meta.url),'utf8');
+const code=ts.transpileModule(source.replace('export function','function'),{compilerOptions:{target:ts.ScriptTarget.ES2022}}).outputText;
+const safe=new Function(code+';return safeAuthRedirect;')();
+test('internal destinations retain query, hash, accents and escaped path segments',()=>{for(const path of ['/','/admin/portfolio','/admin/security/mfa?tab=active#sessions','/projects/a%20b','/search?q=hello%20world','/projetos/ação']){const result=safe(path);assert.equal(result,path);assert.equal(new URL(result,'https://www.sevendevx.com').origin,'https://www.sevendevx.com');}});
+test('external, protocol-relative and backslash redirect variants fall back to home',()=>{for(const path of ['https://example.invalid','//example.invalid','///example.invalid','/\\example.invalid','\\\\example.invalid','javascript:alert(1)','data:text/html,test','admin',' /admin','/admin\n','/admin\t'])assert.equal(safe(path),'/');});
+test('encoded, nested encoded, malformed and oversized destinations fail closed',()=>{for(const path of ['/%2fexample.invalid','/%252fexample.invalid','/%5cexample.invalid','/%255cexample.invalid','/%00','/%0a/admin','/%250d','/%ZZ','/%E0%A4%A','/'+ 'a'.repeat(4096),null,''])assert.equal(safe(path),'/');});
+test('generated separators cannot resolve to an external origin',()=>{const encodings=['/','\\','%2f','%5c','%252f','%255c','%25252f'];for(const separator of encodings){const result=safe('/'+separator+'example.invalid');assert.equal(result,'/');assert.equal(new URL(result,'https://www.sevendevx.com').origin,'https://www.sevendevx.com');}});
