@@ -1,5 +1,6 @@
 import { openAIRequest, textModel } from '../_shared/openai.ts';
 import { validatePublicUrl, readLimitedText } from './public-url.ts';
+import { fetchPinnedPublic } from './pinned-fetch.ts';
 /**
  * 🚀 brand-scan/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -211,8 +212,7 @@ function topTokenFromCss(css: string, prop: RegExp, n = 6): { value: string; cou
 
 async function fetchText(url: string, timeoutMs = 6000): Promise<string | null> {
   try {
-    const target = await validatePublicUrl(url);
-    const r = await fetch(target, { headers: { "User-Agent": UA, "Accept": "text/html,text/css,application/json,*/*" }, redirect: "error", signal: AbortSignal.timeout(timeoutMs) });
+    const r = await fetchPinnedPublic(url, UA, 256000, timeoutMs);
     if (!r.ok) return null;
     return await readLimitedText(r, 256000);
   } catch { return null; }
@@ -259,7 +259,7 @@ Deno.serve(async (req) => {
     if (!/^https?:\/\//i.test(target)) target = "https://" + target;
 
     try { target = await validatePublicUrl(target); } catch { return jsonRes({error:'invalid_public_url'},400); }
-    const res = await fetch(target, { redirect: "error", headers: { "User-Agent": UA }, signal: AbortSignal.timeout(10000) });
+    const res = await fetchPinnedPublic(target, UA, 600000, 10000);
     if (!res.ok) return jsonRes({ error: `fetch_${res.status}` }, 502);
     const finalUrl = res.url || target;
     const html = await readLimitedText(res, 600000);

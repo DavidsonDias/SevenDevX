@@ -7,7 +7,7 @@ function isPublicAddress(address: string): boolean {
   return !(a === 0 || a === 10 || a === 127 || a >= 224 || (a === 100 && b >= 64 && b <= 127) || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) || (a === 192 && (b === 168 || b === 0)) || (a === 198 && (b === 18 || b === 19 || b === 51)) || (a === 203 && b === 0));
 }
 
-export async function validatePublicUrl(raw: string, timeoutMs = 5000): Promise<string> {
+export async function resolvePublicTarget(raw: string, timeoutMs = 5000): Promise<{url: string; addresses: string[]}> {
   const url = new URL(raw);
   const host = url.hostname.toLowerCase();
   if (url.protocol !== 'https:' || url.username || url.password || (url.port && url.port !== '443') || !host.includes('.') || host.includes(':') || /^\d+(?:\.\d+)*$/.test(host) || /\.(?:localhost|local|internal|test|invalid|example)$/.test(host)) throw new Error('Unsupported scan URL');
@@ -31,7 +31,11 @@ export async function validatePublicUrl(raw: string, timeoutMs = 5000): Promise<
   const addresses = answers.flatMap(answer => answer.status === 'fulfilled' ? answer.value : []);
   if (!addresses.length || !addresses.every(isPublicAddress)) throw new Error('Scan target must resolve to public addresses');
   url.hash = '';
-  return url.toString();
+  return {url: url.toString(), addresses};
+}
+
+export async function validatePublicUrl(raw: string, timeoutMs = 5000): Promise<string> {
+  return (await resolvePublicTarget(raw, timeoutMs)).url;
 }
 
 export async function readLimitedText(response: Response, maximum: number): Promise<string> {

@@ -1,0 +1,16 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import ts from 'typescript';
+const code=ts.transpileModule(fs.readFileSync(new URL('../src/lib/bankCsv.ts',import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+const exports={};new Function('exports',code)(exports);const parse=exports.parseBankCsv;
+test('Brazilian decimals keep cents in semicolon CSV',()=>assert.deepEqual(parse('data;descricao;valor\n16/10/2026;Teste;1.234,56'),[{date:'2026-10-16',description:'Teste',amount:1234.56}]));
+test('quoted comma CSV preserves commas, escaped quotes and negative cents',()=>assert.deepEqual(parse('data,descricao,valor\r\n16/10/2026,"Compra, ""teste""","-123,45"'),[{date:'2026-10-16',description:'Compra, "teste"',amount:-123.45}]));
+test('tab CSV and decimal dot remain supported',()=>assert.equal(parse('date\tdescription\tamount\n2026-10-16\tTest\t1234.56')[0].amount,1234.56));
+test('quoted semicolon in comma-delimited description does not change delimiter',()=>assert.equal(parse('2026-10-16,"Test; example",12.34')[0].amount,12.34));
+test('BOM, currency prefix, thousands and positive sign',()=>assert.deepEqual(parse('\uFEFFdata;descricao;valor\n16/10/2026;A;R$ 1.234,56\n16/10/2026;B;+1.234\n16/10/2026;C;0,01').map(r=>r.amount),[1234.56,1234,0.01]));
+test('invalid dates fail instead of rolling forward into another month',()=>{for(const d of ['31/02/2026','2026-13-01','not-a-date'])assert.throws(()=>parse(`${d};Test;10`),/inválida/);});
+test('extra columns, unquoted decimal comma and malformed quotes are rejected',()=>{for(const s of ['16/10/2026,Test,123,45','16/10/2026;Test;10;unexpected','16/10/2026;"Test;10','16/10/2026;"Test"extra;10'])assert.throws(()=>parse(s));});
+test('partial number parses and excessive precision are rejected',()=>{for(const v of ['123abc','NaN','Infinity','12,3456','900719925474099100'])assert.throws(()=>parse(`16/10/2026;Test;${v}`));});
+test('a later invalid row rejects the entire CSV instead of returning a partial import',()=>assert.throws(()=>parse('16/10/2026;Valid;12,34\n31/02/2026;Invalid;10')));
+test('multiline quoted descriptions and empty input',()=>{assert.equal(parse('16/10/2026;"Line1\nLine2";10')[0].description,'Line1\nLine2');assert.deepEqual(parse(''),[]);});

@@ -114,12 +114,17 @@ export default function RestoreAdmin() {
   const [selected, setSelected] = useState<string[]>([]);
   const [running, setRunning] = useState(false);
   const [confirm, setConfirm] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const load = async () => {
     const [b, j] = await Promise.all([
       supabase.from("tenant_backups").select("*").order("created_at", { ascending: false }).limit(20),
       supabase.from("restore_jobs").select("*").order("created_at", { ascending: false }).limit(10),
     ]);
+    if (b.error || j.error) {
+      setError('Não foi possível consultar backups ou restaurações. Tente novamente.');
+      return;
+    }
     setBackups(b.data || []);
     setJobs(j.data || []);
   };
@@ -131,16 +136,29 @@ export default function RestoreAdmin() {
   const run = async () => {
     if (!selectedBackup || selected.length === 0) return;
     setRunning(true);
-    const { error } = await supabase.functions.invoke("tenant-restore", {
-      body: { backup_id: selectedBackup, selected_tables: selected, mode: "merge" },
-    });
-    setRunning(false);
-    setConfirm(false);
-    if (!error) { setSelected([]); load(); }
+    setError(null);
+    try {
+      const { data, error: restoreError } = await supabase.functions.invoke("tenant-restore", {
+        body: { backup_id: selectedBackup, selected_tables: selected, mode: "merge", confirmed: true },
+      });
+      if (restoreError || data?.ok !== true) {
+        setError('A restauração não foi concluída. Confira o histórico antes de tentar novamente: alguns registros podem ter sido aplicados.');
+        await load();
+        return;
+      }
+      setSelected([]);
+      await load();
+    } catch {
+      setError('Não foi possível confirmar o resultado. Confira o histórico antes de repetir a restauração.');
+    } finally {
+      setRunning(false);
+      setConfirm(false);
+    }
   };
 
   return (
     <AdminPageShell title="Restore Seletivo" subtitle="Reaplica snapshots — escolha tabelas específicas">
+      {error && <p role="alert" className="mb-4 rounded-xl border border-red-500/40 bg-red-500/10 p-4 text-sm text-red-200">{error}</p>}
       <div className="grid lg:grid-cols-2 gap-6">
         {/* Config */}
         <div className="space-y-4">
@@ -207,7 +225,7 @@ export default function RestoreAdmin() {
           <p className="text-xs uppercase tracking-wider text-white/60 mb-3 flex items-center gap-2">
             <History className="w-3.5 h-3.5" /> Histórico de restores
           </p>
-          {jobs.length === 0 && <p className="text-xs text-white/40">Nenhum restore executado ainda.</p>}
+          {!error && jobs.length === 0 && <p className="text-xs text-white/40">Nenhum restore executado ainda.</p>}
           <div className="space-y-2">
             {jobs.map(j => (
               <div key={j.id} className="p-3 border border-white/10 rounded-lg text-xs space-y-1">

@@ -4,7 +4,8 @@ const headers = { 'Content-Type': 'application/json', 'Access-Control-Allow-Orig
 Deno.serve(async (req: Request) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers });
   if (req.method !== 'POST') return new Response(JSON.stringify({ error: 'POST required' }), { status: 405, headers });
-  const token = req.headers.get('Authorization')?.replace(/^Bearer\s+/i, '') || '';
+  const authorization = req.headers.get('Authorization') || '';
+  const token = /^Bearer\s+/i.test(authorization) ? authorization.replace(/^Bearer\s+/i, '') : '';
   const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
   let authorized = !!token && !!serviceKey && token === serviceKey;
   // New Supabase secret keys are opaque API keys, not JWTs.
@@ -14,12 +15,17 @@ Deno.serve(async (req: Request) => {
     authorized ||= !!suppliedApiKey && Object.values(secretKeys).some(key => typeof key === 'string' && key.length > 0 && key === suppliedApiKey);
   } catch { /* Missing modern keys must never authorize the request. */ }
   if (!authorized && token) {
-    const admin = createClient(Deno.env.get('SUPABASE_URL')!, serviceKey);
-    const { data: { user }, error } = await admin.auth.getUser(token);
-    if (!error && user) {
-      const { data: role } = await admin.from('user_roles').select('role').eq('user_id', user.id).eq('role', 'admin').maybeSingle();
-      authorized = !!role;
-    }
+    try {
+      const caller = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_ANON_KEY')!, {
+        global: { headers: { Authorization: authorization } },
+      });
+      const { data: { user }, error } = await caller.auth.getUser(token);
+      if (!error && user) {
+        // Evaluate the same admin/AAL2 rule as RLS using the caller's JWT.
+        const { data: role, error: roleError } = await caller.rpc('has_role', { _user_id: user.id, _role: 'admin' });
+        authorized = !roleError && role === true;
+      }
+    } catch { /* Auth and RPC failures must not reach the provider. */ }
   }
   if (!authorized) return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers });
   if (!Deno.env.get('OPENAI_API_KEY')?.trim()) return new Response(JSON.stringify({ ok: false, error: 'OPENAI_API_KEY missing' }), { status: 503, headers });

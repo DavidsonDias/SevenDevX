@@ -68,6 +68,7 @@ const Fornecedores = lazy(() => import("@/pages/Fornecedores"));
 const Blog = lazy(() => import("@/pages/Blog"));
 const BlogPost = lazy(() => import("@/pages/BlogPost"));
 const Auth = lazy(() => import("@/pages/Auth"));
+const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
 const Profile = lazy(() => import("@/pages/Profile"));
 const AdminDashboard = lazy(() => import("@/pages/AdminDashboard"));
 const ProjectsAdmin = lazy(() => import("@/pages/admin/ProjectsAdmin"));
@@ -177,6 +178,7 @@ function AnimatedRoutes() {
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/auth/reset" element={<ResetPassword />} />
             <Route path="/projects-hub" element={<ProjectsHub />} />
             <Route path="/projects/:slug" element={<ProjectDetail />} />
 
