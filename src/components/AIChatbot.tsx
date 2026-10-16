@@ -90,6 +90,7 @@ export const AIChatbot = () => {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId, setConversationId] = useState<string | null>(null);
+  const [conversationToken, setConversationToken] = useState<string | null>(null);
   const [buttonVisible, setButtonVisible] = useState(false);
   const [shouldShake, setShouldShake] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -181,25 +182,25 @@ export const AIChatbot = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
         },
         body: JSON.stringify({
           messages: apiMessages,
           conversationId,
+          conversationToken,
           visitorId: getVisitorId(),
         }),
       });
 
-      // Get conversation ID from header
-      const newConvId = response.headers.get("X-Conversation-Id");
-      if (newConvId && !conversationId) {
-        setConversationId(newConvId);
-      }
-
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to get response");
+        // Failed generations must not replace the local conversation capability.
+        throw new Error("Assistente temporariamente indisponível");
       }
+      const newConvId = response.headers.get("X-Conversation-Id");
+      const newToken = response.headers.get("X-Conversation-Token");
+      if (!newConvId || !newToken) throw new Error("Resposta de conversa inválida");
+      setConversationId(newConvId);
+      setConversationToken(newToken);
 
       // Handle streaming response
       const reader = response.body?.getReader();

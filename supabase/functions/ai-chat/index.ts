@@ -1,93 +1,13 @@
+// Anonymous chat: public project key is routing, not user authentication.
+// A server-issued capability controls each conversation; only its SHA256 is stored.
+import { createClient } from 'npm:@supabase/supabase-js@2.49.1';
 import { openAIRequest, textModel } from '../_shared/openai.ts';
-/**
- * 🚀 ai-chat/index.ts — SevenDevX Enterprise Platform
- * ═══════════════════════════════════════════════════════════════════════
- *
- * @file supabase/functions/ai-chat/index.ts
- * @module Edge Functions
- * @layer Backend / Edge Function
- * @status Active
- *
- * @description
- * Edge Function `ai-chat` do módulo Edge Functions.
- *
- * ┌─────────────────────────────────────────────────────────────────────┐
- * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
- * └─────────────────────────────────────────────────────────────────────┘
- *
- * ✅ Lê/escreve nas tabelas: `chat_conversations`, `chat_messages`
- *
- * ┌─────────────────────────────────────────────────────────────────────┐
- * │ 🔄 FLUXO DE DADOS                                                   │
- * └─────────────────────────────────────────────────────────────────────┘
- *
- * Supabase (RLS aplicada)
- *    ↓
- * Consulta direta via client
- *    ↓
- * Edge Function `ai-chat`
- *
- * ┌─────────────────────────────────────────────────────────────────────┐
- * │ 🔒 REGRAS DE NEGÓCIO E INVARIANTES                                  │
- * └─────────────────────────────────────────────────────────────────────┘
- *
- * 🔒 Secrets permanecem em `Deno.env` e nunca retornam ao cliente
- *
- * ┌─────────────────────────────────────────────────────────────────────┐
- * │ 🌐 API EXTERNA                                                      │
- * └─────────────────────────────────────────────────────────────────────┘
- *
- * 🌐 api.openai.com
- *
- * ┌─────────────────────────────────────────────────────────────────────┐
- * │ 🔐 SEGURANÇA                                                        │
- * └─────────────────────────────────────────────────────────────────────┘
- *
- * ✅ Valida o JWT antes de qualquer operação privilegiada
- * 🔒 A autoridade final é a RLS do banco, não o corpo da requisição
- *
- * ┌─────────────────────────────────────────────────────────────────────┐
- * │ 🔧 MANUTENÇÃO                                                       │
- * └─────────────────────────────────────────────────────────────────────┘
- *
- * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
- * ✅ Manter regras de negócio próximas da implementação
- * ✅ Registrar decisões arquiteturais relevantes em ADR
- *
- * ┌─────────────────────────────────────────────────────────────────────┐
- * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
- * └─────────────────────────────────────────────────────────────────────┘
- *
- * @see docs/architecture/MODULE_MAP.md
- * @see docs/code-standards/CODE_ANATOMY.md
- * @see docs/security/EDGE_FUNCTION_SECURITY.md
- *
- * @updated 2026-08-02
- * @license Proprietary — SevenDevX
- * ═══════════════════════════════════════════════════════════════════════
- */
-
-/**
- * 🤖 AI Chat Edge Function - SevenDevX Enterprise
- * Chatbot inteligente com streaming usando Lovable AI
- */
-
-// ============================================================================
-// 📦 IMPORTS
-// ============================================================================
-
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.1";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+const corsHeaders={
+ 'Access-Control-Allow-Origin':'*',
+ 'Access-Control-Allow-Headers':'authorization, x-client-info, apikey, content-type',
+ 'Access-Control-Expose-Headers':'X-Conversation-Id, X-Conversation-Token, Retry-After',
 };
-
-// ============================================================================
-// ⚙️ CONSTANTS & CONFIGURATION
-// ============================================================================
-
+const reply=(status:number,error:string,extra:Record<string,string>={})=>new Response(JSON.stringify({error}),{status,headers:{...corsHeaders,'Content-Type':'application/json',...extra}});
 const SYSTEM_PROMPT = `Você é a 7AI, assistente virtual inteligente da SevenDevX - uma empresa de desenvolvimento web e software de alta performance.
 
 📋 SOBRE A SEVENDEVX:
@@ -110,153 +30,53 @@ const SYSTEM_PROMPT = `Você é a 7AI, assistente virtual inteligente da SevenDe
 - Não invente informações sobre preços específicos
 - Não prometa prazos sem consulta
 - Não compartilhe dados de outros clientes`;
-
-serve(async (req) => {
-  // Handle CORS preflight
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+async function readBody(req:Request){
+ if(Number(req.headers.get('content-length'))>65536)throw new Error('too_large');
+ const reader=req.body?.getReader();if(!reader)throw new Error('invalid_body');
+ const decoder=new TextDecoder();let size=0,text='';
+ try{for(;;){const {done,value}=await reader.read();if(done)break;size+=value.length;if(size>65536){await reader.cancel();throw new Error('too_large');}text+=decoder.decode(value,{stream:true});}text+=decoder.decode();}
+ finally{reader.releaseLock();}
+ return JSON.parse(text);
+}
+Deno.serve(async(req)=>{
+ if(req.method==='OPTIONS')return new Response('ok',{headers:corsHeaders});
+ if(req.method!=='POST')return reply(405,'POST required');
+ const supplied=req.headers.get('apikey')||req.headers.get('authorization')?.replace(/^Bearer /,'');
+ let keys:unknown[]=[];try{keys=Object.values(JSON.parse(Deno.env.get('SUPABASE_PUBLISHABLE_KEYS')||'{}'));}catch{/* fail closed */}
+ const allowed=[Deno.env.get('SUPABASE_ANON_KEY'),...keys].filter(k=>typeof k==='string'&&k.length>0);
+ if(!supplied||!allowed.includes(supplied))return reply(401,'invalid API key');
+ let input:any;try{input=await readBody(req);}catch(error){return reply(error instanceof Error&&error.message==='too_large'?413:400,'Requisição inválida');}
+ const messages=input?.messages;
+ if(!Array.isArray(messages)||!messages.length||messages.length>30||messages.some(m=>!m||!['user','assistant'].includes(m.role)||typeof m.content!=='string'||!m.content.trim()||m.content.length>4000)||messages.reduce((n,m)=>n+m.content.length,0)>30000||messages.at(-1)?.role!=='user')return reply(400,'Mensagens inválidas');
+ const id=input.conversationId??null;
+ if(id!==null&&(typeof id!=='string'||! /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)))return reply(400,'Conversa inválida');
+ if(id!==null&&(typeof input.conversationToken!=='string'||! /^[0-9a-f]{64}$/.test(input.conversationToken)))return reply(403,'Conversa inválida');
+ const visitor=typeof input.visitorId==='string'&&input.visitorId.length>0&&input.visitorId.length<=64?input.visitorId:'anonymous';
+ if(!Deno.env.get('OPENAI_API_KEY'))return reply(503,'Assistente temporariamente indisponível');
+ try{
+  const token=id?input.conversationToken:Array.from(crypto.getRandomValues(new Uint8Array(32)),b=>b.toString(16).padStart(2,'0')).join('');
+  const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(token));
+  const hash=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
+  const sb=createClient(Deno.env.get('SUPABASE_URL')!,Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,{auth:{persistSession:false,autoRefreshToken:false}});
+  const {data:reservation,error:reserveError}=await sb.rpc('reserve_public_chat',{_conversation_id:id,_token_hash:hash,_visitor_id:visitor});
+  if(reserveError)throw new Error('reservation_failed');
+  if(reservation?.allowed!==true){
+   if(reservation?.reason==='invalid_conversation')return reply(403,'Conversa inválida');
+   if(reservation?.reason==='rate_limited')return reply(429,'Limite de solicitações atingido. Tente mais tarde.',{'Retry-After':String(Math.min(86400,Math.max(1,Number(reservation.retry_after)||60)))});
+   throw new Error('invalid_reservation');
   }
-
-  try {
-    const { messages: rawMessages, conversationId, visitorId } = await req.json();
-
-    // Input validation - prevent API credit exhaustion
-    const MAX_MESSAGES = 30;
-    const MAX_MSG_LENGTH = 4000;
-    const MAX_TOTAL_CHARS = 30000;
-    if (!Array.isArray(rawMessages) || rawMessages.length === 0) {
-      return new Response(JSON.stringify({ error: "Mensagens inválidas" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-    }
-    if (rawMessages.length > MAX_MESSAGES) {
-      return new Response(JSON.stringify({ error: "Conversa muito longa" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-    }
-    const messages = rawMessages.map((m: any) => ({
-      role: m?.role === "assistant" || m?.role === "system" ? m.role : "user",
-      content: String(m?.content ?? "").slice(0, MAX_MSG_LENGTH),
-    }));
-    const totalChars = messages.reduce((s, m) => s + m.content.length, 0);
-    if (totalChars > MAX_TOTAL_CHARS) {
-      return new Response(JSON.stringify({ error: "Conteúdo muito grande" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-    }
-    const safeVisitorId = typeof visitorId === "string" ? visitorId.slice(0, 64) : "anonymous";
-    const safeConversationId = typeof conversationId === "string" && conversationId.length <= 64 ? conversationId : null;
-
-    
-    console.log(`[AI-Chat] Processing request - Conversation: ${safeConversationId}, Messages: ${messages.length}`);
-
-    const OPENAI_API_KEY = Deno.env.get("OPENAI_API_KEY");
-    if (!OPENAI_API_KEY) {
-      console.error("[AI-Chat] OPENAI_API_KEY not configured");
-      throw new Error("AI service not configured");
-    }
-
-    // Initialize Supabase client for logging
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    // Create or update conversation
-    let currentConversationId = safeConversationId;
-    if (!currentConversationId) {
-      const { data: newConv, error: convError } = await supabase
-        .from("chat_conversations")
-        .insert({ visitor_id: safeVisitorId })
-        .select()
-        .single();
-      
-      if (convError) {
-        console.error("[AI-Chat] Failed to create conversation:", convError);
-      } else {
-        currentConversationId = newConv.id;
-      }
-    }
-
-    // Save user message
-    if (currentConversationId && messages?.length > 0) {
-      const lastUserMessage = messages[messages.length - 1];
-      if (lastUserMessage.role === "user") {
-        await supabase.from("chat_messages").insert({
-          conversation_id: currentConversationId,
-          role: "user",
-          content: lastUserMessage.content,
-        });
-      }
-    }
-
-    // Call OpenAI API with streaming
-    const response = await openAIRequest('chat/completions', {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: textModel(),
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          ...messages,
-        ],
-        stream: true,
-        max_tokens: 1024,
-        temperature: 0.7,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("[AI-Chat] Gateway error:", response.status, errorText);
-      
-      if (response.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Muitas solicitações. Por favor, aguarde um momento." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      
-      if (response.status === 402) {
-        return new Response(
-          JSON.stringify({ error: "Serviço temporariamente indisponível." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      
-      throw new Error(`AI Gateway error: ${response.status}`);
-    }
-
-    console.log("[AI-Chat] Streaming response started");
-
-    // Return streaming response with conversation ID in header
-    return new Response(response.body, {
-      headers: {
-        ...corsHeaders,
-        "Content-Type": "text/event-stream",
-        "X-Conversation-Id": currentConversationId || "",
-      },
-    });
-
-  } catch (error) {
-    console.error("[AI-Chat] Error:", error);
-    return new Response(
-      JSON.stringify({ 
-        error: error instanceof Error ? error.message : "Erro ao processar mensagem",
-        fallback: "Desculpe, estou com dificuldades técnicas. Entre em contato pelo WhatsApp: +55 31 98474-0625"
-      }),
-      { 
-        status: 500, 
-        headers: { ...corsHeaders, "Content-Type": "application/json" } 
-      }
-    );
+  const conversation=reservation.conversation_id;
+  if(typeof conversation!=='string')throw new Error('invalid_reservation');
+  const {error:saveError}=await sb.from('chat_messages').insert({conversation_id:conversation,role:'user',content:messages.at(-1).content});
+  if(saveError)throw new Error('message_persistence_failed');
+  const response=await openAIRequest('chat/completions',{method:'POST',body:JSON.stringify({model:textModel(),messages:[{role:'system',content:SYSTEM_PROMPT},...messages.map(m=>({role:m.role,content:m.content}))],stream:true,max_tokens:1024,temperature:0.7})});
+  if(!response.ok){
+   let code='unknown';try{const body=await response.json();if(typeof body?.error?.code==='string'&&/^[a-z_]{1,80}$/.test(body.error.code))code=body.error.code;}catch{/* no raw body logged */}
+   console.warn('ai_chat_provider_error',JSON.stringify({status:response.status,code}));
+   if(response.status===429&&!['credit_balance_exhausted','insufficient_quota','billing_hard_limit_reached','organization_spend_limit_exceeded','project_spend_limit_exceeded','organization_usage_limit_exceeded'].includes(code))return reply(429,'Muitas solicitações. Tente mais tarde.',{'Retry-After':'60'});
+   return reply(503,'Assistente temporariamente indisponível. Entre em contato pelo WhatsApp: +55 31 98474-0625');
   }
+  if(!response.body||!response.headers.get('content-type')?.includes('text/event-stream')){await response.body?.cancel();throw new Error('invalid_stream');}
+  return new Response(response.body,{headers:{...corsHeaders,'Content-Type':'text/event-stream','Cache-Control':'no-store','X-Conversation-Id':conversation,'X-Conversation-Token':token}});
+ }catch{console.warn('ai_chat_request_failed');return reply(503,'Assistente temporariamente indisponível');}
 });
-
-// ============================================================================
-// 🔒 BUSINESS RULES & INVARIANTS
-// ============================================================================
-//
-// 🔒 A service role key permanece no servidor e nunca é devolvida ao frontend.
-// 🔒 Secrets são lidos de `Deno.env`; valores brutos nunca retornam na resposta.
-// 🔒 A autoridade final de acesso é a RLS do banco, não a validação do cliente.
-// 🟡 Saídas geradas por IA são assistivas e exigem revisão humana antes de uso oficial.
-// 🌐 Falhas de API externa são tratadas e devolvidas como erro, sem derrubar o fluxo.
-// ✅ Toda resposta inclui os headers de CORS previstos, inclusive nos caminhos de erro.
-//
