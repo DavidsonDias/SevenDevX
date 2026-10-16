@@ -1,4 +1,6 @@
 import { openAIRequest, textModel } from '../_shared/openai.ts';
+import { validatePublicUrl, readLimitedText } from './public-url.ts';
+import { fetchPinnedPublic } from './pinned-fetch.ts';
 /**
  * 🚀 brand-scan/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -98,8 +100,8 @@ import { openAIRequest, textModel } from '../_shared/openai.ts';
  */
 // 🎨 Brand Scan v3 — extração profunda de identidade visual (Figma-level).
 // Headers/meta + manifest.json + CSS variables + top colors + gradientes + radii + shadows + spacing + fontes + AI summary.
-import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { createClient } from "npm:@supabase/supabase-js@2.49.1";
+const corsHeaders = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type' };
 
 // ============================================================================
 // ⚙️ CONSTANTS & CONFIGURATION
@@ -210,12 +212,9 @@ function topTokenFromCss(css: string, prop: RegExp, n = 6): { value: string; cou
 
 async function fetchText(url: string, timeoutMs = 6000): Promise<string | null> {
   try {
-    const ctrl = new AbortController();
-    const id = setTimeout(() => ctrl.abort(), timeoutMs);
-    const r = await fetch(url, { headers: { "User-Agent": UA, "Accept": "text/html,text/css,application/json,*/*" }, redirect: "follow", signal: ctrl.signal });
-    clearTimeout(id);
+    const r = await fetchPinnedPublic(url, UA, 256000, timeoutMs);
     if (!r.ok) return null;
-    return await r.text();
+    return await readLimitedText(r, 256000);
   } catch { return null; }
 }
 
@@ -243,14 +242,15 @@ async function aiBrandSummary(payload: any): Promise<{ summary?: string; suggest
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+  if (req.method !== 'POST') return jsonRes({error:'POST required'},405);
   try {
     const auth = req.headers.get("Authorization") || "";
     if (!auth.startsWith("Bearer ")) return jsonRes({ error: "unauthorized" }, 401);
     const uc = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { global: { headers: { Authorization: auth } } });
     const { data: u } = await uc.auth.getUser();
     if (!u?.user) return jsonRes({ error: "unauthorized" }, 401);
-    const { data: isAdmin } = await uc.rpc("has_role", { _user_id: u.user.id, _role: "admin" });
-    if (!isAdmin) return jsonRes({ error: "forbidden" }, 403);
+    const { data: isAdmin, error: roleError } = await uc.rpc("has_role", { _user_id: u.user.id, _role: "admin" });
+    if (roleError || isAdmin !== true) return jsonRes({ error: "forbidden" }, 403);
 
     const { url } = await req.json();
     if (!url || typeof url !== "string") return jsonRes({ error: "missing_url" }, 400);
@@ -258,10 +258,11 @@ Deno.serve(async (req) => {
     let target = url.trim();
     if (!/^https?:\/\//i.test(target)) target = "https://" + target;
 
-    const res = await fetch(target, { redirect: "follow", headers: { "User-Agent": UA } });
+    try { target = await validatePublicUrl(target); } catch { return jsonRes({error:'invalid_public_url'},400); }
+    const res = await fetchPinnedPublic(target, UA, 600000, 10000);
     if (!res.ok) return jsonRes({ error: `fetch_${res.status}` }, 502);
     const finalUrl = res.url || target;
-    const html = await res.text();
+    const html = await readLimitedText(res, 600000);
     const head = html.slice(0, 120000);
 
     const pick = (re: RegExp) => { const m = head.match(re); return m ? m[1].trim() : null; };
@@ -367,6 +368,6 @@ Deno.serve(async (req) => {
       version: 3,
     });
   } catch (e) {
-    return jsonRes({ error: (e as Error).message }, 500);
+    return jsonRes({ error: 'Brand scan failed' }, 500);
   }
 });

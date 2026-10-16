@@ -1,0 +1,65 @@
+function isPublicAddress(address: string): boolean {
+  const value = address.toLowerCase();
+  if (value.includes(':')) {
+    let normalized: string;
+    try { normalized = new URL(`http://[${value}]/`).hostname.slice(1, -1); } catch { return false; }
+    if (!/^[23][0-9a-f]{3}:/.test(normalized)) return false;
+    const words = normalized.split(':');
+    const second = parseInt(words[1] || '0', 16);
+    // Exclude protocol/transition networks that can embed private IPv4 destinations.
+    return !(words[0] === '2002' || (words[0] === '2001' && (second < 0x200 || second === 0xdb8)) || (words[0] === '3fff' && second < 0x1000));
+  }
+  const parts = value.split('.').map(Number);
+  if (parts.length !== 4 || parts.some(n => !Number.isInteger(n) || n < 0 || n > 255)) return false;
+  const [a,b] = parts;
+  return !(a === 0 || a === 10 || a === 127 || a >= 224 || (a === 100 && b >= 64 && b <= 127) || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) || (a === 192 && (b === 168 || b === 0 || (b === 88 && parts[2] === 99))) || (a === 198 && (b === 18 || b === 19 || b === 51)) || (a === 203 && b === 0));
+}
+
+export async function resolvePublicTarget(raw: string, timeoutMs = 5000): Promise<{url: string; addresses: string[]}> {
+  const url = new URL(raw);
+  const host = url.hostname.toLowerCase();
+  if (url.protocol !== 'https:' || url.username || url.password || (url.port && url.port !== '443') || !host.includes('.') || host.includes(':') || /^\d+(?:\.\d+)*$/.test(host) || /\.(?:localhost|local|internal|test|invalid|example)$/.test(host)) throw new Error('Unsupported scan URL');
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let answers: PromiseSettledResult<string[]>[];
+  const resolve = async (type: 'A' | 'AAAA'): Promise<string[]> => {
+    try { return await Deno.resolveDns(`${host}.`, type); }
+    catch (error) {
+      // One address family may have no records; operational failures still fail closed.
+      if (error instanceof Error && error.name === 'NotFound') return [];
+      throw error;
+    }
+  };
+  try {
+    answers = await Promise.race([
+      Promise.allSettled([resolve('A'), resolve('AAAA')]),
+      new Promise<never>((_,reject) => { timer = setTimeout(() => reject(new Error('DNS validation timed out')), timeoutMs); }),
+    ]);
+  } finally { if (timer !== undefined) clearTimeout(timer); }
+  if (answers.some(answer => answer.status === 'rejected')) throw new Error('DNS validation incomplete');
+  const addresses = answers.flatMap(answer => answer.status === 'fulfilled' ? answer.value : []);
+  if (!addresses.length || !addresses.every(isPublicAddress)) throw new Error('Scan target must resolve to public addresses');
+  url.hash = '';
+  return {url: url.toString(), addresses};
+}
+
+export async function validatePublicUrl(raw: string, timeoutMs = 5000): Promise<string> {
+  return (await resolvePublicTarget(raw, timeoutMs)).url;
+}
+
+export async function readLimitedText(response: Response, maximum: number): Promise<string> {
+  if (Number(response.headers.get('content-length')) > maximum) throw new Error('Scan response too large');
+  if (!response.body) return '';
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let bytes = 0, text = '';
+  try {
+    for (;;) {
+      const {done,value} = await reader.read();
+      if (done) break;
+      bytes += value.length;
+      if (bytes > maximum) { await reader.cancel(); throw new Error('Scan response too large'); }
+      text += decoder.decode(value,{stream:true});
+    }
+    return text + decoder.decode();
+  } finally { reader.releaseLock(); }
+}
