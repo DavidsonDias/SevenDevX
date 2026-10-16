@@ -102,6 +102,7 @@ import { motion } from "framer-motion";
 import RealtimeActivityFeed from "@/modules/system-health/RealtimeActivityFeed";
 import HealthStatusGrid from "@/modules/system-health/HealthStatusGrid";
 import AIRecommendationPanel from "@/modules/system-health/AIRecommendationPanel";
+import { summarizeProviderHealth } from "@/lib/providerHealth";
 
 // ============================================================================
 // 🧩 TYPES & CONTRACTS
@@ -116,10 +117,13 @@ interface Metric { label: string; value: string | number; status: "ok" | "warn" 
 export default function SystemHealthAdmin() {
   const [metrics, setMetrics] = useState<Metric[]>([]);
   const [openIncidents, setOpenIncidents] = useState(0);
-  const [globalStatus, setGlobalStatus] = useState<"operational" | "degraded" | "incident">("operational");
+  const [globalStatus, setGlobalStatus] = useState<"operational" | "degraded" | "incident" | "unknown">("unknown");
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
+    let disposed = false;
     const load = async () => {
+      try {
       const since = new Date(Date.now() - 60_000).toISOString();
       const sinceHour = new Date(Date.now() - 3600_000).toISOString();
 
@@ -132,43 +136,56 @@ export default function SystemHealthAdmin() {
         supabase.from("automation_runs").select("id", { count: "exact", head: true }).eq("status", "failed").gte("created_at", sinceHour),
       ]);
 
-      const integrations = intR.data || [];
-      const okInt = integrations.filter((i: any) => i.health_status === "ok" || i.health_status === "unknown").length;
-      const downInt = integrations.filter((i: any) => i.health_status === "error" || i.health_status === "down").length;
+      if (disposed) return;
+      if ([intR, evR, errR, incR, sessR, autoR].some(result => result.error) || [evR, errR, incR, sessR, autoR].some(result => typeof result.count !== 'number')) {
+        setGlobalStatus("unknown");
+        setMetrics([]);
+        setLoadError("Não foi possível consultar todas as métricas. O estado de saúde não está confirmado.");
+        return;
+      }
+      setLoadError(null);
+      const providers = summarizeProviderHealth(intR.data || []);
 
       const errs = errR.count || 0;
       const inc = incR.count || 0;
       setOpenIncidents(inc);
 
-      const status: any = inc > 0 ? "incident" : (errs > 5 || downInt > 0) ? "degraded" : "operational";
+      const status = inc > 0 ? "incident" : (errs > 5 || providers.degraded > 0) ? "degraded" : (providers.unknown > 0 || providers.active === 0) ? "unknown" : "operational";
       setGlobalStatus(status);
 
       setMetrics([
-        { label: "Integrações OK", value: `${okInt}/${integrations.length}`, status: downInt > 0 ? "warn" : "ok", icon: Cloud },
+        { label: "Integrações ativas OK", value: `${providers.healthy}/${providers.active}`, status: providers.degraded > 0 || providers.unknown > 0 || providers.active === 0 ? "warn" : "ok", icon: Cloud },
         { label: "Eventos/min", value: evR.count || 0, status: "ok", icon: Activity },
         { label: "Erros (1h)", value: errs, status: errs > 5 ? "warn" : "ok", icon: AlertTriangle },
         { label: "Sessões ativas", value: sessR.count || 0, status: "ok", icon: Zap },
         { label: "Automações falhas (1h)", value: autoR.count || 0, status: (autoR.count || 0) > 0 ? "warn" : "ok", icon: Database },
         { label: "Incidentes abertos", value: inc, status: inc > 0 ? "down" : "ok", icon: HeartPulse },
       ]);
+      } catch {
+        if (disposed) return;
+        setGlobalStatus("unknown");
+        setMetrics([]);
+        setLoadError("Não foi possível consultar todas as métricas. O estado de saúde não está confirmado.");
+      }
     };
     load();
     const t = setInterval(load, 15_000);
-    return () => clearInterval(t);
+    return () => { disposed = true; clearInterval(t); };
   }, []);
 
-  const statusColor = globalStatus === "operational" ? "text-emerald-400" : globalStatus === "degraded" ? "text-amber-400" : "text-red-400";
-  const statusLabel = globalStatus === "operational" ? "🟢 Operational" : globalStatus === "degraded" ? "🟡 Degraded" : "🔴 Incident";
+  const statusColor = globalStatus === "operational" ? "text-emerald-400" : globalStatus === "incident" ? "text-red-400" : "text-amber-400";
+  const statusLabel = globalStatus === "operational" ? "🟢 Operational" : globalStatus === "degraded" ? "🟡 Degraded" : globalStatus === "incident" ? "🔴 Incident" : "Saúde não confirmada";
 
   return (
     <AdminPageShell title="Saúde do Sistema" subtitle="Mission control · uptime · integrações · alertas">
+      {loadError && <p role="alert" className="mb-4 rounded-xl border border-amber-500/30 p-4 text-amber-200">{loadError}</p>}
       <div className="mb-8 p-6 rounded-2xl border border-white/15 bg-gradient-to-br from-white/5 to-transparent flex items-center justify-between">
         <div>
           <div className="text-xs uppercase tracking-wider text-white/50 mb-1">Status global</div>
           <div className={`text-3xl font-bold ${statusColor}`}>{statusLabel}</div>
         </div>
         <motion.div animate={{ scale: [1, 1.15, 1] }} transition={{ repeat: Infinity, duration: 2 }}
-          className={`w-4 h-4 rounded-full ${globalStatus === "operational" ? "bg-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.6)]" : globalStatus === "degraded" ? "bg-amber-400 shadow-[0_0_20px_rgba(251,191,36,0.6)]" : "bg-red-400 shadow-[0_0_20px_rgba(248,113,113,0.6)]"}`} />
+          className={`w-4 h-4 rounded-full ${globalStatus === "operational" ? "bg-emerald-400 shadow-[0_0_20px_rgba(52,211,153,0.6)]" : globalStatus !== "incident" ? "bg-amber-400 shadow-[0_0_20px_rgba(251,191,36,0.6)]" : "bg-red-400 shadow-[0_0_20px_rgba(248,113,113,0.6)]"}`} />
       </div>
 
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">

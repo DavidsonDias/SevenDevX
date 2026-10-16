@@ -94,7 +94,6 @@ import { Database, Download, Trash2, Loader2, Package, FolderArchive, ShieldChec
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "@/hooks/use-toast";
-import { useSystemSettings } from "@/hooks/useSystemSettings";
 
 // ============================================================================
 // ⚙️ CONSTANTS & CONFIGURATION
@@ -132,12 +131,17 @@ export default function BackupAdmin() {
   const [loading, setLoading] = useState(true);
   const [running, setRunning] = useState<string | null>(null);
   const [includeFiles, setIncludeFiles] = useState(true);
-  const { settings, setSetting } = useSystemSettings();
-  const retention = Number(settings.backup_retention_days ?? 30);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const load = async () => {
-    const { data } = await supabase.from("tenant_backups").select("*").order("created_at", { ascending: false });
-    setItems(data ?? []); setLoading(false);
+    try {
+      const { data, error } = await supabase.from("tenant_backups").select("*").order("created_at", { ascending: false });
+      if (error) throw error;
+      setItems(data ?? []);
+      setLoadError(null);
+    } catch {
+      setLoadError("Não foi possível consultar o histórico de backups. Tente novamente.");
+    } finally { setLoading(false); }
   };
 
   useEffect(() => { load(); }, []);
@@ -157,6 +161,7 @@ export default function BackupAdmin() {
       });
       if (error) throw error;
       const d = data as any;
+      if (d?.ok !== true) throw new Error("Não foi possível confirmar a criação do backup.");
       toast({
         title: `Backup ${domain || "completo"} gerado`,
         description: `${(d.size / 1024).toFixed(1)} KB · ${d.file_count} arquivos · iniciando download...`,
@@ -175,6 +180,7 @@ export default function BackupAdmin() {
       if (error || !data?.signedUrl) throw error || new Error("URL não gerada");
       // fetch → blob → anchor download (funciona em iOS/Android/PWA sem popup blocker)
       const res = await fetch(data.signedUrl);
+      if (!res.ok) throw new Error("Não foi possível baixar o backup.");
       const blob = await res.blob();
       const objUrl = URL.createObjectURL(blob);
       triggerBrowserDownload(objUrl, path.split("/").pop() || "backup.zip");
@@ -192,7 +198,7 @@ export default function BackupAdmin() {
   };
 
   return (
-    <AdminPageShell title="Backups" subtitle="ZIP completo do tenant + backups granulares por domínio"
+    <AdminPageShell title="Backups" subtitle="Exportação da aplicação e backups por domínio"
       actions={
         <button onClick={() => create()} disabled={!!running}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-black text-xs font-bold disabled:opacity-50">
@@ -200,6 +206,7 @@ export default function BackupAdmin() {
           {running === "full" ? "Gerando ZIP completo..." : "Backup completo (ZIP)"}
         </button>
       }>
+      {loadError && <p role="alert" className="mb-4 rounded-xl border border-amber-500/30 p-4 text-amber-200">{loadError}</p>}
       {/* 🗂️ Por domínio */}
       <div className="mb-8">
         <p className="text-[11px] uppercase tracking-[0.2em] text-white/50 mb-3">Backup por domínio · ZIP isolado</p>
@@ -242,20 +249,12 @@ export default function BackupAdmin() {
       {/* 🧹 Retenção automática */}
       <div className="mb-6 flex flex-wrap items-center gap-3 p-4 rounded-xl border border-white/10 bg-white/[0.02]">
         <ShieldCheck className="w-4 h-4 text-emerald-300" />
-        <span className="text-xs text-white/70 flex-1">Retenção automática · backups mais antigos são removidos após:</span>
-        <select value={retention} onChange={(e) => setSetting("backup_retention_days", Number(e.target.value))}
-          className="px-3 py-1.5 rounded-lg bg-black/60 border border-white/15 text-xs">
-          <option value={0}>Desativado</option>
-          <option value={7}>7 dias</option>
-          <option value={30}>30 dias</option>
-          <option value={90}>90 dias</option>
-          <option value={365}>1 ano</option>
-        </select>
+        <span className="text-xs text-white/70 flex-1">Exclusão automática suspensa durante a migração. Os backups existentes são preservados.</span>
       </div>
 
       <p className="text-[11px] uppercase tracking-[0.2em] text-white/50 mb-3">Histórico</p>
       {loading ? <div className="py-20 text-center text-white/40">Carregando...</div> :
-       items.length === 0 ? (
+       loadError && items.length === 0 ? null : items.length === 0 ? (
         <div className="py-24 text-center text-white/30">
           <Database className="w-10 h-10 mx-auto mb-3 opacity-30" />
           Nenhum backup ainda.
