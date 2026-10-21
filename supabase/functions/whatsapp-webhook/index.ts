@@ -34,6 +34,7 @@ Deno.serve(async req => {
         const profile=typeof value.contacts?.[0]?.profile?.name==='string'?value.contacts[0].profile.name.slice(0,200):null;
         await db.from('whatsapp_threads').upsert({contact_phone:m.from,contact_name:profile},{onConflict:'contact_phone',ignoreDuplicates:true});
         const thread=await db.from('whatsapp_threads').select('id,unread_count').eq('contact_phone',m.from).single();
+        if(!thread.data) throw new Error('WhatsApp thread not found');
         const mediaType=['image','audio','video','document'].find(k=>m[k]?.id)??null;
         const inserted=await db.from('whatsapp_messages').upsert({thread_id:thread.data.id,direction:'in',body:text,wa_message_id:m.id,status:'received',media_type:mediaType,media_url:mediaType?m[mediaType].id:null},{onConflict:'wa_message_id',ignoreDuplicates:true}).select('id');
         if(inserted.data?.length)await db.from('whatsapp_threads').update({last_message_at:new Date().toISOString(),last_message_preview:text.slice(0,160),unread_count:(thread.data.unread_count||0)+1,status:'open',...(profile?{contact_name:profile}:{})}).eq('id',thread.data.id);
