@@ -1,0 +1,33 @@
+name: Native integration validation
+on:
+  pull_request:
+    paths:
+      - 'supabase/functions/_shared/integration-auth.ts'
+      - 'supabase/functions/oauth-*/**'
+      - 'supabase/functions/gsc-insights/**'
+      - 'scripts/native-integrations.test.mjs'
+      - '.github/workflows/native-integrations-test.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'supabase/functions/_shared/integration-auth.ts'
+      - 'supabase/functions/oauth-*/**'
+      - 'supabase/functions/gsc-insights/**'
+      - 'scripts/native-integrations.test.mjs'
+      - '.github/workflows/native-integrations-test.yml'
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: denoland/setup-deno@22d081ff2d3a40755e97629de92e3bcbfa7cf2ed
+        with:
+          deno-version: v2.2.8
+      - run: deno check --no-config --node-modules-dir=none supabase/functions/oauth-start/index.ts supabase/functions/oauth-callback/index.ts supabase/functions/gsc-insights/index.ts
+      - run: npm ci --ignore-scripts
+      - run: node --test scripts/native-integrations.test.mjs

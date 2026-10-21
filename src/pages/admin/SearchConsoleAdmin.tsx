@@ -83,7 +83,7 @@
 
 /**
  * 📊 SearchConsoleAdmin — visualiza dados do Google Search Console
- * via edge function gsc-insights (Lovable Connector Gateway).
+ * pela Edge Function gsc-insights e API oficial do Google.
  */
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -103,6 +103,11 @@ type Dim = "query" | "page" | "country" | "device";
 // 🎨 INTERNAL COMPONENTS
 // ============================================================================
 
+async function integrationMessage(error: { context?: unknown; message?: string }) {
+  if (error.context instanceof Response) { const details = await error.context.clone().json().catch(() => null); if (typeof details?.error === "string") return details.error; }
+  return "Não foi possível consultar o Search Console. Verifique a conexão Google em OAuth Conexões.";
+}
+
 export default function SearchConsoleAdmin() {
   const [site, setSite] = useState<string>("");
   const [days, setDays] = useState(28);
@@ -114,8 +119,9 @@ export default function SearchConsoleAdmin() {
 
   async function loadSites() {
     const { data, error } = await supabase.functions.invoke("gsc-insights", { body: { action: "sites" } });
-    if (error) return setError(error.message);
+    if (error) { setRows([]); return setError(await integrationMessage(error)); }
     if (data?.ok === false) return setError(data?.error || "Falha ao listar sites no Search Console");
+    setError(null);
     const entries: string[] = (data?.siteEntry ?? []).map((s: any) => s.siteUrl);
     setSites(entries);
     if (entries.length && !site) setSite(entries[0]);
@@ -128,7 +134,7 @@ export default function SearchConsoleAdmin() {
       body: { action: "analytics", site, days, dimension: dim },
     });
     setLoading(false);
-    if (error) return setError(error.message);
+    if (error) { setRows([]); return setError(await integrationMessage(error)); }
     if (data?.ok === false) {
       setRows([]);
       return setError(data?.error || `GSC retornou ${data?.gsc_status}`);
@@ -149,11 +155,12 @@ export default function SearchConsoleAdmin() {
   return (
     <AdminPageShell title="Search Console" subtitle="Performance orgânica no Google — queries, páginas, países e devices.">
       <div className="flex flex-wrap gap-3 items-center mb-6">
-        <select value={site} onChange={(e) => setSite(e.target.value)} className="px-3 py-2 rounded-lg border border-border bg-card text-sm">
+        <a href="/admin/oauth" className="px-3 py-2 rounded-lg border border-border text-sm">Conectar conta Google</a>
+        <select aria-label="Propriedade do Search Console" value={site} onChange={(e) => setSite(e.target.value)} className="px-3 py-2 rounded-lg border border-border bg-card text-sm">
           {sites.length === 0 && <option value={site}>{site}</option>}
           {sites.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
-        <select value={days} onChange={(e) => setDays(Number(e.target.value))} className="px-3 py-2 rounded-lg border border-border bg-card text-sm">
+        <select aria-label="Período da consulta" value={days} onChange={(e) => setDays(Number(e.target.value))} className="px-3 py-2 rounded-lg border border-border bg-card text-sm">
           <option value={7}>Últimos 7 dias</option>
           <option value={28}>Últimos 28 dias</option>
           <option value={90}>Últimos 90 dias</option>
@@ -166,7 +173,7 @@ export default function SearchConsoleAdmin() {
             </button>
           ))}
         </div>
-        <Button variant="outline" size="sm" onClick={load} disabled={loading}>
+        <Button variant="outline" size="sm" aria-label="Atualizar Search Console" onClick={() => site ? load() : loadSites()} disabled={loading}>
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCcw className="w-4 h-4" />}
         </Button>
       </div>
@@ -174,10 +181,10 @@ export default function SearchConsoleAdmin() {
       {error && <div className="p-4 mb-6 rounded-lg border border-destructive/30 bg-destructive/5 text-sm text-destructive">{error}</div>}
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <Kpi icon={MousePointerClick} label="Cliques" value={totals.clicks.toLocaleString()} />
-        <Kpi icon={Eye} label="Impressões" value={totals.impressions.toLocaleString()} />
-        <Kpi icon={TrendingUp} label="CTR médio" value={`${avgCtr.toFixed(2)}%`} />
-        <Kpi icon={Search} label="Posição média" value={avgPos.toFixed(1)} />
+        <Kpi icon={MousePointerClick} label="Cliques" value={error || !site ? "—" : totals.clicks.toLocaleString()} />
+        <Kpi icon={Eye} label="Impressões" value={error || !site ? "—" : totals.impressions.toLocaleString()} />
+        <Kpi icon={TrendingUp} label="CTR médio" value={error || !site ? "—" : `${avgCtr.toFixed(2)}%`} />
+        <Kpi icon={Search} label="Posição média" value={error || !site ? "—" : avgPos.toFixed(1)} />
       </div>
 
       <div className="rounded-2xl border border-border bg-card overflow-hidden">
@@ -204,7 +211,7 @@ export default function SearchConsoleAdmin() {
             ))}
             {!loading && rows.length === 0 && (
               <tr><td colSpan={5} className="p-12 text-center text-muted-foreground text-sm">
-                Sem dados ainda. Verifique se o site está verificado no Search Console e tem tráfego no período.
+                {error ? "Consulta indisponível. Resolva a conexão indicada acima; os valores não representam dados do Google." : !site ? "Conecte a conta Google e selecione uma propriedade autorizada." : "Nenhum resultado retornado pelo Google neste período."}
               </td></tr>
             )}
           </tbody>
