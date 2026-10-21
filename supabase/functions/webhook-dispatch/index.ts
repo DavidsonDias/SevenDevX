@@ -1,3 +1,4 @@
+import { integrationFetch as fetch } from '../_shared/integration-http.ts';
 /**
  * 🚀 webhook-dispatch/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -91,8 +92,8 @@
  * ═══════════════════════════════════════════════════════════════════════
  */
 // Webhook dispatcher: signs payload (HMAC-SHA256), POSTs to webhook URL, logs delivery. Admin-only.
-import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
-import { createClient } from 'npm:@supabase/supabase-js@2';
+import { corsHeaders } from '../_shared/integration-auth.ts';
+import { createClient, serveIntegration } from '../_shared/integration-runtime.ts';
 
 // ============================================================================
 // ⚙️ CONSTANTS & CONFIGURATION
@@ -132,7 +133,7 @@ async function sign(secret: string, body: string): Promise<string> {
 // 🌐 REQUEST HANDLER
 // ============================================================================
 
-Deno.serve(async (req) => {
+serveIntegration(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   try {
     const authHeader = req.headers.get('Authorization') || '';
@@ -170,12 +171,13 @@ Deno.serve(async (req) => {
     if (!webhook.is_active || !webhook.url) throw new Error('webhook_inactive');
 
     const body = JSON.stringify({ event, payload, timestamp: new Date().toISOString() });
+    if(webhook.verify_signature && !webhook.secret) throw new Error('Webhook signing secret missing');
     const signature = await sign(webhook.secret || '', body);
     const headers: Record<string,string> = {
+      ...(webhook.headers || {}),
       'Content-Type': 'application/json',
       'X-SevenOS-Event': event,
       'X-SevenOS-Signature': signature,
-      ...(webhook.headers || {}),
     };
 
     const t0 = Date.now();
@@ -185,7 +187,7 @@ Deno.serve(async (req) => {
       status = resp.status;
       responseText = (await resp.text()).slice(0, 4000);
     } catch (e: any) {
-      error = e?.message || 'fetch_failed';
+      error = 'integration_failed';
     }
     const duration = Date.now() - t0;
     const ok = status >= 200 && status < 300;
@@ -193,6 +195,7 @@ Deno.serve(async (req) => {
     await supa.from('webhook_deliveries').insert({
       webhook_id, event, payload, response_status: status, response_body: responseText,
       error, duration_ms: duration, attempt: 1,
+      next_retry_at: ok ? null : new Date(Date.now() + Math.min(86400,Math.max(1,Number(webhook.retry_policy?.backoff_seconds)||30))*1000).toISOString(),
     });
     await supa.from('webhooks').update({
       last_delivery_at: new Date().toISOString(),
@@ -200,12 +203,12 @@ Deno.serve(async (req) => {
       failure_count: ok ? webhook.failure_count : (webhook.failure_count || 0) + 1,
     }).eq('id', webhook_id);
 
-    return new Response(JSON.stringify({ ok, status, duration_ms: duration, signature }), {
+    return new Response(JSON.stringify({ ok, status, duration_ms: duration }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e: any) {
-    return new Response(JSON.stringify({ error: e?.message || 'internal_error' }), {
+    return new Response(JSON.stringify({ error: 'integration_failed' }), {
       status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
-});
+}, { adminOnly: true });

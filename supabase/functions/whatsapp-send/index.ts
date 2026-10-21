@@ -1,3 +1,4 @@
+import { integrationFetch as fetch } from '../_shared/integration-http.ts';
 /**
  * 🚀 whatsapp-send/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -97,8 +98,8 @@
  * ═══════════════════════════════════════════════════════════════════════
  */
 // Send WhatsApp message via Meta Cloud API. Admin only.
-import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
-import { createClient } from 'npm:@supabase/supabase-js@2';
+import { corsHeaders } from '../_shared/integration-auth.ts';
+import { createClient, serveIntegration } from '../_shared/integration-runtime.ts';
 
 // ============================================================================
 // ⚙️ CONSTANTS & CONFIGURATION
@@ -107,7 +108,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const WA_TOKEN = Deno.env.get('WHATSAPP_TOKEN') || '';
+const WA_TOKEN = Deno.env.get('WHATSAPP_ACCESS_TOKEN') || Deno.env.get('WHATSAPP_TOKEN') || '';
 
 // ============================================================================
 // 🔒 BUSINESS RULES & INVARIANTS
@@ -126,7 +127,7 @@ const WA_TOKEN = Deno.env.get('WHATSAPP_TOKEN') || '';
 // 🌐 REQUEST HANDLER
 // ============================================================================
 
-Deno.serve(async (req) => {
+serveIntegration(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   try {
     const auth = req.headers.get('Authorization') || '';
@@ -138,7 +139,7 @@ Deno.serve(async (req) => {
     if (!isAdmin) return new Response(JSON.stringify({ error: 'forbidden' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
     const { thread_id, phone, body } = await req.json();
-    if (!body || (!thread_id && !phone)) return new Response(JSON.stringify({ error: 'missing_fields' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    if (typeof body!=='string' || !body || body.length>4096 || (!thread_id && !phone)) return new Response(JSON.stringify({ error: 'missing_fields' }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
     const supa = createClient(SUPABASE_URL, SERVICE_KEY);
     let toPhone = phone;
@@ -147,6 +148,7 @@ Deno.serve(async (req) => {
       const { data: th } = await supa.from('whatsapp_threads').select('contact_phone').eq('id', threadId).single();
       toPhone = th?.contact_phone;
     }
+    if(typeof toPhone!=='string'||!/^\d{6,20}$/.test(toPhone)) throw new Error('Invalid recipient phone');
     if (!threadId && toPhone) {
       const { data: ex } = await supa.from('whatsapp_threads').select('id').eq('contact_phone', toPhone).maybeSingle();
       if (ex) threadId = ex.id;
@@ -164,21 +166,24 @@ Deno.serve(async (req) => {
       const v = r.value;
       sm[r.key] = typeof v === 'string' ? v : v?.value ?? String(v ?? '').replace(/"/g, '');
     });
-    const phoneId = sm.whatsapp_business_phone_id || '';
+    const phoneId = sm.whatsapp_business_phone_id || Deno.env.get('WHATSAPP_PHONE_NUMBER_ID') || Deno.env.get('WHATSAPP_PHONE_ID') || '';
+    const graphVersion=Deno.env.get('WHATSAPP_GRAPH_VERSION') || 'v20.0';
+    if(!/^v[0-9]{2}\.0$/.test(graphVersion)||!/^\d{6,30}$/.test(phoneId)) throw new Error('Invalid WhatsApp configuration');
     const token = sm.whatsapp_token || WA_TOKEN;
     let waId: string | null = null;
     let status = 'sent';
     let error: string | null = null;
 
     if (phoneId && token) {
-      const r = await fetch(`https://graph.facebook.com/v20.0/${phoneId}/messages`, {
+      const r = await fetch(`https://graph.facebook.com/${graphVersion}/${phoneId}/messages`, {
         method: 'POST',
         headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ messaging_product: 'whatsapp', to: toPhone, type: 'text', text: { body } }),
       });
       const json = await r.json().catch(() => ({}));
-      if (!r.ok) { status = 'failed'; error = JSON.stringify(json).slice(0, 500); }
+      if (!r.ok) { status = 'failed'; error = `WhatsApp provider returned ${r.status}`; }
       waId = json?.messages?.[0]?.id || null;
+      if(!waId && r.ok){status='failed';error='WhatsApp did not acknowledge the message';}
     } else {
       status = 'failed';
       error = 'Configure whatsapp_token e whatsapp_business_phone_id em /admin/integrations (WhatsApp Business)';
@@ -194,6 +199,6 @@ Deno.serve(async (req) => {
 
     return new Response(JSON.stringify({ ok: status === 'sent', wa_id: waId, error }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   } catch (e: any) {
-    return new Response(JSON.stringify({ error: e?.message }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    return new Response(JSON.stringify({ error: 'integration_failed' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
-});
+}, { adminOnly: true });

@@ -1,3 +1,4 @@
+import { integrationFetch as fetch } from '../_shared/integration-http.ts';
 /**
  * 🚀 vercel-watch/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -94,7 +95,7 @@
  * ═══════════════════════════════════════════════════════════════════════
  */
 // Vercel watch cron — protected by service role key OR CRON_SECRET shared header.
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { createClient, serveIntegration } from '../_shared/integration-runtime.ts';
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -138,7 +139,7 @@ async function vc(path: string) {
 // 🌐 REQUEST HANDLER
 // ============================================================================
 
-Deno.serve(async (req) => {
+serveIntegration(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   // ✅ Restrict to internal scheduler: must present service role key or CRON_SECRET
@@ -154,13 +155,14 @@ Deno.serve(async (req) => {
   }
 
   try {
+    if(!VERCEL_TOKEN) return new Response(JSON.stringify({error:'Configure VERCEL_TOKEN.',code:'missing_credentials'}),{status:503,headers:{...corsHeaders,'Content-Type':'application/json'}});
     const admin = createClient(SUPABASE_URL, SERVICE_KEY);
     const { data: projects } = await admin
       .from("projects")
       .select("id, title, vercel_project_id")
       .not("vercel_project_id", "is", null);
 
-    let checked = 0, alerted = 0;
+    let checked = 0, alerted = 0, failed = 0;
 
     for (const p of projects ?? []) {
       checked++;
@@ -198,17 +200,17 @@ Deno.serve(async (req) => {
         });
         alerted++;
       } catch (e) {
-        console.error("vercel-watch project failed", p.id, e);
+        failed++; console.error("vercel-watch project request failed");
       }
     }
 
-    return new Response(JSON.stringify({ checked, alerted }), {
+    return new Response(JSON.stringify({ ok: failed === 0, checked, alerted, failed }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
-    return new Response(JSON.stringify({ error: String((e as any)?.message ?? e) }), {
+    return new Response(JSON.stringify({ error: 'integration_failed' }), {
       status: 500,
       headers: corsHeaders,
     });
   }
-});
+}, { internalOnly: true });
