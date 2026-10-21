@@ -1,12 +1,20 @@
 name: Backup isolated PostgreSQL validation
 on:
-  push:
-    branches: [codex/backup-export-preservation]
+  pull_request:
     paths:
       - '.github/workflows/backup-isolated-test.yml'
       - 'supabase/functions/tenant-*/**'
       - 'scripts/tenant-*.mjs'
       - 'scripts/tenant-*.ts'
+      - 'src/pages/admin/BackupAdmin.tsx'
+  push:
+    branches: [main, codex/backup-export-preservation]
+    paths:
+      - '.github/workflows/backup-isolated-test.yml'
+      - 'supabase/functions/tenant-*/**'
+      - 'scripts/tenant-*.mjs'
+      - 'scripts/tenant-*.ts'
+      - 'src/pages/admin/BackupAdmin.tsx'
 permissions:
   contents: read
 jobs:
