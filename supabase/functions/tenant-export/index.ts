@@ -153,6 +153,7 @@ const ASSET_EXT_RE = /\.(svg|png|jpe?g|webp|gif|ico|avif|bmp|pdf|docx?|xlsx?|ppt
 const MAX_LINKED_ASSET_BYTES = 35 * 1024 * 1024;
 const EXTERNAL_ASSET_HOSTS = new Set(['images.unsplash.com', 'cdn.jsdelivr.net', 'raw.githubusercontent.com', 'avatars.githubusercontent.com']);
 const MAX_ARCHIVE_PAYLOAD_BYTES = 24 * 1024 * 1024;
+class ExportResourceLimitError extends Error {}
 function createArchiveFiles() {
   const files: { name: string; data: Uint8Array }[] = [];
   let bytes = 0;
@@ -162,12 +163,12 @@ function createArchiveFiles() {
     const added = items.reduce((total, item) => total + item.data.byteLength, 0);
     if (failed || bytes + added > MAX_ARCHIVE_PAYLOAD_BYTES || files.length + items.length > 4000) {
       failed = true;
-      throw new Error('Archive resource limit reached');
+      throw new ExportResourceLimitError('Archive resource limit reached');
     }
     bytes += added;
     return originalPush(...items);
   };
-  return Object.assign(files, { assertBudget: () => { if (failed) throw new Error('Archive resource limit reached'); } });
+  return Object.assign(files, { assertBudget: () => { if (failed) throw new ExportResourceLimitError('Archive resource limit reached'); } });
 }
 const timedFetch: typeof fetch = (input, init) => {
   const signal = init?.signal ?? (input instanceof Request ? input.signal : undefined);
@@ -411,10 +412,10 @@ async function collectBucketFiles(supa: any, bucket: string, prefix = '', out: {
       if (isFolder) {
         n += await collectBucketFiles(supa, bucket, p, out, depth + 1);
       } else {
-        if (Number(item.metadata?.size) > MAX_ARCHIVE_PAYLOAD_BYTES) throw new Error('Storage file exceeds archive budget');
+        if (Number(item.metadata?.size) > MAX_ARCHIVE_PAYLOAD_BYTES) throw new ExportResourceLimitError('Storage file exceeds archive budget');
         const { data: blob, error: downloadError } = await supa.storage.from(bucket).download(p);
         if (downloadError || !blob) throw new Error('Storage download failed');
-        if (blob.size > MAX_ARCHIVE_PAYLOAD_BYTES) throw new Error('Storage file exceeds archive budget');
+        if (blob.size > MAX_ARCHIVE_PAYLOAD_BYTES) throw new ExportResourceLimitError('Storage file exceeds archive budget');
         out.push({ name: `storage/${bucket}/${p}`, data: new Uint8Array(await blob.arrayBuffer()) });
         n++;
       }
@@ -523,7 +524,7 @@ async function fetchAllRows(supa: any, table: string, budget: { bytes: number; r
     if (error) throw error;
     budget.bytes += new TextEncoder().encode(JSON.stringify(data ?? [])).byteLength;
     budget.rows += data?.length ?? 0;
-    if (budget.bytes > 8 * 1024 * 1024 || budget.rows > 20000 || out.length + (data?.length ?? 0) > 10000) throw new Error('Snapshot query budget exceeded');
+    if (budget.bytes > 8 * 1024 * 1024 || budget.rows > 20000 || out.length + (data?.length ?? 0) > 10000) throw new ExportResourceLimitError('Snapshot query budget exceeded');
     out.push(...(data ?? []));
     if (!data || data.length < 1000) break;
   }
@@ -545,12 +546,12 @@ async function addStorageAsset(
   try {
     const { data: blob, error } = await supa.storage.from(bucket).download(path);
     if (error || !blob) return false;
-    if (blob.size > MAX_ARCHIVE_PAYLOAD_BYTES) throw new Error('Storage file exceeds archive budget');
+    if (blob.size > MAX_ARCHIVE_PAYLOAD_BYTES) throw new ExportResourceLimitError('Storage file exceeds archive budget');
     const bytes = new Uint8Array(await blob.arrayBuffer());
     const name = safeFileName(preferredName || path, 'asset.bin');
     files.push({ name: `${targetFolder}/${name}`, data: bytes });
     return true;
-  } catch { return false; }
+  } catch (error) { if (error instanceof ExportResourceLimitError) throw error; return false; }
 }
 
 async function addUrlAsset(
@@ -612,7 +613,7 @@ async function addUrlAsset(
     if (!ASSET_EXT_RE.test(name)) name += `.${guessExtFromContentType(res.headers.get('content-type'))}`;
     files.push({ name: `${targetFolder}/${name}`, data: bytes });
     return true;
-  } catch { return false; }
+  } catch (error) { if (error instanceof ExportResourceLimitError) throw error; return false; }
 }
 
 function techToMarkdown(t: any): string {
@@ -723,7 +724,8 @@ Deno.serve(async (req) => {
           if (!allTables.includes(t)) allTables.push(t);
           // CSV por tabela
           if (rows.length) files.push({ name: `${domain}/csv/${t}.csv`, data: enc.encode(toCsv(rows)) });
-        } catch {
+        } catch (error) {
+          if (error instanceof ExportResourceLimitError) throw error;
           throw new Error(`Required table export failed: ${t}`);
         }
       }
@@ -900,7 +902,7 @@ Deno.serve(async (req) => {
         try {
           const n = await collectBucketFiles(supa, b, '', files);
           storageInv[b] = { downloaded: n };
-        } catch { throw new Error(`Required storage bucket export failed: ${b}`); }
+        } catch (error) { if (error instanceof ExportResourceLimitError) throw error; throw new Error(`Required storage bucket export failed: ${b}`); }
       }
       files.push({ name: 'storage-inventory.json', data: enc.encode(JSON.stringify(storageInv, null, 2)) });
       summary.storage = {
@@ -1061,7 +1063,7 @@ Suba o ZIP em **/admin/restore** e selecione o que restaurar.
 
     files.assertBudget();
     const zip = buildZip(files);
-    if (zip.byteLength > 32 * 1024 * 1024) throw new Error('Archive size unsupported');
+    if (zip.byteLength > 32 * 1024 * 1024) throw new ExportResourceLimitError('Archive size unsupported');
     const checksum = await sha256Hex(zip);
     const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, '-');
     const path = `${user.id}/${stamp}${onlyDomain ? `-${onlyDomain}` : '-full'}.zip`;
@@ -1089,7 +1091,11 @@ Suba o ZIP em **/admin/restore** e selecione o que restaurar.
       ok: true, path, size: zip.byteLength, checksum, url: signed?.signedUrl,
       file_count: files.length, summary, totals: manifest.totals,
     }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-  } catch {
+  } catch (error) {
+    if (error instanceof ExportResourceLimitError) return new Response(JSON.stringify({
+      error: 'Este backup excede o limite de exportação. Exporte por seção ou desmarque a inclusão de arquivos e baixe os arquivos separadamente.',
+      code: 'export_limit_exceeded',
+    }), { status: 413, headers: corsHeaders });
     return new Response(JSON.stringify({ error: 'Backup export failed' }), { status: 500, headers: corsHeaders });
   }
 });

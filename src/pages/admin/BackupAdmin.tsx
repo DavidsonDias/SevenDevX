@@ -159,7 +159,12 @@ export default function BackupAdmin() {
       const { data, error } = await supabase.functions.invoke("tenant-export", {
         body: { ...(domain ? { domain } : {}), include_files: includeFiles },
       });
-      if (error) throw error;
+      if (error) {
+        if (error.context instanceof Response && error.context.status === 413) {
+          throw new Error("Este backup excede o limite de exportação. Exporte por seção ou desmarque a inclusão de arquivos e baixe os arquivos separadamente.");
+        }
+        throw error;
+      }
       const d = data as any;
       if (d?.ok !== true) throw new Error("Não foi possível confirmar a criação do backup.");
       toast({
