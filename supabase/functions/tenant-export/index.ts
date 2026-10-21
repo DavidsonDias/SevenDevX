@@ -460,6 +460,9 @@ function isDownloadableUrl(v: string): boolean {
   if (typeof v !== 'string') return false;
   if (v.startsWith('data:')) return /^data:(image|application|text)\//i.test(v);
   if (v.trim().startsWith('<svg')) return true;
+  // Most snapshot strings are ordinary data, not assets. Avoid a throwing URL
+  // parse for each value; retain the URL parser's ASCII whitespace normalization.
+  if (!/^[\u0000-\u0020]*h[\t\r\n]*t[\t\r\n]*t[\t\r\n]*p[\t\r\n]*s[\t\r\n]*:/i.test(v)) return false;
   try {
     const u = new URL(v);
     if (u.protocol !== 'https:' || u.username || u.password || (u.port && u.port !== '443')) return false;

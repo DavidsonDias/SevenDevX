@@ -64,3 +64,15 @@ test('explicit inventory covers the 80 public tables audited after migration',()
  assert.equal(new Set(tables).size,80);assert.equal(tables.length,80);
  for(const name of ['portfolio_settings','tech_categories','site_page_config','site_page_versions','site_page_projects'])assert.ok(tables.includes(name));
 });
+
+test('asset discovery skips URL parsing for ordinary snapshot text while preserving supported asset forms',()=>{
+ let parses=0;
+ class CountedURL extends URL {constructor(...args){parses++;super(...args);}}
+ const allowed=new Function('Deno','createClient','crypto','exports','URL',compiled+';return isDownloadableUrl;')({env:{get:()=> 'https://example.supabase.co'},serve:()=>{}},()=>({}),webcrypto,{},CountedURL);
+ for(let i=0;i<10000;i++) assert.equal(allowed(`Registro ${i}: texto comum de auditoria`),false);
+ assert.equal(allowed('x'.repeat(1024*1024)),false);
+ assert.equal(parses,0,'Ordinary data must not allocate and throw URL parse errors');
+ for(const value of ['https://images.unsplash.com/cover.jpg',' HTTPS://images.unsplash.com/cover.jpg ','https:images.unsplash.com/cover.jpg','data:image/svg+xml;base64,PHN2Zz4=','<svg></svg>'])assert.equal(allowed(value),true);
+ assert.equal(allowed('http://images.unsplash.com/cover.jpg'),false);
+ assert.equal(allowed('https://images.unsplash.com.evil.example/cover.jpg'),false);
+});
