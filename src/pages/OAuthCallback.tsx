@@ -76,7 +76,7 @@
 /**
  * 🔐 OAuthCallback — recebe ?code&state do provider, troca por token via edge.
  */
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, CheckCircle2, XCircle } from "lucide-react";
@@ -91,30 +91,30 @@ export default function OAuthCallback() {
   const [status, setStatus] = useState<"loading" | "ok" | "error">("loading");
   const [msg, setMsg] = useState("");
 
+  const started = useRef(false);
   useEffect(() => {
+    if (started.current) return;
+    started.current = true;
     const run = async () => {
       const code = params.get("code");
       const state = params.get("state");
       const err = params.get("error");
-      if (err) { setStatus("error"); setMsg(err); return; }
+      if (err) { setStatus("error"); setMsg("A autorização foi recusada ou cancelada no provedor."); return; }
       if (!code) { setStatus("error"); setMsg("missing code"); return; }
-      // Provider deduzido do referer storage — pegamos do state via lookup pendente no backend
-      // Para simplicidade: tenta cada provider conhecido até achar pending matching state
-      const providers = ["github", "google", "slack", "notion"];
-      let provider = "";
-      for (const p of providers) {
-        const r = sessionStorage.getItem(`oauth_${p}_redirect`);
-        if (r) { provider = p; break; }
-      }
-      if (!provider) { setStatus("error"); setMsg("provider context lost"); return; }
-      const redirect_uri = sessionStorage.getItem(`oauth_${provider}_redirect`) || `${window.location.origin}/oauth/callback`;
+      let context: { provider: string; state: string; redirect_uri: string; created_at: number };
+      try { context = JSON.parse(sessionStorage.getItem("oauth_context") || "null");
+        if (!context || context.state !== state || Date.now() - context.created_at > 600000 || context.redirect_uri !== window.location.origin + "/oauth/callback") throw new Error();
+      } catch { setStatus("error"); setMsg("Conexão expirada ou inválida. Inicie novamente."); return; }
+      const { provider, redirect_uri } = context;
+      window.history.replaceState(null, "", window.location.pathname);
 
       const { data, error } = await supabase.functions.invoke("oauth-callback", {
         body: { provider, code, state, redirect_uri },
       });
-      sessionStorage.removeItem(`oauth_${provider}_redirect`);
+      sessionStorage.removeItem("oauth_context");
       if (error || (data as any)?.error) {
-        setStatus("error"); setMsg((data as any)?.error || error?.message || "falha");
+        const details = error?.context instanceof Response ? await error.context.clone().json().catch(() => null) : null;
+        setStatus("error"); setMsg(details?.error || data?.error || "Não foi possível concluir a conexão. Inicie novamente.");
         return;
       }
       setStatus("ok"); setMsg((data as any)?.connection?.account_name || "conectado");

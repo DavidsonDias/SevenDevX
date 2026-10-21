@@ -99,7 +99,8 @@ import { ptBR } from "date-fns/locale";
 
 const PROVIDERS = [
   { id: "github", name: "GitHub", Icon: Github, color: "#fff", desc: "Repos, issues, PRs, actions" },
-  { id: "google", name: "Google", Icon: Mail,   color: "#4285F4", desc: "Drive, Calendar, Gmail (read-only)" },
+  { id: "google", name: "Google", Icon: Mail,   color: "#4285F4", desc: "Perfil e leitura do Drive" },
+  { id: "google_search_console", name: "Search Console", Icon: Mail, color: "#4285F4", desc: "Propriedades e métricas (somente leitura)" },
   { id: "slack",  name: "Slack",  Icon: MessageSquare, color: "#4A154B", desc: "Chat, canais, usuários" },
   { id: "notion", name: "Notion", Icon: BookOpen, color: "#fff", desc: "Pages, databases" },
 ];
@@ -113,9 +114,9 @@ export default function OAuthAdmin() {
   const [busy, setBusy] = useState<string | null>(null);
 
   const load = async () => {
-    const { data } = await supabase.from("oauth_connections" as any).select("*")
-      .eq("status", "active").order("created_at", { ascending: false });
-    setConnections((data as any) || []);
+    const { data, error } = await supabase.functions.invoke("oauth-start", { body: { action: "connections" } });
+    if (error || !data?.ok) { toast({ title: "Não foi possível carregar as conexões", variant: "destructive" }); return; }
+    setConnections(data.connections || []);
   };
   useEffect(() => { load(); }, []);
 
@@ -127,23 +128,25 @@ export default function OAuthAdmin() {
         body: { provider, redirect_uri },
       });
       if (error || !(data as any)?.url) {
-        const msg = (data as any)?.message || error?.message || "Falha";
+        const details = error?.context instanceof Response ? await error.context.clone().json().catch(() => null) : null;
+        const msg = details?.error || data?.error || "Não foi possível iniciar a conexão. Verifique as credenciais do provedor.";
         toast({ title: "Configure as credenciais", description: msg, variant: "destructive" });
         return;
       }
-      sessionStorage.setItem(`oauth_${provider}_redirect`, redirect_uri);
+      sessionStorage.setItem("oauth_context", JSON.stringify({ provider, state: data.state, redirect_uri, created_at: Date.now() }));
       window.location.href = (data as any).url;
     } finally { setBusy(null); }
   };
 
   const disconnect = async (id: string) => {
-    await supabase.from("oauth_connections" as any).update({ status: "revoked" }).eq("id", id);
+    const { data, error } = await supabase.functions.invoke("oauth-start", { body: { action: "disconnect", id } });
+    if (error || !data?.ok) { toast({ title: "Não foi possível revogar a conexão", variant: "destructive" }); return; }
     toast({ title: "Conexão revogada" });
     load();
   };
 
   return (
-    <AdminPageShell title="OAuth Conexões" subtitle="Fluxo real OAuth 2.0 com PKCE · refresh token automático">
+    <AdminPageShell title="OAuth Conexões" subtitle="Conecte as contas dos provedores · credenciais protegidas no servidor">
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {PROVIDERS.map(p => {
           const Icon = p.Icon;
