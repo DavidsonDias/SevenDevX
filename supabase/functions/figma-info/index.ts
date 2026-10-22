@@ -1,3 +1,4 @@
+import { integrationFetch as fetch } from '../_shared/integration-http.ts';
 /**
  * 🚀 figma-info/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -68,7 +69,7 @@
  * ═══════════════════════════════════════════════════════════════════════
  */
 
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { createClient, serveIntegration } from '../_shared/integration-runtime.ts';
 
 // ============================================================================
 // 🔒 BUSINESS RULES & INVARIANTS
@@ -88,7 +89,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-Deno.serve(async (req) => {
+serveIntegration(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
     const auth = req.headers.get("Authorization");
@@ -102,7 +103,7 @@ Deno.serve(async (req) => {
     if (!isAdmin) return new Response(JSON.stringify({ error: "forbidden" }), { status: 403, headers: corsHeaders });
 
     const token = Deno.env.get("FIGMA_TOKEN") ?? "";
-    if (!token) throw new Error("FIGMA_TOKEN not configured");
+    if (!token) return new Response(JSON.stringify({ok:false,code:"missing_credentials",error:"Configure FIGMA_TOKEN no Supabase."}),{status:503,headers:{...corsHeaders,"Content-Type":"application/json"}});
 
     const r = await fetch("https://api.figma.com/v1/me", { headers: { "X-Figma-Token": token } });
     if (!r.ok) throw new Error(`Figma ${r.status}: ${await r.text()}`);
@@ -111,7 +112,7 @@ Deno.serve(async (req) => {
     return new Response(JSON.stringify({ ok: true, user: { id: me.id, email: me.email, handle: me.handle, img: me.img_url } }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
-    return new Response(JSON.stringify({ ok: false, error: String((e as Error)?.message ?? e) }),
+    return new Response(JSON.stringify({ ok: false, error: 'integration_failed' }),
       { status: 500, headers: corsHeaders });
   }
-});
+}, { adminOnly: true });

@@ -1,3 +1,4 @@
+import { integrationFetch as fetch } from '../_shared/integration-http.ts';
 import { openAIRequest, textModel } from '../_shared/openai.ts';
 /**
  * 🚀 automation-runner/index.ts — SevenDevX Enterprise Platform
@@ -96,7 +97,7 @@ import { openAIRequest, textModel } from '../_shared/openai.ts';
  */
 // 🤖 Automation Runner — executa automações ativas para um trigger_event.
 // Chamado pelo trigger SQL fn_dispatch_automation OU manualmente via /test-trigger.
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { createClient, serveIntegration } from '../_shared/integration-runtime.ts';
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -142,8 +143,8 @@ function evalCondition(c: any, payload: any): boolean {
     case "gt": return Number(v) > Number(target);
     case "lt": return Number(v) < Number(target);
     case "exists": return v !== undefined && v !== null;
-    case "regex": try { return new RegExp(String(target)).test(String(v ?? "")); } catch { return false; }
-    default: return true;
+    case "regex": throw new Error("Regex conditions require a bounded regex engine; execution refused.");
+    default: return false;
   }
 }
 
@@ -210,9 +211,9 @@ async function runAction(act: any, payload: any, sb: any): Promise<any> {
       return { ok: res.ok, content: j.choices?.[0]?.message?.content };
     }
     case "db.update": {
-      if (!params.table) throw new Error("table required");
-      const q = sb.from(params.table).update(params.set ?? {});
-      for (const [k, v] of Object.entries(params.where ?? {})) q.eq(k, v as any);
+      if (!["projects","contacts","clients","tasks","incidents"].includes(params.table) || !params.where || !Object.keys(params.where).length || !params.set || !Object.keys(params.set).length) throw new Error("Scoped business table update required");
+      let q = sb.from(params.table).update(params.set ?? {});
+      for (const [k, v] of Object.entries(params.where ?? {})) q = q.eq(k, v as any);
       const { error } = await q;
       if (error) throw new Error(error.message);
       return { ok: true };
@@ -230,9 +231,9 @@ async function runAction(act: any, payload: any, sb: any): Promise<any> {
     case "code.run":
     case "loop":
     case "retry":
-      return { ok: true, simulated: true };
+      throw new Error(`Action ${act.type} is not implemented; no action was executed.`);
     default:
-      return { ok: true, unknown: act.type };
+      throw new Error("Unsupported automation action");
   }
 }
 
@@ -240,7 +241,7 @@ async function runAction(act: any, payload: any, sb: any): Promise<any> {
 // 🌐 REQUEST HANDLER
 // ============================================================================
 
-Deno.serve(async (req) => {
+serveIntegration(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   try {
     // Auth: require internal service secret OR admin JWT
@@ -273,7 +274,7 @@ Deno.serve(async (req) => {
     if (error) throw error;
 
     const results: any[] = [];
-    for (const auto of automations ?? []) {
+    for (const auto of (automations ?? []).slice(0,20)) {
       const conds = (auto.conditions as any[]) ?? [];
       const passes = conds.every((c) => evalCondition(c, payload));
       if (!passes) {
@@ -284,13 +285,14 @@ Deno.serve(async (req) => {
       const steps: any[] = [];
       let status: "success" | "failed" = "success";
       let err: string | null = null;
-      for (const act of ((auto.actions as any[]) ?? [])) {
+      for (const act of ((auto.actions as any[]) ?? []).slice(0,20)) {
         const st = Date.now();
         try {
           const r = await runAction(act, payload, sb);
+          if(r?.ok !== true) throw new Error("Provider rejected automation action");
           steps.push({ type: act.type, ok: true, duration_ms: Date.now() - st, result: r });
         } catch (e: any) {
-          status = "failed"; err = e?.message ?? "step_failed";
+          status = "failed"; err = 'integration_failed';
           steps.push({ type: act.type, ok: false, error: err, duration_ms: Date.now() - st });
           break;
         }
@@ -310,6 +312,6 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e: any) {
-    return new Response(JSON.stringify({ error: String(e?.message ?? e) }), { status: 500, headers: corsHeaders });
+    return new Response(JSON.stringify({ error: 'integration_failed' }), { status: 500, headers: corsHeaders });
   }
 });

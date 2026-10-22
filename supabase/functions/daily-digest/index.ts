@@ -1,3 +1,4 @@
+import { integrationFetch as fetch } from '../_shared/integration-http.ts';
 /**
  * 🚀 daily-digest/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -95,8 +96,8 @@
  * ═══════════════════════════════════════════════════════════════════════
  */
 // Daily digest — envia resumo 8h BRT (leads, projetos parados, MRR, alertas) para admins via Resend.
-import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { corsHeaders } from '../_shared/integration-auth.ts';
+import { createClient, serveIntegration } from '../_shared/integration-runtime.ts';
 
 // ============================================================================
 // ⚙️ CONSTANTS & CONFIGURATION
@@ -122,7 +123,7 @@ const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 // 🌐 REQUEST HANDLER
 // ============================================================================
 
-Deno.serve(async (req) => {
+serveIntegration(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
   const sb = createClient(SUPABASE_URL, SERVICE_ROLE);
 
@@ -187,20 +188,21 @@ Deno.serve(async (req) => {
         <p style="color:#555;font-size:11px;text-align:center;margin-top:24px">Você recebe este digest por ser admin. Desabilite em /admin/settings.</p>
       </div>`;
 
+    if(!RESEND_API_KEY) return new Response(JSON.stringify({ok:false,code:'missing_credentials',error:'Configure RESEND_API_KEY no Supabase.'}),{status:503,headers:{...corsHeaders,'Content-Type':'application/json'}});
     let sent = 0;
     if (RESEND_API_KEY && emails.length) {
       for (const to of emails) {
         const r = await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: { Authorization: `Bearer ${RESEND_API_KEY}`, "Content-Type": "application/json" },
-          body: JSON.stringify({ from: "SevenOS <notify@sevendevx.com>", to: [to], subject: `📊 SevenOS · ${(leads?.length||0)} leads · ${brl(income)} receita`, html }),
+          body: JSON.stringify({ from: Deno.env.get("EMAIL_FROM") || "SevenOS <notify@sevendevx.com>", to: [to], subject: `📊 SevenOS · ${(leads?.length||0)} leads · ${brl(income)} receita`, html }),
         });
         if (r.ok) sent++;
       }
     }
-    return new Response(JSON.stringify({ ok: true, sent, recipients: emails.length }),
+    return new Response(JSON.stringify({ ok: sent === emails.length, sent, failed: emails.length-sent, recipients: emails.length }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (e) {
-    return new Response(JSON.stringify({ error: (e as Error).message }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: 'integration_failed' }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });

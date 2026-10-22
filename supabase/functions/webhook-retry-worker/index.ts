@@ -1,3 +1,4 @@
+import { integrationFetch as fetch } from '../_shared/integration-http.ts';
 /**
  * 🚀 webhook-retry-worker/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -88,8 +89,8 @@
  * ═══════════════════════════════════════════════════════════════════════
  */
 // 🔁 Webhook Retry Worker — varre deliveries pendentes, redispara via webhook-dispatch, ou move pra DLQ.
-import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
-import { createClient } from 'npm:@supabase/supabase-js@2';
+import { corsHeaders } from '../_shared/integration-auth.ts';
+import { createClient, serveIntegration } from '../_shared/integration-runtime.ts';
 
 // ============================================================================
 // ⚙️ CONSTANTS & CONFIGURATION
@@ -126,7 +127,7 @@ async function sign(secret: string, body: string): Promise<string> {
 // 🌐 REQUEST HANDLER
 // ============================================================================
 
-Deno.serve(async (req) => {
+serveIntegration(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   const auth = req.headers.get('Authorization') || '';
   const provided = auth.replace(/^Bearer\s+/i, '');
@@ -143,7 +144,7 @@ Deno.serve(async (req) => {
       .select('*, webhook:webhooks(*)')
       .lte('next_retry_at', new Date().toISOString())
       .eq('is_dead_letter', false)
-      .gte('response_status', 400)
+      .or('response_status.gte.400,response_status.eq.0')
       .limit(50);
 
     const results: any[] = [];
@@ -151,7 +152,7 @@ Deno.serve(async (req) => {
       const wh = (d as any).webhook;
       if (!wh?.is_active) continue;
       const policy = wh.retry_policy ?? { max_attempts: 3, backoff_seconds: 30, multiplier: 2 };
-      const maxAttempts = policy.max_attempts ?? 3;
+      const maxAttempts = Math.min(10,Math.max(1,Number(policy.max_attempts)||3));
       const attempt = (d.attempt ?? 1) + 1;
 
       if (attempt > maxAttempts) {
@@ -164,6 +165,9 @@ Deno.serve(async (req) => {
         continue;
       }
 
+      const claim = await supa.from('webhook_deliveries').update({next_retry_at:new Date(Date.now()+120000).toISOString()}).eq('id',d.id).eq('attempt',d.attempt).eq('next_retry_at',d.next_retry_at).select('id').maybeSingle();
+      if(!claim.data) continue;
+      if(wh.verify_signature && !wh.secret) throw new Error('Webhook signing secret missing');
       const body = JSON.stringify({ event: d.event, payload: d.payload, timestamp: new Date().toISOString() });
       const signature = await sign(wh.secret || '', body);
       const t0 = Date.now();
@@ -171,17 +175,17 @@ Deno.serve(async (req) => {
       try {
         const r = await fetch(wh.url, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'X-SevenOS-Event': d.event, 'X-SevenOS-Signature': signature, ...(wh.headers || {}) },
+          headers: { ...(wh.headers || {}), 'Content-Type': 'application/json', 'X-SevenOS-Event': d.event, 'X-SevenOS-Signature': signature },
           body,
         });
         status = r.status; responseText = (await r.text()).slice(0, 4000);
-      } catch (e: any) { error = e?.message ?? 'fetch_failed'; }
+      } catch (e: any) { error = 'integration_failed'; }
       const ok = status >= 200 && status < 300;
-      const backoff = (policy.backoff_seconds ?? 30) * Math.pow(policy.multiplier ?? 2, attempt - 1);
+      const backoff = Math.min(86400,Math.max(1,Number(policy.backoff_seconds)||30)*Math.pow(Math.min(10,Math.max(1,Number(policy.multiplier)||2)),attempt-1));
 
       await supa.from('webhook_deliveries').update({
         attempt, response_status: status, response_body: responseText, error,
-        duration_ms: Date.now() - t0, signature_verified: true,
+        duration_ms: Date.now() - t0, signature_verified: false,
         next_retry_at: ok ? null : new Date(Date.now() + backoff * 1000).toISOString(),
       }).eq('id', d.id);
 
@@ -192,6 +196,6 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (e: any) {
-    return new Response(JSON.stringify({ error: e?.message || 'error' }), { status: 500, headers: corsHeaders });
+    return new Response(JSON.stringify({ error: 'integration_failed' }), { status: 500, headers: corsHeaders });
   }
-});
+}, { internalOnly: true });

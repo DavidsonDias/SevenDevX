@@ -1,3 +1,4 @@
+import { integrationFetch as fetch } from '../_shared/integration-http.ts';
 /**
  * 🚀 incident-notify/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -88,8 +89,8 @@
  * ═══════════════════════════════════════════════════════════════════════
  */
 // Incident notifier — posts incident summary to Discord/Slack webhooks stored in system_settings.
-import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
-import { createClient } from 'npm:@supabase/supabase-js@2';
+import { corsHeaders } from '../_shared/integration-auth.ts';
+import { createClient, serveIntegration } from '../_shared/integration-runtime.ts';
 
 // ============================================================================
 // ⚙️ CONSTANTS & CONFIGURATION
@@ -116,7 +117,7 @@ const SEV_COLOR: Record<string, number> = { critical: 0xef4444, high: 0xf97316, 
 // 🌐 REQUEST HANDLER
 // ============================================================================
 
-Deno.serve(async (req) => {
+serveIntegration(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   try {
     // Auth: require internal service secret OR admin JWT
@@ -187,8 +188,8 @@ Deno.serve(async (req) => {
     }
 
     await supa.from('events').insert({ type: 'incident.notified', source: 'incident-notify', severity: 'info', payload: { incident_id: inc.id, results } });
-    return new Response(JSON.stringify({ ok: true, results }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    return new Response(JSON.stringify({ ok: Object.keys(results).length > 0 && Object.values(results).every((v:any)=>v>=200&&v<300), results, ...(Object.keys(results).length?{}:{code:"notification_channels_not_configured"}) }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   } catch (e: any) {
-    return new Response(JSON.stringify({ error: e?.message }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    return new Response(JSON.stringify({ error: 'integration_failed' }), { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   }
 });

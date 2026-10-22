@@ -1,3 +1,4 @@
+import { integrationFetch as fetch } from '../_shared/integration-http.ts';
 /**
  * 🚀 push-send/index.ts — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -90,7 +91,7 @@
  * @see supabase/functions/README.md
  * ═══════════════════════════════════════════════════════════════════════
  */
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { createClient, serveIntegration } from '../_shared/integration-runtime.ts';
 import webpush from "https://esm.sh/web-push@3.6.7";
 
 const corsHeaders = {
@@ -106,7 +107,7 @@ const VAPID_PUBLIC = Deno.env.get("VAPID_PUBLIC_KEY")!;
 const VAPID_PRIVATE = Deno.env.get("VAPID_PRIVATE_KEY")!;
 const VAPID_SUBJECT = Deno.env.get("VAPID_SUBJECT") ?? "mailto:admin@sevendevx.com";
 
-webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC, VAPID_PRIVATE);
+
 
 // ============================================================================
 // 🔒 BUSINESS RULES & INVARIANTS
@@ -125,7 +126,7 @@ webpush.setVapidDetails(VAPID_SUBJECT, VAPID_PUBLIC, VAPID_PRIVATE);
 // 🌐 REQUEST HANDLER
 // ============================================================================
 
-Deno.serve(async (req) => {
+serveIntegration(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -144,6 +145,8 @@ Deno.serve(async (req) => {
       if (!isAdmin) return new Response(JSON.stringify({ error: "forbidden" }), { status: 403, headers: corsHeaders });
     }
 
+    if(!VAPID_PUBLIC || !VAPID_PRIVATE) return new Response(JSON.stringify({error:'Configure VAPID_PUBLIC_KEY e VAPID_PRIVATE_KEY.',code:'missing_credentials'}),{status:503,headers:{...corsHeaders,'Content-Type':'application/json'}});
+    webpush.setVapidDetails(VAPID_SUBJECT,VAPID_PUBLIC,VAPID_PRIVATE);
     const { title, body, url } = await req.json();
     if (!title) return new Response(JSON.stringify({ error: "title required" }), { status: 400, headers: corsHeaders });
 
@@ -155,13 +158,15 @@ Deno.serve(async (req) => {
 
     const { data: subs } = await admin.from("push_subscriptions").select("*").in("user_id", userIds);
 
+    const allowedPushEndpoint = (raw: string) => { try { const u=new URL(raw);return u.protocol==='https:' && !u.username && !u.password && (!u.port||u.port==='443') && ['fcm.googleapis.com','updates.push.services.mozilla.com','web.push.apple.com'].includes(u.hostname); } catch {return false;} };
     const payload = JSON.stringify({ title, body: body ?? "", url: url ?? "/admin" });
     let sent = 0, failed = 0;
     for (const s of subs ?? []) {
       try {
+        if(!allowedPushEndpoint(s.endpoint)) throw new Error('Unsupported push endpoint');
         await webpush.sendNotification(
           { endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } },
-          payload,
+          payload, { timeout: 10000, TTL: 3600 },
         );
         sent++;
       } catch (err: any) {
@@ -176,6 +181,6 @@ Deno.serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (e) {
-    return new Response(JSON.stringify({ error: String(e?.message ?? e) }), { status: 500, headers: corsHeaders });
+    return new Response(JSON.stringify({ error: 'integration_failed' }), { status: 500, headers: corsHeaders });
   }
 });

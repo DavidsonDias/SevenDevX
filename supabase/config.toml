@@ -50,3 +50,13 @@ verify_jwt = false
 [functions.ai-chat]
 # Public project key + server-issued conversation capability; no user JWT required.
 verify_jwt = false
+
+# Scheduler credentials and Meta HMAC are verified inside these handlers.
+[functions.vercel-watch]
+verify_jwt = false
+
+[functions.webhook-retry-worker]
+verify_jwt = false
+
+[functions.whatsapp-webhook]
+verify_jwt = false
