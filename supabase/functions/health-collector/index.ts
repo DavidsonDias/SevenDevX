@@ -149,12 +149,35 @@ async function check(name: string, fn: () => Promise<boolean>): Promise<any> {
 // 🌐 REQUEST HANDLER
 // ============================================================================
 
+// A project can retain more than one valid legacy service JWT during key rotation.
+// Claims are only a prefilter: the project's Data API must verify the same token.
+async function verifiedProjectServiceToken(token: string): Promise<boolean> {
+  try {
+    if (token.length > 8192) return false;
+    const parts = token.split('.');
+    if (parts.length !== 3) return false;
+    const encoded = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    const claims = JSON.parse(atob(encoded.padEnd(Math.ceil(encoded.length / 4) * 4, '=')));
+    const project = new URL(SUPABASE_URL).hostname.split('.')[0];
+    if (claims.role !== 'service_role' || claims.ref !== project ||
+        typeof claims.exp !== 'number' || claims.exp <= Date.now() / 1000) return false;
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/system_settings?select=key&limit=0`, {
+      headers: { apikey: token, Authorization: `Bearer ${token}` },
+      redirect: 'error', signal: AbortSignal.timeout(7000),
+    });
+    if (response.status !== 200) return false;
+    const rows = await response.json();
+    return Array.isArray(rows) && rows.length === 0;
+  } catch { return false; }
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   if (req.method !== 'POST') return new Response(JSON.stringify({ error: 'POST required' }), { status: 405, headers: corsHeaders });
   const auth = req.headers.get('Authorization') || '';
   const provided = auth.replace(/^Bearer\s+/i, '');
   let okAuth = !!((CRON_SECRET && provided === CRON_SECRET) || (SERVICE_KEY && provided === SERVICE_KEY));
+  if (!okAuth && provided) okAuth = await verifiedProjectServiceToken(provided);
   if (!okAuth && provided) {
     const userClient = createClient(SUPABASE_URL, Deno.env.get('SUPABASE_ANON_KEY')!, { global: { headers: { Authorization: auth } } });
     const { data, error } = await userClient.auth.getUser();
