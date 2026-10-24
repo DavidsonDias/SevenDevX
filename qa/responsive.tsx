@@ -9,8 +9,10 @@ import AppViewport from '@/components/AppViewport';
 import { Dialog, DialogTrigger, DialogContent, DialogTitle, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import '@/index.css';
 function Fixture() {
+  const [shortViewport, setShortViewport] = React.useState(false);
+  React.useEffect(() => { document.documentElement.style.setProperty("--sevenos-viewport-height", shortViewport ? "320px" : `${innerHeight}px`); }, [shortViewport]);
   return <><AppViewport /><AdminPageShell title="Validação responsiva" subtitle="Dados sintéticos, sem gravação" actions={<>{Array.from({length:8},(_,i)=><button key={i} className="border p-3">Ação {i+1}</button>)}</>}>
-    <Dialog><DialogTrigger className="border p-3">Abrir formulário de teste</DialogTrigger><DialogContent><DialogTitle>Formulário longo</DialogTitle>
+    <Dialog><DialogTrigger className="border p-3">Abrir formulário de teste</DialogTrigger><DialogContent><DialogTitle>Formulário longo</DialogTitle><button className="border p-3" onClick={() => setShortViewport(!shortViewport)}>Simular teclado</button>
       {Array.from({length:18},(_,i)=><label key={i}>Campo {i+1}<input className="block w-full min-w-0 p-3 border bg-black" /></label>)}
       <DialogFooter><DialogClose className="border p-3">Cancelar teste</DialogClose><DialogClose className="border p-3">Concluir teste</DialogClose></DialogFooter>
     </DialogContent></Dialog>
