@@ -34,6 +34,7 @@
 /* 🎨 Design System - Paleta HSL (dark-first) */
 @layer base {
   :root {
+    color-scheme: dark;
     --background: 0 0% 0%;
     --foreground: 0 0% 100%;
 
