@@ -6,7 +6,7 @@ Base: main f59e2249076a3cfb52b860875c4a75b7dcde9ced. Trabalho isolado em codex/s
 
 - TypeScript: aprovado.
 - Build Vite/Workbox: aprovado; warnings existentes de chunks grandes e bases Browserslist/baseline antigas. Nenhuma atualização de dependência foi incluída.
-- 236 testes locais: aprovados, incluindo oito de continuidade de Auth, sete de MFA nativo e quatro de escopo/serialização/registro de edições e atualização PWA.
+- 242 testes locais: aprovados, incluindo oito de continuidade de Auth, sete de MFA nativo e quatro de escopo/serialização/registro de edições e atualização PWA, mais seis de predicados de versão/conflito nos hooks reais de salvamento.
 - Os dois testes PostgreSQL exclusivos do CI foram recusados pelo guard do próprio teste no computador local; não houve conexão alternativa com produção. Rodar somente nos respectivos jobs isolados quando seu escopo mudar.
 - ESLint: os arquivos novos de produção e os componentes centrais modificados passaram. Comparação dos arquivos alterados: 61 erros antigos versus 60 atuais, sem novos erros de produção. Arquivos legados ainda têm dívida de any/fast-refresh; não se declara lint global verde.
 - Navegador com SDK sintético, sem sessão real/backend: token refresh e SIGNED_IN repetido preservaram montagem 1 e texto digitado; falha temporária de rede preservou o editor e mostrou recuperação local; retorno da rede removeu o aviso.
@@ -21,11 +21,17 @@ Instalar dependências pelo lockfile. Executar `node node_modules/vite/bin/vite.
 
 O SDK substituto existe somente nessa configuração de QA, vinculada a loopback. O build de produção usa a configuração normal e o cliente Supabase real. Não configurar tokens ou contas reais no fixture.
 
+## Prévia autenticada — 24/10/2026
+
+Login administrativo concluído pelo proprietário na prévia 5e1ce585 (mesmo código funcional das revisões seguintes de documentação/CI). Clientes leu os quatro registros existentes; um formulário novo com dados sintéticos persistiu rascunho local, confirmou saída pelo histórico e recuperou os dois campos após voltar. O rascunho foi descartado, sem clicar Salvar ou criar cliente.
+
+Portfólio carregou conteúdo existente, preservou a alteração temporária ao mudar de área e recuperou-a explicitamente depois de navegar para fora e retornar. Descartar repôs o nome original e limpou o aviso. Não foi feita publicação nem escrita no registro real. O menu navegou entre módulos e fechou corretamente.
+
 ## Aceite ainda necessário
 
-- Login/MFA reais na prévia; refresh, retorno após suspensão e logout entre abas.
+- Refresh real após suspensão e logout entre abas; login e navegação protegida da prévia já foram observados.
 - Android/iOS instalados: minimizar, bloquear/desbloquear, processo encerrado, teclado, safe areas e paisagem.
 - Atualização real entre duas versões de service worker: edição suja impede reload; outra aba nunca recarrega automaticamente.
-- Clientes/Portfólio: confirmar salvamento real e recusa de updated_at concorrente com dados de teste autorizados.
+- Salvamento concorrente contra um banco de teste: hooks reais foram exercitados com respostas simuladas (incluindo zero linhas), não com alteração de registros de produção.
 
 Viewport responsivo e eventos sintéticos não comprovam ciclo de vida de dispositivo físico. Não considerar estes itens executados por inferência.
