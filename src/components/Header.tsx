@@ -152,7 +152,7 @@ const Header = () => {
 
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-white p-2 ml-auto lg:ml-0 relative z-[60]"
+              className="text-white p-2 ml-auto relative z-[60]"
               aria-label={isMenuOpen ? "Fechar menu" : "Abrir menu"}
             >
               {isMenuOpen ? <X size={28} className="sm:w-8 sm:h-8" strokeWidth={1.5} /> : <Menu size={24} className="sm:w-7 sm:h-7" strokeWidth={1.5} />}
