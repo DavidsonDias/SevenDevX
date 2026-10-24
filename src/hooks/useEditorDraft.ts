@@ -1,3 +1,7 @@
+/** @file src/hooks/useEditorDraft.ts
+ * @module Hooks
+ * @see docs/adr/ADR-005-sevenos-session-continuity.md
+ */
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAuthContext } from '@/contexts/AuthContext';
 import { readEditorDraft, saveEditorDraft, removeEditorDraft, type EditorDraft } from '@/lib/editorDrafts';

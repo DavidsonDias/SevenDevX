@@ -1,3 +1,7 @@
+/** @file src/lib/editorDrafts.ts
+ * @module Core
+ * @see docs/adr/ADR-005-sevenos-session-continuity.md
+ */
 /** Opt-in encrypted drafts. Local encryption does not protect against same-origin XSS. */
 export type DraftScope = { user: string; workspace: string; module: string; record: string };
 export type EditorDraft<T> = { data: T; baseline: string; savedAt: number };

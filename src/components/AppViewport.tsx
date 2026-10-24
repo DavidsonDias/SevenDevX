@@ -1,3 +1,7 @@
+/** @file src/components/AppViewport.tsx
+ * @module UI
+ * @see docs/adr/ADR-005-sevenos-session-continuity.md
+ */
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '@/contexts/AuthContext';

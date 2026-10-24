@@ -1,3 +1,7 @@
+/** @file src/hooks/useUnsavedChanges.ts
+ * @module Hooks
+ * @see docs/adr/ADR-005-sevenos-session-continuity.md
+ */
 import { useEffect, useRef } from 'react';
 import { registerUnsavedEdit } from '@/lib/unsavedChanges';
 

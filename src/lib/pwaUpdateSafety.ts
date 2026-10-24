@@ -1,3 +1,7 @@
+/** @file src/lib/pwaUpdateSafety.ts
+ * @module Core
+ * @see docs/adr/ADR-005-sevenos-session-continuity.md
+ */
 import { hasUnsavedEdits } from './unsavedChanges';
 
 /** Coordination carries edit booleans only. Other tabs never receive a reload command. */

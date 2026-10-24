@@ -1,3 +1,7 @@
+/** @file src/components/UnsavedNavigationGuard.tsx
+ * @module UI
+ * @see docs/adr/ADR-005-sevenos-session-continuity.md
+ */
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { confirmLeaveEdits, hasUnsavedEdits } from '@/lib/unsavedChanges';

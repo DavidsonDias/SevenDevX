@@ -1,3 +1,7 @@
+/** @file src/components/EditorDraftNotice.tsx
+ * @module UI
+ * @see docs/adr/ADR-005-sevenos-session-continuity.md
+ */
 type Props = { available: boolean; conflict?: boolean; error?: string | null; savedAt?: number | null; onRestore: () => void; onDiscard: () => void };
 /** Explicit recovery; this notice never mutates a remote record. */
 export default function EditorDraftNotice({ available, conflict, error, savedAt, onRestore, onDiscard }: Props) {

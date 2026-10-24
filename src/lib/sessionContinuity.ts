@@ -1,3 +1,7 @@
+/** @file src/lib/sessionContinuity.ts
+ * @module Core
+ * @see docs/adr/ADR-005-sevenos-session-continuity.md
+ */
 import type { Session } from '@supabase/supabase-js';
 
 /** UI identity only; decoded claims never grant roles or replace server checks. */
