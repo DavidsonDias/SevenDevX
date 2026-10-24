@@ -278,7 +278,7 @@ function ClientFormModal({ initial, onClose, onSave }: any) {
   const change = (k: string, v: any) => setForm((f: any) => ({ ...f, [k]: v }));
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto" onClick={() => void requestClose()}>
+    <div className="fixed inset-0 h-[var(--sevenos-viewport-height,100dvh)] z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto" onClick={() => void requestClose()}>
       <div onClick={(e) => e.stopPropagation()} className="sevenos-editor-dialog bg-zinc-950 border border-white/10 rounded-2xl w-full max-w-xl my-8">
         <div className="flex items-center justify-between p-5 border-b border-white/10">
           <h3 className="font-bold">{initial.id ? "Editar Cliente" : "Novo Cliente"}</h3>
