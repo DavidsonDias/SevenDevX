@@ -300,7 +300,7 @@ const ProjectDetail = () => {
               <p className="text-muted-foreground">
                 Conte sua ideia e construímos uma solução sob medida para o seu negócio.
               </p>
-              <div className="flex justify-center gap-3 pt-2">
+              <div className="flex flex-wrap justify-center gap-3 pt-2">
                 <Button asChild size="lg">
                   <Link to="/#contact">Solicitar orçamento</Link>
                 </Button>
