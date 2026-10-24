@@ -199,7 +199,7 @@ export default function ProjectIntegrationsBlock({ projectId, initial }: Props) 
       {initial.github_repo && (
         <div className="rounded-lg border border-border/50 p-3 space-y-2">
           <div className="flex items-center justify-between gap-2">
-            <a href={gh.data?.repo?.html_url} target="_blank" rel="noreferrer" className="flex items-center gap-2 font-medium hover:underline">
+            <a href={gh.data?.repo?.html_url} target="_blank" rel="noreferrer" className="flex flex-wrap min-w-0 items-center gap-2 break-all font-medium hover:underline">
               <Github className="w-4 h-4" /> {gh.data?.repo?.full_name ?? initial.github_repo}
               {gh.data?.repo?.private && <Badge variant="outline" className="text-[10px]">private</Badge>}
               <ExternalLink className="w-3 h-3 opacity-60" />
@@ -210,12 +210,12 @@ export default function ProjectIntegrationsBlock({ projectId, initial }: Props) 
           </div>
           {gh.error && <p className="text-xs text-red-400">{(gh.error as any).message}</p>}
           {gh.data && (
-            <div className="grid md:grid-cols-2 gap-3 text-xs">
+            <div className="grid md:grid-cols-2 gap-3 text-xs [&>*]:min-w-0">
               <div>
                 <p className="text-muted-foreground mb-1 flex items-center gap-1"><GitCommit className="w-3 h-3" /> Últimos commits</p>
                 <ul className="space-y-1">
                   {gh.data.commits?.map((c: any) => (
-                    <li key={c.sha} className="truncate">
+                    <li key={c.sha} className="min-w-0 break-words [overflow-wrap:anywhere]">
                       <a href={c.url} target="_blank" rel="noreferrer" className="hover:underline">
                         <span className="font-mono text-[10px] text-primary">{c.sha}</span> {c.message}
                       </a>
@@ -242,7 +242,7 @@ export default function ProjectIntegrationsBlock({ projectId, initial }: Props) 
       {initial.vercel_project_id && (
         <div className="rounded-lg border border-border/50 p-3 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="flex items-center gap-2 font-medium"><Rocket className="w-4 h-4" /> Vercel — {vc.data?.project?.name ?? initial.vercel_project_id}</span>
+            <span className="flex min-w-0 items-center gap-2 break-all font-medium"><Rocket className="w-4 h-4" /> Vercel — {vc.data?.project?.name ?? initial.vercel_project_id}</span>
             <Button size="icon" variant="ghost" onClick={() => vc.refetch()} disabled={vc.isFetching}>
               <RefreshCw className={`w-4 h-4 ${vc.isFetching ? "animate-spin" : ""}`} />
             </Button>
@@ -250,7 +250,7 @@ export default function ProjectIntegrationsBlock({ projectId, initial }: Props) 
           {vc.error && <p className="text-xs text-red-400">{(vc.error as any).message}</p>}
           <ul className="space-y-1 text-xs">
             {vc.data?.deployments?.map((d: any) => (
-              <li key={d.uid} className="flex items-center justify-between gap-2">
+              <li key={d.uid} className="flex flex-wrap min-w-0 items-center justify-between gap-2">
                 <a href={d.url} target="_blank" rel="noreferrer" className="truncate hover:underline">
                   {d.meta?.branch ?? d.target ?? "preview"} — {d.meta?.msg ?? d.url}
                 </a>
