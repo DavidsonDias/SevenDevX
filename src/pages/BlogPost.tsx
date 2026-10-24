@@ -440,7 +440,7 @@ const BlogPost = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
-                className="prose prose-invert prose-lg max-w-none
+                className="min-w-0 [overflow-wrap:anywhere] [&_pre]:max-w-full [&_pre]:overflow-x-auto [&_pre]:overscroll-x-contain [&_pre]:[overflow-wrap:normal] prose prose-invert prose-lg max-w-none
                   prose-headings:font-bold prose-headings:tracking-tight
                   prose-h2:text-2xl prose-h2:mt-14 prose-h2:mb-5
                   prose-h3:text-xl prose-h3:mt-10 prose-h3:mb-4
