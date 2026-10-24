@@ -206,7 +206,7 @@ function FaqModal({ initial, categories, onClose, onSave }: any) {
   const ch = (k: string, v: any) => setForm((f: any) => ({ ...f, [k]: v }));
   return (
     <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto" onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} className="bg-zinc-950 border border-white/10 rounded-2xl w-full max-w-xl my-8">
+      <div onClick={(e) => e.stopPropagation()} className="sevenos-editor-dialog bg-zinc-950 border border-white/10 rounded-2xl w-full max-w-xl my-8">
         <div className="p-5 border-b border-white/10 font-bold">{initial.id ? "Editar" : "Nova"} Pergunta</div>
         <div className="p-5 space-y-3">
           <Field label="Categoria">

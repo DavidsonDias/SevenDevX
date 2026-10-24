@@ -421,7 +421,7 @@ const Store: React.FC = () => {
         <main id="main-content" className="pt-20 focus:outline-none" tabIndex={-1}>
           {/* Hero */}
           <section
-            className="relative min-h-[70vh] md:h-screen flex items-end overflow-hidden section-overlay"
+            className="viewport-hero relative min-h-[70svh] md:min-h-[100svh] flex items-end overflow-hidden section-overlay"
             aria-label="Catálogo de Soluções Digitais"
           >
             <div className="absolute inset-0 z-0">
@@ -434,7 +434,7 @@ const Store: React.FC = () => {
               <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/65 to-black/95" />
             </div>
 
-            <div className="container mx-auto px-6 pb-20 md:pb-32 relative z-10">
+            <div className="viewport-hero-content container mx-auto px-6 pb-20 md:pb-32 relative z-10">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -489,7 +489,7 @@ const Store: React.FC = () => {
                 transition={{ duration: 0.8 }}
                 className="text-center mb-12"
               >
-                <h2 id="plans-heading" className="text-4xl md:text-6xl font-bold mb-6 uppercase tracking-tight">
+                <h2 id="plans-heading" className="text-[clamp(1.5rem,4.5vw,3.75rem)] break-words font-bold mb-6 uppercase tracking-tight">
                   Planos de Desenvolvimento
                 </h2>
                 <p className="text-lg text-white/70 max-w-2xl mx-auto">
@@ -577,7 +577,7 @@ const Store: React.FC = () => {
           </section>
 
           {/* Services */}
-          <section className="relative py-20 md:py-32 bg-black border-t border-white/10" aria-label="Serviços Premium">
+          <section className="relative py-20 md:py-32 bg-black border-t border-white/10 overflow-x-clip" aria-label="Serviços Premium">
             <div className="container mx-auto px-6">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -639,7 +639,7 @@ const Store: React.FC = () => {
           </section>
 
           {/* Final CTA */}
-          <section className="relative py-20 md:py-32 bg-black border-t border-white/10">
+          <section className="relative py-20 md:py-32 bg-black border-t border-white/10 overflow-x-clip">
             <div className="container mx-auto px-6">
               <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="max-w-4xl mx-auto text-center">
                 <h2 className="text-3xl md:text-5xl font-bold mb-6 uppercase tracking-tight">Pronto para Decolar?</h2>

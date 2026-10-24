@@ -228,7 +228,7 @@ const About = () => {
         </section>
 
         {/* Timeline */}
-        <section className="py-20 px-4 bg-card/30">
+        <section className="py-20 px-4 bg-card/30 overflow-x-clip">
           <div className="max-w-5xl mx-auto">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.aboutPage.timeline.title}</h2>

@@ -233,7 +233,7 @@ function ServiceModal({ initial, onClose, onSave }: any) {
 
   return (
     <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto" onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} className="bg-zinc-950 border border-white/10 rounded-2xl w-full max-w-2xl my-8">
+      <div onClick={(e) => e.stopPropagation()} className="sevenos-editor-dialog bg-zinc-950 border border-white/10 rounded-2xl w-full max-w-2xl my-8">
         <div className="p-5 border-b border-white/10 flex items-center justify-between">
           <div className="font-bold">{initial.id ? "Editar Serviço" : "Novo Serviço"}</div>
           <button onClick={onClose}><X className="w-5 h-5" /></button>

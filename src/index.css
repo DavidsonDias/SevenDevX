@@ -163,13 +163,6 @@ select:focus-visible {
 /* =========================
    Mobile & responsive tweaks
    ========================= */
-/* Mobile landscape safe min-height */
-@media (max-height: 500px) and (orientation: landscape) {
-  section, .h-screen {
-    min-height: 100vh !important;
-  }
-}
-
 /* Tablet portrait adjustments */
 @media (min-width: 768px) and (max-width: 1023px) and (orientation: portrait) {
   h1 { font-size: clamp(2rem, 5vw, 3.5rem) !important; }
@@ -419,3 +412,66 @@ select optgroup { background-color: #0a0a0a; color: rgba(255,255,255,.6); }
 @media (max-width: 767px) {
   html[data-sevenos-keyboard="true"] [data-sevenos-floating] { display: none !important; }
 }
+
+
+/* Responsive layout refinements: content sets height; decorative sections never size overlays. */
+.viewport-hero-content { padding-top: calc(5rem + env(safe-area-inset-top)); }
+.viewport-feature-content { padding-top: calc(7rem + env(safe-area-inset-top)); }
+.sevenos-shell main, .sevenos-page-actions > * { min-width: 0; max-width: 100%; }
+.sevenos-page-actions { overflow-wrap: anywhere; }
+[data-public-header] { padding-top: env(safe-area-inset-top); }
+[data-public-menu] { padding-bottom: env(safe-area-inset-bottom); overscroll-behavior: contain; }
+[data-public-whatsapp] { margin-bottom: env(safe-area-inset-bottom); }
+
+@media (max-width: 767px) {
+  .viewport-hero-content { padding-right: 5rem; padding-bottom: calc(5rem + env(safe-area-inset-bottom)); }
+  [data-public-whatsapp], [data-chat-launcher="public"] { right: max(.75rem, env(safe-area-inset-right)); }
+  [data-public-whatsapp] { bottom: .75rem; }
+  [data-chat-launcher="public"] { bottom: 4.25rem; }
+  [data-public-whatsapp] button, [data-chat-launcher="public"] button { width: 2.75rem; height: 2.75rem; }
+  [data-install-dock] button[aria-label="Ocultar"] { width: 2.75rem; height: 2.75rem; }
+}
+
+/* Height matters independently of width: phones rotated sideways and short windows. */
+@media (max-height: 500px) and (orientation: landscape) {
+  .viewport-hero { min-height: 100svh; height: auto; }
+  .viewport-hero .viewport-hero-content {
+    padding: calc(4.5rem + env(safe-area-inset-top)) max(5rem, env(safe-area-inset-right)) calc(4rem + env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
+  }
+  .viewport-hero h1, .viewport-feature h1, .viewport-feature h2 { font-size: clamp(1.5rem, 3.6vw, 2.5rem); line-height: 1.15; margin-bottom: .75rem; }
+  .viewport-hero p, .viewport-feature p { font-size: 1rem; line-height: 1.5; margin-bottom: 1rem; }
+  .viewport-hero button, .viewport-feature button { padding: .75rem 1.5rem; min-height: 2.75rem; }
+  .viewport-feature { min-height: 0; }
+  .viewport-feature-desktop { min-height: 100svh; height: auto; }
+  .viewport-feature .viewport-feature-content { padding-top: 7rem; padding-bottom: 4rem; padding-right: 5rem; }
+  .viewport-feature-image { height: 45svh; min-height: 10rem; }
+  [data-public-header] > div > div { height: 3.5rem; }
+  [data-public-header] img { height: 2.5rem; }
+  [data-public-header] nav { display: none; }
+  [data-public-header] a:has(> img) { position: absolute; left: 50%; transform: translateX(-50%); }
+  [data-public-menu] { top: calc(3.5rem + env(safe-area-inset-top)); }
+  [data-public-menu] > div { padding-top: .5rem; padding-bottom: 1rem; }
+  [data-public-menu] a { padding-top: .75rem; padding-bottom: .75rem; min-height: 2.75rem; }
+  .sevenos-shell > header > div { min-height: 3.5rem; padding-top: .375rem; padding-bottom: .375rem; }
+  .sevenos-shell [data-header-secondary]:not([data-tour="global-search"]) { display: none; }
+  .sevenos-shell [data-tour="global-search"] > button { display: none; }
+  .sevenos-shell [data-admin-brand] h1 { font-size: 1rem; }
+  .sevenos-shell > main { padding-top: 1rem; }
+  .sevenos-shell > main > div { row-gap: .75rem; }
+  [data-public-whatsapp], [data-chat-launcher="public"] { right: max(.75rem, env(safe-area-inset-right)); }
+  [data-public-whatsapp] { bottom: .75rem; }
+  [data-chat-launcher="public"] { bottom: 4.25rem; }
+  [data-public-whatsapp] button, [data-chat-launcher="public"] button { width: 2.75rem; height: 2.75rem; }
+  [data-install-dock] button[aria-label="Instalar SevenDevX"] > span:last-child > span:last-child { display: none; }
+  [data-install-dock] button[aria-label="Ocultar"] { width: 2.75rem; height: 2.75rem; }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .viewport-feature-desktop > .absolute.top-24 { top: 1rem; }
+  [data-chat-panel] { bottom: 1rem; max-height: calc(var(--sevenos-viewport-height, 100dvh) - 2rem); }
+}
+
+/* Shared custom editors: fixed heading/actions, locally scrolling fields. */
+.sevenos-editor-dialog { display: flex; flex-direction: column; min-width: 0; max-height: calc(var(--sevenos-viewport-height, 100dvh) - 2rem); margin-block: 0; }
+.sevenos-editor-dialog > :first-child, .sevenos-editor-dialog > :last-child { flex-shrink: 0; }
+.sevenos-editor-dialog > :nth-child(2) { min-height: 0; min-width: 0; overflow-y: auto; overscroll-behavior: contain; }

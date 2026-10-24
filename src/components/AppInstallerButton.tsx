@@ -216,6 +216,7 @@ export default function AppInstallerButton() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.9 }}
             transition={{ type: "spring", stiffness: 300, damping: 26 }}
+            data-install-dock
             className="fixed z-[9998] flex items-center gap-1"
             style={{
               left: `calc(env(safe-area-inset-left) + 1rem)`,
@@ -255,7 +256,7 @@ export default function AppInstallerButton() {
             transition={{ type: "spring", stiffness: 320, damping: 28 }}
             role="dialog"
             aria-live="polite"
-            className="fixed left-0 right-0 mx-auto z-[9999] w-[calc(100%-1.5rem)] max-w-[440px]"
+            className="fixed left-0 right-0 mx-auto z-[9999] max-h-[calc(100dvh-2.5rem)] overflow-y-auto overscroll-contain w-[calc(100%-1.5rem)] max-w-[440px]"
             style={{ bottom: `calc(env(safe-area-inset-bottom) + 1.25rem)` }}
           >
             <div className="absolute -inset-[1px] rounded-[22px] bg-gradient-to-br from-white/25 via-white/5 to-white/20 opacity-60 blur-md pointer-events-none" />
