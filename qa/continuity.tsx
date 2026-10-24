@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- standalone synthetic QA entry point */
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, useLocation, useNavigate } from 'react-router-dom';

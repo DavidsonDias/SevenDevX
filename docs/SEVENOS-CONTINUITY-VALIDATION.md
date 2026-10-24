@@ -8,7 +8,7 @@ Base: main f59e2249076a3cfb52b860875c4a75b7dcde9ced. Trabalho isolado em codex/s
 - Build Vite/Workbox: aprovado; warnings existentes de chunks grandes e bases Browserslist/baseline antigas. Nenhuma atualização de dependência foi incluída.
 - 236 testes locais: aprovados, incluindo oito de continuidade de Auth, sete de MFA nativo e quatro de escopo/serialização/registro de edições e atualização PWA.
 - Os dois testes PostgreSQL exclusivos do CI foram recusados pelo guard do próprio teste no computador local; não houve conexão alternativa com produção. Rodar somente nos respectivos jobs isolados quando seu escopo mudar.
-- ESLint: os arquivos novos de produção e os componentes centrais modificados passaram. Arquivos legados ainda têm dívida de any/fast-refresh; não se declara lint global verde.
+- ESLint: os arquivos novos de produção e os componentes centrais modificados passaram. Comparação dos arquivos alterados: 61 erros antigos versus 60 atuais, sem novos erros de produção. Arquivos legados ainda têm dívida de any/fast-refresh; não se declara lint global verde.
 - Navegador com SDK sintético, sem sessão real/backend: token refresh e SIGNED_IN repetido preservaram montagem 1 e texto digitado; falha temporária de rede preservou o editor e mostrou recuperação local; retorno da rede removeu o aviso.
 - IndexedDB/WebCrypto reais no navegador: gravação/leitura, isolamento de usuário, isolamento de organização, recusa de credenciais e limpeza após logout aprovados.
 - Expiração simulada bloqueou a rota; reentrada recuperou o rascunho mediante escolha. Troca de conta exibiu um editor vazio, sem conteúdo da conta anterior. Cancelar a confirmação de saída manteve rota e texto.
