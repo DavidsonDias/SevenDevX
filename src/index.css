@@ -475,3 +475,22 @@ select optgroup { background-color: #0a0a0a; color: rgba(255,255,255,.6); }
 .sevenos-editor-dialog { display: flex; flex-direction: column; min-width: 0; max-height: calc(var(--sevenos-viewport-height, 100dvh) - 2rem); margin-block: 0; }
 .sevenos-editor-dialog > :first-child, .sevenos-editor-dialog > :last-child { flex-shrink: 0; }
 .sevenos-editor-dialog > :nth-child(2) { min-height: 0; min-width: 0; overflow-y: auto; overscroll-behavior: contain; }
+
+/* Leave page actions free in short landscape screens; keep every floating action accessible. */
+@media (max-height: 500px) and (orientation: landscape) {
+  [data-sevenos-fab] { left: auto; right: max(.75rem, env(safe-area-inset-right)); bottom: calc(.75rem + env(safe-area-inset-bottom)); }
+  [data-sevenos-fab] > button, [data-chat-launcher="admin"] button { width: 2.75rem; height: 2.75rem; }
+  [data-sevenos-fab] ul { max-height: calc(var(--sevenos-viewport-height, 100dvh) - 8rem); overflow-y: auto; overscroll-behavior: contain; }
+  [data-chat-launcher="admin"] { right: max(.75rem, env(safe-area-inset-right)); bottom: calc(4.25rem + env(safe-area-inset-bottom)); }
+}
+@media (max-width: 767px) and (max-height: 500px) and (orientation: landscape) {
+  [data-sevenos-fab] { left: max(.75rem, env(safe-area-inset-left)); right: auto; bottom: calc(5rem + env(safe-area-inset-bottom)); }
+  [data-chat-launcher="admin"] { bottom: calc(5rem + env(safe-area-inset-bottom)); }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  body:has([data-chat-launcher="admin"], [data-sevenos-fab]) .sevenos-shell > main { padding-right: max(4.5rem, calc(env(safe-area-inset-right) + 4.5rem)); }
+}
+@media (max-width: 767px) and (max-height: 500px) and (orientation: landscape) {
+  body:has([data-sevenos-fab]) .sevenos-shell > main { padding-left: max(4.5rem, calc(env(safe-area-inset-left) + 4.5rem)); }
+}
