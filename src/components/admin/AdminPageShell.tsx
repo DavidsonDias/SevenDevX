@@ -76,8 +76,8 @@ export const AdminPageShell = ({ title, subtitle, actions, children, backFallbac
         }`}
         style={{ paddingTop: "env(safe-area-inset-top)" }}
       >
-        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4 flex flex-wrap items-center justify-between gap-2 sm:gap-3">
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+        <div className="container mx-auto min-h-14 px-2 sm:px-4 lg:px-6 py-1.5 lg:py-4 flex flex-nowrap items-center justify-between gap-1 lg:gap-3">
+          <div className="flex flex-1 items-center gap-1 lg:gap-3 min-w-0">
             <AdminMenu />
             <button
               onClick={() => goBack(backFallback)}
@@ -87,22 +87,22 @@ export const AdminPageShell = ({ title, subtitle, actions, children, backFallbac
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
-            <Link to="/" className="hover:opacity-80 transition-opacity shrink-0">
-              <h1 className="text-base sm:text-xl font-bold font-orbitron">
+            <Link to="/" className="min-w-0 hover:opacity-80 transition-opacity">
+              <h1 className="text-sm max-[360px]:text-xs sm:text-xl font-bold font-orbitron whitespace-nowrap">
                 SEVEN<span className="text-white/60">DEVX</span>
               </h1>
             </Link>
-            <span className="hidden sm:inline text-xs uppercase tracking-wider text-white/40 border border-white/20 px-2 py-1 rounded">
+            <span className="hidden lg:inline text-xs uppercase tracking-wider text-white/40 border border-white/20 px-2 py-1 rounded">
               Admin
             </span>
           </div>
-          <div className="flex w-full sm:w-auto items-center justify-end gap-2">
-            <div data-tour="global-search"><GlobalSearch /></div>
-            <div data-tour="notif-bell"><NotificationBell /></div>
-            <div data-tour="push-button"><PushSubscribeButton /></div>
+          <div className="flex shrink-0 items-center justify-end gap-0.5 lg:gap-2">
+            <div data-tour="global-search" className="[&>button]:hidden lg:[&>button]:inline-flex"><GlobalSearch /></div>
+            <div data-tour="notif-bell" className="shrink-0 [&>div>button]:h-11 [&>div>button]:w-11"><NotificationBell /></div>
+            <div data-tour="push-button" className="shrink-0 [&>button]:h-11 [&>button]:w-11 [&>button]:p-0"><PushSubscribeButton /></div>
             <Link
               to="/"
-              className="hidden md:inline-flex items-center gap-1.5 px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-xs uppercase tracking-wider"
+              className="hidden lg:inline-flex items-center gap-1.5 px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-xs uppercase tracking-wider"
             >
               <HomeIcon className="w-3.5 h-3.5" />
               Site
@@ -112,7 +112,7 @@ export const AdminPageShell = ({ title, subtitle, actions, children, backFallbac
             </span>
             <button
               onClick={handleSignOut}
-              className="min-h-11 flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-sm"
+              className="hidden lg:flex min-h-11 items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-sm"
               aria-label="Sair"
             >
               <LogOut className="w-4 h-4" />
