@@ -30,7 +30,12 @@
 // 📦 IMPORTS
 // ============================================================================
 
-import { useEffect, useMemo, useState } from "react";
+import { useEditorDraft } from "@/hooks/useEditorDraft";
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
+import EditorDraftNotice from "@/components/EditorDraftNotice";
+import { useSearchParams } from "react-router-dom";
+import type { PortfolioSettings } from "@/hooks/usePortfolio";
+import { useEffect, useMemo, useState, useRef } from "react";
 import {
   Globe, Copy, Check, ExternalLink, Loader2, Save, Eye, EyeOff, LayoutDashboard,
   UserCircle, FileText, Layers, Briefcase, FolderKanban, Settings2, Upload,
@@ -71,21 +76,7 @@ type Area = (typeof AREAS)[number]["key"];
 // 🏗️ MAIN COMPONENT
 // ============================================================================
 
-export default function PortfolioAdmin() {
-  const { toast } = useToast();
-  const { data: settings } = usePortfolioSettings();
-  const updateSettings = useUpdatePortfolioSettings();
-
-  const [area, setArea] = useState<Area>("overview");
-  const [copied, setCopied] = useState(false);
-  const [form, setForm] = useState({ name: "", role: "", headline: "", bio: "", email: "", github: "", linkedin: "" });
-  const [cv, setCv] = useState<CvData>({});
-  const [blocks, setBlocks] = useState<BlocksValue>({});
-  const [baseline, setBaseline] = useState("");
-  const [state, setState] = useState<SaveState>("idle");
-
-  useEffect(() => {
-    if (!settings) return;
+function editorValue(settings: PortfolioSettings) {
     const nextForm = {
       name: settings.profile?.name ?? "",
       role: settings.profile?.role ?? "",
@@ -113,6 +104,31 @@ export default function PortfolioAdmin() {
       pwa: settings.pwa ?? {},
       flags: settings.flags ?? {},
     };
+    return { nextForm, nextCv, nextBlocks };
+}
+
+export default function PortfolioAdmin() {
+  const { toast } = useToast();
+  const { data: settings } = usePortfolioSettings();
+  const updateSettings = useUpdatePortfolioSettings();
+
+  const [params, setParams] = useSearchParams();
+  const area: Area = AREAS.some(item => item.key === params.get("area")) ? params.get("area") as Area : "overview";
+  const setArea = (nextArea: Area) => setParams(previous => { const next = new URLSearchParams(previous); next.set("area", nextArea); return next; }, { replace: true });
+  const [copied, setCopied] = useState(false);
+  const [form, setForm] = useState({ name: "", role: "", headline: "", bio: "", email: "", github: "", linkedin: "" });
+  const [cv, setCv] = useState<CvData>({});
+  const [blocks, setBlocks] = useState<BlocksValue>({});
+  const [baseline, setBaseline] = useState("");
+  const [state, setState] = useState<SaveState>("idle");
+  const dirtyRef = useRef(false);
+  const baseVersion = useRef<string>();
+
+  useEffect(() => {
+    if (!settings) return;
+    if (dirtyRef.current) return;
+    const { nextForm, nextCv, nextBlocks } = editorValue(settings);
+    baseVersion.current = settings.updated_at;
     setForm(nextForm);
     setCv(nextCv);
     setBlocks(nextBlocks);
@@ -126,6 +142,12 @@ export default function PortfolioAdmin() {
     [baseline, form, cv, blocks],
   );
 
+  dirtyRef.current = dirty;
+  useUnsavedChanges(dirty);
+  const draftValue = useMemo(() => ({ form, cv, blocks }), [form, cv, blocks]);
+  const liveValue = useRef(""); liveValue.current = JSON.stringify({ nextForm: form, nextCv: cv, nextBlocks: blocks });
+  const draft = useEditorDraft({ module: "portfolio", record: "davidson", value: draftValue, baseline: baseVersion.current || "", dirty, enabled: baseline !== "" });
+
   /**
    * Persiste tudo em uma única escrita.
    *
@@ -133,10 +155,13 @@ export default function PortfolioAdmin() {
    *    não apagar campos que o editor não expõe.
    */
   const saveSettings = (publish = false) => {
+    if (draft.candidate) return;
+    const submitted = JSON.stringify({ nextForm: form, nextCv: cv, nextBlocks: blocks });
     setState("saving");
     updateSettings.mutate(
       {
         ...blocks,
+        _expectedUpdatedAt: baseVersion.current,
         profile: {
           ...(settings?.profile ?? {}),
           name: form.name,
@@ -151,7 +176,10 @@ export default function PortfolioAdmin() {
         ...(publish ? { content_version: (settings?.content_version ?? 0) + 1 } : {}),
       },
       {
-        onSuccess: () => {
+        onSuccess: (row) => {
+          baseVersion.current = row.updated_at;
+          setBaseline(submitted);
+          if (liveValue.current === submitted) void draft.clearAfterSave();
           setState("saved");
           toast({ title: publish ? "Portfólio publicado" : "Conteúdo salvo" });
         },
@@ -165,25 +193,11 @@ export default function PortfolioAdmin() {
 
   const discard = () => {
     if (!settings) return;
-    setBaseline("");
-    // Reidrata a partir do último estado persistido.
-    setForm({
-      name: settings.profile?.name ?? "",
-      role: settings.profile?.role ?? "",
-      headline: settings.hero?.headline ?? "",
-      bio: settings.about?.bio ?? "",
-      email: settings.profile?.email ?? "",
-      github: settings.profile?.github ?? "",
-      linkedin: settings.profile?.linkedin ?? "",
-    });
-    setCv((settings.cv ?? {}) as CvData);
-    setBlocks({
-      hero: settings.hero ?? {}, about: settings.about ?? {}, highlights: settings.highlights ?? [],
-      skills: settings.skills ?? [], stats: settings.stats ?? [], navigation: settings.navigation ?? [],
-      links: settings.links ?? [], services: settings.services ?? [], faqs: settings.faqs ?? [],
-      contact: settings.contact ?? {}, footer: settings.footer ?? {}, seo: settings.seo ?? {},
-      pwa: settings.pwa ?? {}, flags: settings.flags ?? {},
-    });
+    const { nextForm, nextCv, nextBlocks } = editorValue(settings);
+    setForm(nextForm); setCv(nextCv); setBlocks(nextBlocks);
+    setBaseline(JSON.stringify({ nextForm, nextCv, nextBlocks }));
+    baseVersion.current = settings.updated_at;
+    void draft.discard();
     setState("idle");
   };
 
@@ -215,6 +229,9 @@ export default function PortfolioAdmin() {
           ))}
         </nav>
 
+        <EditorDraftNotice available={!!draft.candidate} conflict={draft.conflict} error={draft.error} savedAt={draft.savedAt}
+          onRestore={() => { const recovered = draft.restore(); if (recovered) { setForm(recovered.form); setCv(recovered.cv); setBlocks(recovered.blocks); } }}
+          onDiscard={() => void draft.discard()} />
         {/* ── Barra de publicação ─────────────────────────────── */}
         {dirty && (
           <div

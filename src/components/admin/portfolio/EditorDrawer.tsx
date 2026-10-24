@@ -28,6 +28,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import { useState, type ReactNode } from "react";
 import { Loader2, Save, Check, AlertCircle } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
@@ -91,6 +92,7 @@ export default function EditorDrawer({
   open, onOpenChange, title, description, dirty, state, onSave, children, footerExtra,
 }: Props) {
   const [confirming, setConfirming] = useState(false);
+  useUnsavedChanges(open && dirty);
 
   const requestClose = (next: boolean) => {
     if (!next && dirty) {

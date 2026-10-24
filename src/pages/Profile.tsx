@@ -181,7 +181,8 @@ const Profile = () => {
   };
 
   const handleSignOut = async () => {
-    await signOut();
+    const result = await signOut();
+    if (result.error) return;
     navigate("/");
   };
 

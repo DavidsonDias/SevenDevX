@@ -68,7 +68,9 @@
  * Aplica a atualização SOMENTE quando o usuário clica em "Atualizar".
  * Estilo monocromático glass, coerente com o instalador PWA.
  */
-import { useEffect, useState } from "react";
+import { canApplyPwaUpdate } from "@/lib/pwaUpdateSafety";
+import { hasUnsavedEdits } from "@/lib/unsavedChanges";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sparkles, X, ArrowUpRight } from "lucide-react";
 
@@ -91,6 +93,7 @@ const isPreview = () => {
 // ============================================================================
 
 const PWAUpdatePrompt = () => {
+  const approvedUpdate = useRef(false);
   const [show, setShow] = useState(false);
   const [waiting, setWaiting] = useState<ServiceWorker | null>(null);
 
@@ -99,8 +102,11 @@ const PWAUpdatePrompt = () => {
     if (isPreview()) return;
 
     let refreshing = false;
+    let active = true;
+    const cleanups: Array<() => void> = [];
     const onControllerChange = () => {
-      if (refreshing) return;
+      if (refreshing || !approvedUpdate.current) return;
+      if (hasUnsavedEdits()) { approvedUpdate.current = false; setWaiting(null); setShow(true); return; }
       refreshing = true;
       window.location.reload();
     };
@@ -115,27 +121,38 @@ const PWAUpdatePrompt = () => {
         setShow(true);
       }
 
-      reg.addEventListener("updatefound", () => {
+      const onUpdate = () => {
         const nw = reg.installing;
         if (!nw) return;
-        nw.addEventListener("statechange", () => {
+        const onState = () => {
           if (nw.state === "installed" && navigator.serviceWorker.controller) {
             setWaiting(nw);
             setShow(true);
           }
-        });
-      });
+        };
+        nw.addEventListener("statechange", onState);
+        cleanups.push(() => nw.removeEventListener("statechange", onState));
+      };
+      reg.addEventListener("updatefound", onUpdate);
+      cleanups.push(() => reg.removeEventListener("updatefound", onUpdate));
     };
 
-    navigator.serviceWorker.getRegistration().then((reg) => reg && attach(reg));
+    navigator.serviceWorker.getRegistration().then((reg) => { if (active && reg) attach(reg); }).catch(() => {});
 
     return () => {
+      active = false; cleanups.forEach(cleanup => cleanup());
       navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange);
     };
   }, []);
 
-  const apply = () => {
+  const apply = async () => {
+    if (!(await canApplyPwaUpdate())) {
+      window.alert("Salve ou descarte as alterações nas abas abertas antes de atualizar. Seu trabalho continua aberto.");
+      return;
+    }
+    approvedUpdate.current = true;
     if (waiting) waiting.postMessage({ type: "SKIP_WAITING" });
+    else window.location.reload();
     // Não fecha o card: aguardamos controllerchange → reload
   };
 

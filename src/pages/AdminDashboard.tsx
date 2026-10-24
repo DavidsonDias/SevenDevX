@@ -314,7 +314,8 @@ const AdminDashboard = () => {
   }, [isAdmin, toast]);
 
   const handleSignOut = async () => {
-    await signOut();
+    const result = await signOut();
+    if (result.error) return;
     navigate("/");
   };
 

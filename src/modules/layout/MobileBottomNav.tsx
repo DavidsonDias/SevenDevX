@@ -178,6 +178,7 @@ export default function MobileBottomNav() {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 80, opacity: 0 }}
           transition={{ type: "spring", stiffness: 320, damping: 28 }}
+          data-sevenos-floating
           className="md:hidden fixed bottom-0 inset-x-0 z-[45] pb-[env(safe-area-inset-bottom)] pointer-events-none"
         >
           <div className="mx-2 mb-2 pointer-events-auto rounded-2xl border border-white/10 bg-black/75 backdrop-blur-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.7)] relative">

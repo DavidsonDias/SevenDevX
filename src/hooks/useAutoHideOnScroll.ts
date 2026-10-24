@@ -19,17 +19,25 @@
  */
 import { useEffect, useState } from "react";
 
+/** Direction hysteresis avoids jitter. A keyboard-focused header stays reachable. */
 export function useAutoHideOnScroll(threshold = 80) {
   const [isVisible, setIsVisible] = useState(true);
-  const [lastY, setLastY] = useState(0);
   useEffect(() => {
-    const onScroll = () => {
-      const y = window.scrollY;
-      setIsVisible(!(y > lastY && y > threshold));
-      setLastY(y);
+    let lastY = window.scrollY, distance = 0, direction = 0, frame = 0;
+    const measure = () => {
+      frame = 0;
+      const y = Math.max(0, window.scrollY), delta = y - lastY;
+      const nextDirection = Math.sign(delta);
+      distance = nextDirection === direction ? distance + Math.abs(delta) : Math.abs(delta);
+      direction = nextDirection; lastY = y;
+      const headerFocused = document.activeElement?.closest('[data-admin-header]') && document.activeElement.matches(':focus-visible');
+      if (y <= threshold || headerFocused) setIsVisible(true);
+      else if (distance >= (direction < 0 ? 8 : 16)) setIsVisible(direction < 0);
     };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [lastY, threshold]);
+    const scroll = () => { if (!frame) frame = requestAnimationFrame(measure); };
+    const focus = () => { if (document.activeElement?.closest('[data-admin-header]')) setIsVisible(true); };
+    window.addEventListener('scroll', scroll, { passive: true }); document.addEventListener('focusin', focus);
+    return () => { cancelAnimationFrame(frame); window.removeEventListener('scroll', scroll); document.removeEventListener('focusin', focus); };
+  }, [threshold]);
   return isVisible;
 }

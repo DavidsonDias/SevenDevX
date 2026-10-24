@@ -43,9 +43,13 @@
 // 📦 IMPORTS
 // ============================================================================
 
-import { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useSyncExternalStore, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { allowUserDrafts, pauseUserDrafts, clearUserDrafts } from "@/lib/editorDrafts";
+import { confirmLeaveEdits } from "@/lib/unsavedChanges";
+import { SessionContinuity } from "@/lib/sessionContinuity";
 import { useSessionTracker } from "@/hooks/useSessionTracker";
 
 // ============================================================================
@@ -57,6 +61,9 @@ interface AuthContextType {
   session: Session | null;
   isLoading: boolean;
   isAdmin: boolean;
+  isRevalidating: boolean;
+  authError: string | null;
+  retryAuthorization: () => void;
   signIn: (email: string, password: string) => Promise<{ data: any; error: any }>;
   signUp: (email: string, password: string, fullName?: string) => Promise<{ data: any; error: any }>;
   signOut: () => Promise<{ error: any }>;
@@ -97,69 +104,32 @@ export const useAuthContext = () => {
  * @security `isAdmin` deriva sempre da RPC `has_role`, nunca de storage local.
  */
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const authRevision = useRef(0);
+  const queryClient = useQueryClient();
+  const [continuity] = useState(() => new SessionContinuity({
+    readSession: async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if (error) throw error;
+      return data.session;
+    },
+    subscribeAuth: accept => {
+      const { data } = supabase.auth.onAuthStateChange(accept);
+      return () => data.subscription.unsubscribe();
+    },
+    checkRole: async userId => {
+      const { data, error } = await supabase.rpc("has_role", { _user_id: userId, _role: "admin" });
+      if (error) throw error;
+      return data === true;
+    },
+    onAccountChange: (previous, next) => {
+      if (previous) pauseUserDrafts(previous);
+      if (next) allowUserDrafts(next);
+      queryClient.clear();
+    },
+  }));
+  const { session, isLoading, isAdmin, isRevalidating, authError } = useSyncExternalStore(continuity.subscribe, continuity.snapshot);
+  const user = session?.user ?? null;
   useSessionTracker(user?.id);
-
-  const checkAdminRole = useCallback(async (userId: string) => {
-    try {
-      const { data, error } = await supabase.rpc("has_role", {
-        _user_id: userId,
-        _role: "admin",
-      });
-      if (error) return false;
-      return !!data;
-    } catch {
-      return false;
-    }
-  }, []);
-
-  useEffect(() => {
-    let mounted = true;
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!mounted) return;
-      const revision = ++authRevision.current;
-      setSession(session);
-      setUser(session?.user ?? null);
-      setIsAdmin(false);
-      setIsLoading(!!session?.user);
-
-      if (session?.user) {
-        setTimeout(() => {
-          checkAdminRole(session.user.id).then((admin) => {
-            if (mounted && revision === authRevision.current) {
-              setIsAdmin(admin);
-              setIsLoading(false);
-            }
-          });
-        }, 0);
-      } else {
-        setIsAdmin(false);
-      }
-    });
-
-    (async () => {
-      const revision = authRevision.current;
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!mounted || revision !== authRevision.current) return;
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          const admin = await checkAdminRole(session.user.id);
-          if (mounted && revision === authRevision.current) setIsAdmin(admin);
-        }
-      } finally {
-        if (mounted && revision === authRevision.current) setIsLoading(false);
-      }
-    })();
-
-    return () => { mounted = false; subscription.unsubscribe(); };
-  }, [checkAdminRole]);
+  useEffect(() => continuity.start(), [continuity]);
 
   const signIn = async (email: string, password: string) => {
     try {
@@ -183,7 +153,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signOut = async () => {
+    if (!confirmLeaveEdits()) return { error: new Error("Saída cancelada.") };
+    if (user) pauseUserDrafts(user.id);
     const { error } = await supabase.auth.signOut();
+    if (error) { if (user) allowUserDrafts(user.id); return { error }; }
+    if (user) {
+      await clearUserDrafts(user.id).catch(() => {});
+      try { localStorage.removeItem(`sevenos:resume:${user.id}`); } catch { /* storage unavailable */ }
+    }
     return { error };
   };
 
@@ -195,7 +172,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, isLoading, isAdmin, signIn, signUp, signOut, resetPassword }}>
+    <AuthContext.Provider value={{ user, session, isLoading, isAdmin, isRevalidating, authError, retryAuthorization: continuity.retry, signIn, signUp, signOut, resetPassword }}>
       {children}
     </AuthContext.Provider>
   );

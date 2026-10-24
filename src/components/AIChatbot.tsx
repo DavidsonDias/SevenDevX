@@ -82,7 +82,7 @@ export const AIChatbot = () => {
     ? "right-4 md:right-6 bottom-[120px] md:bottom-24"
     : "right-6 bottom-24 md:bottom-24";
   const chatPosClass = isAdminCtx
-    ? "bottom-[110px] right-4 md:bottom-6 md:right-6"
+    ? "bottom-[var(--sevenos-chat-bottom,110px)] right-4 md:bottom-6 md:right-6"
     : "bottom-24 right-4 md:bottom-24 md:right-6";
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
@@ -284,6 +284,7 @@ export const AIChatbot = () => {
       <AnimatePresence>
         {!isOpen && buttonVisible && (
           <motion.div
+            data-sevenos-floating
             className={`fixed ${buttonPosClass} z-[48] flex items-center gap-3 pb-[env(safe-area-inset-bottom)]`}
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -347,7 +348,7 @@ export const AIChatbot = () => {
             }}
             exit={{ opacity: 0, y: 100, scale: 0.9 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className={`fixed ${chatPosClass} z-50 w-[380px] max-w-[calc(100vw-1rem)] max-h-[calc(100dvh-6rem)] bg-black border border-white/20 rounded-xl shadow-2xl overflow-hidden flex flex-col`}
+            className={`fixed ${chatPosClass} z-50 w-[380px] max-w-[calc(100vw-1rem)] max-h-[calc(var(--sevenos-viewport-height,100dvh)-2rem)] bg-black border border-white/20 rounded-xl shadow-2xl overflow-hidden flex flex-col`}
           >
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-white/10 bg-white/5">
