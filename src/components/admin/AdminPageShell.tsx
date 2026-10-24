@@ -97,7 +97,7 @@ export const AdminPageShell = ({ title, subtitle, actions, children, backFallbac
             </span>
           </div>
           <div className="flex shrink-0 items-center justify-end gap-0.5 lg:gap-2">
-            <div data-tour="global-search" className="hidden lg:block"><GlobalSearch /></div>
+            <div data-tour="global-search" className="[&>button]:hidden lg:[&>button]:inline-flex"><GlobalSearch /></div>
             <div data-tour="notif-bell" className="shrink-0 [&>div>button]:h-11 [&>div>button]:w-11"><NotificationBell /></div>
             <div data-tour="push-button" className="shrink-0 [&>button]:h-11 [&>button]:w-11 [&>button]:p-0"><PushSubscribeButton /></div>
             <Link
