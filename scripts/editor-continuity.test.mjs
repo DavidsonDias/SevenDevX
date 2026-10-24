@@ -68,4 +68,4 @@ test('installed PWA resumes only a cold start, never an explicit public-site nav
   const publicVisit = app('/', false, null); publicVisit.render();
   publicVisit.render('/', { user: { id: 'owner' }, isLoading: false });
   assert.deepEqual(publicVisit.visits, []);
-}});
+});
