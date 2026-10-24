@@ -285,6 +285,7 @@ export const AIChatbot = () => {
         {!isOpen && buttonVisible && (
           <motion.div
             data-sevenos-floating
+            data-chat-launcher={isAdminCtx ? "admin" : "public"}
             className={`fixed ${buttonPosClass} z-[48] flex items-center gap-3 pb-[env(safe-area-inset-bottom)]`}
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -348,6 +349,7 @@ export const AIChatbot = () => {
             }}
             exit={{ opacity: 0, y: 100, scale: 0.9 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            data-chat-panel
             className={`fixed ${chatPosClass} z-50 w-[380px] max-w-[calc(100vw-1rem)] max-h-[calc(var(--sevenos-viewport-height,100dvh)-2rem)] bg-black border border-white/20 rounded-xl shadow-2xl overflow-hidden flex flex-col`}
           >
             {/* Header */}

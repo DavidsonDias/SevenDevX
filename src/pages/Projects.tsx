@@ -149,7 +149,7 @@ const Projects = () => {
   initial={{ opacity: 0 }}
   animate={{ opacity: 1 }}
   transition={{ duration: 0.8 }}
-  className="relative min-h-screen flex items-center overflow-hidden bg-black"
+  className="viewport-feature relative min-h-[100svh] flex items-center overflow-hidden bg-black"
   aria-label={t.projects.heroTitle}
   role="region"
 >
@@ -162,7 +162,7 @@ const Projects = () => {
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="w-full h-[50vh] min-h-[280px] relative"
+      className="viewport-feature-image w-full h-[50svh] min-h-[280px] relative"
     >
       <picture>
         <source srcSet={heroBackground} type="image/webp" />
@@ -196,7 +196,7 @@ const Projects = () => {
   {/* ===========================
       DESKTOP LAYOUT (Background + Overlay)
      =========================== */}
-  <div className="hidden md:flex md:items-end w-full h-screen">
+  <div className="viewport-feature-desktop hidden md:flex md:items-end w-full min-h-[100svh]">
     {/* Background Image */}
     <div className="absolute inset-0 z-0" aria-hidden="true">
       <picture>
@@ -213,7 +213,7 @@ const Projects = () => {
     </div>
 
     {/* Content */}
-    <div className="relative z-10 w-full px-6 md:px-10 lg:px-16 xl:px-24 pb-20 md:pb-24 lg:pb-32">
+    <div className="viewport-feature-content relative z-10 w-full px-6 md:px-10 lg:px-16 xl:px-24 pb-20 md:pb-24 lg:pb-32">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}

@@ -68,7 +68,7 @@ export const AdminPageShell = ({ title, subtitle, actions, children, backFallbac
   };
 
   return (
-    <div className="min-h-screen bg-black text-white w-full min-w-0">
+    <div className="sevenos-shell min-h-screen bg-black text-white w-full min-w-0">
       <header
         data-admin-header
         className={`border-b border-white/10 sticky top-0 bg-black/95 backdrop-blur-lg z-50 transition-transform duration-300 motion-reduce:transition-none focus-within:translate-y-0 ${
@@ -87,32 +87,32 @@ export const AdminPageShell = ({ title, subtitle, actions, children, backFallbac
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
-            <Link to="/" className="min-w-0 hover:opacity-80 transition-opacity">
+            <Link data-admin-brand to="/" className="min-w-0 hover:opacity-80 transition-opacity">
               <h1 className="text-sm max-[360px]:text-xs sm:text-xl font-bold font-orbitron whitespace-nowrap">
                 SEVEN<span className="text-white/60">DEVX</span>
               </h1>
             </Link>
-            <span className="hidden lg:inline text-xs uppercase tracking-wider text-white/40 border border-white/20 px-2 py-1 rounded">
+            <span data-header-secondary className="hidden lg:inline text-xs uppercase tracking-wider text-white/40 border border-white/20 px-2 py-1 rounded">
               Admin
             </span>
           </div>
           <div className="flex shrink-0 items-center justify-end gap-0.5 lg:gap-2">
-            <div data-tour="global-search" className="[&>button]:hidden lg:[&>button]:inline-flex"><GlobalSearch /></div>
+            <div data-header-secondary data-tour="global-search" className="[&>button]:hidden lg:[&>button]:inline-flex"><GlobalSearch /></div>
             <div data-tour="notif-bell" className="shrink-0 [&>div>button]:h-11 [&>div>button]:w-11"><NotificationBell /></div>
             <div data-tour="push-button" className="shrink-0 [&>button]:h-11 [&>button]:w-11 [&>button]:p-0"><PushSubscribeButton /></div>
             <Link
               to="/"
-              className="hidden lg:inline-flex items-center gap-1.5 px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-xs uppercase tracking-wider"
+              data-header-secondary className="hidden lg:inline-flex items-center gap-1.5 px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-xs uppercase tracking-wider"
             >
               <HomeIcon className="w-3.5 h-3.5" />
               Site
             </Link>
-            <span className="text-sm text-white/60 hidden lg:inline truncate max-w-[180px]">
+            <span data-header-secondary className="text-sm text-white/60 hidden lg:inline truncate max-w-[180px]">
               {user?.email}
             </span>
             <button
               onClick={handleSignOut}
-              className="hidden lg:flex min-h-11 items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-sm"
+              data-header-secondary className="hidden lg:flex min-h-11 items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-sm"
               aria-label="Sair"
             >
               <LogOut className="w-4 h-4" />
@@ -131,7 +131,7 @@ export const AdminPageShell = ({ title, subtitle, actions, children, backFallbac
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight break-words">{title}</h2>
             {subtitle && <p className="text-sm text-white/60 mt-1.5 break-words">{subtitle}</p>}
           </div>
-          {actions && <div className="flex items-center gap-2 flex-wrap">{actions}</div>}
+          {actions && <div className="sevenos-page-actions flex min-w-0 max-w-full items-center gap-2 flex-wrap">{actions}</div>}
         </div>
         {children}
       </main>

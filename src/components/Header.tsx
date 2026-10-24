@@ -114,17 +114,18 @@ const Header = () => {
   return (
     <>
       <header
+        data-public-header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled ? "bg-black/95 backdrop-blur-sm" : "bg-transparent"
         } ${isVisible ? "translate-y-0" : "-translate-y-full"}`}
       >
         <div className="w-full px-4 sm:px-6">
           <div className="flex items-center justify-between h-16 sm:h-20">
-            <Link to="/" className="flex items-center lg:static absolute left-1/2 lg:left-0 -translate-x-1/2 lg:translate-x-0 z-[60]">
+            <Link to="/" className="flex items-center xl:static absolute left-1/2 xl:left-0 -translate-x-1/2 xl:translate-x-0 z-[60]">
               <img src={logo} alt="SevenDevX" className="h-10 sm:h-12 lg:h-14 w-auto transition-all duration-300" />
             </Link>
 
-            <nav className="hidden lg:flex items-center gap-8 ml-auto mr-4">
+            <nav className="hidden xl:flex items-center gap-6 2xl:gap-8 ml-auto mr-4">
               {navLinks.map((link) => {
                 const active = location.pathname === link.path;
                 return (
@@ -172,7 +173,8 @@ const Header = () => {
             <motion.nav
               initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className="fixed top-20 right-0 bottom-0 w-full md:w-[500px] bg-black z-50 overflow-y-auto"
+              data-public-menu
+              className="fixed top-16 sm:top-20 right-0 bottom-0 w-full md:w-[500px] bg-black z-50 overflow-y-auto"
             >
               <div className="flex flex-col items-end px-8 md:px-12 py-8">
                 {navLinks.map((link, index) => (

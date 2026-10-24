@@ -139,7 +139,7 @@ export default function LocalSeoPage() {
               <p className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-muted-foreground mb-4">
                 <MapPin className="w-3 h-3" /> {cityData.name} · {cityData.state}
               </p>
-              <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 max-w-3xl">
+              <h1 className="text-[clamp(1.5rem,4.5vw,3.75rem)] break-words font-bold tracking-tight mb-6 max-w-3xl">
                 Desenvolvimento Web em {cityData.name}
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">

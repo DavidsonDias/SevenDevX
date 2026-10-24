@@ -85,7 +85,7 @@ const Hero = () => {
     <section
       id="main-content"
       ref={sectionRef}
-      className="relative h-screen flex items-end overflow-hidden"
+      className="viewport-hero relative min-h-[100svh] flex items-end overflow-hidden"
       tabIndex={-1}
       aria-label="Seção principal de destaque com vídeo e introdução da SevenDevX"
     >
@@ -116,7 +116,7 @@ const Hero = () => {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 pb-10 sm:pb-16 md:pb-20 lg:pb-28">
+      <div className="viewport-hero-content relative z-10 w-full px-4 sm:px-6 lg:px-8 pb-10 sm:pb-16 md:pb-20 lg:pb-28">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}

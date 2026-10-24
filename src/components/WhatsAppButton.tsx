@@ -89,6 +89,7 @@ const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
     <AnimatePresence>
       {visible && (
         <motion.div
+          data-public-whatsapp
           className={`fixed bottom-6 ${positionClass} z-50 flex items-center gap-3`}
           initial={{ opacity: 0, scale: 0.8, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
