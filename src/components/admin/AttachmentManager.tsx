@@ -83,7 +83,7 @@ export default function AttachmentManager({
           <FileText className="w-4 h-4" /> {title}
           <span className="text-xs text-white/40 font-normal">({items.length})</span>
         </h4>
-        <div className="flex items-center gap-1">
+        <div className="flex min-w-0 max-w-full flex-wrap items-center gap-1">
           {allowedTypes.map((t) => {
             const meta = TYPE_META[t];
             const Icon = meta.icon;
