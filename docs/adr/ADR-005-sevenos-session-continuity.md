@@ -19,7 +19,7 @@ Status: implementado; validação local em 24/10/2026. Aceite em dispositivo fí
 
 O sistema operacional pode encerrar o processo antes de concluir uma gravação IndexedDB. Debounce de 400ms e flush ao ocultar reduzem o risco, sem garantia de recuperação do último caractere. Limpeza de dados do navegador, quota ou modo privado também podem indisponibilizar rascunhos; o editor informa falha local.
 
-Metadados de rota/rolagem são locais e isolados por conta; não armazenam tokens, pesquisa livre ou conteúdo do formulário. A retomada automática de rota ocorre apenas na inicialização standalone em `/`. Logout remove o contexto da conta.
+Metadados de rota/rolagem são locais e isolados por conta; não armazenam tokens, pesquisa livre ou conteúdo do formulário. A URL atual prevalece em recarregamentos e inicializações standalone: `/` abre o site público, e uma URL `/admin/...` mantém seu destino sujeito à autenticação existente. A retomada automática de uma rota administrativa antiga na raiz foi removida. Logout remove o contexto da conta.
 
 ## Rollback
 
