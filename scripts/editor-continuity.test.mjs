@@ -42,3 +42,30 @@ test('PWA updates refuse local or peer edits and recheck after coordination', as
   localDirty = false; peerDirty = true; assert.equal(await exports.canApplyPwaUpdate(), false);
   peerDirty = false; editedDuringCheck = true; assert.equal(await exports.canApplyPwaUpdate(), false);
 });
+
+test('installed PWA resumes only a cold start, never an explicit public-site navigation', () => {
+  const source = fs.readFileSync(new URL('../src/components/AppViewport.tsx', import.meta.url), 'utf8');
+  const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
+  function app(initialPath, loading = false, user = { id: 'owner' }) {
+    let route = { pathname: initialPath, search: '' }, auth = { user, isLoading: loading }, ref, effect = 0;
+    const visits = [], storage = new Map([['sevenos:resume:owner', JSON.stringify({ path: '/admin/clients', at: Date.now() })]]);
+    const exports = {};
+    new Function('exports', 'require', 'window', 'navigator', 'localStorage', compiled)(exports, name => {
+      if (name === 'react') return { useRef: value => ref ||= { current: value }, useEffect: callback => { if (effect++ === 0) callback(); } };
+      if (name === 'react-router-dom') return { useLocation: () => route, useNavigate: () => path => visits.push(path) };
+      return { useAuthContext: () => auth };
+    }, { matchMedia: () => ({ matches: true }) }, {}, { getItem: key => storage.get(key), setItem: (key, value) => storage.set(key, value) });
+    return { visits, render(path = route.pathname, nextAuth = auth) { route = { pathname: path, search: '' }; auth = nextAuth; effect = 0; exports.default(); } };
+  }
+  const cold = app('/', true);
+  cold.render(); assert.deepEqual(cold.visits, []);
+  cold.render('/', { user: { id: 'owner' }, isLoading: false });
+  assert.deepEqual(cold.visits, ['/admin/clients']);
+  cold.render('/admin/clients'); cold.render('/'); cold.render('/');
+  assert.equal(cold.visits.length, 1);
+  const admin = app('/admin/portfolio'); admin.render(); admin.render('/');
+  assert.deepEqual(admin.visits, []);
+  const publicVisit = app('/', false, null); publicVisit.render();
+  publicVisit.render('/', { user: { id: 'owner' }, isLoading: false });
+  assert.deepEqual(publicVisit.visits, []);
+});

@@ -2,7 +2,7 @@
  * @module UI
  * @see docs/adr/ADR-005-sevenos-session-continuity.md
  */
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuthContext } from '@/contexts/AuthContext';
 
@@ -12,8 +12,14 @@ export default function AppViewport() {
   const navigate = useNavigate();
   const { user, isLoading } = useAuthContext();
   const userId = user?.id;
+  // Consume cold-start recovery once; explicit links to the public site must stay there.
+  const resumeOnStartup = useRef(pathname === "/" && !search);
   useEffect(() => {
-    if (!userId || isLoading) return;
+    if (pathname !== "/" || search) resumeOnStartup.current = false;
+    if (isLoading) return;
+    const shouldResume = resumeOnStartup.current;
+    resumeOnStartup.current = false;
+    if (!userId) return;
     const key = `sevenos:resume:${userId}`;
     try {
       if (pathname.startsWith('/admin')) {
@@ -22,7 +28,7 @@ export default function AppViewport() {
           const value = params.get(name); if (value && value.length < 100) safe.set(name, value);
         }
         localStorage.setItem(key, JSON.stringify({ path: pathname + (safe.size ? `?${safe}` : ''), at: Date.now() }));
-      } else if (pathname === '/' && !search && (window.matchMedia('(display-mode: standalone)').matches || (navigator as Navigator & { standalone?: boolean }).standalone === true)) {
+      } else if (shouldResume && pathname === '/' && !search && (window.matchMedia('(display-mode: standalone)').matches || (navigator as Navigator & { standalone?: boolean }).standalone === true)) {
         const saved = JSON.parse(localStorage.getItem(key) || 'null');
         if (saved && Date.now() - saved.at < 86_400_000 && /^\/admin(?:\/|\?|$)/.test(saved.path) && !saved.path.includes('://')) navigate(saved.path, { replace: true });
       }
