@@ -397,7 +397,7 @@ self.addEventListener("install", (event) => {
         cache.add(FALLBACK_HTML).catch(() => console.warn(`${LOG_PREFIX} ⚠️ offline.html não encontrado`)),
         cache.add(FALLBACK_IMG).catch(() => console.warn(`${LOG_PREFIX} ⚠️ fallback icon não encontrado`)),
       ]);
-      await self.skipWaiting();
+      // Wait for the explicit SKIP_WAITING message; do not interrupt active editors.
       console.log(`${LOG_PREFIX} ✅ Instalação concluída`);
     })()
   );
@@ -430,6 +430,7 @@ self.addEventListener("activate", (event) => {
       // Monitorar quota
       monitorQuota(),
       // Claim todos os clientes imediatamente
+      // Updates wait for user approval before activation; first install may claim without reloading.
       self.clients.claim(),
     ]).then(() => {
       console.log(`${LOG_PREFIX} ✅ Ativado com sucesso!`);

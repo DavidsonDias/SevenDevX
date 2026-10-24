@@ -415,4 +415,7 @@ select optgroup { background-color: #0a0a0a; color: rgba(255,255,255,.6); }
 
 /* =========================
    FIM — SevenDevX Global Styles v2.0 Enterprise
-   ========================= */
+   ========================= *//* Keep administrative floating controls clear of an open mobile keyboard. */
+@media (max-width: 767px) {
+  html[data-sevenos-keyboard="true"] [data-sevenos-floating] { display: none !important; }
+}

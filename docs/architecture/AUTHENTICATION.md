@@ -9,7 +9,7 @@
 | `src/pages/Auth.tsx` | Login, cadastro e recuperação |
 | `src/utils/authErrors.ts` | Tradução de erros para mensagens de usuário |
 | `src/hooks/useSessionTracker.ts` | Registro de sessões administrativas |
-| `src/hooks/useMfa.ts` | Enrolamento/verificação TOTP |
+| `src/hooks/useMfa.ts` | Enrolamento/verificação TOTP nativo |
 
 > Regra do projeto: usar **sempre** `useAuthContext` de `@/contexts/AuthContext`. O antigo `useAuth.ts` foi removido.
 
@@ -43,11 +43,9 @@ Ver [security/AUTHORIZATION](../security/AUTHORIZATION.md).
 
 ## MFA (TOTP)
 
-```text
-mfa-enroll  → gera secret base32 + otpauth URI + backup codes → user_mfa
-mfa-verify  → valida código TOTP e ativa (enabled_at)
-mfa-disable → remove o registro do próprio usuário
-```
+MFA usa Supabase Auth nativo (`auth.mfa.enroll`, `challengeAndVerify`, `listFactors`, `getAuthenticatorAssuranceLevel`). O fluxo legado em `user_mfa` não é autoridade para AAL2. Consulte [NATIVE-MFA-MIGRATION](../security/NATIVE-MFA-MIGRATION.md).
+
+Renovação da mesma sessão revalida papéis e MFA sem desmontar a interface já admitida. Falhas transitórias exibem retry; remoção confirmada de permissão ou logout bloqueiam acesso. Veja [ADR-005](../adr/ADR-005-sevenos-session-continuity.md).
 
 ## Recuperação e redirects
 

@@ -22,9 +22,9 @@
  * Estilo igual ao site: overlay com animações suaves, lista de rotas, perfil + logout.
  */
 import { useState, useEffect } from "react";
-import { createPortal } from "react-dom";
+import * as Dialog from "@radix-ui/react-dialog";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+
 import {
   Menu, X, LayoutDashboard, FolderKanban, Users, Workflow, Settings2, Sparkles,
   FileQuestion, Tag, Cpu, MessageSquare, GitBranch, Home as HomeIcon, LogOut,
@@ -122,14 +122,9 @@ export default function AdminMenu() {
 
   useEffect(() => { setOpen(false); }, [pathname]);
 
-  useEffect(() => {
-    if (open) document.body.style.overflow = "hidden";
-    else document.body.style.overflow = "";
-    return () => { document.body.style.overflow = ""; };
-  }, [open]);
-
   const handleSignOut = async () => {
-    await signOut();
+    const result = await signOut();
+    if (result.error) return;
     navigate("/");
   };
 
@@ -139,111 +134,39 @@ export default function AdminMenu() {
   }, {});
 
   return (
-    <>
-      <button
-        onClick={() => setOpen(true)}
-        aria-label="Abrir menu admin"
-        className="p-2 rounded-lg border border-white/10 hover:bg-white/5 transition-colors"
-      >
-        <Menu className="w-4 h-4" />
-      </button>
-
-      {createPortal(
-        <AnimatePresence>
-          {open && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              className="fixed inset-0 z-[9999] bg-black/98 backdrop-blur-xl overflow-y-auto"
-            >
-            <div className="container mx-auto px-4 sm:px-6 py-5 flex items-center justify-between border-b border-white/10">
-              <div className="flex items-center gap-3 min-w-0">
-                <h1 className="text-lg font-bold font-orbitron">
-                  SEVEN<span className="text-white/60">DEVX</span>
-                </h1>
-                <span className="text-[10px] uppercase tracking-wider text-white/40 border border-white/20 px-2 py-0.5 rounded">
-                  Admin
-                </span>
-              </div>
-              <button
-                onClick={() => setOpen(false)}
-                className="p-2 rounded-lg border border-white/10 hover:bg-white/5"
-                aria-label="Fechar menu"
-              >
-                <X className="w-4 h-4" />
-              </button>
+    <Dialog.Root open={open} onOpenChange={setOpen}>
+      <Dialog.Trigger asChild>
+        <button aria-label="Abrir menu admin" className="min-h-11 min-w-11 inline-flex items-center justify-center rounded-lg border border-white/10 hover:bg-white/5"><Menu className="w-4 h-4" /></button>
+      </Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 z-[9998] bg-black/75 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out motion-reduce:animate-none" />
+        <Dialog.Content className="fixed top-0 left-0 z-[9999] w-full sm:max-w-lg h-[var(--sevenos-viewport-height,100dvh)] flex flex-col bg-zinc-950 border-r border-white/15 shadow-2xl data-[state=open]:animate-in data-[state=open]:slide-in-from-left data-[state=closed]:animate-out data-[state=closed]:slide-out-to-left motion-reduce:animate-none" aria-describedby="admin-menu-description">
+          <div className="shrink-0 flex items-center justify-between gap-3 px-4 sm:px-6 pt-[max(1rem,env(safe-area-inset-top))] pb-4 border-b border-white/10">
+            <div className="min-w-0"><Dialog.Title className="text-lg font-bold font-orbitron">SEVEN<span className="text-white/60">DEVX</span></Dialog.Title><p id="admin-menu-description" className="text-xs text-white/50">SevenOS · Administração</p></div>
+            <Dialog.Close asChild><button className="min-h-11 min-w-11 flex items-center justify-center border border-white/15 rounded-lg focus-visible:ring-2" aria-label="Fechar menu"><X className="w-5 h-5" /></button></Dialog.Close>
+          </div>
+          <nav aria-label="Módulos administrativos" className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 sm:px-6 py-5">
+            {Object.entries(grouped).map(([group, items]) => <section key={group} className="mb-6" aria-label={group}>
+              <h2 className="text-[10px] uppercase tracking-[0.2em] text-white/45 mb-2 px-3">{group}</h2>
+              <div className="space-y-1">{items.map(item => {
+                const Icon = item.icon;
+                const active = pathname === item.to || (item.to !== "/admin" && pathname.startsWith(item.to));
+                return <Link key={item.to} to={item.to} aria-current={active ? "page" : undefined}
+                  className={`flex items-center gap-3 min-h-11 px-3 py-3 rounded-xl border text-sm transition-colors motion-reduce:transition-none focus-visible:ring-2 ${active ? "bg-white text-black border-white" : "border-transparent text-white/75 hover:bg-white/5 hover:border-white/10 active:bg-white/10"}`}>
+                  <Icon className="w-4 h-4 shrink-0" /><span>{item.label}</span>
+                </Link>;
+              })}</div>
+            </section>)}
+          </nav>
+          <div className="shrink-0 border-t border-white/10 px-4 sm:px-6 pt-3 pb-[max(1rem,env(safe-area-inset-bottom))] bg-black/30">
+            {user && <p className="text-xs text-white/50 truncate mb-3">{user.email}</p>}
+            <div className="grid grid-cols-2 gap-3">
+              <Link to="/" className="min-h-11 flex items-center justify-center gap-2 rounded-lg border border-white/15 text-sm"><HomeIcon className="w-4 h-4" /> Site</Link>
+              <button onClick={handleSignOut} className="min-h-11 flex items-center justify-center gap-2 rounded-lg border border-red-500/30 text-red-300 text-sm"><LogOut className="w-4 h-4" /> Sair</button>
             </div>
-
-            <motion.nav
-              initial={{ y: 12, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.05, duration: 0.3 }}
-              className="container mx-auto px-4 sm:px-6 py-8 max-w-3xl"
-            >
-              {Object.entries(grouped).map(([group, items]) => (
-                <div key={group} className="mb-8">
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-3">{group}</p>
-                  <div className="grid sm:grid-cols-2 gap-2">
-                    {items.map((item, i) => {
-                      const Icon = item.icon;
-                      const active = pathname === item.to || (item.to !== "/admin" && pathname.startsWith(item.to));
-                      return (
-                        <motion.div
-                          key={item.to}
-                          initial={{ x: -8, opacity: 0 }}
-                          animate={{ x: 0, opacity: 1 }}
-                          transition={{ delay: 0.05 + i * 0.02 }}
-                        >
-                          <Link
-                            to={item.to}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-all uppercase tracking-wider text-xs font-bold ${
-                              active
-                                ? "bg-white text-black border-white"
-                                : "border-white/10 hover:bg-white/5 hover:border-white/30"
-                            }`}
-                          >
-                            <Icon className="w-4 h-4" />
-                            {item.label}
-                          </Link>
-                        </motion.div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-
-              <div className="border-t border-white/10 pt-6 mt-6 space-y-3">
-                {user && (
-                  <div className="flex items-center justify-between gap-3 p-3 border border-white/10 rounded-xl">
-                    <div className="min-w-0">
-                      <p className="text-xs text-white/50 uppercase tracking-wider">Logado como</p>
-                      <p className="text-sm truncate">{user.email}</p>
-                    </div>
-                  </div>
-                )}
-                <div className="grid grid-cols-2 gap-2">
-                  <Link
-                    to="/"
-                    className="flex items-center justify-center gap-2 px-4 py-3 border border-white/15 rounded-xl text-xs uppercase tracking-wider hover:bg-white/5"
-                  >
-                    <HomeIcon className="w-4 h-4" /> Site
-                  </Link>
-                  <button
-                    onClick={handleSignOut}
-                    className="flex items-center justify-center gap-2 px-4 py-3 border border-red-500/30 text-red-300 rounded-xl text-xs uppercase tracking-wider hover:bg-red-500/10"
-                  >
-                    <LogOut className="w-4 h-4" /> Sair
-                  </button>
-                </div>
-              </div>
-            </motion.nav>
-            </motion.div>
-          )}
-        </AnimatePresence>,
-        document.body
-      )}
-    </>
+          </div>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }

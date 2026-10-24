@@ -1,0 +1,24 @@
+name: SevenOS session and editing continuity
+on:
+  pull_request:
+    paths: ['src/**', 'scripts/*continuity*', 'scripts/auth-session-regression.test.mjs', 'package*.json', '.github/workflows/sevenos-continuity.yml']
+  push:
+    branches: [main]
+    paths: ['src/**', 'scripts/*continuity*', 'scripts/auth-session-regression.test.mjs', 'package*.json', '.github/workflows/sevenos-continuity.yml']
+permissions:
+  contents: read
+jobs:
+  continuity:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run typecheck
+      - run: node --test scripts/auth-session-regression.test.mjs scripts/editor-continuity.test.mjs scripts/native-mfa.test.mjs scripts/auth-redirect-safety.test.mjs
+      - run: npm run build

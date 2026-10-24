@@ -78,7 +78,7 @@ interface ProtectedRouteProps {
 // ============================================================================
 
 const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
-  const { user, isLoading, isAdmin } = useAuthContext();
+  const { user, isLoading, isAdmin, authError, retryAuthorization } = useAuthContext();
   const location = useLocation();
 
   if (isLoading) {
@@ -89,8 +89,14 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
     );
   }
 
+  if (authError && (!user || !isAdmin)) {
+    return <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-6" role="alert">
+      <p>{authError}</p><button onClick={retryAuthorization} className="border rounded-lg px-4 py-3">Tentar novamente</button>
+    </div>;
+  }
+
   if (!user) {
-    return <Navigate to={`/auth?redirect=${encodeURIComponent(location.pathname)}`} replace />;
+    return <Navigate to={`/auth?redirect=${encodeURIComponent(location.pathname + location.search + location.hash)}`} replace />;
   }
 
   if (requiredRole === "admin" && !isAdmin) {
@@ -115,7 +121,12 @@ const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
     );
   }
 
-  return <MfaGate>{children}</MfaGate>;
+  return <>
+    {authError && <div role="status" className="fixed bottom-24 inset-x-4 z-[199] bg-zinc-950 border border-amber-500/40 rounded-xl p-4 text-sm">
+      {authError} <button onClick={retryAuthorization} className="underline min-h-11 px-2">Tentar novamente</button>
+    </div>}
+    <MfaGate>{children}</MfaGate>
+  </>;
 };
 
 // ============================================================================

@@ -131,9 +131,11 @@ export const useUpsertClient = () => {
   const { toast } = useToast();
   return useMutation({
     mutationFn: async (payload: any) => {
-      const { id, ...rest } = payload;
+      const { id, _expectedUpdatedAt, ...rest } = payload;
       if (id) {
-        const { data, error } = await supabase.from("clients").update(rest).eq("id", id).select().single();
+        let query = supabase.from("clients").update(rest).eq("id", id);
+        if (_expectedUpdatedAt) query = query.eq("updated_at", _expectedUpdatedAt);
+        const { data, error } = await query.select().single();
         if (error) throw error;
         return data;
       }

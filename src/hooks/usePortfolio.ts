@@ -165,9 +165,13 @@ export function usePortfolioSettings(siteKey = "davidson") {
 export function useUpdatePortfolioSettings(siteKey = "davidson") {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async (patch: Partial<PortfolioSettings>) => {
-      const { error } = await sb.from("portfolio_settings").update(patch).eq("site_key", siteKey);
+    mutationFn: async (patch: Partial<PortfolioSettings> & { _expectedUpdatedAt?: string }) => {
+      const { _expectedUpdatedAt, ...values } = patch;
+      let query = sb.from("portfolio_settings").update(values).eq("site_key", siteKey);
+      if (_expectedUpdatedAt) query = query.eq("updated_at", _expectedUpdatedAt);
+      const { data, error } = await query.select().single();
       if (error) throw error;
+      return data as PortfolioSettings;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["portfolio_settings", siteKey] }),
   });

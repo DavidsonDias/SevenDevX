@@ -153,7 +153,7 @@ export default function GlobalFAB() {
   };
 
   return (
-    <div className="fixed left-4 bottom-[110px] md:left-auto md:right-6 md:bottom-6 z-40 pb-[env(safe-area-inset-bottom)]">
+    <div data-sevenos-floating className="fixed left-4 bottom-[110px] md:left-auto md:right-6 md:bottom-6 z-40 pb-[env(safe-area-inset-bottom)]">
       <AnimatePresence>
         {open && (
           <motion.ul

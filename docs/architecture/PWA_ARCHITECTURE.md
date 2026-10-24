@@ -43,3 +43,7 @@ A detecção considera `display-mode: standalone`, `navigator.standalone` (iOS) 
 Target: navegação básica do site público disponível offline
 Target: nenhuma resposta de API servida a partir do cache
 ```
+
+## Continuidade de edições
+
+A instalação do worker não chama skipWaiting automaticamente. A ativação antecipada exige aprovação, verifica edições locais e consulta abas responsivas; controllerchange não recarrega abas sem aprovação própria. O registro de rascunhos é separado da fila offline de requisições. Consulte [ADR-005](../adr/ADR-005-sevenos-session-continuity.md) e [validação](../SEVENOS-CONTINUITY-VALIDATION.md).

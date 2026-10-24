@@ -47,6 +47,8 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import ScrollToTop from "@/components/ScrollToTop";
 import AppLoaderOrbital from "@/components/ui/AppLoaderOrbital";
+import AppViewport from "@/components/AppViewport";
+import UnsavedNavigationGuard from "@/components/UnsavedNavigationGuard";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { useNavHistoryTracker } from "@/hooks/useSmartBack";
 import { useAiReferralTracker } from "@/hooks/useAiReferralTracker";
@@ -382,6 +384,8 @@ export default function AppRouter() {
       basename={import.meta.env.BASE_URL || "/"}
       future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
     >
+      <AppViewport />
+      <UnsavedNavigationGuard />
       <ScrollToTop />
       <AnimatedRoutes />
       <MobileBottomNav />

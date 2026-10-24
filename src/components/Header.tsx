@@ -40,7 +40,8 @@ const Header = () => {
 
   const handleLogout = async () => {
     setIsMenuOpen(false);
-    await signOut();
+    const result = await signOut();
+    if (result.error) return;
     navigate("/");
   };
 

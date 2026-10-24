@@ -98,7 +98,9 @@
  */
 import { useState, useMemo, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import { useEditorDraft } from "@/hooks/useEditorDraft";
+import EditorDraftNotice from "@/components/EditorDraftNotice";
 import { useQuery } from "@tanstack/react-query";
 import {
   Plus, Search, Building2, Mail, Phone, Sparkles, X, Edit2, Trash2,
@@ -141,7 +143,14 @@ export default function ClientsAdmin() {
   const upsert = useUpsertClient();
   const del = useDeleteClient();
   const [search, setSearch] = useState("");
-  const [editing, setEditing] = useState<any | null>(null);
+  const [params, setParams] = useSearchParams();
+  const editingId = params.get("edit");
+  const editing = useMemo(() => editingId === "new" ? { status: "lead" } : clients.find((client) => client.id === editingId) ?? null, [clients, editingId]);
+  const setEditing = (client: { id?: string; status?: string } | null) => setParams(previous => {
+    const next = new URLSearchParams(previous);
+    if (client) next.set("edit", client.id || "new"); else next.delete("edit");
+    return next;
+  }, { replace: true });
   const [drawerId, setDrawerId] = useState<string | null>(null);
 
   const filtered = useMemo(
@@ -230,11 +239,11 @@ export default function ClientsAdmin() {
 
       {editing && (
         <ClientFormModal
+          key={editingId}
           initial={editing}
           onClose={() => setEditing(null)}
           onSave={async (payload) => {
             await upsert.mutateAsync(payload);
-            setEditing(null);
           }}
         />
       )}
@@ -246,17 +255,40 @@ export default function ClientsAdmin() {
 
 /* ─────────── form modal ─────────── */
 function ClientFormModal({ initial, onClose, onSave }: any) {
-  const [form, setForm] = useState<any>(initial);
+  const original = useRef(initial).current;
+  const [form, setForm] = useState<any>(original);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const dirty = JSON.stringify(form) !== JSON.stringify(original);
+  const eligible = useMemo(() => Object.fromEntries(["name", "company", "segment", "email", "phone", "whatsapp", "status"].map(key => [key, form[key] ?? ""])), [form]);
+  const draft = useEditorDraft({ module: "clients", record: original.id || "new", value: eligible, baseline: original.updated_at || "new", dirty });
+  const requestClose = async () => {
+    if (saving) return;
+    if (dirty && !window.confirm("Descartar as alterações desta edição?")) return;
+    if (dirty) await draft.discard().catch(() => {});
+    onClose();
+  };
+  const save = async () => {
+    if (!form.name || saving || draft.candidate) return;
+    setSaving(true); setSaveError(null);
+    try { await onSave({ ...form, _expectedUpdatedAt: original.updated_at }); await draft.clearAfterSave().catch(() => {}); onClose(); }
+    catch { setSaveError("Não foi possível salvar. Se o registro mudou em outra sessão, reabra os dados atuais e recupere seu rascunho para revisar."); }
+    finally { setSaving(false); }
+  };
   const change = (k: string, v: any) => setForm((f: any) => ({ ...f, [k]: v }));
 
   return (
-    <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto" onClick={onClose}>
+    <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto" onClick={() => void requestClose()}>
       <div onClick={(e) => e.stopPropagation()} className="bg-zinc-950 border border-white/10 rounded-2xl w-full max-w-xl my-8">
         <div className="flex items-center justify-between p-5 border-b border-white/10">
           <h3 className="font-bold">{initial.id ? "Editar Cliente" : "Novo Cliente"}</h3>
-          <button onClick={onClose}><X className="w-5 h-5" /></button>
+          <button onClick={() => void requestClose()}><X className="w-5 h-5" /></button>
         </div>
-        <div className="p-5 space-y-3">
+        <fieldset disabled={saving} className="p-5 space-y-3">
+          <EditorDraftNotice available={!!draft.candidate} conflict={draft.conflict} error={draft.error} savedAt={draft.savedAt}
+            onRestore={() => { const recovered = draft.restore(); if (recovered) setForm((current) => ({ ...current, ...recovered })); }} onDiscard={() => void draft.discard()} />
+          <p className="text-xs text-white/40">O rascunho protege os dados de contato. Notas e faturamento ficam apenas nesta edição até salvar.</p>
+          {saveError && <p role="alert" className="text-amber-300 text-sm">{saveError}</p>}
           <Field label="Nome *"><input className={inputCls} value={form.name || ""} onChange={(e) => change("name", e.target.value)} /></Field>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Empresa"><input className={inputCls} value={form.company || ""} onChange={(e) => change("company", e.target.value)} /></Field>
@@ -278,14 +310,15 @@ function ClientFormModal({ initial, onClose, onSave }: any) {
           <Field label="Notas">
             <textarea className={inputCls} rows={3} value={form.notes || ""} onChange={(e) => change("notes", e.target.value)} />
           </Field>
-        </div>
+        </fieldset>
         <div className="flex justify-end gap-2 p-5 border-t border-white/10">
-          <button onClick={onClose} className="px-4 py-2 border border-white/20 rounded-lg text-sm">Cancelar</button>
+          <button onClick={() => void requestClose()} className="px-4 py-2 border border-white/20 rounded-lg text-sm">Cancelar</button>
           <button
-            onClick={() => form.name && onSave(form)}
+            onClick={() => void save()}
+            disabled={saving || !form.name || !!draft.candidate}
             className="px-4 py-2 bg-white text-black rounded-lg text-sm font-bold inline-flex items-center gap-2"
           >
-            <Save className="w-4 h-4" /> Salvar
+            <Save className="w-4 h-4" /> {saving ? "Salvando…" : "Salvar"}
           </button>
         </div>
       </div>

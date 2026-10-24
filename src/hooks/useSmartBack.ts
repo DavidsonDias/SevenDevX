@@ -22,6 +22,7 @@
  * Se houver histórico no app (mesma origem), volta. Senão, vai para o fallback.
  * Detecta também navegações vindas de fora (sem referer interno) usando sessionStorage.
  */
+import { confirmLeaveEdits } from "@/lib/unsavedChanges";
 import { useCallback, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -75,6 +76,7 @@ export const useSmartBack = () => {
   const navigate = useNavigate();
   return useCallback(
     (fallback = "/admin") => {
+      if (!confirmLeaveEdits()) return;
       const h = readHistory();
       // remove a entrada atual
       const trimmed = h.slice(0, -1);
