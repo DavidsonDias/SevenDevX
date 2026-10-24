@@ -427,8 +427,8 @@ select optgroup { background-color: #0a0a0a; color: rgba(255,255,255,.6); }
   .viewport-hero-content { padding-right: 5rem; padding-bottom: calc(5rem + env(safe-area-inset-bottom)); }
   [data-public-whatsapp], [data-chat-launcher="public"] { right: max(.75rem, env(safe-area-inset-right)); }
   [data-public-whatsapp] { bottom: .75rem; }
-  [data-chat-launcher="public"] { bottom: 4.25rem; }
-  [data-public-whatsapp] button, [data-chat-launcher="public"] button { width: 2.75rem; height: 2.75rem; }
+  [data-chat-launcher="public"] { bottom: 4.75rem; }
+  [data-public-whatsapp] button, [data-chat-launcher="public"] button { width: 3.25rem; height: 3.25rem; }
   [data-install-dock] button[aria-label="Ocultar"] { width: 2.75rem; height: 2.75rem; }
 }
 
@@ -460,8 +460,8 @@ select optgroup { background-color: #0a0a0a; color: rgba(255,255,255,.6); }
   .sevenos-shell > main > div { row-gap: .75rem; }
   [data-public-whatsapp], [data-chat-launcher="public"] { right: max(.75rem, env(safe-area-inset-right)); }
   [data-public-whatsapp] { bottom: .75rem; }
-  [data-chat-launcher="public"] { bottom: 4.25rem; }
-  [data-public-whatsapp] button, [data-chat-launcher="public"] button { width: 2.75rem; height: 2.75rem; }
+  [data-chat-launcher="public"] { bottom: 4.75rem; }
+  [data-public-whatsapp] button, [data-chat-launcher="public"] button { width: 3.25rem; height: 3.25rem; }
   [data-install-dock] button[aria-label="Instalar SevenDevX"] > span:last-child > span:last-child { display: none; }
   [data-install-dock] button[aria-label="Ocultar"] { width: 2.75rem; height: 2.75rem; }
 }
