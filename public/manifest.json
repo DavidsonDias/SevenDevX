@@ -5,31 +5,88 @@
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",
-  "theme_color": "#ffffff",
+  "theme_color": "#000000",
   "icons": [
     {
-      "src": "/logo-192.png",
+      "src": "/pwa/icon-192-v1.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/logo-512.png",
+      "src": "/pwa/icon-512-v1.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/maskable-icon-512.png",
+      "src": "/pwa/maskable-512-v1.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
+    }
+  ],
+  "scope": "/",
+  "id": "/",
+  "orientation": "any",
+  "lang": "pt-BR",
+  "categories": [
+    "business",
+    "productivity",
+    "development"
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard SevenOS",
+      "short_name": "Admin",
+      "description": "Acessar painel administrativo",
+      "url": "/admin",
+      "icons": [
+        {
+          "src": "/pwa/icon-192-v1.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     },
     {
-      "src": "/apple-touch-icon.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
+      "name": "Pipeline de Vendas",
+      "short_name": "Pipeline",
+      "description": "Acompanhar funil de leads",
+      "url": "/admin/pipeline",
+      "icons": [
+        {
+          "src": "/pwa/icon-192-v1.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "WhatsApp Inbox",
+      "short_name": "WhatsApp",
+      "description": "Conversas em tempo real",
+      "url": "/admin/whatsapp",
+      "icons": [
+        {
+          "src": "/pwa/icon-192-v1.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Logo Lab",
+      "short_name": "Brand",
+      "description": "Editor de marca e logos",
+      "url": "/admin/logo-lab",
+      "icons": [
+        {
+          "src": "/pwa/icon-192-v1.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
     }
   ]
 }
