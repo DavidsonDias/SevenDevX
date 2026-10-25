@@ -221,14 +221,6 @@ const SEOHead: React.FC<SEOHeadProps> = ({
         content="SevenDevX - Desenvolvimento de Software Profissional"
       />
 
-      {/* 📱 PWA e Mobile */}
-      <meta name="theme-color" content="#000000" />
-      <meta name="apple-mobile-web-app-capable" content="yes" />
-      <meta
-        name="apple-mobile-web-app-status-bar-style"
-        content="black-translucent"
-      />
-
       {/* 📍 SEO Local */}
       <meta name="geo.region" content={`BR-${address.region}`} />
       <meta name="geo.placename" content={address.city} />

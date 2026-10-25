@@ -10,6 +10,7 @@ export default function AppViewport() {
   const { pathname } = useLocation();
   useEffect(() => {
     const root = document.documentElement, viewport = window.visualViewport;
+    root.dataset.pwaSurface = pathname === '/' ? 'home' : 'solid';
     const update = () => {
       const height = viewport?.height || window.innerHeight;
       const inset = Math.max(0, window.innerHeight - height - (viewport?.offsetTop || 0));
