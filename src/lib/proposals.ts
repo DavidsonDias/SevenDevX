@@ -3,6 +3,42 @@ import { z } from "zod";
 
 export const PROPOSAL_KIND = "sevenos-commercial-proposal-v1";
 const text = z.string().max(20000);
+/** Only public raster references are persisted, never signed attachment URLs. */
+export function safeProposalLink(value: string): string {
+  try {
+    const url = new URL(value);
+    return /^https?:$/.test(url.protocol) && !url.username && !url.password
+      ? url.href
+      : "";
+  } catch {
+    return "";
+  }
+}
+export function safeProposalImage(value: string): string {
+  if (/^local:[\w.-]+$/.test(value) || /^\/(?!\/)[^?#]*$/.test(value))
+    return value;
+  const url = safeProposalLink(value);
+  if (!url) return "";
+  const parsed = new URL(url);
+  return parsed.pathname.includes("/object/sign/") ||
+    [...parsed.searchParams.keys()].some((key) =>
+      /token|secret|signature/i.test(key),
+    )
+    ? ""
+    : url;
+}
+export const proposalProjectSchema = z.object({
+  id: z.string().max(100),
+  title: z.string().trim().min(1).max(160),
+  summary: z.string().max(450),
+  category: z.string().max(80),
+  image: z.string().max(2048).transform(safeProposalImage),
+  url: z
+    .string()
+    .max(2048)
+    .transform((value) => (value ? safeProposalLink(value) : "")),
+});
+export type ProposalProject = z.infer<typeof proposalProjectSchema>;
 export const proposalSchema = z.object({
   schema: z.literal(1),
   title: text,
@@ -29,9 +65,10 @@ export const proposalSchema = z.object({
   differentiators: text.default(""),
   growth: text.default(""),
   social: text.default(""),
+  projects: z.array(proposalProjectSchema).max(18).default([]),
 });
 export type Proposal = z.infer<typeof proposalSchema>;
-export type ProposalField = Exclude<keyof Proposal, "schema">;
+export type ProposalField = Exclude<keyof Proposal, "schema" | "projects">;
 export type ProposalSource = {
   project: {
     title?: string | null;
@@ -61,6 +98,7 @@ export function createProposal(
     documents.find((doc) => doc.type === type)?.content || "";
   return {
     schema: 1,
+    projects: [],
     title: project.title || "Proposta comercial",
     clientName: client?.name || project.client_name || "",
     company: client?.company || "",
@@ -188,6 +226,51 @@ export const PROPOSAL_SECTIONS: {
   },
 ];
 
+/** Shared section order for preview, Markdown and PDF; empty fields do not create gaps. */
+export function visibleProposalSections(p: Proposal) {
+  return PROPOSAL_SECTIONS.filter(
+    (section) =>
+      p[section.key].trim() ||
+      (section.key === "portfolio" && p.projects.length),
+  );
+}
+export type ProposalChannel = {
+  kind: "instagram" | "youtube" | "email" | "phone" | "linkedin" | "website";
+  text: string;
+  href: string;
+};
+export function proposalChannel(line: string): ProposalChannel {
+  const value = line.trim();
+  const email = value.match(/[\w.+-]+@[\w.-]+\.[a-z]{2,}/i)?.[0];
+  if (email) return { kind: "email", text: value, href: `mailto:${email}` };
+  const kind = /instagram/i.test(value)
+    ? "instagram"
+    : /youtube/i.test(value)
+      ? "youtube"
+      : /linkedin/i.test(value)
+        ? "linkedin"
+        : /whatsapp|telefone|\(\d{2}\)/i.test(value)
+          ? "phone"
+          : "website";
+  let href = safeProposalLink(
+    value.match(/https?:\/\/[^\s]+/i)?.[0] ||
+      (value.match(/www\.[^\s]+/i)?.[0]
+        ? `https://${value.match(/www\.[^\s]+/i)?.[0]}`
+        : ""),
+  );
+  const handle = value.match(/@([a-z0-9._-]+)/i)?.[1];
+  if (!href && handle && (kind === "instagram" || kind === "youtube"))
+    href = `https://${kind === "instagram" ? "www.instagram.com/" : "www.youtube.com/@"}${handle}`;
+  if (!href && kind === "phone") {
+    const digits = value.replace(/\D/g, "");
+    if (digits.length >= 10 && digits.length <= 15)
+      href = /whatsapp/i.test(value)
+        ? `https://wa.me/${digits.length <= 11 ? "55" : ""}${digits}`
+        : `tel:+${digits.length <= 11 ? "55" : ""}${digits}`;
+  }
+  return { kind, text: value, href };
+}
+
 export function proposalWarnings(p: Proposal): string[] {
   return [
     !p.title.trim() && "Título",
@@ -218,8 +301,11 @@ export function readProposal(metadata: unknown): Proposal | null {
 export function proposalMarkdown(p: Proposal): string {
   return (
     `# ${p.title}\n\n${p.headline}\n\nCliente: ${p.clientName}\nEmpresa: ${p.company}\nE-mail: ${p.email}\nTelefone: ${p.phone}\nEmissão: ${p.issuedOn}\nValidade: ${p.validUntil || "A definir"}\n\n` +
-    PROPOSAL_SECTIONS.filter((section) => p[section.key].trim())
-      .map((section) => `## ${section.title}\n\n${p[section.key]}`)
+    visibleProposalSections(p)
+      .map(
+        (section) =>
+          `## ${section.title}\n\n${p[section.key]}${section.key === "portfolio" ? p.projects.map((project) => `\n\n### ${project.title}\n${project.summary}\n${project.url}`).join("") : ""}`,
+      )
       .join("\n\n")
   );
 }

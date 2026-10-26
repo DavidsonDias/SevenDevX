@@ -20,6 +20,12 @@ import { useEditorDraft } from "@/hooks/useEditorDraft";
 import { useToast } from "@/hooks/use-toast";
 import EditorDraftNotice from "@/components/EditorDraftNotice";
 import proposalBrand from "@/assets/proposal-brand.png";
+import {
+  ProposalPortfolioPicker,
+  ProposalProjectCards,
+  ProposalContacts,
+} from "./ProposalVisuals";
+import { resolveProjectImage } from "@/data/projectImages";
 import { appendProposalSnapshot } from "@/lib/proposalPersistence";
 import {
   createProposal,
@@ -29,6 +35,8 @@ import {
   readProposal,
   type Proposal,
   type ProposalField,
+  type ProposalProject,
+  visibleProposalSections,
 } from "@/lib/proposals";
 
 type Project = Tables<"projects">;
@@ -151,12 +159,14 @@ export function ProposalEditor({
   source,
   snapshots,
   logos,
+  catalog,
   onSave,
 }: {
   record: string;
   source: Proposal;
   snapshots: Snapshot[];
   logos: ProposalLogo[];
+  catalog?: ProposalProject[];
   onSave: (value: Proposal, expectedId: string | null) => Promise<Snapshot>;
 }) {
   const initial = snapshots[0];
@@ -208,7 +218,25 @@ export function ProposalEditor({
           );
         const data = logo ? await proposalLogoData(logo.url) : undefined;
         const brand = await proposalLogoData(proposalBrand);
-        const pdf = await createProposalPdf(validated, data, brand);
+        const images = Object.fromEntries(
+          await Promise.all(
+            validated.projects
+              .filter((project) => project.image)
+              .map(async (project) => {
+                try {
+                  return [
+                    project.id,
+                    await proposalLogoData(resolveProjectImage(project.image)),
+                  ];
+                } catch {
+                  throw new Error(
+                    `A imagem de “${project.title}” não carregou. Tente novamente ou remova a imagem no portfólio da proposta.`,
+                  );
+                }
+              }),
+          ),
+        );
+        const pdf = await createProposalPdf(validated, data, brand, images);
         pdf.save(proposalFilename(value));
         toast({
           title: "PDF gerado",
@@ -358,6 +386,11 @@ export function ProposalEditor({
             </select>
           </label>
         )}
+        <p className="text-xs text-blue-200/70" role="status">
+          {visibleProposalSections(value).length + 1} páginas-base na prévia.
+          Seções vazias são omitidas e a numeração é contínua; textos longos
+          podem gerar continuações no PDF.
+        </p>
         {preview ? (
           <ProposalPreview proposal={value} logo={logo} />
         ) : (
@@ -438,7 +471,7 @@ export function ProposalEditor({
                   <summary className="font-bold text-sm cursor-pointer min-h-8">
                     {String(index + 2).padStart(2, "0")} / {section.title}
                     <span className="ml-2 text-[10px] font-normal text-white/40">
-                      {value[section.key]?.trim() ? "Preenchido" : "A definir"}
+                      {value[section.key]?.trim() || (section.key === "portfolio" && value.projects.length) ? "Preenchido" : "A definir"}
                     </span>
                   </summary>
                   <label
@@ -447,6 +480,15 @@ export function ProposalEditor({
                   >
                     {section.hint}
                   </label>
+                  {section.key === "portfolio" && (
+                    <ProposalPortfolioPicker
+                      selected={value.projects}
+                      catalog={catalog}
+                      onChange={(projects) =>
+                        setValue((current) => ({ ...current, projects }))
+                      }
+                    />
+                  )}
                   <textarea
                     id={`${prefix}-${section.key}`}
                     rows={5}
@@ -504,7 +546,7 @@ export function ProposalPreview({
         <div className="absolute right-[-50px] top-[-90px] rounded-full border border-blue-500/20 w-64 h-64 pointer-events-none" />
         <div className="flex items-start justify-between gap-4 mb-6">
           <p className="text-[10px] tracking-[.18em] uppercase text-blue-300">
-            Proposta comercial / SevenDevX
+            01 / Proposta comercial / SevenDevX
           </p>
           <img
             src={proposalBrand}
@@ -533,31 +575,36 @@ export function ProposalPreview({
           {proposal.issuedOn} · Válida até {proposal.validUntil || "a definir"}
         </p>
       </article>
-      {PROPOSAL_SECTIONS.filter((section) => proposal[section.key]?.trim()).map(
-        (section, index) => (
-          <article
-            key={section.key}
-            className="rounded-xl border border-white/10 bg-[#080c12] p-6 sm:p-10"
-          >
-            <div className="flex items-start justify-between gap-4 mb-4">
-              <p className="text-[10px] text-blue-300 uppercase tracking-widest">
-                {String(index + 1).padStart(2, "0")} / SevenDevX
-              </p>
-              <img
-                src={proposalBrand}
-                alt="SevenDevX"
-                className="w-24 sm:w-28 h-12 object-contain shrink-0"
-              />
-            </div>
-            <h3 className="text-xl sm:text-2xl font-bold mb-5">
-              {section.title}
-            </h3>
+      {visibleProposalSections(proposal).map((section, index) => (
+        <article
+          key={section.key}
+          className="rounded-xl border border-white/10 bg-[#080c12] p-6 sm:p-10"
+        >
+          <div className="flex items-start justify-between gap-4 mb-4">
+            <p className="text-[10px] text-blue-300 uppercase tracking-widest">
+              {String(index + 2).padStart(2, "0")} / SevenDevX
+            </p>
+            <img
+              src={proposalBrand}
+              alt="SevenDevX"
+              className="w-24 sm:w-28 h-12 object-contain shrink-0"
+            />
+          </div>
+          <h3 className="text-xl sm:text-2xl font-bold mb-5">
+            {section.title}
+          </h3>
+          {section.key === "social" || section.key === "contact" ? (
+            <ProposalContacts value={proposal[section.key]} />
+          ) : (
             <p className="whitespace-pre-wrap break-words text-sm leading-relaxed text-white/70">
               {proposal[section.key]}
             </p>
-          </article>
-        ),
-      )}
+          )}
+          {section.key === "portfolio" && (
+            <ProposalProjectCards projects={proposal.projects} />
+          )}
+        </article>
+      ))}
     </div>
   );
 }

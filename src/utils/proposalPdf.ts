@@ -1,6 +1,7 @@
 /** @file Selectable-text proposal PDF, with automatic continuation pages. */
 import {
-  PROPOSAL_SECTIONS,
+  visibleProposalSections,
+  proposalChannel,
   proposalWarnings,
   type Proposal,
 } from "@/lib/proposals";
@@ -10,6 +11,7 @@ export async function createProposalPdf(
   proposal: Proposal,
   logoDataUrl?: string,
   brandDataUrl?: string,
+  projectImages: Record<string, string> = {},
 ) {
   const { jsPDF } = await import("jspdf");
   const pdf = new jsPDF({
@@ -46,7 +48,9 @@ export async function createProposalPdf(
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(9);
     pdf.text(
-      clean(label.toUpperCase() + (continuation ? " / CONTINUAÇÃO" : "")),
+      clean(
+        `${String(page).padStart(2, "0")} / ${label.toUpperCase()}${continuation ? " / CONTINUAÇÃO" : ""}`,
+      ),
       margin + 4,
       22,
     );
@@ -219,14 +223,244 @@ export async function createProposalPdf(
       false,
       "Apresentação",
     );
-  for (const [index, section] of PROPOSAL_SECTIONS.entries()) {
+  const icon = (kind: string, x: number, top: number) => {
+    const c =
+      kind === "phone"
+        ? "#21ad67"
+        : kind === "youtube"
+          ? "#df3030"
+          : kind === "instagram"
+            ? "#bc338f"
+            : "#285cbe";
+    pdf.setFillColor(c);
+    pdf.roundedRect(x, top, 13, 13, 3, 3, "F");
+    pdf.setDrawColor("#ffffff");
+    pdf.setLineWidth(0.5);
+    if (kind === "email") {
+      pdf.rect(x + 3, top + 4, 7, 5);
+      pdf.line(x + 3, top + 4, x + 6.5, top + 7);
+      pdf.line(x + 10, top + 4, x + 6.5, top + 7);
+    } else if (kind === "instagram") {
+      pdf.roundedRect(x + 3, top + 3, 7, 7, 2, 2);
+      pdf.circle(x + 6.5, top + 6.5, 1.8);
+      pdf.circle(x + 8.8, top + 4.3, 0.35);
+    } else if (kind === "youtube") {
+      pdf.setFillColor("#ffffff");
+      pdf.triangle(x + 5, top + 4, x + 5, top + 9, x + 9, top + 6.5, "F");
+    } else if (kind === "phone") {
+      pdf.lines(
+        [
+          [0, 2],
+          [2, 2],
+          [2, 0],
+          [1, -1],
+          [-1, -1],
+          [-1, 1],
+          [-2, -2],
+          [1, -1],
+          [-1, -1],
+          [-1, 1],
+        ],
+        x + 4,
+        top + 4,
+        [1, 1],
+        "S",
+        false,
+      );
+    } else if (kind === "linkedin") {
+      pdf.setTextColor("#ffffff");
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(17);
+      pdf.text("in", x + 3, top + 9);
+    } else {
+      pdf.circle(x + 6.5, top + 6.5, 3.7);
+      pdf.ellipse(x + 6.5, top + 6.5, 1.7, 3.7);
+      pdf.line(x + 3, top + 6.5, x + 10, top + 6.5);
+    }
+  };
+  const contain = (
+    data: string,
+    x: number,
+    top: number,
+    w: number,
+    h: number,
+    id: string,
+  ) => {
+    const image = pdf.getImageProperties(data),
+      scale = Math.min(w / image.width, h / image.height);
+    pdf.addImage(
+      data,
+      image.fileType,
+      x + (w - image.width * scale) / 2,
+      top + (h - image.height * scale) / 2,
+      image.width * scale,
+      image.height * scale,
+      id,
+    );
+  };
+  for (const section of visibleProposalSections(proposal)) {
     const value = proposal[section.key].trim();
-    if (!value) continue;
-    start(`${String(index + 1).padStart(2, "0")} / ${section.title}`);
+    start(section.title);
+    if (section.key === "portfolio" && proposal.projects.length) {
+      const shortIntro = !!value && value.length <= 160;
+      if (shortIntro) {
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(10);
+        pdf.setTextColor("#b6c4d8");
+        pdf.text(
+          pdf.splitTextToSize(clean(value), width - margin * 2),
+          margin,
+          34,
+        );
+      }
+      // Three visual cards per page. Long summaries use a wide card without dropping text.
+      for (let offset = 0; offset < proposal.projects.length;) {
+        pdf.setFont("helvetica", "normal");
+        pdf.setFontSize(11);
+        const group = proposal.projects.slice(offset, offset + 3);
+        const w = (width - margin * 2 - 12) / 3;
+        const measures = group.map((project) => {
+          pdf.setFont("helvetica", "bold");
+          pdf.setFontSize(14);
+          const title = pdf.splitTextToSize(
+            clean(project.title),
+            w - 12,
+          ) as string[];
+          pdf.setFont("helvetica", "normal");
+          pdf.setFontSize(11);
+          const summary = pdf.splitTextToSize(
+            clean(project.summary),
+            w - 12,
+          ) as string[];
+          return {
+            title,
+            summary,
+            height:
+              63 +
+              title.length * 5 +
+              summary.length * 4.2 +
+              Math.ceil(project.category.length / 35) * 3.5,
+          };
+        });
+        const wide = measures.some((item) => item.height > bottom - 42);
+        const batch = wide ? group.slice(0, 1) : group;
+        batch.forEach((project, column) => {
+          const x = wide ? margin : margin + column * (w + 6),
+            boxWidth = wide ? width - margin * 2 : w;
+          const textX = wide ? x + 101 : x + 6,
+            textW = wide ? boxWidth - 108 : w - 12;
+          pdf.setFillColor("#18243a");
+          pdf.roundedRect(x, 42, boxWidth, bottom - 42, 5, 5, "F");
+          const data = projectImages[project.id];
+          if (data)
+            contain(
+              data,
+              x + 4,
+              46,
+              wide ? 90 : w - 8,
+              wide ? 80 : 31,
+              `project-${project.id}`,
+            );
+          else {
+            pdf.setTextColor("#8295b2");
+            pdf.setFontSize(10);
+            pdf.text("SEM IMAGEM", x + 8, wide ? 75 : 63);
+          }
+          let cursor = wide ? 51 : 83;
+          pdf.setFont("helvetica", "bold");
+          pdf.setFontSize(14);
+          pdf.setTextColor("#ffffff");
+          const titles = pdf.splitTextToSize(
+            clean(project.title),
+            textW,
+          ) as string[];
+          titles.forEach((line) => {
+            pdf.text(line, textX, cursor);
+            cursor += 5;
+          });
+          cursor += 2;
+          pdf.setFont("helvetica", "normal");
+          pdf.setFontSize(9);
+          pdf.setTextColor("#88a7ff");
+          const categories = pdf.splitTextToSize(
+            clean(project.category),
+            textW,
+          ) as string[];
+          categories.forEach((line) => {
+            pdf.text(line, textX, cursor);
+            cursor += 3.5;
+          });
+          cursor += 3;
+          pdf.setFontSize(11);
+          pdf.setTextColor("#c5d0e0");
+          const summaries = pdf.splitTextToSize(
+            clean(project.summary),
+            textW,
+          ) as string[];
+          summaries.forEach((line) => {
+            pdf.text(line, textX, cursor);
+            cursor += 4.2;
+          });
+          if (project.url) {
+            pdf.setFontSize(10);
+            pdf.setTextColor("#27ccff");
+            pdf.textWithLink(
+              "VISITAR PROJETO >",
+              textX,
+              Math.max(cursor + 6, 132),
+              { url: project.url },
+            );
+          }
+        });
+        offset += batch.length;
+        if (offset < proposal.projects.length) start(section.title, true);
+      }
+      if (!value || shortIntro) continue;
+      start("Portfólio / Apresentação", true);
+    }
     write(section.title, 27, "#ffffff", true, section.title);
     pdf.setFillColor("#3667ff");
     pdf.rect(margin, y, 26, 1, "F");
     y += 12;
+    if (section.key === "social" || section.key === "contact") {
+      y = 65;
+      for (const line of value.split(/\n/).filter((line) => line.trim())) {
+        const channel = proposalChannel(line);
+        pdf.setFont("helvetica", "bold");
+        pdf.setFontSize(15);
+        const lines = pdf.splitTextToSize(
+          clean(channel.text),
+          width - margin * 2 - 39,
+        ) as string[];
+        let offset = 0;
+        while (offset < lines.length) {
+          if (y + 20 > bottom) start(section.title, true);
+          const count = Math.min(
+            lines.length - offset,
+            Math.max(1, Math.floor((bottom - y - 10) / 5.5)),
+          );
+          const boxHeight = Math.max(20, count * 5.5 + 10);
+          pdf.setFillColor("#18243a");
+          pdf.roundedRect(margin, y, width - margin * 2, boxHeight, 4, 4, "F");
+          icon(channel.kind, margin + 5, y + 3.5);
+          pdf.setFont("helvetica", "bold");
+          pdf.setFontSize(15);
+          pdf.setTextColor("#28caff");
+          lines
+            .slice(offset, offset + count)
+            .forEach((text, index) =>
+              pdf.text(text, margin + 26, y + 11 + index * 5.5),
+            );
+          if (channel.href)
+            pdf.link(margin, y, width - margin * 2, boxHeight, {
+              url: channel.href,
+            });
+          y += boxHeight + 4;
+          offset += count;
+        }
+      }
+      continue;
+    }
     const paragraphs = value.split(/\n\s*\n|\n/).filter((line) => line.trim());
     if (
       paragraphs.length > 1 &&
