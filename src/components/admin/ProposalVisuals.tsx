@@ -5,15 +5,10 @@ import {
   ArrowDown,
   ArrowUp,
   ExternalLink,
-  Globe,
-  Instagram,
-  Mail,
-  Phone,
   Trash2,
-  Youtube,
-  Linkedin,
   ImageOff,
 } from "lucide-react";
+import { channelIcons, channelColors } from "@/lib/proposalIcons";
 import { publicSupabase } from "@/integrations/supabase/publicClient";
 import { resolveProjectImage } from "@/data/projectImages";
 import {
@@ -78,14 +73,6 @@ export function ProposalProjectCards({
     </div>
   );
 }
-const icons = {
-  instagram: Instagram,
-  youtube: Youtube,
-  email: Mail,
-  phone: Phone,
-  linkedin: Linkedin,
-  website: Globe,
-};
 export function ProposalContacts({ value }: { value: string }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -95,13 +82,19 @@ export function ProposalContacts({ value }: { value: string }) {
         .filter(Boolean)
         .map((line, index) => {
           const channel = proposalChannel(line),
-            Icon = icons[channel.kind];
+            Icon = channelIcons[channel.kind];
           const content = (
             <>
               <span
-                className={`shrink-0 rounded-xl p-3 ${channel.kind === "phone" ? "bg-green-600" : channel.kind === "youtube" ? "bg-red-600" : channel.kind === "instagram" ? "bg-gradient-to-tr from-orange-500 to-fuchsia-600" : "bg-blue-600"}`}
+                className="shrink-0 rounded-xl p-3 text-white"
+                style={{
+                  background:
+                    channel.kind === "instagram"
+                      ? "linear-gradient(35deg,#f9a13b,#df2278,#7937b9)"
+                      : channelColors[channel.kind],
+                }}
               >
-                <Icon size={25} aria-hidden="true" />
+                <Icon size={30} aria-hidden="true" />
               </span>
               <span className="min-w-0 break-words text-sm font-semibold leading-relaxed">
                 {channel.text}
