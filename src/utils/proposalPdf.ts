@@ -165,7 +165,7 @@ export async function createProposalPdf(
       image.width * scale,
       image.height * scale,
     );
-    y += 30;
+    y += 40;
   }
   write(
     proposal.headline || proposal.title,
