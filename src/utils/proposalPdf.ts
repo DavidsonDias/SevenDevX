@@ -9,6 +9,7 @@ import {
 export async function createProposalPdf(
   proposal: Proposal,
   logoDataUrl?: string,
+  brandDataUrl?: string,
 ) {
   const { jsPDF } = await import("jspdf");
   const pdf = new jsPDF({
@@ -49,9 +50,24 @@ export async function createProposalPdf(
       margin + 4,
       22,
     );
-    pdf.setTextColor("#ffffff");
-    pdf.setFontSize(12);
-    pdf.text("SEVENDEVX", width - margin, 22, { align: "right" });
+    if (brandDataUrl) {
+      const image = pdf.getImageProperties(brandDataUrl);
+      const scale = Math.min(33 / image.width, 17 / image.height);
+      const logoWidth = image.width * scale;
+      pdf.addImage(
+        brandDataUrl,
+        image.fileType,
+        width - margin - logoWidth,
+        10,
+        logoWidth,
+        image.height * scale,
+        "sevendevx-brand",
+      );
+    } else {
+      pdf.setTextColor("#ffffff");
+      pdf.setFontSize(12);
+      pdf.text("SEVENDEVX", width - margin, 22, { align: "right" });
+    }
     pdf.setDrawColor("#243044");
     pdf.line(margin, 152, width - margin, 152);
     pdf.setTextColor("#8793a6");

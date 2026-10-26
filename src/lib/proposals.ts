@@ -26,6 +26,9 @@ export const proposalSchema = z.object({
   portfolio: text,
   nextSteps: text,
   contact: text,
+  differentiators: text.default(""),
+  growth: text.default(""),
+  social: text.default(""),
 });
 export type Proposal = z.infer<typeof proposalSchema>;
 export type ProposalField = Exclude<keyof Proposal, "schema">;
@@ -89,7 +92,14 @@ export function createProposal(
     evolution: "",
     about:
       "Estratégia, design e engenharia para transformar necessidades de negócio em experiências digitais.\nDesenvolvimento personalizado, comunicação direta e atenção à qualidade em cada entrega.",
-    portfolio: "",
+    differentiators:
+      "Desenvolvimento personalizado para o modelo de negócio e o momento do cliente.\nExperiência em primeiro lugar: navegação clara e apresentação profissional em diferentes telas.\nVisão de evolução: estrutura planejada para novas funcionalidades e integrações.\nComunicação direta, alinhamentos e transparência nas entregas.",
+    growth:
+      "Serviços de crescimento podem ser avaliados após o lançamento: SEO, conteúdo e gestão de campanhas.\nSão opcionais e dependem de escopo e orçamento próprios. Verba de anúncios e serviços de terceiros são tratados separadamente. Resultados não são garantidos.",
+    social:
+      "Instagram: @sevendevx\nYouTube: @sevendevxx\nSite oficial: www.sevendevx.com",
+    portfolio:
+      "Conheça os projetos e experiências digitais da SevenDevX em www.sevendevx.com.",
     contact: "www.sevendevx.com\nsevendevxx@gmail.com",
     nextSteps:
       "Revisar e aprovar o escopo da proposta.\nAlinhar condições comerciais e cronograma.\nFormalizar a contratação.\nEnviar os materiais necessários para iniciar o projeto.",
@@ -147,9 +157,24 @@ export const PROPOSAL_SECTIONS: {
     hint: "Apresentação, forma de trabalho e diferenciais.",
   },
   {
+    key: "differentiators",
+    title: "Nossos diferenciais",
+    hint: "Personalização, experiência, evolução e acompanhamento do projeto.",
+  },
+  {
+    key: "growth",
+    title: "Crescimento opcional",
+    hint: "SEO, conteúdo e campanhas, sempre com escopo e investimento separados.",
+  },
+  {
     key: "portfolio",
     title: "Portfólio de referência",
     hint: "Projetos e endereços públicos aprovados para apresentação.",
+  },
+  {
+    key: "social",
+    title: "Conecte-se com a SevenDevX",
+    hint: "Canais oficiais e redes sociais da empresa.",
   },
   {
     key: "contact",
