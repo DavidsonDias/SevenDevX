@@ -290,3 +290,133 @@ test("institutional logo is embedded on every page, including long-content conti
       "every PDF page must draw the corporate logo",
     );
 });
+
+test("sparse sections produce consecutive page labels without empty pages", async () => {
+  const proposal = model.createProposal(source);
+  for (const section of model.PROPOSAL_SECTIONS) proposal[section.key] = "";
+  proposal.overview = "Primeiro conteúdo";
+  proposal.evolution = "Segundo conteúdo";
+  proposal.nextSteps = "Terceiro conteúdo";
+  assert.deepEqual(
+    model.visibleProposalSections(proposal).map((item) => item.key),
+    ["overview", "evolution", "nextSteps"],
+  );
+  const doc = await pdf.createProposalPdf(proposal);
+  assert.equal(doc.getNumberOfPages(), 4);
+  doc.internal.pages
+    .slice(1)
+    .forEach((page, index) =>
+      assert.match(
+        page.join("\n"),
+        new RegExp(`${String(index + 1).padStart(2, "0")} / `),
+      ),
+    );
+});
+test("project-only portfolio is included and snapshots retain their own presentation data", async () => {
+  const proposal = model.createProposal(source);
+  for (const section of model.PROPOSAL_SECTIONS) proposal[section.key] = "";
+  proposal.projects = [
+    {
+      id: "aurora",
+      title: "Aurora",
+      summary: "Uma vitrine para a marca.",
+      category: "Institucional",
+      image: "",
+      url: "https://example.com",
+    },
+  ];
+  assert.deepEqual(
+    model.visibleProposalSections(proposal).map((item) => item.key),
+    ["portfolio"],
+  );
+  assert.match(model.proposalMarkdown(proposal), /Uma vitrine/);
+  const saved = model.readProposal({ kind: model.PROPOSAL_KIND, proposal });
+  proposal.projects[0].summary = "Mudança posterior";
+  assert.equal(saved.projects[0].summary, "Uma vitrine para a marca.");
+  const doc = await pdf.createProposalPdf(saved);
+  assert.equal(doc.getNumberOfPages(), 2);
+  assert.match(doc.output(), /https:\/\/example.com/);
+});
+test("legacy snapshots default to no linked projects and unsafe project URLs are removed", () => {
+  const proposal = model.createProposal(source);
+  delete proposal.projects;
+  assert.deepEqual(
+    model.readProposal({ kind: model.PROPOSAL_KIND, proposal }).projects,
+    [],
+  );
+  for (const image of [
+    "javascript:alert(1)",
+    "https://example.com/storage/v1/object/sign/private/image?token=secret",
+    "https://example.com/image?signature=secret",
+    "//evil.example/image",
+  ])
+    assert.equal(model.safeProposalImage(image), "");
+  assert.equal(model.safeProposalImage("local:Roane.jpg"), "local:Roane.jpg");
+  assert.equal(model.safeProposalLink("javascript:alert(1)"), "");
+});
+test("contacts produce safe actionable links and recognizable channel kinds", () => {
+  assert.equal(
+    model.proposalChannel("Instagram: @sevendevx").kind,
+    "instagram",
+  );
+  assert.equal(
+    model.proposalChannel("E-mail: contato@example.com").href,
+    "mailto:contato@example.com",
+  );
+  assert.equal(
+    model.proposalChannel("www.sevendevx.com").href,
+    "https://www.sevendevx.com/",
+  );
+  assert.equal(
+    model.proposalChannel("YouTube: @sevendevxx").href,
+    "https://www.youtube.com/@sevendevxx",
+  );
+  assert.equal(model.proposalChannel("javascript:alert(1)").href, "");
+});
+test("portfolio pagination preserves all project titles and long summaries with raster art and clickable links", async () => {
+  const proposal = model.createProposal(source);
+  for (const section of model.PROPOSAL_SECTIONS) proposal[section.key] = "";
+  const brand =
+    "data:image/png;base64," +
+    fs
+      .readFileSync(
+        new URL("../src/assets/proposal-brand.png", import.meta.url),
+      )
+      .toString("base64");
+  proposal.projects = Array.from({ length: 7 }, (_, i) => ({
+    id: `case-${i}`,
+    title: `Projeto-${i}`,
+    summary:
+      i === 3 ? "Resumo extenso ".repeat(28) + "FIM-RESUMO" : `Resumo-${i}`,
+    category: "Institucional",
+    image: "/logo-192.png",
+    url: `https://example.com/${i}`,
+  }));
+  const doc = await pdf.createProposalPdf(
+    proposal,
+    undefined,
+    brand,
+    Object.fromEntries(proposal.projects.map((p) => [p.id, brand])),
+  );
+  const output = doc.internal.pages.flat().join("\n") + doc.output();
+  for (const project of proposal.projects)
+    assert.match(output, new RegExp(project.title));
+  assert.match(output, /FIM-RESUMO/);
+  assert.ok(doc.getNumberOfPages() >= 4);
+  for (const page of doc.internal.pages.slice(1))
+    assert.match(page.join("\n"), /\/I\d+ Do/);
+});
+
+
+test("long contact text continues without loss and three short contacts share one page", async () => {
+  const proposal = model.createProposal(source);
+  for (const section of model.PROPOSAL_SECTIONS) proposal[section.key] = "";
+  proposal.contact = "WhatsApp: (31) 98474-0625\nE-mail: contato@example.com\nwww.sevendevx.com";
+  let doc = await pdf.createProposalPdf(proposal);
+  assert.equal(doc.getNumberOfPages(),2);
+  assert.match(doc.output(),/https:\/\/wa.me\/5531984740625/);
+  proposal.contact = "Informações de contato ".repeat(300)+"FIM-CONTATO";
+  doc = await pdf.createProposalPdf(proposal);
+  assert.ok(doc.getNumberOfPages()>2);
+  assert.match(doc.internal.pages.flat().join("\n"),/FIM-CONTATO/);
+});

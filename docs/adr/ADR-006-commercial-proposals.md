@@ -30,3 +30,14 @@ Vincular o cliente ao projeto; cadastrar a logo em seus arquivos; abrir **Propos
 ## Rollback
 
 Reverter o commit de interface não exige rollback de banco. Snapshots permanecem legíveis como documentos Markdown pelo motor anterior. Nenhum contrato ou anexo anterior é removido.
+
+
+## Refinamento visual de portfólio — 2026-10-26
+
+- A seção de portfólio oferece catálogo visual dos projetos públicos, consultando apenas campos de apresentação e exigindo `status=published` e `is_published_on_site=true`. Não usa nem expõe projetos internos. O catálogo é carregado ao abrir a seleção e falhas têm ação de tentar novamente.
+- O operador seleciona até 18 projetos, reordena, remove da proposta e edita o resumo (até 450 caracteres), sem alterar o projeto original. A versão salva preserva ID, título, categoria, resumo e referências públicas de imagem/link. Os arquivos de imagem não são duplicados; se a origem for removida, a exportação informa a falha e permite remover a imagem da proposta.
+- O campo `projects` tem default vazio para snapshots anteriores. São rejeitados protocolos inseguros e URLs assinadas nas referências persistidas. As logos privadas existentes continuam sendo resolvidas pelo ID do anexo, sem mudança de permissões.
+- A prévia exibe cards com imagem sem recorte, resumo e link. O PDF inclui os mesmos dados, com três cards por página para textos curtos e cards amplos para resumos longos. Mais projetos geram páginas de continuação. O Markdown inclui o conteúdo e os links dos projetos.
+- Redes e contatos recebem ícones vetoriais e links acionáveis na prévia e no PDF; WhatsApp abre `wa.me`, e-mail abre `mailto`, telefones usam `tel`. Não há envio automático.
+- Prévia, Markdown e PDF compartilham a seleção e ordem das seções preenchidas. Um portfólio com projetos aparece mesmo sem texto introdutório. A capa e todas as páginas físicas do PDF recebem numeração contínua, inclusive continuações. Campos essenciais ausentes ainda marcam o documento como rascunho.
+- Validação: 271 testes locais aprovados, incluindo seis novos cenários de páginas esparsas, compatibilidade, links seguros, projetos, imagens e contatos longos. Typecheck, lint dos arquivos alterados e build aprovados. Catálogo real lido pelo navegador; proposta fictícia exportada e PDF renderizado para inspeção. Prévia verificada em desktop e 390px, sem overflow horizontal. Nenhuma proposta de cliente real foi gravada durante a validação.
