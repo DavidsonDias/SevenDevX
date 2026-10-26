@@ -21,7 +21,11 @@ function load(file, imports = {}) {
   return exports;
 }
 const model = load("../src/lib/proposals.ts");
-const pdf = load("../src/utils/proposalPdf.ts", { "@/lib/proposals": model });
+const identity = load("../src/lib/proposalIdentity.ts");
+const pdf = load("../src/utils/proposalPdf.ts", {
+  "@/lib/proposals": model,
+  "@/lib/proposalIdentity": identity,
+});
 const persistence = load("../src/lib/proposalPersistence.ts", {
   "./proposals": model,
 });
@@ -407,16 +411,103 @@ test("portfolio pagination preserves all project titles and long summaries with 
     assert.match(page.join("\n"), /\/I\d+ Do/);
 });
 
-
 test("long contact text continues without loss and three short contacts share one page", async () => {
   const proposal = model.createProposal(source);
   for (const section of model.PROPOSAL_SECTIONS) proposal[section.key] = "";
-  proposal.contact = "WhatsApp: (31) 98474-0625\nE-mail: contato@example.com\nwww.sevendevx.com";
+  proposal.contact =
+    "WhatsApp: (31) 98474-0625\nE-mail: contato@example.com\nwww.sevendevx.com";
   let doc = await pdf.createProposalPdf(proposal);
-  assert.equal(doc.getNumberOfPages(),2);
-  assert.match(doc.output(),/https:\/\/wa.me\/5531984740625/);
-  proposal.contact = "Informações de contato ".repeat(300)+"FIM-CONTATO";
+  assert.equal(doc.getNumberOfPages(), 2);
+  assert.match(doc.output(), /https:\/\/wa.me\/5531984740625/);
+  proposal.contact = "Informações de contato ".repeat(300) + "FIM-CONTATO";
   doc = await pdf.createProposalPdf(proposal);
-  assert.ok(doc.getNumberOfPages()>2);
-  assert.match(doc.internal.pages.flat().join("\n"),/FIM-CONTATO/);
+  assert.ok(doc.getNumberOfPages() > 2);
+  assert.match(doc.internal.pages.flat().join("\n"), /FIM-CONTATO/);
+});
+
+test("bare Brazilian phone numbers use WhatsApp instead of a website globe", () => {
+  for (const number of [
+    "3198474-0625",
+    "(31) 98474-0625",
+    "+55 31 98474-0625",
+  ]) {
+    const result = model.proposalChannel(number);
+    assert.equal(result.kind, "whatsapp");
+    assert.equal(result.href, "https://wa.me/5531984740625");
+  }
+  assert.equal(model.proposalChannel("Telefone: 3198474-0625").kind, "phone");
+  assert.equal(
+    model.proposalChannel("Telefone: 3198474-0625").href,
+    "tel:+5531984740625",
+  );
+});
+test("explicit channel choices survive text persistence and invalid links stay inactive", () => {
+  const rows = [
+    { kind: "whatsapp", value: "3198474-0625" },
+    { kind: "instagram", value: "@sevendevx" },
+    { kind: "github", value: "https://github.com/DavidsonDias" },
+    { kind: "website", value: "sevendevx.com" },
+    { kind: "other", value: "Atendimento mediante agendamento" },
+  ];
+  const lines = model.serializeChannels(rows).split("\n");
+  assert.deepEqual(
+    lines.map((line) => model.channelDraft(line).kind),
+    rows.map((row) => row.kind),
+  );
+  assert.equal(model.proposalChannel(lines[3]).href, "https://sevendevx.com/");
+  assert.equal(model.proposalChannel("WhatsApp: https://example.com").href, "");
+  assert.equal(model.proposalChannel("Site: javascript:alert(1)").href, "");
+  assert.equal(
+    model.proposalChannel("WhatsApp: https://wa.me/5531984740625").kind,
+    "whatsapp",
+  );
+});
+test("earlier proposals receive safe presentation defaults without changing commercial fields", () => {
+  const earlier = { ...model.createProposal(source) };
+  delete earlier.logoSurface;
+  delete earlier.logoTreatment;
+  delete earlier.theme;
+  const parsed = model.readProposal({
+    kind: model.PROPOSAL_KIND,
+    proposal: earlier,
+  });
+  assert.equal(parsed.theme, "classic");
+  assert.equal(parsed.logoTreatment, "original");
+  assert.equal(parsed.logoSurface, "none");
+  assert.equal(parsed.investment, earlier.investment);
+});
+test("white-edge removal is non-destructive and preserves enclosed white details", () => {
+  const pixels = new Uint8ClampedArray(5 * 5 * 4).fill(255);
+  for (let y = 1; y < 4; y++)
+    for (let x = 1; x < 4; x++) {
+      const i = (y * 5 + x) * 4;
+      pixels[i] = pixels[i + 1] = pixels[i + 2] = 20;
+    }
+  pixels[(2 * 5 + 2) * 4] =
+    pixels[(2 * 5 + 2) * 4 + 1] =
+    pixels[(2 * 5 + 2) * 4 + 2] =
+      255;
+  const original = new Uint8ClampedArray(pixels);
+  const result = identity.clearLogoWhiteEdges(pixels, 5, 5);
+  assert.deepEqual(pixels, original);
+  assert.equal(result.data[3], 0);
+  assert.equal(result.data[(2 * 5 + 2) * 4 + 3], 255);
+  assert.equal(result.width, 3);
+  assert.equal(result.height, 3);
+  assert.equal(result.left, 1);
+  assert.throws(
+    () =>
+      identity.clearLogoWhiteEdges(new Uint8ClampedArray(16).fill(255), 2, 2),
+    /vazia/,
+  );
+});
+test("transparent logo boundaries and blue theme remain valid for export", async () => {
+  const pixels = new Uint8ClampedArray(16);
+  pixels.set([80, 90, 100, 255], 4);
+  assert.equal(identity.clearLogoWhiteEdges(pixels, 2, 2).width, 1);
+  const proposal = model.createProposal(source);
+  proposal.theme = "azure";
+  const doc = await pdf.createProposalPdf(proposal);
+  assert.ok(doc.getNumberOfPages() > 1);
+  assert.ok(identity.proposalThemeStyle("azure").backgroundImage);
 });

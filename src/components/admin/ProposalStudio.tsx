@@ -26,6 +26,10 @@ import {
   ProposalContacts,
 } from "./ProposalVisuals";
 import { resolveProjectImage } from "@/data/projectImages";
+import ProposalContactPicker from "./ProposalContactPicker";
+import { ProposalClientLogo } from "./ProposalIdentity";
+import { proposalIconData } from "@/lib/proposalIcons";
+import { proposalThemeStyle } from "@/lib/proposalIdentity";
 import { appendProposalSnapshot } from "@/lib/proposalPersistence";
 import {
   createProposal,
@@ -33,6 +37,7 @@ import {
   proposalSchema,
   proposalWarnings,
   readProposal,
+  proposalChannel,
   type Proposal,
   type ProposalField,
   type ProposalProject,
@@ -87,7 +92,9 @@ export default function ProposalStudio({
     ...(clientLogos.data || []),
     ...(projectLogos.data || []),
   ]
-    .filter((row) => /^image\/(png|jpeg|webp)$/.test(row.mime_type || ""))
+    .filter((row) =>
+      /^image\/(png|jpeg|webp|svg\+xml)$/.test(row.mime_type || ""),
+    )
     .map((row) => ({ id: row.id, name: row.name, url: row.file_url }));
   const source = createProposal({
     project,
@@ -210,13 +217,19 @@ export function ProposalEditor({
         await draft.clearAfterSave();
         toast({ title: `Proposta salva · versão ${saved.version}` });
       } else {
-        const { createProposalPdf, proposalLogoData, proposalFilename } =
-          await import("@/utils/proposalPdf");
+        const {
+          createProposalPdf,
+          proposalLogoData,
+          proposalFilename,
+          proposalThemeData,
+        } = await import("@/utils/proposalPdf");
         if (value.logoId && !logo)
           throw new Error(
             "A logo selecionada não está disponível. Escolha outra logo ou “Sem logo”.",
           );
-        const data = logo ? await proposalLogoData(logo.url) : undefined;
+        const data = logo
+          ? await proposalLogoData(logo.url, validated.logoTreatment)
+          : undefined;
         const brand = await proposalLogoData(proposalBrand);
         const images = Object.fromEntries(
           await Promise.all(
@@ -236,7 +249,18 @@ export function ProposalEditor({
               }),
           ),
         );
-        const pdf = await createProposalPdf(validated, data, brand, images);
+        const icons = await proposalIconData(
+          [validated.social, validated.contact].flatMap((value) =>
+            value
+              .split(/\n/)
+              .filter((line) => line.trim())
+              .map((line) => proposalChannel(line).kind),
+          ),
+        );
+        const pdf = await createProposalPdf(validated, data, brand, images, {
+          icons,
+          background: proposalThemeData(validated.theme),
+        });
         pdf.save(proposalFilename(value));
         toast({
           title: "PDF gerado",
@@ -428,9 +452,88 @@ export function ProposalEditor({
                   </select>
                 </label>
               </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+                <label className="text-xs text-white/60">
+                  Apresentação da logo
+                  <select
+                    aria-label="Fundo da logo"
+                    value={value.logoSurface}
+                    onChange={(event) =>
+                      setValue((current) => ({
+                        ...current,
+                        logoSurface: event.target
+                          .value as Proposal["logoSurface"],
+                      }))
+                    }
+                    className={`${inputClass} mt-1`}
+                  >
+                    <option value="none">Sem moldura</option>
+                    <option value="light">Placa clara</option>
+                    <option value="dark">Placa escura</option>
+                  </select>
+                </label>
+                <label className="text-xs text-white/60">
+                  Tratamento da imagem
+                  <select
+                    aria-label="Tratamento da logo"
+                    value={value.logoTreatment}
+                    onChange={(event) =>
+                      setValue((current) => ({
+                        ...current,
+                        logoTreatment: event.target
+                          .value as Proposal["logoTreatment"],
+                      }))
+                    }
+                    className={`${inputClass} mt-1`}
+                  >
+                    <option value="original">Preservar imagem original</option>
+                    <option value="white-edges">
+                      Remover branco nas bordas
+                    </option>
+                  </select>
+                </label>
+                <label className="text-xs text-white/60">
+                  Modelo visual
+                  <select
+                    aria-label="Modelo visual da proposta"
+                    value={value.theme}
+                    onChange={(event) =>
+                      setValue((current) => ({
+                        ...current,
+                        theme: event.target.value as Proposal["theme"],
+                      }))
+                    }
+                    className={`${inputClass} mt-1`}
+                  >
+                    <option value="classic">SevenDevX Clássico</option>
+                    <option value="azure">
+                      SevenDevX Azure · azul em gradiente
+                    </option>
+                  </select>
+                </label>
+              </div>
+              {logo && (
+                <div
+                  className="mt-4 rounded-xl border border-white/10 p-4"
+                  style={proposalThemeStyle(value.theme)}
+                >
+                  <ProposalClientLogo
+                    url={logo.url}
+                    name={value.company || value.clientName}
+                    treatment={value.logoTreatment}
+                    surface={value.logoSurface}
+                  />
+                </div>
+              )}
               <p className="text-xs text-white/40 mt-3">
-                Logos PNG, JPEG e WebP cadastradas nos arquivos do cliente ou
-                projeto. O acesso aos arquivos continua privado.
+                O tratamento é opcional e afeta apenas a apresentação. Branco
+                ligado às bordas será tornado transparente; revise detalhes
+                claros ou escolha o modo original. O arquivo cadastrado é
+                preservado.
+              </p>
+              <p className="text-xs text-white/40 mt-3">
+                Logos SVG, PNG, JPEG e WebP cadastradas nos arquivos do cliente
+                ou projeto. O acesso aos arquivos continua privado.
               </p>
             </fieldset>
             <details className="border border-white/10 rounded-lg p-3">
@@ -471,7 +574,10 @@ export function ProposalEditor({
                   <summary className="font-bold text-sm cursor-pointer min-h-8">
                     {String(index + 2).padStart(2, "0")} / {section.title}
                     <span className="ml-2 text-[10px] font-normal text-white/40">
-                      {value[section.key]?.trim() || (section.key === "portfolio" && value.projects.length) ? "Preenchido" : "A definir"}
+                      {value[section.key]?.trim() ||
+                      (section.key === "portfolio" && value.projects.length)
+                        ? "Preenchido"
+                        : "A definir"}
                     </span>
                   </summary>
                   <label
@@ -487,6 +593,13 @@ export function ProposalEditor({
                       onChange={(projects) =>
                         setValue((current) => ({ ...current, projects }))
                       }
+                    />
+                  )}
+                  {(section.key === "social" || section.key === "contact") && (
+                    <ProposalContactPicker
+                      title={section.title}
+                      value={value[section.key]}
+                      onChange={(next) => update(section.key, next)}
                     />
                   )}
                   <textarea
@@ -542,7 +655,10 @@ export function ProposalPreview({
 }) {
   return (
     <div className="space-y-3" aria-label="Prévia da proposta">
-      <article className="relative overflow-hidden rounded-xl border border-white/10 bg-[#080c12] p-6 sm:p-10 min-h-72">
+      <article
+        style={proposalThemeStyle(proposal.theme)}
+        className="relative overflow-hidden rounded-xl border border-white/10 bg-[#080c12] p-6 sm:p-10 min-h-72"
+      >
         <div className="absolute right-[-50px] top-[-90px] rounded-full border border-blue-500/20 w-64 h-64 pointer-events-none" />
         <div className="flex items-start justify-between gap-4 mb-6">
           <p className="text-[10px] tracking-[.18em] uppercase text-blue-300">
@@ -555,10 +671,11 @@ export function ProposalPreview({
           />
         </div>
         {logo && (
-          <img
-            src={logo.url}
-            alt={`Logo de ${proposal.company || proposal.clientName}`}
-            className="w-20 h-14 object-contain rounded bg-white p-2 mb-6"
+          <ProposalClientLogo
+            url={logo.url}
+            name={proposal.company || proposal.clientName}
+            treatment={proposal.logoTreatment}
+            surface={proposal.logoSurface}
           />
         )}
         <h2 className="text-2xl sm:text-4xl max-w-xl font-bold leading-tight break-words">
@@ -578,6 +695,7 @@ export function ProposalPreview({
       {visibleProposalSections(proposal).map((section, index) => (
         <article
           key={section.key}
+          style={proposalThemeStyle(proposal.theme)}
           className="rounded-xl border border-white/10 bg-[#080c12] p-6 sm:p-10"
         >
           <div className="flex items-start justify-between gap-4 mb-4">

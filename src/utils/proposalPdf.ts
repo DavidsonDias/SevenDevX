@@ -4,7 +4,13 @@ import {
   proposalChannel,
   proposalWarnings,
   type Proposal,
+  type ProposalChannelKind,
 } from "@/lib/proposals";
+
+import {
+  clearLogoWhiteEdges,
+  proposalChannelColors,
+} from "@/lib/proposalIdentity";
 
 /** The caller supplies a raster image resolved through the existing private attachment hook. */
 export async function createProposalPdf(
@@ -12,6 +18,10 @@ export async function createProposalPdf(
   logoDataUrl?: string,
   brandDataUrl?: string,
   projectImages: Record<string, string> = {},
+  visualAssets: {
+    icons?: Partial<Record<ProposalChannelKind, string>>;
+    background?: string;
+  } = {},
 ) {
   const { jsPDF } = await import("jspdf");
   const pdf = new jsPDF({
@@ -39,6 +49,22 @@ export async function createProposalPdf(
     if (page++) pdf.addPage();
     pdf.setFillColor("#080c12");
     pdf.rect(0, 0, width, height, "F");
+    if (proposal.theme === "azure") {
+      if (visualAssets.background)
+        pdf.addImage(
+          visualAssets.background,
+          "PNG",
+          0,
+          0,
+          width,
+          height,
+          "azure-background",
+        );
+      else {
+        pdf.setFillColor("#10264a");
+        pdf.rect(width * 0.6, 0, width * 0.4, height, "F");
+      }
+    }
     pdf.setDrawColor("#17253d");
     pdf.setLineWidth(0.25);
     pdf.circle(286, 18, 63);
@@ -175,8 +201,12 @@ export async function createProposalPdf(
   if (logoDataUrl && /^data:image\/(png|jpeg);base64,/.test(logoDataUrl)) {
     const image = pdf.getImageProperties(logoDataUrl);
     const scale = Math.min(45 / image.width, 24 / image.height);
-    pdf.setFillColor("#ffffff");
-    pdf.roundedRect(margin, y - 4, 51, 30, 2, 2, "F");
+    if (proposal.logoSurface !== "none") {
+      pdf.setFillColor(
+        proposal.logoSurface === "light" ? "#ffffff" : "#18243a",
+      );
+      pdf.roundedRect(margin, y - 4, 51, 30, 2, 2, "F");
+    }
     pdf.addImage(
       logoDataUrl,
       image.fileType,
@@ -224,16 +254,22 @@ export async function createProposalPdf(
       "Apresentação",
     );
   const icon = (kind: string, x: number, top: number) => {
-    const c =
-      kind === "phone"
-        ? "#21ad67"
-        : kind === "youtube"
-          ? "#df3030"
-          : kind === "instagram"
-            ? "#bc338f"
-            : "#285cbe";
+    const c = proposalChannelColors[kind as ProposalChannelKind] || "#285cbe";
     pdf.setFillColor(c);
-    pdf.roundedRect(x, top, 13, 13, 3, 3, "F");
+    pdf.roundedRect(x, top, 15, 15, 3, 3, "F");
+    const brandIcon = visualAssets.icons?.[kind as ProposalChannelKind];
+    if (brandIcon) {
+      pdf.addImage(
+        brandIcon,
+        "PNG",
+        x + 2.5,
+        top + 2.5,
+        10,
+        10,
+        `channel-${kind}`,
+      );
+      return;
+    }
     pdf.setDrawColor("#ffffff");
     pdf.setLineWidth(0.5);
     if (kind === "email") {
@@ -247,7 +283,7 @@ export async function createProposalPdf(
     } else if (kind === "youtube") {
       pdf.setFillColor("#ffffff");
       pdf.triangle(x + 5, top + 4, x + 5, top + 9, x + 9, top + 6.5, "F");
-    } else if (kind === "phone") {
+    } else if (kind === "phone" || kind === "whatsapp") {
       pdf.lines(
         [
           [0, 2],
@@ -482,7 +518,10 @@ export async function createProposalPdf(
 }
 
 /** Resolve only an already-authorized raster attachment; SVG and arbitrary HTML are excluded. */
-export async function proposalLogoData(url: string): Promise<string> {
+export async function proposalLogoData(
+  url: string,
+  treatment: Proposal["logoTreatment"] = "original",
+): Promise<string> {
   return new Promise((resolve, reject) => {
     const image = new Image();
     image.crossOrigin = "anonymous";
@@ -507,7 +546,39 @@ export async function proposalLogoData(url: string): Promise<string> {
         const context = canvas.getContext("2d");
         if (!context) throw new Error("Não foi possível preparar a logo.");
         context.drawImage(image, 0, 0, canvas.width, canvas.height);
-        resolve(canvas.toDataURL("image/png"));
+        if (treatment === "white-edges") {
+          const pixels = context.getImageData(
+            0,
+            0,
+            canvas.width,
+            canvas.height,
+          );
+          const trimmed = clearLogoWhiteEdges(
+            pixels.data,
+            canvas.width,
+            canvas.height,
+          );
+          pixels.data.set(trimmed.data);
+          context.putImageData(pixels, 0, 0);
+          const result = document.createElement("canvas");
+          result.width = trimmed.width + 8;
+          result.height = trimmed.height + 8;
+          const resultContext = result.getContext("2d");
+          if (!resultContext)
+            throw new Error("Não foi possível preparar a logo.");
+          resultContext.drawImage(
+            canvas,
+            trimmed.left,
+            trimmed.top,
+            trimmed.width,
+            trimmed.height,
+            4,
+            4,
+            trimmed.width,
+            trimmed.height,
+          );
+          resolve(result.toDataURL("image/png"));
+        } else resolve(canvas.toDataURL("image/png"));
       } catch {
         reject(
           new Error(
@@ -535,4 +606,29 @@ export function proposalFilename(proposal: Proposal) {
     .replace(/[^a-zA-Z0-9-]+/g, "-")
     .slice(0, 70);
   return `Proposta-SevenDevX-${name || "cliente"}.pdf`;
+}
+
+/** Optional geometric background, generated locally without changing brand artwork. */
+export function proposalThemeData(
+  theme: Proposal["theme"],
+): string | undefined {
+  if (theme !== "azure") return undefined;
+  const canvas = document.createElement("canvas");
+  canvas.width = 1200;
+  canvas.height = 675;
+  const context = canvas.getContext("2d");
+  if (!context) throw new Error("Não foi possível preparar o tema.");
+  context.fillStyle = "#080c12";
+  context.fillRect(0, 0, 1200, 675);
+  const blue = context.createRadialGradient(1200, 0, 0, 1200, 0, 1000);
+  blue.addColorStop(0, "#123b79");
+  blue.addColorStop(1, "#080c12");
+  context.fillStyle = blue;
+  context.fillRect(0, 0, 1200, 675);
+  const accent = context.createRadialGradient(0, 675, 0, 0, 675, 500);
+  accent.addColorStop(0, "#102c4d");
+  accent.addColorStop(1, "#102c4d00");
+  context.fillStyle = accent;
+  context.fillRect(0, 0, 1200, 675);
+  return canvas.toDataURL("image/png");
 }

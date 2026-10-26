@@ -66,9 +66,15 @@ export const proposalSchema = z.object({
   growth: text.default(""),
   social: text.default(""),
   projects: z.array(proposalProjectSchema).max(18).default([]),
+  logoSurface: z.enum(["none", "light", "dark"]).default("none"),
+  logoTreatment: z.enum(["original", "white-edges"]).default("original"),
+  theme: z.enum(["classic", "azure"]).default("classic"),
 });
 export type Proposal = z.infer<typeof proposalSchema>;
-export type ProposalField = Exclude<keyof Proposal, "schema" | "projects">;
+export type ProposalField = Exclude<
+  keyof Proposal,
+  "schema" | "projects" | "logoSurface" | "logoTreatment" | "theme"
+>;
 export type ProposalSource = {
   project: {
     title?: string | null;
@@ -99,6 +105,9 @@ export function createProposal(
   return {
     schema: 1,
     projects: [],
+    logoSurface: "none",
+    logoTreatment: "original",
+    theme: "classic",
     title: project.title || "Proposta comercial",
     clientName: client?.name || project.client_name || "",
     company: client?.company || "",
@@ -234,41 +243,129 @@ export function visibleProposalSections(p: Proposal) {
       (section.key === "portfolio" && p.projects.length),
   );
 }
+export const PROPOSAL_CHANNELS = {
+  whatsapp: { label: "WhatsApp", hint: "(31) 98474-0625" },
+  phone: { label: "Telefone", hint: "+55 31 98474-0625" },
+  email: { label: "E-mail", hint: "contato@empresa.com" },
+  website: { label: "Site", hint: "https://www.empresa.com" },
+  instagram: { label: "Instagram", hint: "@empresa ou endereço do perfil" },
+  youtube: { label: "YouTube", hint: "@canal ou endereço do canal" },
+  linkedin: {
+    label: "LinkedIn",
+    hint: "https://www.linkedin.com/company/empresa",
+  },
+  facebook: { label: "Facebook", hint: "https://www.facebook.com/empresa" },
+  tiktok: { label: "TikTok", hint: "@empresa ou endereço do perfil" },
+  github: { label: "GitHub", hint: "https://github.com/empresa" },
+  x: { label: "X", hint: "https://x.com/empresa" },
+  other: { label: "Outro texto", hint: "Informação complementar" },
+} as const;
+export type ProposalChannelKind = keyof typeof PROPOSAL_CHANNELS;
 export type ProposalChannel = {
-  kind: "instagram" | "youtube" | "email" | "phone" | "linkedin" | "website";
+  kind: ProposalChannelKind;
   text: string;
   href: string;
 };
 export function proposalChannel(line: string): ProposalChannel {
   const value = line.trim();
-  const email = value.match(/[\w.+-]+@[\w.-]+\.[a-z]{2,}/i)?.[0];
-  if (email) return { kind: "email", text: value, href: `mailto:${email}` };
-  const kind = /instagram/i.test(value)
-    ? "instagram"
-    : /youtube/i.test(value)
-      ? "youtube"
-      : /linkedin/i.test(value)
-        ? "linkedin"
-        : /whatsapp|telefone|\(\d{2}\)/i.test(value)
-          ? "phone"
-          : "website";
+  const prefix = value.match(/^([^:]{1,20}):\s*/)?.[1].toLocaleLowerCase();
+  const explicit = Object.entries(PROPOSAL_CHANNELS).find(
+    ([, item]) => item.label.toLocaleLowerCase() === prefix,
+  )?.[0] as ProposalChannelKind | undefined;
+  const content = explicit ? value.replace(/^[^:]+:\s*/, "") : value;
+  const email = content.match(/[\w.+-]+@[\w.-]+\.[a-z]{2,}/i)?.[0];
+  const digits = content.replace(/\D/g, "");
+  const barePhone =
+    /^[+\d\s().-]+$/.test(content) &&
+    digits.length >= 10 &&
+    digits.length <= 15;
   let href = safeProposalLink(
-    value.match(/https?:\/\/[^\s]+/i)?.[0] ||
-      (value.match(/www\.[^\s]+/i)?.[0]
-        ? `https://${value.match(/www\.[^\s]+/i)?.[0]}`
+    content.match(/https?:\/\/[^\s]+/i)?.[0] ||
+      (content.match(/www\.[^\s]+/i)?.[0]
+        ? `https://${content.match(/www\.[^\s]+/i)?.[0]}`
         : ""),
   );
-  const handle = value.match(/@([a-z0-9._-]+)/i)?.[1];
-  if (!href && handle && (kind === "instagram" || kind === "youtube"))
-    href = `https://${kind === "instagram" ? "www.instagram.com/" : "www.youtube.com/@"}${handle}`;
-  if (!href && kind === "phone") {
-    const digits = value.replace(/\D/g, "");
-    if (digits.length >= 10 && digits.length <= 15)
-      href = /whatsapp/i.test(value)
-        ? `https://wa.me/${digits.length <= 11 ? "55" : ""}${digits}`
-        : `tel:+${digits.length <= 11 ? "55" : ""}${digits}`;
+  if (!href && /^[a-z0-9][a-z0-9.-]+\.[a-z]{2,}(\/[^\s]*)?$/i.test(content))
+    href = safeProposalLink(`https://${content}`);
+  const kind: ProposalChannelKind =
+    explicit ||
+    (email
+      ? "email"
+      : /whatsapp|wa\.me|api\.whatsapp/i.test(value) || barePhone
+        ? "whatsapp"
+        : /telefone|^tel:/i.test(value)
+          ? "phone"
+          : /instagram/i.test(value)
+            ? "instagram"
+            : /youtube|youtu\.be/i.test(value)
+              ? "youtube"
+              : /linkedin/i.test(value)
+                ? "linkedin"
+                : /facebook|fb\.com/i.test(value)
+                  ? "facebook"
+                  : /tiktok/i.test(value)
+                    ? "tiktok"
+                    : /github/i.test(value)
+                      ? "github"
+                      : /^(x|twitter):|https?:\/\/(www\.)?(x|twitter)\.com/i.test(
+                            value,
+                          )
+                        ? "x"
+                        : href
+                          ? "website"
+                          : "other");
+  if (kind === "email") href = email ? `mailto:${email}` : "";
+  if (kind === "other") href = "";
+  const handle = content.match(/@([a-z0-9._-]+)/i)?.[1];
+  const roots: Partial<Record<ProposalChannelKind, string>> = {
+    instagram: "https://www.instagram.com/",
+    youtube: "https://www.youtube.com/@",
+    tiktok: "https://www.tiktok.com/@",
+    x: "https://x.com/",
+  };
+  if (!href && handle && roots[kind]) href = roots[kind] + handle;
+  if (kind === "phone" || kind === "whatsapp") {
+    if (barePhone) {
+      const international = `${digits.length <= 11 ? "55" : ""}${digits}`;
+      href =
+        kind === "whatsapp"
+          ? `https://wa.me/${international}`
+          : `tel:+${international}`;
+    } else if (
+      kind !== "whatsapp" ||
+      !href ||
+      !/^(wa\.me|api\.whatsapp\.com|www\.whatsapp\.com)$/.test(
+        new URL(href).hostname,
+      )
+    )
+      href = "";
   }
   return { kind, text: value, href };
+}
+
+export function channelDraft(line: string) {
+  const channel = proposalChannel(line);
+  return {
+    kind: channel.kind,
+    value: line
+      .replace(
+        /^(WhatsApp|Telefone|E-mail|Site|Website|Instagram|YouTube|LinkedIn|Facebook|TikTok|GitHub|X|Twitter|Outro texto):\s*/i,
+        "",
+      )
+      .trim(),
+  };
+}
+export function serializeChannels(
+  rows: { kind: ProposalChannelKind; value: string }[],
+): string {
+  return rows
+    .filter((row) => row.value.trim())
+    .map((row) =>
+      row.kind === "other"
+        ? row.value.trim()
+        : `${PROPOSAL_CHANNELS[row.kind].label}: ${row.value.trim()}`,
+    )
+    .join("\n");
 }
 
 export function proposalWarnings(p: Proposal): string[] {
