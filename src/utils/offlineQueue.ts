@@ -150,12 +150,14 @@ export async function enqueue(req: Omit<QueuedRequest, "id" | "createdAt" | "tri
 
 export async function getQueueSize(): Promise<number> {
   try {
-    return await new Promise<number>(async (resolve) => {
-      const db = await openDB();
+    const db = await openDB();
+    return await new Promise<number>((resolve) => {
       const t = db.transaction(STORE, "readonly");
       const req = t.objectStore(STORE).count();
       req.onsuccess = () => resolve(req.result);
       req.onerror = () => resolve(0);
+      t.onabort = () => resolve(0);
+      t.onerror = () => resolve(0);
     });
   } catch {
     return 0;
@@ -164,12 +166,14 @@ export async function getQueueSize(): Promise<number> {
 
 async function getAll(): Promise<QueuedRequest[]> {
   try {
-    return await new Promise<QueuedRequest[]>(async (resolve) => {
-      const db = await openDB();
+    const db = await openDB();
+    return await new Promise<QueuedRequest[]>((resolve) => {
       const t = db.transaction(STORE, "readonly");
       const req = t.objectStore(STORE).getAll();
       req.onsuccess = () => resolve(req.result as QueuedRequest[]);
       req.onerror = () => resolve([]);
+      t.onabort = () => resolve([]);
+      t.onerror = () => resolve([]);
     });
   } catch {
     return [];

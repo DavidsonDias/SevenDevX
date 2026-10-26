@@ -35,3 +35,10 @@ Portfólio carregou conteúdo existente, preservou a alteração temporária ao 
 - Salvamento concorrente contra um banco de teste: hooks reais foram exercitados com respostas simuladas (incluindo zero linhas), não com alteração de registros de produção.
 
 Viewport responsivo e eventos sintéticos não comprovam ciclo de vida de dispositivo físico. Não considerar estes itens executados por inferência.
+
+
+## Offline queue read failures — 2026-10-26
+
+Regression tests in scripts/offline-queue-read.test.mjs cover unavailable IndexedDB, denied opening, aborted transactions, failed requests and successful reads. The old implementation failed three of five scenarios because async Promise executors lost rejected openDB errors, and aborted transactions had no settlement handler. Awaiting openDB before constructing the request Promise and handling abort/error preserves the existing safe return values without changing retries, enqueue, deletion or sending rules. Tests use in-memory IndexedDB doubles and explicitly assert zero writes and zero network requests. They do not drain a real user's queue or certify every browser implementation.
+
+The new scenarios run in the continuity CI job. Local eligible suite: 248 passed; global lint reduced from 804 to 802 errors, with 32 warnings unchanged. Remaining lint debt is not suppressed.
