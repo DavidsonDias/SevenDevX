@@ -250,3 +250,43 @@ test("invalid drafts are rejected before database access", async () => {
   assert.equal(repo.filters.length, 0);
   assert.equal(repo.writes.length, 0);
 });
+
+test("earlier snapshots remain readable without the new institutional sections", () => {
+  const earlier = { ...model.createProposal(source) };
+  delete earlier.differentiators;
+  delete earlier.growth;
+  delete earlier.social;
+  const parsed = model.readProposal({
+    kind: model.PROPOSAL_KIND,
+    proposal: earlier,
+  });
+  assert.ok(parsed);
+  assert.equal(parsed.differentiators, "");
+  assert.equal(parsed.overview, earlier.overview);
+});
+
+test("institutional logo is embedded on every page, including long-content continuations", async () => {
+  const brand =
+    "data:image/png;base64," +
+    fs
+      .readFileSync(
+        new URL("../src/assets/proposal-brand.png", import.meta.url),
+      )
+      .toString("base64");
+  const proposal = {
+    ...model.createProposal(source),
+    deliverables: Array.from(
+      { length: 150 },
+      (_, i) =>
+        `Entrega ${i}: conteúdo extenso para testar as continuações da proposta.`,
+    ).join("\n"),
+  };
+  const doc = await pdf.createProposalPdf(proposal, undefined, brand);
+  assert.ok(doc.getNumberOfPages() > 10);
+  for (const page of doc.internal.pages.slice(1))
+    assert.match(
+      page.join("\n"),
+      /\/I\d+ Do/,
+      "every PDF page must draw the corporate logo",
+    );
+});

@@ -19,6 +19,7 @@ import { useAttachments } from "@/hooks/useAttachments";
 import { useEditorDraft } from "@/hooks/useEditorDraft";
 import { useToast } from "@/hooks/use-toast";
 import EditorDraftNotice from "@/components/EditorDraftNotice";
+import proposalBrand from "@/assets/proposal-brand.png";
 import { appendProposalSnapshot } from "@/lib/proposalPersistence";
 import {
   createProposal,
@@ -189,9 +190,10 @@ export function ProposalEditor({
     setBusy(kind);
     setError("");
     try {
-      proposalSchema.parse(value);
+      const validated = proposalSchema.parse(value);
       if (kind === "save") {
-        const saved = await onSave(value, savedId);
+        const saved = await onSave(validated, savedId);
+        setValue(saved.proposal);
         setSavedId(saved.id);
         setHistoryId(saved.id);
         setBaseline(JSON.stringify(saved.proposal));
@@ -205,7 +207,8 @@ export function ProposalEditor({
             "A logo selecionada não está disponível. Escolha outra logo ou “Sem logo”.",
           );
         const data = logo ? await proposalLogoData(logo.url) : undefined;
-        const pdf = await createProposalPdf(value, data);
+        const brand = await proposalLogoData(proposalBrand);
+        const pdf = await createProposalPdf(validated, data, brand);
         pdf.save(proposalFilename(value));
         toast({
           title: "PDF gerado",
@@ -435,7 +438,7 @@ export function ProposalEditor({
                   <summary className="font-bold text-sm cursor-pointer min-h-8">
                     {String(index + 2).padStart(2, "0")} / {section.title}
                     <span className="ml-2 text-[10px] font-normal text-white/40">
-                      {value[section.key].trim() ? "Preenchido" : "A definir"}
+                      {value[section.key]?.trim() ? "Preenchido" : "A definir"}
                     </span>
                   </summary>
                   <label
@@ -448,7 +451,7 @@ export function ProposalEditor({
                     id={`${prefix}-${section.key}`}
                     rows={5}
                     maxLength={20000}
-                    value={value[section.key]}
+                    value={value[section.key] || ""}
                     onChange={(event) =>
                       update(section.key, event.target.value)
                     }
@@ -499,18 +502,23 @@ export function ProposalPreview({
     <div className="space-y-3" aria-label="Prévia da proposta">
       <article className="relative overflow-hidden rounded-xl border border-white/10 bg-[#080c12] p-6 sm:p-10 min-h-72">
         <div className="absolute right-[-50px] top-[-90px] rounded-full border border-blue-500/20 w-64 h-64 pointer-events-none" />
-        <div className="flex items-start justify-between gap-4 mb-10">
+        <div className="flex items-start justify-between gap-4 mb-6">
           <p className="text-[10px] tracking-[.18em] uppercase text-blue-300">
             Proposta comercial / SevenDevX
           </p>
-          {logo && (
-            <img
-              src={logo.url}
-              alt={`Logo de ${proposal.company || proposal.clientName}`}
-              className="w-20 h-14 object-contain rounded bg-white p-2"
-            />
-          )}
+          <img
+            src={proposalBrand}
+            alt="SevenDevX"
+            className="w-24 sm:w-28 h-12 object-contain shrink-0"
+          />
         </div>
+        {logo && (
+          <img
+            src={logo.url}
+            alt={`Logo de ${proposal.company || proposal.clientName}`}
+            className="w-20 h-14 object-contain rounded bg-white p-2 mb-6"
+          />
+        )}
         <h2 className="text-2xl sm:text-4xl max-w-xl font-bold leading-tight break-words">
           {proposal.headline || proposal.title}
         </h2>
@@ -525,15 +533,22 @@ export function ProposalPreview({
           {proposal.issuedOn} · Válida até {proposal.validUntil || "a definir"}
         </p>
       </article>
-      {PROPOSAL_SECTIONS.filter((section) => proposal[section.key].trim()).map(
+      {PROPOSAL_SECTIONS.filter((section) => proposal[section.key]?.trim()).map(
         (section, index) => (
           <article
             key={section.key}
             className="rounded-xl border border-white/10 bg-[#080c12] p-6 sm:p-10"
           >
-            <p className="text-[10px] text-blue-300 uppercase tracking-widest mb-4">
-              {String(index + 1).padStart(2, "0")} / SevenDevX
-            </p>
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <p className="text-[10px] text-blue-300 uppercase tracking-widest">
+                {String(index + 1).padStart(2, "0")} / SevenDevX
+              </p>
+              <img
+                src={proposalBrand}
+                alt="SevenDevX"
+                className="w-24 sm:w-28 h-12 object-contain shrink-0"
+              />
+            </div>
             <h3 className="text-xl sm:text-2xl font-bold mb-5">
               {section.title}
             </h3>
