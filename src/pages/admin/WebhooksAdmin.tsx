@@ -105,7 +105,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import AdminPageShell from "@/components/admin/AdminPageShell";
-import { Plus, Webhook as WebhookIcon, Send, Trash2, Power, Copy, CheckCircle2, XCircle, Loader2, Bug, BookOpen } from "lucide-react";
+import { Plus, Webhook as WebhookIcon, Send, Trash2, Power, CheckCircle2, XCircle, Loader2, Bug, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import WebhookPayloadViewer from "@/modules/webhooks/WebhookPayloadViewer";
@@ -123,7 +123,7 @@ const EVENT_CATALOG = [
 ];
 
 interface Webhook {
-  id: string; name: string; url: string | null; secret: string;
+  id: string; name: string; url: string | null;
   events: string[]; is_active: boolean; success_count: number; failure_count: number;
   last_delivery_at: string | null; description: string | null;
 }
@@ -145,6 +145,7 @@ interface Webhook {
 export default function WebhooksAdmin() {
   const [hooks, setHooks] = useState<Webhook[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [form, setForm] = useState({ name: "", url: "", events: [] as string[] });
   const [testing, setTesting] = useState<string | null>(null);
@@ -156,8 +157,10 @@ export default function WebhooksAdmin() {
 
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase.from("webhooks").select("*").order("created_at", { ascending: false });
-    setHooks((data || []) as any);
+    setLoadError(null);
+    const { data, error } = await supabase.from("webhooks").select("id,name,url,events,is_active,success_count,failure_count,last_delivery_at,description,created_at").order("created_at", { ascending: false });
+    if (error) setLoadError("Não foi possível carregar os webhooks. Tente novamente.");
+    else setHooks((data || []) as any);
     setLoading(false);
   };
 
@@ -187,12 +190,14 @@ export default function WebhooksAdmin() {
   };
 
   const toggle = async (h: Webhook) => {
-    await supabase.from("webhooks").update({ is_active: !h.is_active } as any).eq("id", h.id);
+    const { error } = await supabase.from("webhooks").update({ is_active: !h.is_active } as any).eq("id", h.id);
+    if (error) return toast.error("Não foi possível alterar o webhook.");
     load();
   };
   const remove = async (id: string) => {
     if (!confirm("Remover webhook?")) return;
-    await supabase.from("webhooks").delete().eq("id", id);
+    const { error } = await supabase.from("webhooks").delete().eq("id", id);
+    if (error) return toast.error("Não foi possível remover o webhook.");
     load();
   };
 
@@ -226,6 +231,7 @@ export default function WebhooksAdmin() {
         </div>
       }
     >
+      {loadError && <div role="alert" className="border border-red-500/30 rounded-lg p-3 text-sm text-red-300 mb-4">{loadError} <button className="underline min-h-11" onClick={() => void load()}>Tentar novamente</button></div>}
       {creating && (
         <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
           className="mb-6 p-5 rounded-2xl border border-white/15 bg-white/5 backdrop-blur space-y-3">
@@ -288,10 +294,6 @@ export default function WebhooksAdmin() {
                     <button onClick={(e) => { e.stopPropagation(); toggle(h); }}
                       className="p-2 rounded-lg border border-white/10 hover:bg-white/5" title="Ativar/Desativar">
                       <Power className="w-3.5 h-3.5" />
-                    </button>
-                    <button onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(h.secret); toast.success("Secret copiado"); }}
-                      className="p-2 rounded-lg border border-white/10 hover:bg-white/5" title="Copiar secret">
-                      <Copy className="w-3.5 h-3.5" />
                     </button>
                     <button onClick={(e) => { e.stopPropagation(); remove(h.id); }}
                       className="p-2 rounded-lg border border-white/10 hover:bg-red-500/10 hover:text-red-400" title="Remover">

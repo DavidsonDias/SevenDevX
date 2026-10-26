@@ -92,7 +92,6 @@ interface Webhook {
   id: string;
   name: string;
   url: string | null;
-  secret: string;
   events: string[];
 }
 
@@ -111,15 +110,6 @@ const PRESETS: Record<string, any> = {
 // 🧠 BUSINESS LOGIC
 // ============================================================================
 
-async function hmacHex(secret: string, body: string) {
-  const key = await crypto.subtle.importKey(
-    "raw", new TextEncoder().encode(secret),
-    { name: "HMAC", hash: "SHA-256" }, false, ["sign"],
-  );
-  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(body));
-  return Array.from(new Uint8Array(sig)).map((b) => b.toString(16).padStart(2, "0")).join("");
-}
-
 // ============================================================================
 // 🏗️ MAIN COMPONENT
 // ============================================================================
@@ -132,7 +122,6 @@ export default function WebhookDebugger({
   const [payload, setPayload] = useState<string>(JSON.stringify(PRESETS["test.ping"], null, 2));
   const [simulateFailure, setSimulateFailure] = useState(false);
   const [sending, setSending] = useState(false);
-  const [signature, setSignature] = useState<string>("");
   const [result, setResult] = useState<any>(null);
   const [parseError, setParseError] = useState<string | null>(null);
 
@@ -142,18 +131,11 @@ export default function WebhookDebugger({
     setPayload(JSON.stringify(preset, null, 2));
   }, [event]);
 
-  // Live signature preview
+  // Validate locally; the signing key is used only by webhook-dispatch on the server.
   useEffect(() => {
-    if (!webhook?.secret) return;
-    try {
-      const body = JSON.stringify({ event, payload: JSON.parse(payload), timestamp: new Date().toISOString() });
-      setParseError(null);
-      hmacHex(webhook.secret, body).then(setSignature);
-    } catch (e: any) {
-      setParseError(e?.message || "JSON inválido");
-      setSignature("");
-    }
-  }, [payload, event, webhook?.secret]);
+    try { JSON.parse(payload); setParseError(null); }
+    catch { setParseError("JSON inválido"); }
+  }, [payload]);
 
   if (!webhook) return null;
 
@@ -248,14 +230,8 @@ export default function WebhookDebugger({
                 <Shield className="w-3 h-3" /> X-SevenOS-Signature (HMAC-SHA256)
               </div>
               <div className="text-[10px] font-mono text-white/80 break-all leading-relaxed">
-                {signature || <span className="text-white/30">—</span>}
+                A assinatura HMAC é aplicada pelo servidor no envio. A chave permanece protegida.
               </div>
-              {signature && (
-                <button onClick={() => { navigator.clipboard.writeText(signature); toast.success("Signature copiada"); }}
-                  className="text-[10px] text-fuchsia-300/80 hover:text-fuchsia-200 inline-flex items-center gap-1">
-                  <Copy className="w-3 h-3" /> copiar
-                </button>
-              )}
             </div>
 
             <div className="rounded-xl border border-white/10 bg-white/[0.02] p-3 space-y-1">
@@ -263,7 +239,7 @@ export default function WebhookDebugger({
               <pre className="text-[10px] font-mono text-white/70 whitespace-pre-wrap leading-relaxed">
 {`Content-Type: application/json
 X-SevenOS-Event: ${event}
-X-SevenOS-Signature: ${signature ? signature.slice(0, 16) + "…" : "—"}`}
+X-SevenOS-Signature: [gerada pelo servidor]`}
               </pre>
             </div>
 

@@ -3726,6 +3726,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      submit_site_diagnostic: {
+        Args: { _answers: Json; _source_url?: string; _utm?: Json }
+        Returns: boolean
+      }
+
       admin_list_mfa_status: {
         Args: never
         Returns: {

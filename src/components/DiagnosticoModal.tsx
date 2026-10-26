@@ -118,23 +118,6 @@ export default function DiagnosticoModal({ open, onClose, config }: Props) {
   const submit = async () => {
     setSubmitting(true);
     try {
-      // 1. Cria/atualiza contact (evita duplicidade por email)
-      const { data: existing } = await sb.rpc("contact_id_by_email" as any, { _email: form.email });
-      let contactId: string | undefined = typeof existing === "string" ? existing : (existing as any) ?? undefined;
-      if (!contactId) {
-        const { data: created, error: cErr } = await sb.from("contacts").insert({
-          name: form.name, email: form.email, phone: form.phone || null,
-          company: form.company || null,
-          message: form.notes || null,
-          service_type: form.project_type || null,
-          budget: form.budget || null,
-          source: "diagnostico-criacao-sites",
-          status: "new",
-        }).select("id").single();
-        if (cErr) throw cErr;
-        contactId = created.id;
-      }
-
       // 2. Captura UTM da URL
       const params = new URLSearchParams(window.location.search);
       const utm: Record<string, string> = {};
@@ -142,15 +125,11 @@ export default function DiagnosticoModal({ open, onClose, config }: Props) {
         const v = params.get(k); if (v) utm[k] = v;
       });
 
-      // 3. Grava diagnóstico
-      await sb.from("site_page_diagnostics").insert({
-        contact_id: contactId,
-        answers: form,
-        source_url: window.location.href,
-        utm,
-        consent_lgpd: form.consent,
-        consent_at: form.consent ? new Date().toISOString() : null,
+      // Atomic intake returns no CRM identifiers and never enumerates existing emails.
+      const { data: accepted, error: intakeError } = await sb.rpc("submit_site_diagnostic", {
+        _answers: { ...form }, _source_url: window.location.origin + window.location.pathname, _utm: utm,
       });
+      if (intakeError || accepted !== true) throw new Error("Não foi possível enviar agora. Tente novamente em instantes.");
 
       setDone(true);
       toast({ title: "✅ Diagnóstico enviado!", description: "Retornamos em até 24h." });

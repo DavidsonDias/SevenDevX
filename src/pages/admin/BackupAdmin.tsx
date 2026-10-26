@@ -197,8 +197,10 @@ export default function BackupAdmin() {
 
   const remove = async (b: any) => {
     if (!confirm("Remover este backup?")) return;
-    await supabase.storage.from("backups").remove([b.storage_path]);
-    await supabase.from("tenant_backups").delete().eq("id", b.id);
+    const { error: storageError } = await supabase.storage.from("backups").remove([b.storage_path]);
+    if (storageError) return toast({ title: "Não foi possível remover o arquivo", variant: "destructive" });
+    const { error: metadataError } = await supabase.from("tenant_backups").delete().eq("id", b.id);
+    if (metadataError) return toast({ title: "Não foi possível atualizar o histórico", variant: "destructive" });
     load();
   };
 
