@@ -22,6 +22,9 @@
  * Lista o catálogo de documentos sugeridos + documentos persistidos.
  * Botão "Gerar com IA" cria + persiste; "Editar" abre modal; "Copiar" copia conteúdo.
  */
+import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
+import { readProposal } from "@/lib/proposals";
 import { useMemo, useState } from "react";
 import { Sparkles, Loader2, FileText, Edit2, Copy, Trash2, Save, X, Plus, RefreshCw, Eye, Download } from "lucide-react";
 import { exportMarkdownToPdf } from "@/utils/pdfExport";
@@ -113,7 +116,7 @@ export default function StageDocuments({ projectId, stage, project, client, inte
     }
   };
 
-  const customDocs = docs.filter((d: any) => !catalog.find((c) => c.type === d.type));
+  const customDocs = docs.filter((d: any) => !readProposal(d.metadata) && !catalog.find((c) => c.type === d.type));
 
   return (
     <div className="space-y-3">
@@ -156,7 +159,8 @@ export default function StageDocuments({ projectId, stage, project, client, inte
                     </div>
                     {!doc && <p className="text-[11px] text-white/50 mt-0.5 line-clamp-1">{entry.prompt}</p>}
                   </div>
-                  <div className="flex items-center gap-1 shrink-0">
+                  <div className="flex flex-wrap items-center gap-1">
+                    {!doc && <button type="button" onClick={() => setEditing({ project_id: projectId, stage_id: stage.id, type: entry.type, title: entry.title, content: '', generated_by_ai: false })} className="min-h-11 text-xs px-3 border border-white/15 rounded">Escrever</button>}
                     {doc ? (
                       <>
                         <button
@@ -261,16 +265,23 @@ function DocEditorModal({ doc, onClose, onSave }: any) {
   const [content, setContent] = useState(doc.content || "");
   const [tab, setTab] = useState<"edit" | "preview">(viewMode ? "preview" : "edit");
   const { toast } = useToast();
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const dirty = !viewMode && (title !== (doc.title || '') || content !== (doc.content || ''));
+  useUnsavedChanges(dirty);
+  const close = () => { if (!saving && (!dirty || window.confirm('Sair sem salvar este documento?'))) onClose(); };
 
   return (
-    <div className="fixed inset-0 z-[120] bg-black/85 backdrop-blur-sm flex items-center justify-center p-4" onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-3xl bg-zinc-950 border border-white/10 rounded-2xl flex flex-col max-h-[90vh]">
-        <div className="flex items-center justify-between p-4 border-b border-white/10 gap-3">
+    <Dialog open onOpenChange={(open) => { if (!open) close(); }}>
+      <DialogContent className="max-w-3xl p-0 flex flex-col overflow-hidden bg-zinc-950 z-[120]" onEscapeKeyDown={event => { event.preventDefault(); close(); }} onInteractOutside={event => event.preventDefault()}>
+        <DialogTitle className="sr-only">Documento da etapa</DialogTitle>
+        <DialogDescription className="sr-only">Edição e exportação do documento do projeto.</DialogDescription>
+        <div className="flex flex-wrap items-center justify-between p-4 pr-14 border-b border-white/10 gap-3">
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             disabled={viewMode}
-            className="bg-transparent font-bold text-base outline-none flex-1 disabled:opacity-100"
+            aria-label="Título do documento" className="bg-transparent font-bold text-base outline-none flex-1 min-w-0 disabled:opacity-100"
           />
           <div className="flex items-center gap-2 shrink-0">
             <div className="flex border border-white/10 rounded overflow-hidden">
@@ -299,14 +310,15 @@ function DocEditorModal({ doc, onClose, onSave }: any) {
               className="text-xs p-1.5 hover:bg-white/5 rounded"
               title="Baixar PDF"
             ><Download className="w-4 h-4" /></button>
-            <button onClick={onClose}><X className="w-5 h-5" /></button>
+
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="flex-1 min-h-0 overflow-y-auto p-4">
+          {error && <p role="alert" className="text-red-300 text-sm mb-3">{error}</p>}
           {tab === "edit" ? (
             <textarea
-              value={content}
+              aria-label="Conteúdo do documento" value={content}
               onChange={(e) => setContent(e.target.value)}
               disabled={viewMode}
               className="w-full min-h-[400px] bg-white/5 border border-white/10 rounded-lg p-3 text-sm font-mono outline-none focus:border-white/30 disabled:opacity-100"
@@ -320,16 +332,22 @@ function DocEditorModal({ doc, onClose, onSave }: any) {
 
         {!viewMode && (
           <div className="flex justify-end gap-2 p-4 border-t border-white/10">
-            <button onClick={onClose} className="px-4 py-2 border border-white/15 rounded-lg text-sm">Cancelar</button>
+            <button disabled={saving} onClick={close} className="px-4 py-2 border border-white/15 rounded-lg text-sm">Cancelar</button>
             <button
-              onClick={() => onSave({ ...doc, _viewMode: undefined, title, content })}
+              disabled={saving || !title.trim()}
+              onClick={async () => {
+                setSaving(true); setError('');
+                try { const { _viewMode, ...payload } = doc; await onSave({ ...payload, title, content }); }
+                catch (cause) { setError(cause instanceof Error ? cause.message : 'Não foi possível salvar. Seu texto foi preservado.'); }
+                finally { setSaving(false); }
+              }}
               className="px-4 py-2 bg-white text-black rounded-lg text-sm font-bold inline-flex items-center gap-2"
             >
-              <Save className="w-4 h-4" /> Salvar
+              <Save className="w-4 h-4" /> {saving ? "Salvando…" : "Salvar"}
             </button>
           </div>
         )}
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -136,6 +136,10 @@ import {
 import ClientPicker from "@/components/admin/ClientPicker";
 import ContractCard from "@/components/admin/ContractCard";
 import AttachmentManager from "@/components/admin/AttachmentManager";
+import ProposalStudio from "@/components/admin/ProposalStudio";
+import { STAGE_GUIDES } from "@/lib/proposals";
+import { confirmLeaveEdits } from "@/lib/unsavedChanges";
+import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
 import StageDocuments from "@/components/admin/StageDocuments";
 import ProjectFinanceBlock from "@/components/admin/finance/ProjectFinanceBlock";
 import TimeTrackerWidget from "@/components/admin/finance/TimeTrackerWidget";
@@ -358,16 +362,16 @@ export default function ProjectDetailAdmin() {
           <>
             <div className="relative mb-6 -mx-4 sm:mx-0">
               <div className="overflow-x-auto pb-3 px-4 sm:px-0 snap-x snap-mandatory scrollbar-thin">
-                <div className="flex items-center gap-2 min-w-max">
+                <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-2">
                   {stages.map((s: any, idx: number) => {
                     const meta = STAGE_STATUS[s.status] || STAGE_STATUS.pending;
                     const isActive = s.id === selectedStage?.id;
                     return (
-                      <div key={s.id} className="flex items-center snap-start">
+                      <div key={s.id} className="flex min-w-0 snap-start">
                         <button
-                          onClick={() => setSelectedStageId(s.id)}
+                          onClick={() => { if (confirmLeaveEdits()) setSelectedStageId(s.id); }}
                           aria-pressed={isActive}
-                          className={`flex flex-col items-center gap-2 p-3 rounded-xl border transition-all w-[148px] ${
+                          className={`flex flex-col items-center gap-2 p-3 rounded-xl border transition-all w-full min-w-0 ${
                             isActive
                               ? "bg-white/10 border-white/30 shadow-lg shadow-white/5"
                               : "bg-white/[0.02] border-white/10 hover:bg-white/5"
@@ -384,13 +388,13 @@ export default function ProjectDetailAdmin() {
                             {s.status === "completed" ? <CheckCircle2 className="w-5 h-5" /> : idx + 1}
                           </div>
                           <div className="text-center min-w-0 w-full">
-                            <p className="text-xs font-bold truncate">{s.name}</p>
+                            <p className="text-xs font-bold break-words min-h-8">{s.name}</p>
                             <p className="text-[10px] uppercase tracking-wider mt-0.5" style={{ color: meta.color }}>
                               {meta.label}
                             </p>
                           </div>
                         </button>
-                        {idx < stages.length - 1 && <ChevronRight className="w-4 h-4 text-white/20 mx-1 shrink-0" />}
+
                       </div>
                     );
                   })}
@@ -419,7 +423,8 @@ export default function ProjectDetailAdmin() {
                 )}
 
                 {/* Termo / Contrato — abaixo dos blocos da etapa */}
-                <GlassCard className="p-5 min-w-0">
+                <details className="p-4 rounded-xl border border-white/10 min-w-0">
+                  <summary className="min-h-11 cursor-pointer font-bold text-sm">Contrato do projeto · editor e histórico</summary>
                   <ContractCard
                     entity="projects"
                     id={project.id}
@@ -435,7 +440,7 @@ export default function ProjectDetailAdmin() {
                     }}
                     onChange={() => qc.invalidateQueries({ queryKey: ["project", id] })}
                   />
-                </GlassCard>
+                </details>
 
                 {/* Resumo IA — abaixo do Termo/Contrato */}
                 <ClientAiSummaryBlock clientId={(project as any).client_id} />
@@ -491,15 +496,18 @@ function StageDetail({
   const projectId = project.id;
   const [notes, setNotes] = useState(stage.notes || "");
   const [newItem, setNewItem] = useState("");
+  const [savedNotes, setSavedNotes] = useState(stage.notes || "");
+  useUnsavedChanges(notes !== savedNotes);
   const qc = useQueryClient();
 
-  const { data: client } = useClient(clientId || undefined);
+  const { data: client, isPending: clientLoading } = useClient(clientId || undefined);
   const { data: interactions = [] } = useClientInteractions(clientId || undefined);
 
   useEffect(() => { setNotes(stage.notes || ""); }, [stage.id]); // eslint-disable-line
 
   const saveNotes = async () => {
     await onUpdate({ notes });
+    setSavedNotes(notes);
     toast({ title: "Notas salvas" });
   };
 
@@ -528,6 +536,7 @@ function StageDetail({
   const checklist = stage.checklist || [];
   const checklistDone = checklist.filter((c: any) => c.is_done).length;
   const meta = STAGE_STATUS[stage.status] || STAGE_STATUS.pending;
+  const guide = STAGE_GUIDES[stage.slug];
 
   return (
     <>
@@ -561,6 +570,15 @@ function StageDetail({
         </div>
       </GlassCard>
 
+      {guide && <GlassCard className="p-5 min-w-0 border-blue-500/20">
+        <p className="text-[10px] uppercase tracking-widest text-blue-300 mb-2">Foco desta etapa</p>
+        <p className="font-medium text-sm">{guide.goal}</p>
+        <div className="flex flex-wrap gap-2 my-4">{guide.outputs.map(output => <span key={output} className="px-3 py-2 rounded-lg border border-white/10 text-xs text-white/70">{output}</span>)}</div>
+        <p className="text-xs text-white/50 leading-relaxed"><strong className="text-white/75">Para avançar:</strong> {guide.ready}</p>
+        <div className="h-1 bg-white/10 rounded mt-4 overflow-hidden" role="progressbar" aria-label="Checklist da etapa" aria-valuemin={0} aria-valuemax={checklist.length || 1} aria-valuenow={checklistDone}><div className="h-full bg-blue-500" style={{ width: `${checklist.length ? checklistDone / checklist.length * 100 : 0}%` }} /></div>
+      </GlassCard>}
+      {stage.slug === 'proposal' && (clientId && clientLoading ? <p role="status" className="p-4 text-sm">Carregando dados do cliente…</p> : <ProposalStudio project={project} stageId={stage.id} client={client} />)}
+
       {/* DOCUMENT ENGINE */}
       <GlassCard className="p-5 border-purple-500/20 bg-purple-500/[0.02]">
         <StageDocuments
@@ -586,7 +604,9 @@ function StageDetail({
             <div key={it.id} className="flex items-center gap-2 group">
               <button
                 onClick={() => onToggleItem(it.id, !it.is_done)}
-                className="shrink-0 text-white/70 hover:text-white"
+                aria-label={`${it.is_done ? 'Reabrir' : 'Concluir'}: ${it.title}`}
+                aria-pressed={it.is_done}
+                className="shrink-0 min-h-11 min-w-11 flex items-center justify-center text-white/70 hover:text-white"
               >
                 {it.is_done ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <Circle className="w-4 h-4" />}
               </button>
@@ -594,8 +614,9 @@ function StageDetail({
                 {it.title}
               </span>
               <button
-                onClick={() => removeChecklistItem(it.id)}
-                className="opacity-0 group-hover:opacity-100 text-white/40 hover:text-red-400 transition-opacity"
+                onClick={() => { if (window.confirm('Excluir este item do checklist?')) void removeChecklistItem(it.id); }}
+                aria-label={`Excluir item: ${it.title}`}
+                className="min-h-11 min-w-11 flex items-center justify-center text-white/40 hover:text-red-400 transition-opacity"
               >
                 <Trash2 className="w-3 h-3" />
               </button>
@@ -642,7 +663,7 @@ function StageDetail({
           rows={4}
           className="w-full bg-white/5 border border-white/10 rounded-lg p-3 text-sm outline-none focus:border-white/30 mb-3"
         />
-        <div className="grid grid-cols-2 gap-3 mb-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
           <div>
             <label className="text-[10px] uppercase tracking-wider text-white/50 block mb-1">Início</label>
             <input

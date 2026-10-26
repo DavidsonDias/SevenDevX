@@ -1,0 +1,242 @@
+/** @file Proposal snapshots: independent from contracts, with no automatic commitments. */
+import { z } from "zod";
+
+export const PROPOSAL_KIND = "sevenos-commercial-proposal-v1";
+const text = z.string().max(20000);
+export const proposalSchema = z.object({
+  schema: z.literal(1),
+  title: text,
+  clientName: text,
+  company: text,
+  email: text,
+  phone: text,
+  issuedOn: text,
+  validUntil: text,
+  logoId: text,
+  headline: text,
+  overview: text,
+  deliverables: text,
+  timeline: text,
+  investment: text,
+  payment: text,
+  support: text,
+  exclusions: text,
+  evolution: text,
+  about: text,
+  portfolio: text,
+  nextSteps: text,
+  contact: text,
+});
+export type Proposal = z.infer<typeof proposalSchema>;
+export type ProposalField = Exclude<keyof Proposal, "schema">;
+export type ProposalSource = {
+  project: {
+    title?: string | null;
+    description?: string | null;
+    long_description?: string | null;
+    client_name?: string | null;
+    budget?: number | null;
+  };
+  client?: {
+    name?: string | null;
+    company?: string | null;
+    email?: string | null;
+    phone?: string | null;
+    notes?: string | null;
+  } | null;
+  documents?: { type: string; content: string }[];
+  logoId?: string;
+  budget?: { amount_total: number; currency: string } | null;
+};
+
+/** Imports known facts only. Missing commercial conditions stay empty for human review. */
+export function createProposal(
+  { project, client, documents = [], logoId = "", budget }: ProposalSource,
+  now = new Date(),
+): Proposal {
+  const source = (type: string) =>
+    documents.find((doc) => doc.type === type)?.content || "";
+  return {
+    schema: 1,
+    title: project.title || "Proposta comercial",
+    clientName: client?.name || project.client_name || "",
+    company: client?.company || "",
+    email: client?.email || "",
+    phone: client?.phone || "",
+    issuedOn: now.toISOString().slice(0, 10),
+    validUntil: "",
+    logoId,
+    headline: "Uma presença digital à altura da sua marca.",
+    overview:
+      source("briefing") ||
+      project.long_description ||
+      project.description ||
+      client?.notes ||
+      "",
+    deliverables: source("technical_scope") || source("scope_macro"),
+    timeline: source("timeline") || source("roadmap"),
+    investment:
+      source("investment") ||
+      ((budget?.amount_total || project.budget || 0) > 0
+        ? new Intl.NumberFormat("pt-BR", {
+            style: "currency",
+            currency: budget?.currency || "BRL",
+          }).format(budget?.amount_total || project.budget || 0)
+        : ""),
+    payment: "",
+    support: "",
+    exclusions: "",
+    evolution: "",
+    about:
+      "Estratégia, design e engenharia para transformar necessidades de negócio em experiências digitais.\nDesenvolvimento personalizado, comunicação direta e atenção à qualidade em cada entrega.",
+    portfolio: "",
+    contact: "www.sevendevx.com\nsevendevxx@gmail.com",
+    nextSteps:
+      "Revisar e aprovar o escopo da proposta.\nAlinhar condições comerciais e cronograma.\nFormalizar a contratação.\nEnviar os materiais necessários para iniciar o projeto.",
+  };
+}
+
+export const PROPOSAL_SECTIONS: {
+  key: ProposalField;
+  title: string;
+  hint: string;
+}[] = [
+  {
+    key: "overview",
+    title: "Visão do projeto",
+    hint: "Objetivos, público, contexto e resultados esperados.",
+  },
+  {
+    key: "deliverables",
+    title: "Escopo e entregáveis",
+    hint: "Descreva o que será entregue, limites, quantidades e critérios de aceite.",
+  },
+  {
+    key: "investment",
+    title: "Investimento",
+    hint: "Valores, moeda e serviços incluídos. Revise antes de enviar.",
+  },
+  {
+    key: "payment",
+    title: "Condições de pagamento",
+    hint: "Entrada, parcelas, vencimentos e forma de pagamento.",
+  },
+  {
+    key: "timeline",
+    title: "Cronograma",
+    hint: "Fases, duração, marcos de aprovação e dependências do cliente.",
+  },
+  {
+    key: "support",
+    title: "Suporte e serviços opcionais",
+    hint: "Prazo de suporte, limites e valores recorrentes, se aplicáveis.",
+  },
+  {
+    key: "exclusions",
+    title: "Premissas e exclusões",
+    hint: "Domínio, hospedagem, serviços de terceiros e itens fora do escopo.",
+  },
+  {
+    key: "evolution",
+    title: "Evolução futura",
+    hint: "Possibilidades futuras, separadas do investimento atual.",
+  },
+  {
+    key: "about",
+    title: "Sobre a SevenDevX",
+    hint: "Apresentação, forma de trabalho e diferenciais.",
+  },
+  {
+    key: "portfolio",
+    title: "Portfólio de referência",
+    hint: "Projetos e endereços públicos aprovados para apresentação.",
+  },
+  {
+    key: "contact",
+    title: "Contato SevenDevX",
+    hint: "Site, e-mail e canais comerciais.",
+  },
+  {
+    key: "nextSteps",
+    title: "Próximos passos",
+    hint: "O caminho entre a aprovação e o início do trabalho.",
+  },
+];
+
+export function proposalWarnings(p: Proposal): string[] {
+  return [
+    !p.title.trim() && "Título",
+    !p.clientName.trim() && "Cliente",
+    !p.overview.trim() && "Visão do projeto",
+    !p.deliverables.trim() && "Escopo",
+    !p.investment.trim() && "Investimento",
+    !p.payment.trim() && "Pagamento",
+    !p.timeline.trim() && "Cronograma",
+    !p.validUntil && "Validade",
+  ].filter((value): value is string => !!value);
+}
+
+/** Metadata is validated before opening any saved snapshot or local draft. */
+export function readProposal(metadata: unknown): Proposal | null {
+  if (
+    !metadata ||
+    typeof metadata !== "object" ||
+    !("kind" in metadata) ||
+    metadata.kind !== PROPOSAL_KIND ||
+    !("proposal" in metadata)
+  )
+    return null;
+  const result = proposalSchema.safeParse(metadata.proposal);
+  return result.success ? result.data : null;
+}
+
+export function proposalMarkdown(p: Proposal): string {
+  return (
+    `# ${p.title}\n\n${p.headline}\n\nCliente: ${p.clientName}\nEmpresa: ${p.company}\nE-mail: ${p.email}\nTelefone: ${p.phone}\nEmissão: ${p.issuedOn}\nValidade: ${p.validUntil || "A definir"}\n\n` +
+    PROPOSAL_SECTIONS.filter((section) => p[section.key].trim())
+      .map((section) => `## ${section.title}\n\n${p[section.key]}`)
+      .join("\n\n")
+  );
+}
+
+export const STAGE_GUIDES: Record<
+  string,
+  { goal: string; outputs: string[]; ready: string }
+> = {
+  discovery: {
+    goal: "Entender o negócio antes de propor a solução.",
+    outputs: [
+      "Briefing validado",
+      "Público e necessidades",
+      "Indicadores de sucesso",
+    ],
+    ready:
+      "Objetivos, materiais disponíveis e restrições alinhados com o cliente.",
+  },
+  strategy: {
+    goal: "Transformar o diagnóstico em prioridades e um plano viável.",
+    outputs: ["Jornada do usuário", "Escopo macro", "Roadmap de entregas"],
+    ready: "Prioridades, dependências e limites do projeto acordados.",
+  },
+  proposal: {
+    goal: "Apresentar escopo, investimento e condições com clareza.",
+    outputs: ["Proposta comercial", "Cronograma", "Condições de pagamento"],
+    ready:
+      "Proposta revisada e aprovação do cliente registrada. O contrato é tratado separadamente.",
+  },
+  design: {
+    goal: "Validar a experiência antes de iniciar a construção.",
+    outputs: ["Wireframes", "Protótipo navegável", "Design system"],
+    ready: "Fluxos, telas e identidade aprovados; pendências documentadas.",
+  },
+  development: {
+    goal: "Construir e testar as entregas conforme o escopo aprovado.",
+    outputs: ["Ambiente técnico", "Sprints", "Evidências de QA"],
+    ready: "Critérios de aceite verificados e defeitos críticos resolvidos.",
+  },
+  launch: {
+    goal: "Publicar com segurança e preparar a operação do cliente.",
+    outputs: ["Deploy e rollback", "Monitoramento", "Treinamento e evolução"],
+    ready: "Produção validada, acessos entregues e suporte combinado.",
+  },
+};

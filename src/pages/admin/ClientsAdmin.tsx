@@ -113,6 +113,7 @@ import {
   useClients, useUpsertClient, useDeleteClient, useClient,
   useClientInteractions, useAddInteraction, useAiGenerate,
 } from "@/hooks/useEcosystem";
+import ClientWorkspace from "@/components/admin/ClientWorkspace";
 import ContractCard from "@/components/admin/ContractCard";
 import AttachmentManager from "@/components/admin/AttachmentManager";
 import { supabase } from "@/integrations/supabase/client";
@@ -338,17 +339,7 @@ function ClientDrawer({ id, onClose }: { id: string; onClose: () => void }) {
 
   if (!client) return null;
   return (
-    <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex justify-end" onClick={onClose}>
-      <div onClick={(e) => e.stopPropagation()} className="w-full max-w-2xl bg-zinc-950 border-l border-white/10 h-full overflow-y-auto">
-        <div className="sticky top-0 bg-zinc-950 border-b border-white/10 p-5 flex items-center justify-between z-10">
-          <div>
-            <h3 className="font-bold text-lg">{client.name}</h3>
-            <p className="text-sm text-white/60">{client.company || client.email}</p>
-          </div>
-          <button onClick={onClose}><X className="w-5 h-5" /></button>
-        </div>
-
-        <div className="p-5 space-y-6">
+    <ClientWorkspace client={client} onClose={onClose}>
           {/* IA Summary */}
           <ClientAiSummary
             client={client}
@@ -362,7 +353,9 @@ function ClientDrawer({ id, onClose }: { id: string; onClose: () => void }) {
           <ClientProjects clientId={id} />
 
           {/* Contract + Files */}
-          <div className="grid sm:grid-cols-2 gap-4">
+          <div className="space-y-4 min-w-0">
+            <details className="rounded-xl border border-white/10 p-3 min-w-0">
+              <summary className="cursor-pointer min-h-11 flex items-center font-bold text-sm">Contrato do cliente · abrir editor</summary>
             <ContractCard
               entity="clients"
               id={id}
@@ -378,7 +371,8 @@ function ClientDrawer({ id, onClose }: { id: string; onClose: () => void }) {
                 },
               }}
             />
-            <div className="border border-white/10 rounded-xl p-4">
+            </details>
+            <div className="border border-white/10 rounded-xl p-4 min-w-0">
               <AttachmentManager
                 title="Logo & Arquivos"
                 clientId={id}
@@ -392,7 +386,7 @@ function ClientDrawer({ id, onClose }: { id: string; onClose: () => void }) {
           {/* Add interaction */}
           <div className="border border-white/10 rounded-xl p-4">
             <h4 className="font-bold mb-3">Registrar Interação</h4>
-            <div className="grid grid-cols-2 gap-2 mb-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
               <select className={inputCls} value={interForm.type} onChange={(e) => setInterForm({ ...interForm, type: e.target.value })}>
                 <option value="note">Nota</option>
                 <option value="meeting">Reunião</option>
@@ -436,9 +430,7 @@ function ClientDrawer({ id, onClose }: { id: string; onClose: () => void }) {
               </div>
             )}
           </div>
-        </div>
-      </div>
-    </div>
+    </ClientWorkspace>
   );
 }
 
