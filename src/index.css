@@ -450,6 +450,7 @@ select optgroup { background-color: #0a0a0a; color: rgba(255,255,255,.6); }
   [data-public-header] > div > div { height: 3.5rem; }
   [data-public-header] img { height: 2.5rem; }
   [data-public-header] nav { display: none; }
+  [data-public-header] nav + button { margin-left: auto; }
   [data-public-header] a:has(> img) { position: absolute; left: 50%; transform: translateX(-50%); }
   [data-public-menu] { top: calc(3.5rem + env(safe-area-inset-top)); }
   [data-public-menu] > div { padding-top: .5rem; padding-bottom: 1rem; }
