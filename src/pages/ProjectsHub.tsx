@@ -82,6 +82,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { useState, useMemo, useCallback, memo, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ExternalLink, Github, Sparkles, ArrowLeft, X } from "lucide-react";
@@ -451,6 +452,7 @@ const FILTER_TAGS = ["React", "TypeScript", "Node.js", "SaaS", "3D", "AI", "PWA"
 // ============================================================================
 
 const ProjectsHub = () => {
+  const { copy } = usePublicCopy();
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
@@ -496,8 +498,8 @@ const ProjectsHub = () => {
   return (
     <>
       <SEOHead
-        title="Todos os Projetos | SevenDevX — Portfólio Completo de Software"
-        description="Explore todos os projetos da SevenDevX: SaaS, landing pages de alta conversão, dashboards, simuladores 3D e aplicações web modernas. Soluções reais com tecnologia enterprise."
+        title={copy("Todos os Projetos | SevenDevX — Portfólio Completo de Software")}
+        description={copy("Explore todos os projetos da SevenDevX: SaaS, landing pages de alta conversão, dashboards, simuladores 3D e aplicações web modernas. Soluções reais com tecnologia enterprise.")}
         keywords="portfólio completo, projetos software, SaaS, landing page alta conversão, dashboard web, desenvolvimento web enterprise, React, TypeScript, Node.js, aplicações web modernas, SevenDevX"
         url="https://www.sevendevx.com/projects-hub"
       />

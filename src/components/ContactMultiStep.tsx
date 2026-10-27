@@ -19,6 +19,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -37,6 +38,7 @@ import { useLanguage } from "@/i18n/LanguageContext";
 // ============================================================================
 
 const ContactMultiStep: React.FC = () => {
+  const { copy } = usePublicCopy();
   const { toast } = useToast();
   const { t } = useLanguage();
   const { saveAndOpenWhatsApp, isSubmitting } = useContacts();
@@ -177,7 +179,7 @@ const ContactMultiStep: React.FC = () => {
             </div>
             <div className="flex justify-between text-[9px] xs:text-[10px] sm:text-xs text-muted-foreground uppercase tracking-wider px-1">
               {stepLabels.map((label, i) => (
-                <span key={i} className={i === 0 ? "text-left" : i === 1 ? "text-center" : "text-right"}>{label}</span>
+                <span key={i} className={i === 0 ? "text-left" : i === 1 ? "text-center" : "text-right"}>{copy(label)}</span>
               ))}
             </div>
           </div>
@@ -193,7 +195,7 @@ const ContactMultiStep: React.FC = () => {
           >
             {/* Honeypot */}
             <div className="sr-only" aria-hidden>
-              <label htmlFor="hp_email">Leave empty</label>
+              <label htmlFor="hp_email">{copy("Leave empty")}</label>
               <input id="hp_email" name="hp_email" value={formData.hp_email} onChange={handleChange} autoComplete="off" tabIndex={-1} className="opacity-0 pointer-events-none" />
             </div>
 
@@ -260,10 +262,10 @@ const ContactMultiStep: React.FC = () => {
                 <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }} className="space-y-6">
                   <div className="bg-foreground/5 p-6 space-y-3 border border-border">
                     <h3 className="text-sm font-semibold uppercase tracking-wider mb-4">{t.contact.step3}</h3>
-                    <p className="text-xs text-muted-foreground"><span className="text-foreground/90 font-semibold">{t.contact.nameLabel}:</span> {formData.name}</p>
+                    <p className="text-xs text-muted-foreground"><span className="text-foreground/90 font-semibold">{t.contact.nameLabel}:</span> {copy(formData.name)}</p>
                     <p className="text-xs text-muted-foreground"><span className="text-foreground/90 font-semibold">{t.contact.phoneLabel}:</span> {formData.phone}</p>
                     <p className="text-xs text-muted-foreground"><span className="text-foreground/90 font-semibold">{t.contact.emailLabel}:</span> {formData.email}</p>
-                    <p className="text-xs text-muted-foreground"><span className="text-foreground/90 font-semibold">{t.contact.projectTypeLabel}:</span> {formData.projectType || "—"}</p>
+                    <p className="text-xs text-muted-foreground"><span className="text-foreground/90 font-semibold">{t.contact.projectTypeLabel}:</span> {copy(formData.projectType || "—")}</p>
                     {formData.budget && <p className="text-xs text-muted-foreground"><span className="text-foreground/90 font-semibold">{t.contact.budgetLabel}:</span> {formData.budget}</p>}
                   </div>
                   <div className="space-y-4">
@@ -278,7 +280,7 @@ const ContactMultiStep: React.FC = () => {
                         onCheckedChange={(checked) => { setPoliticaPrivacidade(checked as boolean); if (errors.politica) setErrors((prev) => ({ ...prev, politica: false })); }}
                         className={`mt-1 ${errors.politica ? "border-destructive" : "border-muted-foreground"}`} />
                       <label htmlFor="politica" className="text-xs text-muted-foreground leading-relaxed uppercase tracking-wide">
-                        {t.contact.acceptPrivacy}{" "}
+                        {t.contact.acceptPrivacy}{copy(" ")}
                         <Link to="/privacy-policy" className="text-foreground hover:text-foreground/80 underline">{t.contact.privacyPolicy}</Link>
                       </label>
                     </div>

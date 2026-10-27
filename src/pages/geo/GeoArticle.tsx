@@ -74,6 +74,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
@@ -104,12 +105,13 @@ interface Props {
  * Índice dos artigos GEO, agrupados por cluster de conteúdo.
  */
 export function GeoArticleIndex({ basePath, filterCategory, title, intro }: Props) {
+  const { copy } = usePublicCopy();
   const articles = GEO_ARTICLES.filter((a) => a.category === filterCategory);
   return (
     <>
       <Helmet>
         <title>{title} — SevenDevX</title>
-        <meta name="description" content={intro} />
+        <meta name="description" content={copy(intro)} />
         <link rel="canonical" href={`https://www.sevendevx.com/${basePath}`} />
       </Helmet>
       <Header />
@@ -118,9 +120,9 @@ export function GeoArticleIndex({ basePath, filterCategory, title, intro }: Prop
           <Container>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
               <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-4">
-                {basePath === "answers" ? "AI Answers" : "Knowledge Base"}
+                {copy(basePath === "answers" ? "AI Answers" : "Knowledge Base")}
               </p>
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 max-w-3xl">{title}</h1>
+              <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 max-w-3xl">{copy(title)}</h1>
               <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">{intro}</p>
             </motion.div>
           </Container>
@@ -142,9 +144,9 @@ export function GeoArticleIndex({ basePath, filterCategory, title, intro }: Prop
                   >
                     <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground mb-3">
                       <Clock className="w-3 h-3" />
-                      {a.readingMinutes} min de leitura
+                      {a.readingMinutes} {copy("min de leitura")}
                     </div>
-                    <h2 className="text-2xl font-bold mb-3 group-hover:underline">{a.title}</h2>
+                    <h2 className="text-2xl font-bold mb-3 group-hover:underline">{copy(a.title)}</h2>
                     <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">{a.shortAnswer}</p>
                   </Link>
                 </motion.div>
@@ -166,6 +168,7 @@ export function GeoArticleIndex({ basePath, filterCategory, title, intro }: Prop
  * Página de artigo GEO resolvida pelo slug da rota.
  */
 export function GeoArticlePage({ basePath }: { basePath: "answers" | "knowledge-base" }) {
+  const { copy } = usePublicCopy();
   const { slug } = useParams<{ slug: string }>();
   const article = GEO_ARTICLES.find((a) => a.slug === slug);
   if (!article) return <NotFound />;
@@ -216,11 +219,11 @@ export function GeoArticlePage({ basePath }: { basePath: "answers" | "knowledge-
     <>
       <Helmet>
         <title>{article.title} — SevenDevX</title>
-        <meta name="description" content={article.summary} />
+        <meta name="description" content={copy(article.summary)} />
         <meta name="keywords" content={article.keywords.join(", ")} />
         <link rel="canonical" href={url} />
-        <meta property="og:title" content={article.title} />
-        <meta property="og:description" content={article.summary} />
+        <meta property="og:title" content={copy(article.title)} />
+        <meta property="og:description" content={copy(article.summary)} />
         <meta property="og:url" content={url} />
         <meta property="og:type" content="article" />
         <script type="application/ld+json">{JSON.stringify(articleSchema)}</script>
@@ -232,7 +235,7 @@ export function GeoArticlePage({ basePath }: { basePath: "answers" | "knowledge-
       <main className="min-h-screen bg-background text-foreground pt-24 pb-16">
         <Container narrow>
           <Link to={`/${basePath}`} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition mb-8">
-            <ArrowLeft className="w-4 h-4" /> Voltar
+            <ArrowLeft className="w-4 h-4" /> {copy("Voltar")}
           </Link>
 
           <motion.article
@@ -241,17 +244,17 @@ export function GeoArticlePage({ basePath }: { basePath: "answers" | "knowledge-
             transition={{ duration: 0.6 }}
           >
             <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-4">
-              {basePath === "answers" ? "AI Answer" : "Knowledge Base"} · {article.readingMinutes} min
+              {copy(basePath === "answers" ? "AI Answer" : "Knowledge Base")} · {article.readingMinutes} {copy("min")}
             </p>
             <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-6 leading-tight">
-              {article.title}
+              {copy(article.title)}
             </h1>
 
             {/* Short answer block — optimized for featured snippets & AI Overviews */}
             <div className="geo-short-answer p-6 rounded-2xl border border-border bg-card mb-12">
               <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-muted-foreground mb-3">
                 <MessageCircleQuestion className="w-4 h-4" />
-                Resposta direta
+                {copy("Resposta direta")}
               </div>
               <p className="text-lg leading-relaxed font-medium">{article.shortAnswer}</p>
             </div>
@@ -265,7 +268,7 @@ export function GeoArticlePage({ basePath }: { basePath: "answers" | "knowledge-
               ))}
 
               <section>
-                <h2 className="text-2xl font-bold tracking-tight mb-6">Perguntas Frequentes</h2>
+                <h2 className="text-2xl font-bold tracking-tight mb-6">{copy("Perguntas Frequentes")}</h2>
                 <div className="space-y-4">
                   {article.faq.map((f) => (
                     <details key={f.q} className="group p-5 rounded-xl border border-border bg-card">
@@ -281,7 +284,7 @@ export function GeoArticlePage({ basePath }: { basePath: "answers" | "knowledge-
 
               {article.relatedSlugs?.length ? (
                 <section>
-                  <h2 className="text-2xl font-bold tracking-tight mb-6">Conteúdo relacionado</h2>
+                  <h2 className="text-2xl font-bold tracking-tight mb-6">{copy("Conteúdo relacionado")}</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {article.relatedSlugs.map((rs) => {
                       const rel = GEO_ARTICLES.find((x) => x.slug === rs);
@@ -290,9 +293,9 @@ export function GeoArticlePage({ basePath }: { basePath: "answers" | "knowledge-
                       return (
                         <Link key={rs} to={`/${path}/${rs}`} className="block p-5 rounded-xl border border-border bg-card hover:border-foreground/30 transition">
                           <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
-                            {path === "answers" ? "AI Answer" : "Knowledge"}
+                            {copy(path === "answers" ? "AI Answer" : "Knowledge")}
                           </p>
-                          <p className="font-semibold">{rel.title}</p>
+                          <p className="font-semibold">{copy(rel.title)}</p>
                         </Link>
                       );
                     })}

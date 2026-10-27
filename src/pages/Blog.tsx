@@ -89,6 +89,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -154,6 +155,7 @@ const formatDate = (dateString: string | null, lang: string) => {
 
 /* ── Featured Article (Hero) ── */
 const FeaturedArticle = ({ post, lang }: { post: BlogPost; lang: string }) => {
+  const { copy } = usePublicCopy();
   const { t } = useLanguage();
   return (
     <Link to={`/blog/${post.slug}`} className="group block">
@@ -169,7 +171,7 @@ const FeaturedArticle = ({ post, lang }: { post: BlogPost; lang: string }) => {
             {post.cover_image ? (
               <motion.img
                 src={post.cover_image}
-                alt={post.title}
+                alt={copy(post.title)}
                 className="w-full h-full object-cover"
                 whileHover={{ scale: 1.08 }}
                 transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
@@ -195,7 +197,7 @@ const FeaturedArticle = ({ post, lang }: { post: BlogPost; lang: string }) => {
                     border: `1px solid ${post.category.color}30`,
                   }}
                 >
-                  {post.category.name}
+                  {copy(post.category.name)}
                 </span>
               )}
               <span className="text-xs text-muted-foreground uppercase tracking-wider">
@@ -204,7 +206,7 @@ const FeaturedArticle = ({ post, lang }: { post: BlogPost; lang: string }) => {
             </div>
 
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold leading-tight tracking-tight group-hover:text-primary/90 transition-colors duration-300">
-              {post.title}
+              {copy(post.title)}
             </h2>
 
             {post.excerpt && (
@@ -220,11 +222,11 @@ const FeaturedArticle = ({ post, lang }: { post: BlogPost; lang: string }) => {
               </span>
               <span className="flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5" />
-                {post.read_time || 5} min
+                {copy(post.read_time || 5)} {copy("min")}
               </span>
               <span className="flex items-center gap-1.5">
                 <Eye className="w-3.5 h-3.5" />
-                {post.views_count || 0}
+                {copy(post.views_count || 0)}
               </span>
             </div>
 
@@ -241,6 +243,7 @@ const FeaturedArticle = ({ post, lang }: { post: BlogPost; lang: string }) => {
 
 /* ── Article Card (Grid) ── */
 const ArticleCard = ({ post, index, variant = "default", lang }: { post: BlogPost; index: number; variant?: "default" | "wide"; lang: string }) => {
+  const { copy } = usePublicCopy();
   const { t } = useLanguage();
   return (
     <motion.article
@@ -258,7 +261,7 @@ const ArticleCard = ({ post, index, variant = "default", lang }: { post: BlogPos
             {post.cover_image ? (
               <img
                 src={post.cover_image}
-                alt={post.title}
+                alt={copy(post.title)}
                 loading="lazy"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               />
@@ -278,12 +281,12 @@ const ArticleCard = ({ post, index, variant = "default", lang }: { post: BlogPos
                   color: post.category.color,
                 }}
               >
-                {post.category.name}
+                {copy(post.category.name)}
               </span>
             )}
 
             <h3 className="text-lg font-bold leading-snug group-hover:text-primary/90 transition-colors line-clamp-2">
-              {post.title}
+              {copy(post.title)}
             </h3>
 
             {post.excerpt && (
@@ -300,7 +303,7 @@ const ArticleCard = ({ post, index, variant = "default", lang }: { post: BlogPos
                 </span>
                 <span className="flex items-center gap-1">
                   <Clock className="w-3 h-3" />
-                  {post.read_time || 5} min
+                  {copy(post.read_time || 5)} {copy("min")}
                 </span>
               </div>
               <ChevronRight className="w-4 h-4 text-muted-foreground/50 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
@@ -318,6 +321,7 @@ const ArticleCard = ({ post, index, variant = "default", lang }: { post: BlogPos
 
 /* ── Main Blog Page ── */
 const Blog = () => {
+  const { copy } = usePublicCopy();
   const { t, language } = useLanguage();
   useAnalytics();
 
@@ -390,8 +394,8 @@ const Blog = () => {
   return (
     <>
       <SEOHead
-        title="Blog — SevenDevX | Artigos sobre Desenvolvimento Web & Tecnologia"
-        description="Artigos técnicos sobre criação de sites, React, TypeScript, performance web, UX/UI e arquitetura de software. Conteúdo profundo para desenvolvedores e empresas."
+        title={copy("Blog — SevenDevX | Artigos sobre Desenvolvimento Web & Tecnologia")}
+        description={copy("Artigos técnicos sobre criação de sites, React, TypeScript, performance web, UX/UI e arquitetura de software. Conteúdo profundo para desenvolvedores e empresas.")}
         keywords="blog desenvolvimento web, artigos tecnologia, como criar um site, performance web, react tutorial, typescript dicas, landing page conversão, frontend backend, full stack, UX UI design, melhores tecnologias web, criação de sites profissionais"
         url="https://www.sevendevx.com/blog"
         type="website"
@@ -422,7 +426,7 @@ const Blog = () => {
                   custom={1}
                   className="text-[clamp(2rem,5vw,4.5rem)] font-bold mb-6 tracking-tight leading-[1.05]"
                 >
-                  {t.blog.heroTitle}{" "}
+                  {t.blog.heroTitle}{copy(" ")}
                   <span className="text-muted-foreground">{t.blog.heroTitleHighlight}</span>
                 </motion.h1>
                 <motion.p
@@ -472,7 +476,7 @@ const Blog = () => {
                           : "bg-muted/10 text-muted-foreground hover:bg-muted/20"
                       }`}
                     >
-                      {category.name}
+                      {copy(category.name)}
                     </button>
                   ))}
                 </div>
@@ -521,9 +525,9 @@ const Blog = () => {
                   <div className="text-5xl mb-4 opacity-20">🔍</div>
                   <h3 className="text-xl font-bold mb-2">{t.blog.noResults}</h3>
                   <p className="text-muted-foreground text-sm">
-                    {searchQuery
+                    {copy(searchQuery
                       ? `${t.blog.noResultsFor} "${searchQuery}"`
-                      : t.blog.newArticlesSoon}
+                      : t.blog.newArticlesSoon)}
                   </p>
                 </motion.div>
               )}

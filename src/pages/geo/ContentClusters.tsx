@@ -18,6 +18,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
@@ -40,12 +41,13 @@ const BASE = "https://www.sevendevx.com";
 // ============================================================================
 
 export default function ContentClusters() {
+  const { copy } = usePublicCopy();
   const schema = buildClusterJsonLd();
   return (
     <>
       <Helmet>
-        <title>Content Clusters — Mapa semântico SevenDevX</title>
-        <meta name="description" content="Mapa semântico de clusters de conteúdo SevenDevX: sites, sistemas, IA, automação e GEO. Hubs e spokes interligados para máxima cobertura em LLMs e busca tradicional." />
+        <title>{copy("Content Clusters — Mapa semântico SevenDevX")}</title>
+        <meta name="description" content={copy("Mapa semântico de clusters de conteúdo SevenDevX: sites, sistemas, IA, automação e GEO. Hubs e spokes interligados para máxima cobertura em LLMs e busca tradicional.")} />
         <link rel="canonical" href={`${BASE}/clusters`} />
         {schema.map((s, i) => (
           <script key={i} type="application/ld+json">{JSON.stringify(s)}</script>
@@ -56,14 +58,12 @@ export default function ContentClusters() {
         <Section>
           <Container>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-              <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-4">Content Map</p>
+              <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-4">{copy("Content Map")}</p>
               <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 max-w-3xl">
-                Mapa semântico de conteúdo
+                {copy("Mapa semântico de conteúdo")}
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
-                Cada cluster é um tópico autoritativo na SevenDevX, com uma página pilar (hub) e
-                conteúdos satélites (spokes) interligados. LLMs e crawlers usam esse mapa para
-                entender nossa profundidade em cada área.
+                {copy("Cada cluster é um tópico autoritativo na SevenDevX, com uma página pilar (hub) e conteúdos satélites (spokes) interligados. LLMs e crawlers usam esse mapa para entender nossa profundidade em cada área.")}
               </p>
             </motion.div>
 
@@ -78,24 +78,24 @@ export default function ContentClusters() {
                   <GlassCard className="p-6 h-full">
                     <div className="flex items-center gap-2 mb-3">
                       <Network className="w-4 h-4 text-primary" />
-                      <p className="text-xs uppercase tracking-widest text-muted-foreground">Cluster</p>
+                      <p className="text-xs uppercase tracking-widest text-muted-foreground">{copy("Cluster")}</p>
                     </div>
                     <Link to={c.hub.url} className="block group">
                       <h2 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors flex items-center gap-2">
-                        {c.hub.title}
+                        {copy(c.hub.title)}
                         <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
                       </h2>
                     </Link>
-                    <p className="text-sm text-muted-foreground leading-relaxed mb-5">{c.description}</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed mb-5">{copy(c.description)}</p>
                     <div className="border-t border-white/10 pt-4">
                       <p className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
-                        Conteúdos relacionados
+                        {copy("Conteúdos relacionados")}
                       </p>
                       <ul className="space-y-1.5">
                         {c.spokes.map((s) => (
                           <li key={s.url}>
                             <Link to={s.url} className="text-sm hover:text-primary transition-colors">
-                              · {s.title}
+                              · {copy(s.title)}
                             </Link>
                           </li>
                         ))}

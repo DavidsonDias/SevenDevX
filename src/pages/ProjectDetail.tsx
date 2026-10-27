@@ -80,6 +80,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -102,6 +103,7 @@ import { TagIcon } from "@/components/TagIcon";
 // ============================================================================
 
 const ProjectDetail = () => {
+  const { copy } = usePublicCopy();
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { data: project, isLoading, error } = useProjectBySlug(slug);
@@ -120,9 +122,9 @@ const ProjectDetail = () => {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center text-center px-6">
         <div>
-          <p className="text-muted-foreground mb-4">Projeto não encontrado.</p>
+          <p className="text-muted-foreground mb-4">{copy("Projeto não encontrado.")}</p>
           <Button onClick={() => navigate("/projects-hub")} variant="outline">
-            Ver todos os projetos
+            {copy("Ver todos os projetos")}
           </Button>
         </div>
       </div>
@@ -184,21 +186,21 @@ const ProjectDetail = () => {
                   className="mb-6 text-muted-foreground hover:text-foreground"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
-                  Voltar aos projetos
+                  {copy("Voltar aos projetos")}
                 </Button>
 
                 <div className="grid lg:grid-cols-2 gap-10 items-center">
                   <div className="space-y-5">
                     {project.featured && (
                       <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-primary/15 border border-primary/30 rounded-full text-[11px] font-medium text-primary uppercase tracking-wider">
-                        <Sparkles size={11} /> Projeto em destaque
+                        <Sparkles size={11} /> {copy("Projeto em destaque")}
                       </span>
                     )}
                     <h1 className="text-[clamp(1.8rem,5vw,3.5rem)] font-orbitron font-bold tracking-tight leading-tight">
-                      {project.title}
+                      {copy(project.title)}
                     </h1>
                     <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                      {project.description}
+                      {copy(project.description)}
                     </p>
 
                     <div className="flex flex-wrap gap-2 pt-2">
@@ -214,7 +216,7 @@ const ProjectDetail = () => {
                         <Button asChild size="lg">
                           <a href={project.liveUrl!} target="_blank" rel="noopener noreferrer">
                             <ExternalLink className="h-4 w-4 mr-2" />
-                            Ver projeto ao vivo
+                            {copy("Ver projeto ao vivo")}
                           </a>
                         </Button>
                       )}
@@ -222,7 +224,7 @@ const ProjectDetail = () => {
                         <Button asChild size="lg" variant="outline">
                           <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
                             <Github className="h-4 w-4 mr-2" />
-                            Repositório
+                            {copy("Repositório")}
                           </a>
                         </Button>
                       )}
@@ -237,7 +239,7 @@ const ProjectDetail = () => {
                   >
                     <img
                       src={project.image}
-                      alt={project.title}
+                      alt={copy(project.title)}
                       className="w-full h-full object-cover"
                       loading="eager"
                     />
@@ -253,10 +255,10 @@ const ProjectDetail = () => {
             <section className="py-16 sm:py-20">
               <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-4">
-                  Sobre o projeto
+                  {copy("Sobre o projeto")}
                 </h2>
                 <p className="text-base sm:text-lg leading-relaxed text-foreground/90 whitespace-pre-line">
-                  {project.longDescription}
+                  {copy(project.longDescription)}
                 </p>
               </div>
             </section>
@@ -267,7 +269,7 @@ const ProjectDetail = () => {
             <section className="py-12 border-t border-border/30">
               <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-6">
-                  Stack utilizada
+                  {copy("Stack utilizada")}
                 </h2>
                 <div className="flex flex-wrap gap-3">
                   {project.techs.map((tech) => {
@@ -282,7 +284,7 @@ const ProjectDetail = () => {
                         ) : (
                           <Icon className="text-base" style={{ color: tech.color }} />
                         )}
-                        <span className="text-sm font-medium">{tech.name}</span>
+                        <span className="text-sm font-medium">{copy(tech.name)}</span>
                       </div>
                     );
                   })}
@@ -295,17 +297,17 @@ const ProjectDetail = () => {
           <section className="py-20 border-t border-border/30 text-center">
             <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 space-y-5">
               <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
-                Quer um projeto como esse?
+                {copy("Quer um projeto como esse?")}
               </h2>
               <p className="text-muted-foreground">
-                Conte sua ideia e construímos uma solução sob medida para o seu negócio.
+                {copy("Conte sua ideia e construímos uma solução sob medida para o seu negócio.")}
               </p>
               <div className="flex flex-wrap justify-center gap-3 pt-2">
                 <Button asChild size="lg">
-                  <Link to="/#contact">Solicitar orçamento</Link>
+                  <Link to="/#contact">{copy("Solicitar orçamento")}</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline">
-                  <Link to="/projects-hub">Ver todos os projetos</Link>
+                  <Link to="/projects-hub">{copy("Ver todos os projetos")}</Link>
                 </Button>
               </div>
             </div>

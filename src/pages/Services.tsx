@@ -82,6 +82,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -129,6 +130,7 @@ const COVER_BY_SLUG: Record<string, string> = {
 // ============================================================================
 
 const Services = () => {
+  const { copy } = usePublicCopy();
   const { t, language } = useLanguage();
 
   // 📊 Track page view
@@ -203,8 +205,8 @@ const Services = () => {
           SEO Optimized
          ========================= */}
       <SEOHead
-        title={currentSeo.title}
-        description={currentSeo.description}
+        title={copy(currentSeo.title)}
+        description={copy(currentSeo.description)}
         keywords={currentSeo.keywords}
         url="https://www.sevendevx.com/services"
         type="website"
@@ -357,7 +359,7 @@ const Services = () => {
                           <div className="relative h-48 overflow-hidden">
                             <img
                               src={service.image}
-                              alt={service.title}
+                              alt={copy(service.title)}
                               loading="lazy"
                               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                             />
@@ -372,10 +374,10 @@ const Services = () => {
                           {/* Content */}
                           <div className="p-6 space-y-4">
                             <h3 className="text-xl font-bold uppercase tracking-wide">
-                              {service.title}
+                              {copy(service.title)}
                             </h3>
                             <p className="text-white/70 text-sm leading-relaxed line-clamp-3">
-                              {service.description}
+                              {copy(service.description)}
                             </p>
 
                             {/* Features */}
@@ -386,7 +388,7 @@ const Services = () => {
                                   className="flex items-start gap-2 text-white/60 text-sm"
                                 >
                                   <ArrowRight size={14} className="mt-0.5 flex-shrink-0 text-primary" />
-                                  <span>{feature}</span>
+                                  <span>{copy(feature)}</span>
                                 </li>
                               ))}
                             </ul>
@@ -490,16 +492,16 @@ const Services = () => {
           <section className="py-16 px-4 md:px-8 lg:px-16 bg-background border-t border-border/10">
             <div className="container mx-auto text-center">
               <p className="text-muted-foreground text-sm mb-4">
-                {language === "pt" ? "Veja nossos projetos reais e artigos técnicos" :
+                {copy(language === "pt" ? "Veja nossos projetos reais e artigos técnicos" :
                  language === "es" ? "Vea nuestros proyectos reales y artículos técnicos" :
-                 "See our real projects and technical articles"}
+                 "See our real projects and technical articles")}
               </p>
               <div className="flex gap-4 justify-center flex-wrap">
                 <a href="/projects-hub" className="text-sm font-semibold text-primary hover:underline">
-                  {language === "pt" ? "Portfólio →" : language === "es" ? "Portafolio →" : "Portfolio →"}
+                  {copy(language === "pt" ? "Portfólio →" : language === "es" ? "Portafolio →" : "Portfolio →")}
                 </a>
                 <a href="/blog" className="text-sm font-semibold text-primary hover:underline">
-                  Blog →
+                  {copy("Blog →")}
                 </a>
               </div>
             </div>

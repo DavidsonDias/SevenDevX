@@ -93,6 +93,7 @@
 /**
  * 🛒 IntegrationsMarketplace — vitrine pública + 1-click install (admin).
  */
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -120,6 +121,7 @@ const CATS = Object.keys(CATEGORY_LABEL) as ProviderCategory[];
 // ============================================================================
 
 export default function IntegrationsMarketplace() {
+  const { copy } = usePublicCopy();
   const { user, isAdmin } = useAuthContext();
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<ProviderCategory | "all">("all");
@@ -174,8 +176,8 @@ export default function IntegrationsMarketplace() {
   return (
     <>
       <SEOHead
-        title="Marketplace de Integrações | SevenDevX"
-        description={`Conectamos seu produto a ${PROVIDER_CATALOG.length}+ ferramentas enterprise. GitHub, Vercel, Stripe, OpenAI, Slack, WhatsApp e muito mais.`}
+        title={copy("Marketplace de Integrações | SevenDevX")}
+        description={copy(`Conectamos seu produto a ${PROVIDER_CATALOG.length}+ ferramentas enterprise. GitHub, Vercel, Stripe, OpenAI, Slack, WhatsApp e muito mais.`)}
       />
       <Header />
       <main className="min-h-screen bg-background pt-24 pb-24">
@@ -183,18 +185,18 @@ export default function IntegrationsMarketplace() {
         <section className="container mx-auto px-4 mb-12">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center max-w-3xl mx-auto">
             <Badge variant="outline" className="mb-4 border-white/15 text-white/70">
-              <Sparkles className="w-3 h-3 mr-1" /> {PROVIDER_CATALOG.length}+ integrações enterprise
+              <Sparkles className="w-3 h-3 mr-1" /> {PROVIDER_CATALOG.length}{copy("+ integrações enterprise")}
             </Badge>
             <h1 className="text-4xl sm:text-6xl font-bold tracking-tight mb-6 bg-gradient-to-br from-white to-white/40 bg-clip-text text-transparent">
-              Marketplace de Integrações
+              {copy("Marketplace de Integrações")}
             </h1>
             <p className="text-lg text-white/60 leading-relaxed">
-              Conectamos seu produto a todo o ecossistema que sua operação precisa. Deploy, IA, pagamentos, comunicação, observabilidade — entregue chave-na-mão pela SevenDevX.
+              {copy("Conectamos seu produto a todo o ecossistema que sua operação precisa. Deploy, IA, pagamentos, comunicação, observabilidade — entregue chave-na-mão pela SevenDevX.")}
             </p>
             <div className="flex flex-wrap justify-center gap-2 mt-6 text-xs text-white/40">
-              <span className="flex items-center gap-1"><Check className="w-3 h-3 text-emerald-400" /> OAuth & API key</span>
-              <span className="flex items-center gap-1"><Check className="w-3 h-3 text-emerald-400" /> Webhooks com retry/DLQ</span>
-              <span className="flex items-center gap-1"><Check className="w-3 h-3 text-emerald-400" /> Logs e observabilidade</span>
+              <span className="flex items-center gap-1"><Check className="w-3 h-3 text-emerald-400" /> {copy("OAuth & API key")}</span>
+              <span className="flex items-center gap-1"><Check className="w-3 h-3 text-emerald-400" /> {copy("Webhooks com retry/DLQ")}</span>
+              <span className="flex items-center gap-1"><Check className="w-3 h-3 text-emerald-400" /> {copy("Logs e observabilidade")}</span>
             </div>
           </motion.div>
         </section>
@@ -206,7 +208,7 @@ export default function IntegrationsMarketplace() {
             <Input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder={`Buscar entre ${PROVIDER_CATALOG.length} integrações…`}
+              placeholder={copy(`Buscar entre ${PROVIDER_CATALOG.length} integrações…`)}
               className="pl-11 h-12 bg-white/5 border-white/10"
             />
           </div>
@@ -218,7 +220,7 @@ export default function IntegrationsMarketplace() {
                 cat === "all" ? "bg-white text-black" : "bg-white/5 text-white/60 hover:bg-white/10"
               }`}
             >
-              Todas · {PROVIDER_CATALOG.length}
+              {copy("Todas ·")} {PROVIDER_CATALOG.length}
             </button>
             {CATS.map((c) => (
               <button
@@ -228,7 +230,7 @@ export default function IntegrationsMarketplace() {
                   cat === c ? "bg-white text-black" : "bg-white/5 text-white/60 hover:bg-white/10"
                 }`}
               >
-                {CATEGORY_LABEL[c]} · {totalsByCat[c] || 0}
+                {CATEGORY_LABEL[c]} · {copy(totalsByCat[c] || 0)}
               </button>
             ))}
           </div>
@@ -237,7 +239,7 @@ export default function IntegrationsMarketplace() {
         {/* Grid */}
         <section className="container mx-auto px-4">
           {filtered.length === 0 ? (
-            <div className="text-center text-white/50 py-24">Nenhuma integração encontrada para "{q}".</div>
+            <div className="text-center text-white/50 py-24">{copy("Nenhuma integração encontrada para \"")}{q}".</div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {filtered.map((p, i) => (
@@ -257,7 +259,7 @@ export default function IntegrationsMarketplace() {
                       <div className="text-[10px] uppercase tracking-wider text-white/40 truncate">{CATEGORY_LABEL[p.category]}</div>
                     </div>
                   </div>
-                  <p className="text-xs text-white/55 line-clamp-2 leading-relaxed">{p.description}</p>
+                  <p className="text-xs text-white/55 line-clamp-2 leading-relaxed">{copy(p.description)}</p>
                   {p.badges && p.badges.length > 0 && (
                     <div className="mt-2 flex flex-wrap gap-1">
                       {p.badges.slice(0, 2).map((b) => (
@@ -273,7 +275,7 @@ export default function IntegrationsMarketplace() {
                     className="mt-3 w-full inline-flex items-center justify-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-white/10 hover:bg-white text-white hover:text-black text-[11px] font-medium transition-colors disabled:opacity-50"
                   >
                     {installing === p.id ? <Loader2 className="w-3 h-3 animate-spin" /> : <Plus className="w-3 h-3" />}
-                    {isAdmin ? "Instalar" : "Solicitar"}
+                    {copy(isAdmin ? "Instalar" : "Solicitar")}
                   </button>
                 </motion.div>
               ))}
@@ -290,13 +292,13 @@ export default function IntegrationsMarketplace() {
             className="relative overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.02] p-8 sm:p-14 text-center"
           >
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(59,130,246,0.15),transparent_60%)] pointer-events-none" />
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight">Não viu sua ferramenta?</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4 tracking-tight">{copy("Não viu sua ferramenta?")}</h2>
             <p className="text-white/60 max-w-xl mx-auto mb-8">
-              Construímos integrações sob demanda. Webhooks customizados, OAuth, sync bidirecional, automações complexas — diga o que você precisa.
+              {copy("Construímos integrações sob demanda. Webhooks customizados, OAuth, sync bidirecional, automações complexas — diga o que você precisa.")}
             </p>
             <Link to="/store">
               <Button size="lg" className="bg-white text-black hover:bg-white/90">
-                Solicitar integração customizada <ArrowRight className="w-4 h-4 ml-2" />
+                {copy("Solicitar integração customizada")} <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
           </motion.div>

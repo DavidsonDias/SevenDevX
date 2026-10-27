@@ -76,6 +76,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -87,6 +88,7 @@ import { useLanguage } from "@/i18n/LanguageContext";
 // ============================================================================
 
 const PrivacyPolicy = () => {
+  const { copy } = usePublicCopy();
   const { t, language } = useLanguage();
 
   // Formatação da data de última atualização baseada no idioma
@@ -103,7 +105,7 @@ const PrivacyPolicy = () => {
   return (
     <>
       <SEOHead
-        title={`${t.privacy.title} - SevenDevX`}
+        title={copy(`${t.privacy.title} - SevenDevX`)}
         description={t.privacy.intro.slice(0, 160)}
         keywords="política de privacidade, LGPD, proteção de dados, privacidade, SevenDevX, segurança digital"
         url="https://www.sevendevx.com/privacy-policy"
@@ -253,7 +255,7 @@ const PrivacyPolicy = () => {
                     <p className="mt-6 mb-2">{t.privacy.sections.rights.contactPrompt}</p>
                     <div className="space-y-2">
                       <p>
-                        📧{" "}
+                        📧{copy(" ")}
                         <a
                           href="mailto:contato@sevendevx.com"
                           className="text-primary hover:underline transition-colors"
@@ -262,7 +264,7 @@ const PrivacyPolicy = () => {
                         </a>
                       </p>
                       <p>
-                        💬{" "}
+                        💬{copy(" ")}
                         <a
                           href="https://wa.me/5531984740625"
                           target="_blank"
@@ -303,7 +305,7 @@ const PrivacyPolicy = () => {
                       </li>
                       <li>📍 {t.privacy.sections.contact.location}</li>
                       <li>
-                        📧{" "}
+                        📧{copy(" ")}
                         <a
                           href="mailto:contato@sevendevx.com"
                           className="text-primary hover:underline transition-colors"
@@ -312,7 +314,7 @@ const PrivacyPolicy = () => {
                         </a>
                       </li>
                       <li>
-                        📱{" "}
+                        📱{copy(" ")}
                         <a
                           href="https://wa.me/5531984740625"
                           target="_blank"

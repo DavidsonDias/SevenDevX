@@ -81,6 +81,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { Suspense, lazy, useEffect } from "react";
 import { motion } from "framer-motion";
 
@@ -108,6 +109,7 @@ const PortfolioCarousel3D = lazy(() => import("@/components/PortfolioCarousel3D"
 // ============================================================================
 
 const Projects = () => {
+  const { copy } = usePublicCopy();
   const { t } = useLanguage();
   
   // 📊 Track page view
@@ -127,8 +129,8 @@ const Projects = () => {
           SEO Optimized
          ========================= */}
       <SEOHead
-        title="Portfólio de Projetos | SevenDevX — Sites, SaaS & Sistemas Web"
-        description="Portfólio completo da SevenDevX: sites profissionais, sistemas web, SaaS, landing pages e dashboards. Projetos reais com React, TypeScript e Node.js."
+        title={copy("Portfólio de Projetos | SevenDevX — Sites, SaaS & Sistemas Web")}
+        description={copy("Portfólio completo da SevenDevX: sites profissionais, sistemas web, SaaS, landing pages e dashboards. Projetos reais com React, TypeScript e Node.js.")}
         keywords="portfólio desenvolvimento web, projetos React, sites profissionais, SaaS, landing pages, sistemas web, dashboard, e-commerce, SevenDevX, full stack, aplicações web modernas"
         url="https://www.sevendevx.com/projects"
         type="website"

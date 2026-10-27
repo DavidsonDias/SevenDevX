@@ -79,6 +79,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { motion, useReducedMotion } from "framer-motion";
 import { useMemo } from "react";
 import Header from "@/components/Header";
@@ -185,6 +186,7 @@ const staggerItem = {
 // ============================================================================
 
 const Fornecedores = () => {
+  const { copy } = usePublicCopy();
   const { t } = useLanguage();
   const prefersReducedMotion = useReducedMotion();
   
@@ -267,8 +269,8 @@ const Fornecedores = () => {
     <>
       {/* 🎯 SEO avançado com Schema.org */}
       <SEOHead
-        title="Portal de Fornecedores - SevenDevX"
-        description="Seja um fornecedor parceiro da SevenDevX — inovação, tecnologia e parcerias estratégicas de alta performance."
+        title={copy("Portal de Fornecedores - SevenDevX")}
+        description={copy("Seja um fornecedor parceiro da SevenDevX — inovação, tecnologia e parcerias estratégicas de alta performance.")}
         keywords="fornecedores, parcerias, tecnologia, infraestrutura, cloud, serviços digitais, SevenDevX"
         url="https://www.sevendevx.com/fornecedores"
         type="website"
@@ -296,7 +298,7 @@ const Fornecedores = () => {
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-3 focus:bg-white focus:text-black focus:font-bold"
         >
-          Pular para o conteúdo principal
+          {copy("Pular para o conteúdo principal")}
         </a>
 
         <main
@@ -308,7 +310,7 @@ const Fornecedores = () => {
           {/* HERO com gradiente sutil */}
           <section 
             className="min-h-[50vh] flex items-center border-b border-white/10 relative overflow-hidden"
-            aria-label="Apresentação do portal de fornecedores"
+            aria-label={copy("Apresentação do portal de fornecedores")}
           >
             {/* Background gradient decorativo */}
             <div className="absolute inset-0 bg-gradient-to-b from-white/[0.02] to-transparent pointer-events-none" />
@@ -352,7 +354,7 @@ const Fornecedores = () => {
           </section>
 
           {/* APRESENTAÇÃO */}
-          <section className="py-20" aria-label="Informações sobre parceria">
+          <section className="py-20" aria-label={copy("Informações sobre parceria")}>
             <div className="container mx-auto px-6 max-w-4xl">
               <motion.div
                 initial={prefersReducedMotion ? false : "hidden"}
@@ -451,7 +453,7 @@ const Fornecedores = () => {
                           <Icon className="w-6 h-6 text-white/70 flex-shrink-0" />
                           <div className="flex-1">
                             <h4 className="font-semibold mb-2 uppercase text-sm tracking-wider">
-                              {item.title}
+                              {copy(item.title)}
                             </h4>
 
                             {item.href ? (
@@ -529,7 +531,7 @@ const Fornecedores = () => {
           {/* Novo: Seção de FAQ rápido */}
           <section 
             className="py-20 border-t border-white/10"
-            aria-label="Perguntas frequentes"
+            aria-label={copy("Perguntas frequentes")}
           >
             <div className="container mx-auto px-6 max-w-4xl">
               <motion.div
@@ -584,7 +586,7 @@ const Fornecedores = () => {
             className="flex items-center justify-center gap-2 w-full bg-white text-black py-4 font-bold uppercase text-sm tracking-wider shadow-lg hover:bg-white/90 transition-colors"
           >
             <Mail className="w-5 h-5" />
-            Enviar Proposta
+            {copy("Enviar Proposta")}
           </a>
         </motion.div>
       </div>

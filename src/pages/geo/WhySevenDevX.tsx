@@ -74,6 +74,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
 import { Award, Code2, Zap, Shield, Users, Trophy, Sparkles, Heart } from "lucide-react";
@@ -122,6 +123,7 @@ const DIFFERENTIALS = [
 // ============================================================================
 
 export default function WhySevenDevX() {
+  const { copy } = usePublicCopy();
   const url = "https://www.sevendevx.com/why-sevendevx";
 
   const aboutSchema = {
@@ -135,13 +137,13 @@ export default function WhySevenDevX() {
   return (
     <>
       <Helmet>
-        <title>Por que SevenDevX — Expertise, Performance e Autoridade Técnica</title>
+        <title>{copy("Por que SevenDevX — Expertise, Performance e Autoridade Técnica")}</title>
         <meta
           name="description"
-          content="Conheça os diferenciais da SevenDevX: experience, expertise, authoritativeness e trustworthiness. Software house full stack com performance Lighthouse 95+ e design enterprise."
+          content={copy("Conheça os diferenciais da SevenDevX: experience, expertise, authoritativeness e trustworthiness. Software house full stack com performance Lighthouse 95+ e design enterprise.")}
         />
         <link rel="canonical" href={url} />
-        <meta property="og:title" content="Por que SevenDevX" />
+        <meta property="og:title" content={copy("Por que SevenDevX")} />
         <meta property="og:url" content={url} />
         <script type="application/ld+json">{JSON.stringify(aboutSchema)}</script>
       </Helmet>
@@ -152,10 +154,9 @@ export default function WhySevenDevX() {
           <Container>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="max-w-3xl">
               <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-4">E-E-A-T</p>
-              <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">Por que SevenDevX</h1>
+              <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">{copy("Por que SevenDevX")}</h1>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                Quatro pilares que definem como entregamos software e por que somos referência em
-                desenvolvimento web, sistemas sob demanda e integração de IA no Brasil.
+                {copy("Quatro pilares que definem como entregamos software e por que somos referência em desenvolvimento web, sistemas sob demanda e integração de IA no Brasil.")}
               </p>
             </motion.div>
           </Container>
@@ -178,8 +179,8 @@ export default function WhySevenDevX() {
                     <div className="w-12 h-12 rounded-xl bg-foreground/5 flex items-center justify-center mb-6">
                       <Icon className="w-6 h-6" />
                     </div>
-                    <h2 className="text-2xl font-bold mb-3">{p.title}</h2>
-                    <p className="text-muted-foreground leading-relaxed">{p.body}</p>
+                    <h2 className="text-2xl font-bold mb-3">{copy(p.title)}</h2>
+                    <p className="text-muted-foreground leading-relaxed">{copy(p.body)}</p>
                   </motion.div>
                 );
               })}
@@ -189,7 +190,7 @@ export default function WhySevenDevX() {
 
         <Section>
           <Container>
-            <h2 className="text-2xl md:text-4xl font-bold tracking-tight mb-12">Diferenciais técnicos</h2>
+            <h2 className="text-2xl md:text-4xl font-bold tracking-tight mb-12">{copy("Diferenciais técnicos")}</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {DIFFERENTIALS.map((d, i) => {
                 const Icon = d.icon;
@@ -203,8 +204,8 @@ export default function WhySevenDevX() {
                     className="p-6 rounded-2xl border border-border bg-card"
                   >
                     <Icon className="w-5 h-5 mb-4 text-muted-foreground" />
-                    <h3 className="font-bold mb-2">{d.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{d.desc}</p>
+                    <h3 className="font-bold mb-2">{copy(d.title)}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{copy(d.desc)}</p>
                   </motion.div>
                 );
               })}
@@ -215,16 +216,16 @@ export default function WhySevenDevX() {
         <Section>
           <Container>
             <div className="rounded-2xl border border-border bg-card p-8 md:p-12 text-center">
-              <h2 className="text-2xl md:text-3xl font-bold mb-4">Pronto para conversar?</h2>
+              <h2 className="text-2xl md:text-3xl font-bold mb-4">{copy("Pronto para conversar?")}</h2>
               <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
-                Solicite um orçamento gratuito ou veja nossos serviços.
+                {copy("Solicite um orçamento gratuito ou veja nossos serviços.")}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link to="/services" className="px-8 py-3 border-2 border-foreground font-bold uppercase tracking-wider text-sm hover:bg-foreground hover:text-background transition">
-                  Ver Serviços
+                  {copy("Ver Serviços")}
                 </Link>
                 <a href="https://wa.me/5531984740625" target="_blank" rel="noopener noreferrer" className="px-8 py-3 border border-border font-bold uppercase tracking-wider text-sm hover:border-foreground transition">
-                  WhatsApp
+                  {copy("WhatsApp")}
                 </a>
               </div>
             </div>
