@@ -125,15 +125,13 @@ export const useUpsertDocument = () => {
   const { toast } = useToast();
   return useMutation({
     mutationFn: async (payload: any) => {
-      const { id, ...rest } = payload;
+      const { id, updated_at: expectedUpdatedAt, created_at: _createdAt, ...rest } = payload;
       if (id) {
-        const { data, error } = await supabase
-          .from("stage_documents")
-          .update({ ...rest, version: (rest.version || 1) + 1 })
-          .eq("id", id)
-          .select()
-          .single();
-        if (error) throw error;
+        let query = supabase.from("stage_documents").update({ ...rest, version: (rest.version || 1) + 1 }).eq("id", id).eq("project_id",rest.project_id).eq("stage_id",rest.stage_id);
+        if(expectedUpdatedAt)query=query.eq("updated_at",expectedUpdatedAt);
+        const { data,error }=await query.select().maybeSingle();
+        if(error)throw error;
+        if(!data)throw new Error("O documento mudou ou não está mais acessível. Reabra a versão atual; sua edição foi preservada.");
         return data;
       }
       const { data, error } = await supabase.from("stage_documents").insert(rest).select().single();

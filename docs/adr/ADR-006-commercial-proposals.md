@@ -51,3 +51,14 @@ Reverter o commit de interface não exige rollback de banco. Snapshots permanece
 - WhatsApp, Instagram, YouTube, LinkedIn, Facebook, TikTok, GitHub e X usam os símbolos de marca do pacote react-icons já instalado. E-mail, site, telefone e texto complementar usam símbolos funcionais. Os mesmos ícones são rasterizados localmente para o PDF; não dependem de CDN. Valores inválidos não são aplicados pelo seletor.
 - Dois modelos: Clássico e Azure, com azul em gradiente e geometria discreta. O tema fica no snapshot e se aplica à prévia e ao PDF. Snapshots anteriores recebem defaults seguros, mantendo o conteúdo comercial.
 - Evidência local: testes de telefone sem formatação, serialização dos canais, links inválidos, compatibilidade, tratamento não destrutivo, detalhes brancos internos e tema. Diálogo verificado em desktop e 390px e exportação PDF real com logo SVG tratada, links e ícones de marca renderizada para inspeção. Nenhum cliente real foi modificado.
+
+
+## Continuidade nas seis etapas — 2026-10-27
+
+- Os 19 documentos sugeridos das seis etapas têm modelos manuais com tópicos específicos, fatos conhecidos do projeto e marcadores explícitos de preenchimento. Não geram valores, prazos ou aprovações presumidas.
+- A revisão da etapa reúne checklist e documentos sugeridos preenchidos. Marcadores `[A preencher]` não contam como conteúdo final. É uma orientação de revisão, sem bloquear o fluxo ou aprovar/concluir entregas automaticamente. O resumo salvo pode ser exportado em PDF.
+- Documentos técnicos e notas/datas recebem rascunhos locais no mecanismo existente, isolados por usuário/projeto/etapa. Recuperação permanece explícita; erro de salvamento preserva a edição. Datas usam horário local no campo e são convertidas para ISO somente ao salvar. Campos de data inalterados não são regravados ao salvar notas.
+- A geração por IA agora abre um rascunho para revisão, sem substituir automaticamente o documento existente. O provedor não é rotulado com um modelo legado que não foi confirmado na resposta. Não foram feitas chamadas pagas durante a validação.
+- Atualizações de documentos incluem condições de projeto, etapa e `updated_at`; a ausência de linha correspondente produz conflito em vez de sucesso aparente. O trigger de atualização do timestamp foi conferido em produção por leitura de metadados.
+- Falhas em status, checklist, notas e consulta de documentos são visíveis. Ações de etapa têm guarda contra repetição durante a requisição. Formulários, contratos, snapshots comerciais e regras de conclusão continuam independentes.
+- Validação: 282 testes locais aprovados; navegação pelos seis catálogos em 390px sem overflow; abertura, preenchimento, prévia, PDF e salvamento de um briefing fictício. Nenhum registro de cliente real foi alterado. O salvamento remoto foi exercitado por testes de adaptação com simulação de conflito/erro, sem produzir dados de teste em produção.
