@@ -91,14 +91,19 @@ import { GEO_PROGRAMMATIC } from "@/data/geoContent";
 // ============================================================================
 
 export default function LocalSeoPage() {
-  const { copy } = usePublicCopy();
+  const { copy, language } = usePublicCopy();
   const { city } = useParams<{ city: string }>();
   const cityData = GEO_PROGRAMMATIC.cities.find((c) => c.slug === city);
   if (!cityData) return <NotFound />;
 
   const url = `https://www.sevendevx.com/local/${cityData.slug}`;
-  const title = `Desenvolvimento Web em ${cityData.name} — SevenDevX`;
-  const description = `Criação de sites, landing pages e sistemas sob demanda em ${cityData.name}/${cityData.state}. Software house full stack com performance Lighthouse 95+ e design enterprise.`;
+  const title = `${copy("Desenvolvimento Web em")} ${cityData.name} — SevenDevX`;
+  const descriptions = {
+    pt: `Criação de sites, landing pages e sistemas sob demanda em ${cityData.name}/${cityData.state}. Software house full stack com performance Lighthouse 95+ e design enterprise.`,
+    en: `Websites, landing pages and custom systems in ${cityData.name}/${cityData.state}, Brazil. Full-stack software development with Lighthouse 95+ performance and enterprise design.`,
+    es: `Sitios web, landing pages y sistemas a medida en ${cityData.name}/${cityData.state}, Brasil. Desarrollo full stack con rendimiento Lighthouse 95+ y diseño empresarial.`,
+  };
+  const description = descriptions[language];
 
   const localBusinessSchema = {
     "@context": "https://schema.org",

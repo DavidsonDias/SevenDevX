@@ -110,7 +110,7 @@ export function GeoArticleIndex({ basePath, filterCategory, title, intro }: Prop
   return (
     <>
       <Helmet>
-        <title>{title} — SevenDevX</title>
+        <title>{copy(title)} — SevenDevX</title>
         <meta name="description" content={copy(intro)} />
         <link rel="canonical" href={`https://www.sevendevx.com/${basePath}`} />
       </Helmet>
@@ -218,7 +218,7 @@ export function GeoArticlePage({ basePath }: { basePath: "answers" | "knowledge-
   return (
     <>
       <Helmet>
-        <title>{article.title} — SevenDevX</title>
+        <title>{copy(article.title)} — SevenDevX</title>
         <meta name="description" content={copy(article.summary)} />
         <meta name="keywords" content={article.keywords.join(", ")} />
         <link rel="canonical" href={url} />

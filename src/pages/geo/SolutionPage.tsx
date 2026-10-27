@@ -113,7 +113,7 @@ export default function SolutionPage() {
   return (
     <div className="min-h-screen bg-black text-white">
       <Helmet>
-        <title>{service.name} — SevenDevX | Software House Enterprise</title>
+        <title>{copy(service.name)} — SevenDevX | {copy("Software House Enterprise")}</title>
         <meta name="description" content={`${service.desc} Entregue pela SevenDevX com performance, SEO e GEO enterprise.`} />
         <link rel="canonical" href={url} />
         <meta property="og:title" content={`${service.name} | SevenDevX`} />
