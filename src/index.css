@@ -311,11 +311,20 @@ button, a, input, textarea, select {
 
 /* Operational cards retain brand identity without washing out labels or controls. */
 .bp-halo-multicolor.bp-readable,
-.bp-halo-multicolor.bp-readable.bp-always-on { --bp-base: .08; opacity: .08; animation: bp-rotate 22s linear infinite; }
-.group:hover .bp-halo-multicolor.bp-readable { opacity: .12; }
-.bp-ring-multicolor.bp-readable { opacity: .3; }
+.bp-halo-multicolor.bp-readable.bp-always-on { --bp-base: .16; opacity: .16; animation: bp-rotate 22s linear infinite; }
+.group:hover .bp-halo-multicolor.bp-readable,
+.group:focus-within .bp-halo-multicolor.bp-readable { opacity: .22; }
+.bp-ring-multicolor.bp-readable { opacity: .45; }
 .group:hover .bp-ring-multicolor.bp-readable,
-.bp-ring-multicolor.bp-readable.bp-always-on { opacity: .5; }
+.bp-ring-multicolor.bp-readable.bp-always-on { opacity: .65; }
+
+/* Glow accents only titles; descriptions and error messages keep a stable contrast. */
+.brand-readable-card [data-brand-title] { transition: text-shadow .2s ease, color .2s ease; }
+@media (hover: hover) and (pointer: fine) {
+  .brand-readable-card:hover [data-brand-title] { color: #fff; text-shadow: 0 0 9px var(--brand-title-glow, #67e8f9), 0 0 20px #000; }
+}
+.brand-readable-card:focus-within [data-brand-title] { color: #fff; text-shadow: 0 0 9px var(--brand-title-glow, #67e8f9), 0 0 20px #000; }
+@media (prefers-reduced-motion: reduce) { .brand-readable-card [data-brand-title] { transition: none; } }
 
 /* 🎛️ Native <select> options — força contraste legível em modo escuro */
 select { color-scheme: dark; }
@@ -466,7 +475,7 @@ select optgroup { background-color: #0a0a0a; color: rgba(255,255,255,.6); }
   .sevenos-shell > header > div { min-height: 3.5rem; padding-top: .375rem; padding-bottom: .375rem; }
   .sevenos-shell [data-header-secondary]:not([data-tour="global-search"]) { display: none; }
   .sevenos-shell [data-tour="global-search"] > button { display: none; }
-  .sevenos-shell [data-admin-brand] h1 { font-size: 1rem; }
+  .sevenos-shell [data-admin-brand] h1 { font-size: clamp(.6875rem, 3vw, 1rem); }
   .sevenos-shell > main { padding-top: 1rem; }
   .sevenos-shell > main > div { row-gap: .75rem; }
   [data-public-whatsapp], [data-chat-launcher="public"] { right: max(.75rem, env(safe-area-inset-right)); }
