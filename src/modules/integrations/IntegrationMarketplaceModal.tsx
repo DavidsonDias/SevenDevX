@@ -109,7 +109,7 @@ function MarketplaceCard({
   return (
     <motion.div
       whileHover={{ y: -3 }}
-      className="group relative min-h-[162px] p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/30 hover:bg-white/[0.04] transition-all flex flex-col gap-3 overflow-hidden"
+      className="group relative brand-readable-card min-h-[162px] p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/30 hover:bg-white/[0.04] transition-all flex flex-col gap-3 overflow-hidden"
     >
       <BrandHalo readable tokens={tokens} />
       {!tokens.isMulticolor && (
@@ -130,7 +130,7 @@ function MarketplaceCard({
         <LogoRenderer slug={i.slug} color={accent} name={i.name} variant="card" glow />
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h4 className="font-semibold truncate">{i.name}</h4>
+            <h4 data-brand-title className="font-semibold truncate">{i.name}</h4>
             {i.tagline && <span className="hidden sm:inline text-[9px] uppercase tracking-wider text-white/65 truncate">· {i.tagline}</span>}
           </div>
           <p className="text-xs text-white/75 mt-0.5 line-clamp-2">{i.description}</p>

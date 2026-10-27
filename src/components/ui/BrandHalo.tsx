@@ -37,8 +37,8 @@ export default function BrandHalo({
   return (
     <div
       aria-hidden
-      className={`pointer-events-none absolute -inset-px rounded-[inherit] opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl ${alwaysOn ? "!opacity-100" : ""} ${className}`}
-      style={{ background: `radial-gradient(circle at top left, ${tokens.primary}${readable ? "18" : "55"}, transparent 70%)` }}
+      className={`pointer-events-none absolute -inset-px rounded-[inherit] ${readable ? "opacity-60 group-hover:opacity-100 group-focus-within:opacity-100" : "opacity-0 group-hover:opacity-100"} transition-opacity duration-500 blur-xl ${alwaysOn ? "!opacity-100" : ""} ${className}`}
+      style={{ background: `radial-gradient(circle at top left, ${tokens.primary}${readable ? "30" : "55"}, transparent 70%)` }}
     />
   );
 }

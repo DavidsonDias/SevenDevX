@@ -129,7 +129,7 @@ function ProviderItemCard({
     <motion.div
       initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: i * 0.04 }} whileHover={{ y: -3 }}
-      className="relative group"
+      className="relative group brand-readable-card"
     >
       <div onClick={onOpen} className="cursor-pointer h-full relative">
         <GlassCard padding="md" hover={false} className="h-full flex flex-col gap-3.5 hover:border-white/30 transition-all overflow-hidden relative">
@@ -147,7 +147,7 @@ function ProviderItemCard({
             <LogoRenderer slug={catalog?.slug} color={accent} name={p.name} variant="card" glow />
             <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between gap-2">
-                <h4 className="font-semibold truncate"><button type="button" onClick={(event)=>{event.stopPropagation();onOpen();}} className="max-w-full truncate text-left rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70" aria-label={`Abrir detalhes de ${p.name}`}>{p.name}</button></h4>
+                <h4 data-brand-title className="font-semibold truncate"><button type="button" onClick={(event)=>{event.stopPropagation();onOpen();}} className="max-w-full truncate text-left rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70" aria-label={`Abrir detalhes de ${p.name}`}>{p.name}</button></h4>
                 <span className={`text-[9px] uppercase tracking-[0.18em] px-1.5 py-0.5 rounded border ${
                   stateLabel === "connected" ? "border-emerald-400/40 text-emerald-300 bg-emerald-400/10" :
                   stateLabel === "syncing" ? "border-sky-400/40 text-sky-300 bg-sky-400/10 animate-pulse" :

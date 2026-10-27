@@ -144,7 +144,7 @@ function PalettePreview({ slug, name, fallback }: { slug: string; name: string; 
 function IntegrationCardMock({ slug, name, description, fallback }: { slug: string; name: string; description: string; fallback: string }) {
   const tokens = useBrandPalette(slug, fallback);
   return (
-    <div className="group relative">
+    <div className="group relative brand-readable-card">
       <GlassCard padding="md" hover={false} className="h-full flex flex-col gap-3.5 transition-all overflow-hidden relative">
         <BrandHalo readable tokens={tokens} alwaysOn />
         {!tokens.isMulticolor && (
@@ -157,7 +157,7 @@ function IntegrationCardMock({ slug, name, description, fallback }: { slug: stri
           <LogoRenderer slug={slug} color={tokens.primary} name={name} variant="card" glow />
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between gap-2">
-              <h4 className="font-semibold truncate">{name}</h4>
+              <h4 data-brand-title className="font-semibold truncate">{name}</h4>
               <span className="text-[9px] uppercase tracking-[0.18em] px-1.5 py-0.5 rounded border border-emerald-400/40 text-emerald-300 bg-emerald-400/10">connected</span>
             </div>
             <p className="text-xs text-white/75 mt-0.5 line-clamp-2">{description}</p>
@@ -179,7 +179,7 @@ function IntegrationCardMock({ slug, name, description, fallback }: { slug: stri
 function MarketplaceCardMock({ slug, name, description, fallback }: { slug: string; name: string; description: string; fallback: string }) {
   const tokens = useBrandPalette(slug, fallback);
   return (
-    <div className="group relative min-h-[162px] p-4 rounded-xl border border-white/10 bg-white/[0.02] flex flex-col gap-3 overflow-hidden">
+    <div className="group relative brand-readable-card min-h-[162px] p-4 rounded-xl border border-white/10 bg-white/[0.02] flex flex-col gap-3 overflow-hidden">
       <BrandHalo readable tokens={tokens} alwaysOn />
       {!tokens.isMulticolor && (
         <div className="absolute inset-x-0 top-0 h-px opacity-80 pointer-events-none" style={{ background: tokens.topBorderGradient }} />
@@ -190,7 +190,7 @@ function MarketplaceCardMock({ slug, name, description, fallback }: { slug: stri
       <div className="relative flex items-start gap-3">
         <LogoRenderer slug={slug} color={tokens.primary} name={name} variant="card" glow />
         <div className="min-w-0 flex-1">
-          <h4 className="font-semibold truncate">{name}</h4>
+          <h4 data-brand-title className="font-semibold truncate">{name}</h4>
           <p className="text-xs text-white/75 mt-0.5 line-clamp-2">{description}</p>
         </div>
       </div>
@@ -209,11 +209,11 @@ function MarketplaceCardMock({ slug, name, description, fallback }: { slug: stri
 function HeroPreview({ slug, name, fallback }: { slug: string; name: string; fallback: string }) {
   const tokens = useBrandPalette(slug, fallback);
   return (
-    <div className="group relative rounded-2xl p-8 border border-white/10 bg-black/40 overflow-hidden">
+    <div className="group relative brand-readable-card rounded-2xl p-8 border border-white/10 bg-black/40 overflow-hidden">
       <BrandHalo readable tokens={tokens} alwaysOn intensity={2} />
       <div className="relative flex flex-col items-center gap-4">
         <LogoRenderer slug={slug} name={name} color={tokens.primary} variant="hero" glow />
-        <h3 className="text-2xl font-bold">{name}</h3>
+        <h3 data-brand-title className="text-2xl font-bold">{name}</h3>
         <PalettePreview slug={slug} name={name} fallback={fallback} />
       </div>
     </div>

@@ -81,25 +81,25 @@ export const AdminPageShell = ({ title, subtitle, actions, children, backFallbac
             <AdminMenu />
             <button
               onClick={() => goBack(backFallback)}
-              className="min-h-11 min-w-11 inline-flex items-center justify-center rounded-lg border border-white/10 hover:bg-white/5 transition-colors shrink-0"
+              className="min-h-11 min-w-11 max-[400px]:min-w-9 inline-flex items-center justify-center rounded-lg border border-white/10 hover:bg-white/5 transition-colors shrink-0"
               aria-label="Voltar"
               title="Voltar"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
             <Link data-admin-brand to="/" className="min-w-0 hover:opacity-80 transition-opacity">
-              <h1 className="text-sm max-[360px]:text-xs sm:text-xl font-bold font-orbitron whitespace-nowrap">
+              <h1 className="text-sm max-[400px]:text-[11px] sm:text-xl font-bold font-orbitron whitespace-nowrap">
                 SEVEN<span className="text-white/60">DEVX</span>
               </h1>
             </Link>
-            <Link to="/admin" aria-label="Admin — ir para o dashboard" data-header-secondary className="hidden lg:inline-flex min-h-11 items-center text-xs uppercase tracking-wider text-white/80 border border-white/20 px-2 py-1 rounded hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
+            <Link to="/admin" aria-label="Admin — ir para o dashboard" data-admin-home className="inline-flex shrink-0 min-h-11 min-w-9 items-center justify-center text-[10px] sm:text-xs uppercase sm:tracking-wider text-white/80 border border-white/20 px-1 sm:px-2 py-1 rounded hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
               Admin
             </Link>
           </div>
           <div className="flex shrink-0 items-center justify-end gap-0.5 lg:gap-2">
             <div data-header-secondary data-tour="global-search" className="[&>button]:hidden lg:[&>button]:inline-flex"><GlobalSearch /></div>
-            <div data-tour="notif-bell" className="shrink-0 [&>div>button]:h-11 [&>div>button]:w-11"><NotificationBell /></div>
-            <div data-tour="push-button" className="shrink-0 [&>button]:h-11 [&>button]:w-11 [&>button]:p-0"><PushSubscribeButton /></div>
+            <div data-tour="notif-bell" className="shrink-0 [&>div>button]:h-11 [&>div>button]:w-11 max-[400px]:[&>div>button]:w-9"><NotificationBell /></div>
+            <div data-tour="push-button" className="shrink-0 [&>button]:h-11 [&>button]:w-11 max-[400px]:[&>button]:w-9 [&>button]:p-0"><PushSubscribeButton /></div>
             <Link
               to="/"
               data-header-secondary className="hidden lg:inline-flex items-center gap-1.5 px-3 py-2 border border-white/20 rounded-lg hover:bg-white/5 transition-colors text-xs uppercase tracking-wider"
