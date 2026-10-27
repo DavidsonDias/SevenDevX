@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { pushTimeout } from "@/lib/push-timeout";
 import { toast } from "sonner";
 
 export const pushSupported = () =>
@@ -47,12 +48,27 @@ function decodeKey(value: string) {
   );
   return Uint8Array.from(raw, (c) => c.charCodeAt(0));
 }
-async function publicKey() {
-  const { data, error } = await supabase.functions.invoke("push-public-key");
-  if (error || !data?.configured || !data.publicKey)
-    throw new Error("Configuração VAPID indisponível no servidor.");
-  return data.publicKey as string;
+let keyCache: { value: string; expires: number } | null = null;
+let keyRequest: Promise<string> | null = null;
+export async function fetchPushPublicKey(): Promise<string> {
+  if (keyCache && keyCache.expires > Date.now()) return keyCache.value;
+  if (keyRequest) return keyRequest;
+  keyRequest = (async () => {
+    const { data, error } = await supabase.functions.invoke("push-public-key", {
+      signal: AbortSignal.timeout(8000),
+    });
+    if (error || !data?.configured || !data.publicKey)
+      throw new Error("Configuração VAPID indisponível no servidor.");
+    keyCache = { value: data.publicKey, expires: Date.now() + 60000 };
+    return data.publicKey as string;
+  })();
+  try {
+    return await keyRequest;
+  } finally {
+    keyRequest = null;
+  }
 }
+
 export function usePushSubscription() {
   const { user } = useAuthContext();
   const userId = user?.id;
@@ -63,47 +79,62 @@ export function usePushSubscription() {
     [loading, setLoading] = useState(false),
     [error, setError] = useState("");
   const [subscriptionId, setSubscriptionId] = useState<string | null>(null);
+  const [verification, setVerification] = useState<
+    "checking" | "confirmed" | "missing" | "unavailable"
+  >("checking");
+  const inspection = useRef(0);
   const inspect = useCallback(async () => {
-    if (!userId || !supported) {
-      setSubscribed(false);
-      setSubscriptionId(null);
-      return;
+    const current = ++inspection.current;
+    setVerification("checking");
+    try {
+      if (!userId || !supported) {
+        setSubscribed(false);
+        setSubscriptionId(null);
+        setVerification("missing");
+        return;
+      }
+      const reg = await pushRegistration(),
+        sub = await reg.pushManager.getSubscription();
+      if (owner.current !== userId || current !== inspection.current) return;
+      if (!sub) {
+        setSubscribed(false);
+        setSubscriptionId(null);
+        setVerification("missing");
+        return;
+      }
+      const key = await fetchPushPublicKey();
+      const result = await supabase
+        .from("push_subscriptions")
+        .select("id,vapid_public_key,enabled")
+        .eq("user_id", userId)
+        .eq("endpoint", sub.endpoint)
+        .maybeSingle();
+      if (owner.current !== userId || current !== inspection.current) return;
+      if (result.error)
+        throw new Error("Não foi possível conferir a inscrição no servidor.");
+      const row = result.data as unknown as {
+        id: string;
+        vapid_public_key: string;
+        enabled: boolean;
+      } | null;
+      const valid =
+        !!row?.enabled &&
+        row.vapid_public_key === key &&
+        Notification.permission === "granted";
+      setVerification(valid ? "confirmed" : "missing");
+      setSubscribed(valid);
+      setSubscriptionId(valid ? row.id : null);
+      setError("");
+      if (!valid)
+        setError(
+          "A inscrição local precisa ser reativada para esta conta e chave VAPID.",
+        );
+      return valid;
+    } catch (error) {
+      if (current !== inspection.current || owner.current !== userId) return;
+      setVerification("unavailable");
+      throw error;
     }
-    const reg = await pushRegistration(),
-      sub = await reg.pushManager.getSubscription();
-    if (owner.current !== userId) return;
-    if (!sub) {
-      setSubscribed(false);
-      setSubscriptionId(null);
-      return;
-    }
-    const key = await publicKey();
-    const result = await supabase
-      .from("push_subscriptions")
-      .select("id,vapid_public_key,enabled")
-      .eq("user_id", userId)
-      .eq("endpoint", sub.endpoint)
-      .maybeSingle();
-    if (owner.current !== userId) return;
-    if (result.error)
-      throw new Error("Não foi possível conferir a inscrição no servidor.");
-    const row = result.data as unknown as {
-      id: string;
-      vapid_public_key: string;
-      enabled: boolean;
-    } | null;
-    const valid =
-      !!row?.enabled &&
-      row.vapid_public_key === key &&
-      Notification.permission === "granted";
-    setSubscribed(valid);
-    setSubscriptionId(valid ? row.id : null);
-    setError("");
-    if (!valid)
-      setError(
-        "A inscrição local precisa ser reativada para esta conta e chave VAPID.",
-      );
-    return valid;
   }, [userId, supported]);
   useEffect(() => {
     let active = true;
@@ -113,10 +144,12 @@ export function usePushSubscription() {
     // Inspection never prompts for permission or creates a new subscription.
     if (userId && supported)
       void inspect().catch(() => {
-        if (active)
+        if (active) {
+          setVerification("unavailable");
           setError(
-            "Não foi possível conferir o dispositivo. Use o diagnóstico.",
+            "A consulta ao dispositivo está indisponível. Tente verificar novamente.",
           );
+        }
       });
     return () => {
       active = false;
@@ -127,22 +160,56 @@ export function usePushSubscription() {
     try {
       await inspect();
     } catch (e) {
-      setSubscribed(false);setSubscriptionId(null);
+      setVerification("unavailable");
       setError(e instanceof Error ? e.message : "Falha na verificação.");
     }
   }, [inspect]);
+  useEffect(() => {
+    if (!userId || !supported) return;
+    const recheck = () => {
+      if (document.visibilityState === "visible")
+        void inspect().catch(() => {
+          setVerification("unavailable");
+        });
+    };
+    const storage = (event: StorageEvent) => {
+      if (event.key === "sevenos.push.revision") recheck();
+    };
+    window.addEventListener("sevenos:push-changed", recheck);
+    window.addEventListener("focus", recheck);
+    window.addEventListener("storage", storage);
+    document.addEventListener("visibilitychange", recheck);
+    return () => {
+      window.removeEventListener("sevenos:push-changed", recheck);
+      window.removeEventListener("focus", recheck);
+      window.removeEventListener("storage", storage);
+      document.removeEventListener("visibilitychange", recheck);
+    };
+  }, [inspect, userId, supported]);
+  function publishChange() {
+    window.dispatchEvent(new Event("sevenos:push-changed"));
+    try {
+      localStorage.setItem("sevenos.push.revision", crypto.randomUUID());
+    } catch {
+      /* optional cross-tab signal */
+    }
+  }
   async function subscribe() {
     if (!userId || !supported) return;
     setLoading(true);
     setError("");
     try {
       // Request inside the click gesture, required by Safari/iOS.
-      const permission = await Notification.requestPermission();
+      const permission = await pushTimeout(
+        Notification.requestPermission(),
+        20000,
+        "O navegador não respondeu à permissão. Abra o diagnóstico no Chrome/Edge ou no PWA instalado e libere as notificações nas configurações do aplicativo.",
+      );
       if (permission !== "granted")
         throw new Error(
           "Permissão não concedida. Libere notificações nas configurações do navegador ou do aplicativo.",
         );
-      const key = await publicKey(),
+      const key = await fetchPushPublicKey(),
         reg = await pushRegistration();
       let sub = await reg.pushManager.getSubscription();
       if (sub) {
@@ -168,29 +235,36 @@ export function usePushSubscription() {
         }
       }
       if (!sub)
-        sub = await reg.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: decodeKey(key),
-        });
+        sub = await pushTimeout(
+          reg.pushManager.subscribe({
+            userVisibleOnly: true,
+            applicationServerKey: decodeKey(key),
+          }),
+          15000,
+          "O serviço de push não confirmou a inscrição. Confira a conexão e as permissões do navegador.",
+        );
       const value = sub.toJSON();
-      if(!value.keys?.p256dh || !value.keys?.auth) throw new Error("O navegador retornou uma inscrição incompleta.");
-      if (owner.current !== userId) throw new Error("A conta mudou durante a ativação. Tente novamente.");
-      const result = await supabase.rpc(
-        "sevenos_register_push",
-        {
-          _endpoint: sub.endpoint,
-          _p256dh: value.keys?.p256dh,
-          _auth: value.keys?.auth,
-          _device: pushDeviceId(),
-          _public_key: key,
-          _agent: navigator.userAgent,
-        },
-      );
+      if (!value.keys?.p256dh || !value.keys?.auth)
+        throw new Error("O navegador retornou uma inscrição incompleta.");
+      if (owner.current !== userId)
+        throw new Error("A conta mudou durante a ativação. Tente novamente.");
+      const result = await supabase.rpc("sevenos_register_push", {
+        _endpoint: sub.endpoint,
+        _p256dh: value.keys?.p256dh,
+        _auth: value.keys?.auth,
+        _device: pushDeviceId(),
+        _public_key: key,
+        _agent: navigator.userAgent,
+      });
       if (result.error || !result.data)
         throw new Error(
           "O servidor não confirmou a inscrição. Nenhuma ativação foi confirmada; tente novamente.",
         );
-      if(!await inspect()) throw new Error("A inscrição não foi confirmada em todas as verificações. Confira o diagnóstico.");
+      if (!(await inspect()))
+        throw new Error(
+          "A inscrição não foi confirmada em todas as verificações. Confira o diagnóstico.",
+        );
+      publishChange();
       toast.success(
         "Dispositivo registrado. Envie um teste no diagnóstico para confirmar o recebimento.",
       );
@@ -226,6 +300,8 @@ export function usePushSubscription() {
       }
       setSubscribed(false);
       setSubscriptionId(null);
+      setVerification("missing");
+      publishChange();
       toast.success("Notificações desativadas neste dispositivo.");
     } catch (e) {
       const message = e instanceof Error ? e.message : "Falha ao desativar.";
@@ -236,6 +312,7 @@ export function usePushSubscription() {
     }
   }
   return {
+    verification,
     supported,
     subscribed,
     loading,

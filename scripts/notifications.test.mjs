@@ -5,6 +5,7 @@ import vm from "node:vm";
 import ts from "typescript";
 function load(file) {const out=ts.transpileModule(fs.readFileSync(file,"utf8"),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;const exports={};new Function("exports",out)(exports);return exports;}
 const policy=load("supabase/functions/_shared/push-policy.ts");
+const timeout=load("src/lib/push-timeout.ts");
 const links=load("src/lib/notification-links.ts");
 test("Push endpoints reject SSRF, credentials, alternate ports, query-host confusion and fragments",()=>{
  for(const endpoint of ["http://fcm.googleapis.com/a","https://localhost/a","https://127.0.0.1/a","https://fcm.googleapis.com.evil.test/a","https://evil.test/?fcm.googleapis.com","https://u:p@fcm.googleapis.com/a","https://fcm.googleapis.com:444/a","https://fcm.googleapis.com/a#secret","https://[::1]/a",null,{}])assert.equal(policy.validPushEndpoint(endpoint),false,JSON.stringify(endpoint));
@@ -53,3 +54,11 @@ test("A successful display is required before a receipt can be sent", async()=>{
  const events={};let receipts=0;const w=await worker({fetch:async()=>{receipts++;return {ok:true,status:200};},self:{location:{origin:"https://www.sevendevx.com"},registration:{showNotification:async()=>{throw new Error("permission revoked");}},addEventListener:(type,fn)=>{events[type]=fn;}}});let task;
  events.push({data:{json:()=>({notificationId:notice,deliveryId:delivery,receiptToken:token})},waitUntil:p=>{task=p;}});await assert.rejects(task,/permission revoked/);assert.equal(receipts,0);
 });
+
+test("Permission timeout reports unanswered browser prompts and releases activation",async()=>{
+ await assert.rejects(timeout.pushTimeout(new Promise(()=>{}),5,"Permission unanswered"),/Permission unanswered/);
+ assert.equal(await timeout.pushTimeout(Promise.resolve("granted"),100,"unexpected"),"granted");
+ await assert.rejects(timeout.pushTimeout(Promise.reject(new Error("denied")),100,"unexpected"),/denied/);
+});
+
+test("Cooldown expires by elapsed time after backgrounding, rather than counting timer callbacks",()=>{assert.equal(timeout.pushCooldownSeconds(61000,1000),60);assert.equal(timeout.pushCooldownSeconds(61000,60900),1);assert.equal(timeout.pushCooldownSeconds(61000,120000),0);});
