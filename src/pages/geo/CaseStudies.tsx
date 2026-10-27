@@ -197,7 +197,7 @@ export function CaseStudyPage() {
   return (
     <>
       <Helmet>
-        <title>{c.title} — Case SevenDevX</title>
+        <title>{copy(c.title)} — Case SevenDevX</title>
         <meta name="description" content={copy(c.summary)} />
         <link rel="canonical" href={`${BASE}/cases/${c.slug}`} />
         <meta property="og:title" content={copy(c.title)} />
