@@ -139,7 +139,10 @@ import AttachmentManager from "@/components/admin/AttachmentManager";
 import ProposalStudio from "@/components/admin/ProposalStudio";
 import { STAGE_GUIDES } from "@/lib/proposals";
 import { confirmLeaveEdits } from "@/lib/unsavedChanges";
-import { useUnsavedChanges } from "@/hooks/useUnsavedChanges";
+import StageReview from "@/components/admin/StageReview";
+import EditorDraftNotice from "@/components/EditorDraftNotice";
+import { useEditorDraft } from "@/hooks/useEditorDraft";
+import { toLocalDateTime, validateStageDates } from "@/lib/stageWorkspace";
 import StageDocuments from "@/components/admin/StageDocuments";
 import ProjectFinanceBlock from "@/components/admin/finance/ProjectFinanceBlock";
 import TimeTrackerWidget from "@/components/admin/finance/TimeTrackerWidget";
@@ -490,25 +493,103 @@ export default function ProjectDetailAdmin() {
 
 /* ─────────────────── STAGE DETAIL ─────────────────── */
 function StageDetail({
-  stage, project, clientId, onUpdate, onToggleItem,
+  stage,
+  project,
+  clientId,
+  onUpdate,
+  onToggleItem,
 }: any) {
   const { toast } = useToast();
   const projectId = project.id;
   const [notes, setNotes] = useState(stage.notes || "");
   const [newItem, setNewItem] = useState("");
-  const [savedNotes, setSavedNotes] = useState(stage.notes || "");
-  useUnsavedChanges(notes !== savedNotes);
+  const [startedAt, setStartedAt] = useState(toLocalDateTime(stage.started_at));
+  const [dueAt, setDueAt] = useState(toLocalDateTime(stage.due_at));
+  const noteValue = useMemo(
+    () => ({ notes, startedAt, dueAt }),
+    [notes, startedAt, dueAt],
+  );
+  const [noteBaseline, setNoteBaseline] = useState(JSON.stringify(noteValue));
+  const noteDraft = useEditorDraft({
+    module: "stage-notes",
+    record: `${projectId}:${stage.id}`,
+    value: noteValue,
+    baseline: noteBaseline,
+    dirty: JSON.stringify(noteValue) !== noteBaseline,
+  });
+  const [working, setWorking] = useState(false);
+  const workingRef = useRef(false);
+  const [stageError, setStageError] = useState("");
+  const perform = async (action: () => Promise<unknown>) => {
+    if (workingRef.current) return;
+    workingRef.current = true;
+    setWorking(true);
+    setStageError("");
+    try {
+      await action();
+    } catch (cause) {
+      setStageError(
+        cause instanceof Error
+          ? cause.message
+          : "Não foi possível concluir. Os dados foram preservados.",
+      );
+    } finally {
+      workingRef.current = false;
+      setWorking(false);
+    }
+  };
+  const serverNotes = JSON.stringify({
+    notes: stage.notes || "",
+    startedAt: toLocalDateTime(stage.started_at),
+    dueAt: toLocalDateTime(stage.due_at),
+  });
+  const observedNotes = useRef(serverNotes);
+  useEffect(() => {
+    if (observedNotes.current === serverNotes) return;
+    observedNotes.current = serverNotes;
+    if (JSON.stringify(noteValue) === noteBaseline) {
+      const next = JSON.parse(serverNotes);
+      setNotes(next.notes);
+      setStartedAt(next.startedAt);
+      setDueAt(next.dueAt);
+      setNoteBaseline(serverNotes);
+    }
+  }, [serverNotes, noteValue, noteBaseline]);
   const qc = useQueryClient();
 
-  const { data: client, isPending: clientLoading } = useClient(clientId || undefined);
-  const { data: interactions = [] } = useClientInteractions(clientId || undefined);
-
-  useEffect(() => { setNotes(stage.notes || ""); }, [stage.id]); // eslint-disable-line
+  const { data: client, isPending: clientLoading } = useClient(
+    clientId || undefined,
+  );
+  const { data: interactions = [] } = useClientInteractions(
+    clientId || undefined,
+  );
 
   const saveNotes = async () => {
-    await onUpdate({ notes });
-    setSavedNotes(notes);
-    toast({ title: "Notas salvas" });
+    const previous = JSON.parse(noteBaseline) as {
+      notes: string;
+      startedAt: string;
+      dueAt: string;
+    };
+    const changedDates =
+      startedAt !== previous.startedAt || dueAt !== previous.dueAt;
+    const dates = changedDates ? validateStageDates(startedAt, dueAt) : null;
+    await onUpdate({
+      ...(notes !== previous.notes ? { notes } : {}),
+      ...(dates && startedAt !== previous.startedAt
+        ? { started_at: dates.started_at }
+        : {}),
+      ...(dates && dueAt !== previous.dueAt ? { due_at: dates.due_at } : {}),
+    });
+    setNoteBaseline(JSON.stringify(noteValue));
+    await noteDraft
+      .clearAfterSave()
+      .catch(() =>
+        toast({
+          title: "Dados salvos; não foi possível limpar o rascunho local",
+          variant: "destructive",
+        }),
+      );
+    toast({ title: "Notas e datas salvas" });
   };
 
   const setStatus = async (status: string) => {
@@ -521,15 +602,27 @@ function StageDetail({
     const { error } = await supabase.from("stage_checklist_items").insert({
       stage_id: stage.id,
       title: newItem.trim(),
-      display_order: (stage.checklist?.length || 0),
+      display_order: stage.checklist?.length || 0,
     });
-    if (error) { toast({ title: "Erro", description: error.message, variant: "destructive" }); return; }
+    if (error) {
+      toast({
+        title: "Erro",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
     setNewItem("");
     qc.invalidateQueries({ queryKey: ["project_stages", projectId] });
   };
 
   const removeChecklistItem = async (itemId: string) => {
-    await supabase.from("stage_checklist_items").delete().eq("id", itemId);
+    const { error } = await supabase
+      .from("stage_checklist_items")
+      .delete()
+      .eq("id", itemId)
+      .eq("stage_id", stage.id);
+    if (error) throw error;
     qc.invalidateQueries({ queryKey: ["project_stages", projectId] });
   };
 
@@ -545,11 +638,17 @@ function StageDetail({
         <div className="flex items-start justify-between gap-3 mb-4">
           <div className="min-w-0">
             <h3 className="text-xl font-bold">{stage.name}</h3>
-            <p className="text-xs text-white/50 mt-1 uppercase tracking-wider">/{stage.slug}</p>
+            <p className="text-xs text-white/50 mt-1 uppercase tracking-wider">
+              /{stage.slug}
+            </p>
           </div>
           <span
             className="text-[10px] px-2 py-1 rounded uppercase tracking-wider shrink-0"
-            style={{ background: `${meta.color}20`, color: meta.color, border: `1px solid ${meta.color}40` }}
+            style={{
+              background: `${meta.color}20`,
+              color: meta.color,
+              border: `1px solid ${meta.color}40`,
+            }}
           >
             {meta.label}
           </span>
@@ -559,9 +658,12 @@ function StageDetail({
           {Object.entries(STAGE_STATUS).map(([k, v]) => (
             <button
               key={k}
-              onClick={() => setStatus(k)}
-              className={`text-xs px-3 py-1.5 rounded border transition-colors ${
-                stage.status === k ? "bg-white text-black border-white" : "border-white/15 hover:bg-white/5"
+              disabled={working}
+              onClick={() => void perform(() => setStatus(k))}
+              className={`min-h-11 text-xs px-3 py-1.5 rounded border transition-colors disabled:opacity-40 ${
+                stage.status === k
+                  ? "bg-white text-black border-white"
+                  : "border-white/15 hover:bg-white/5"
               }`}
             >
               {v.label}
@@ -570,15 +672,65 @@ function StageDetail({
         </div>
       </GlassCard>
 
-      {guide && <GlassCard className="p-5 min-w-0 border-blue-500/20">
-        <p className="text-[10px] uppercase tracking-widest text-blue-300 mb-2">Foco desta etapa</p>
-        <p className="font-medium text-sm">{guide.goal}</p>
-        <div className="flex flex-wrap gap-2 my-4">{guide.outputs.map(output => <span key={output} className="px-3 py-2 rounded-lg border border-white/10 text-xs text-white/70">{output}</span>)}</div>
-        <p className="text-xs text-white/50 leading-relaxed"><strong className="text-white/75">Para avançar:</strong> {guide.ready}</p>
-        <div className="h-1 bg-white/10 rounded mt-4 overflow-hidden" role="progressbar" aria-label="Checklist da etapa" aria-valuemin={0} aria-valuemax={checklist.length || 1} aria-valuenow={checklistDone}><div className="h-full bg-blue-500" style={{ width: `${checklist.length ? checklistDone / checklist.length * 100 : 0}%` }} /></div>
-      </GlassCard>}
-      {stage.slug === 'proposal' && (clientId && clientLoading ? <p role="status" className="p-4 text-sm">Carregando dados do cliente…</p> : <ProposalStudio project={project} stageId={stage.id} client={client} />)}
+      {guide && (
+        <GlassCard className="p-5 min-w-0 border-blue-500/20">
+          <p className="text-[10px] uppercase tracking-widest text-blue-300 mb-2">
+            Foco desta etapa
+          </p>
+          <p className="font-medium text-sm">{guide.goal}</p>
+          <div className="flex flex-wrap gap-2 my-4">
+            {guide.outputs.map((output) => (
+              <span
+                key={output}
+                className="px-3 py-2 rounded-lg border border-white/10 text-xs text-white/70"
+              >
+                {output}
+              </span>
+            ))}
+          </div>
+          <p className="text-xs text-white/50 leading-relaxed">
+            <strong className="text-white/75">Para avançar:</strong>{" "}
+            {guide.ready}
+          </p>
+          <div
+            className="h-1 bg-white/10 rounded mt-4 overflow-hidden"
+            role="progressbar"
+            aria-label="Checklist da etapa"
+            aria-valuemin={0}
+            aria-valuemax={checklist.length || 1}
+            aria-valuenow={checklistDone}
+          >
+            <div
+              className="h-full bg-blue-500"
+              style={{
+                width: `${checklist.length ? (checklistDone / checklist.length) * 100 : 0}%`,
+              }}
+            />
+          </div>
+        </GlassCard>
+      )}
+      {stage.slug === "proposal" &&
+        (clientId && clientLoading ? (
+          <p role="status" className="p-4 text-sm">
+            Carregando dados do cliente…
+          </p>
+        ) : (
+          <ProposalStudio
+            project={project}
+            stageId={stage.id}
+            client={client}
+          />
+        ))}
 
+      {stageError && (
+        <p
+          role="alert"
+          className="rounded-lg border border-red-400/30 p-4 text-sm text-red-300"
+        >
+          {stageError}
+        </p>
+      )}
+      <StageReview stage={stage} projectTitle={project.title} />
       {/* DOCUMENT ENGINE */}
       <GlassCard className="p-5 border-purple-500/20 bg-purple-500/[0.02]">
         <StageDocuments
@@ -595,26 +747,43 @@ function StageDetail({
         <div className="flex items-center justify-between mb-3">
           <h4 className="font-bold flex items-center gap-2">
             <ListChecks className="w-4 h-4" /> Checklist
-            <span className="text-xs text-white/40 font-normal">({checklistDone}/{checklist.length})</span>
+            <span className="text-xs text-white/40 font-normal">
+              ({checklistDone}/{checklist.length})
+            </span>
           </h4>
         </div>
         <div className="space-y-1.5 mb-3">
-          {checklist.length === 0 && <p className="text-xs text-white/40">Nenhum item ainda.</p>}
+          {checklist.length === 0 && (
+            <p className="text-xs text-white/40">Nenhum item ainda.</p>
+          )}
           {checklist.map((it: any) => (
             <div key={it.id} className="flex items-center gap-2 group">
               <button
-                onClick={() => onToggleItem(it.id, !it.is_done)}
-                aria-label={`${it.is_done ? 'Reabrir' : 'Concluir'}: ${it.title}`}
+                disabled={working}
+                onClick={() =>
+                  void perform(() => onToggleItem(it.id, !it.is_done))
+                }
+                aria-label={`${it.is_done ? "Reabrir" : "Concluir"}: ${it.title}`}
                 aria-pressed={it.is_done}
                 className="shrink-0 min-h-11 min-w-11 flex items-center justify-center text-white/70 hover:text-white"
               >
-                {it.is_done ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <Circle className="w-4 h-4" />}
+                {it.is_done ? (
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                ) : (
+                  <Circle className="w-4 h-4" />
+                )}
               </button>
-              <span className={`text-sm flex-1 ${it.is_done ? "line-through text-white/40" : ""}`}>
+              <span
+                className={`text-sm flex-1 ${it.is_done ? "line-through text-white/40" : ""}`}
+              >
                 {it.title}
               </span>
               <button
-                onClick={() => { if (window.confirm('Excluir este item do checklist?')) void removeChecklistItem(it.id); }}
+                onClick={() => {
+                  if (window.confirm("Excluir este item do checklist?"))
+                    void perform(() => removeChecklistItem(it.id));
+                }}
+                disabled={working}
                 aria-label={`Excluir item: ${it.title}`}
                 className="min-h-11 min-w-11 flex items-center justify-center text-white/40 hover:text-red-400 transition-opacity"
               >
@@ -627,12 +796,20 @@ function StageDetail({
           <input
             value={newItem}
             onChange={(e) => setNewItem(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && addChecklistItem()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.nativeEvent.isComposing) {
+                e.preventDefault();
+                void perform(addChecklistItem);
+              }
+            }}
+            aria-label="Novo item do checklist"
+            disabled={working}
             placeholder="Adicionar item…"
-            className="flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm outline-none focus:border-white/30"
+            className="min-w-0 flex-1 px-3 py-2 bg-white/5 border border-white/10 rounded-lg text-sm outline-none focus:border-white/30"
           />
           <button
-            onClick={addChecklistItem}
+            disabled={working}
+            onClick={() => void perform(addChecklistItem)}
             className="px-3 py-2 bg-white text-black rounded-lg text-sm font-bold inline-flex items-center gap-1"
           >
             <Plus className="w-3 h-3" />
@@ -656,7 +833,32 @@ function StageDetail({
         <h4 className="font-bold mb-3 flex items-center gap-2">
           <MessageSquare className="w-4 h-4" /> Notas
         </h4>
+        <EditorDraftNotice
+          available={!!noteDraft.candidate}
+          conflict={noteDraft.conflict}
+          error={noteDraft.error}
+          savedAt={noteDraft.savedAt}
+          onRestore={() => {
+            const recovered = noteDraft.restore();
+            if (
+              recovered &&
+              typeof recovered.notes === "string" &&
+              typeof recovered.startedAt === "string" &&
+              typeof recovered.dueAt === "string"
+            ) {
+              setNotes(recovered.notes);
+              setStartedAt(recovered.startedAt);
+              setDueAt(recovered.dueAt);
+            } else
+              setStageError(
+                "Rascunho incompatível. As notas atuais foram preservadas.",
+              );
+          }}
+          onDiscard={() => void noteDraft.discard()}
+        />
         <textarea
+          disabled={working}
+          aria-label="Notas da etapa"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="Anotações desta etapa…"
@@ -665,29 +867,43 @@ function StageDetail({
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
           <div>
-            <label className="text-[10px] uppercase tracking-wider text-white/50 block mb-1">Início</label>
+            <label className="text-[10px] uppercase tracking-wider text-white/50 block mb-1">
+              Início
+            </label>
             <input
+              disabled={working}
+              aria-label="Início da etapa"
               type="datetime-local"
-              defaultValue={stage.started_at ? new Date(stage.started_at).toISOString().slice(0, 16) : ""}
-              onBlur={(e) => onUpdate({ started_at: e.target.value ? new Date(e.target.value).toISOString() : null })}
+              value={startedAt}
+              onChange={(e) => setStartedAt(e.target.value)}
               className="w-full px-2 py-1.5 bg-white/5 border border-white/10 rounded text-xs outline-none"
             />
           </div>
           <div>
-            <label className="text-[10px] uppercase tracking-wider text-white/50 block mb-1">Prazo</label>
+            <label className="text-[10px] uppercase tracking-wider text-white/50 block mb-1">
+              Prazo
+            </label>
             <input
+              disabled={working}
+              aria-label="Prazo da etapa"
               type="datetime-local"
-              defaultValue={stage.due_at ? new Date(stage.due_at).toISOString().slice(0, 16) : ""}
-              onBlur={(e) => onUpdate({ due_at: e.target.value ? new Date(e.target.value).toISOString() : null })}
+              value={dueAt}
+              onChange={(e) => setDueAt(e.target.value)}
               className="w-full px-2 py-1.5 bg-white/5 border border-white/10 rounded text-xs outline-none"
             />
           </div>
         </div>
         <button
-          onClick={saveNotes}
+          disabled={
+            working ||
+            !!noteDraft.candidate ||
+            JSON.stringify(noteValue) === noteBaseline
+          }
+          onClick={() => void perform(saveNotes)}
           className="text-xs px-3 py-1.5 bg-white text-black rounded inline-flex items-center gap-1.5 font-bold"
         >
-          <Save className="w-3 h-3" /> Salvar notas
+          <Save className="w-3 h-3" />{" "}
+          {working ? "Salvando…" : "Salvar notas e datas"}
         </button>
       </GlassCard>
     </>
