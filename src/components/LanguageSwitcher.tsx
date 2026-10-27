@@ -21,6 +21,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Globe, Check } from "lucide-react";
@@ -252,6 +253,7 @@ const languages: { code: Language; label: string; country: string; nativeName: s
 // ============================================================================
 
 const LanguageSwitcher = () => {
+  const { copy } = usePublicCopy();
   const { language, setLanguage } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -303,7 +305,7 @@ const LanguageSwitcher = () => {
                    hover:shadow-xl hover:shadow-primary/10"
         whileHover={{ scale: 1.03, y: -1 }}
         whileTap={{ scale: 0.97 }}
-        aria-label="Selecionar idioma"
+        aria-label={copy("Selecionar idioma")}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
       >
@@ -355,14 +357,14 @@ const LanguageSwitcher = () => {
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
               transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
               role="listbox"
-              aria-label="Idiomas disponíveis"
+              aria-label={copy("Idiomas disponíveis")}
             >
               {/* Header */}
               <div className="px-4 py-3 border-b border-white/5 bg-white/[0.02]">
                 <div className="flex items-center gap-2">
                   <Globe size={14} className="text-primary/80" />
                   <span className="text-xs font-medium text-white/50 uppercase tracking-widest">
-                    Idioma
+                    {copy("Idioma")}
                   </span>
                 </div>
               </div>
@@ -436,9 +438,9 @@ const LanguageSwitcher = () => {
               {/* Footer hint */}
               <div className="px-4 py-2.5 border-t border-white/5 bg-white/[0.01]">
                 <div className="flex items-center justify-center gap-2 text-[10px] text-white/30">
-                  <span>ESC para fechar</span>
+                  <span>{copy("ESC para fechar")}</span>
                   <span>•</span>
-                  <span>↑↓ navegar</span>
+                  <span>{copy("↑↓ navegar")}</span>
                 </div>
               </div>
             </motion.div>

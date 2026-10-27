@@ -15,6 +15,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Menu, X, LogOut, Shield, UserCircle } from "lucide-react";
@@ -29,6 +30,7 @@ import { useAuthContext } from "@/contexts/AuthContext";
 // ============================================================================
 
 const Header = () => {
+  const { copy } = usePublicCopy();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -83,7 +85,7 @@ const Header = () => {
     if (!user) {
       return (
         <Link to="/auth" className="relative group text-xs tracking-[0.2em] font-light text-white/70 hover:text-white transition-colors">
-          LOGIN
+          {copy("LOGIN")}
           {underline()}
         </Link>
       );
@@ -93,18 +95,18 @@ const Header = () => {
         {isAdmin && (
           <Link to="/admin" className="relative group flex items-center gap-1.5 text-xs tracking-[0.2em] font-light text-amber-400/90 hover:text-amber-300 transition-colors">
             <Shield className="w-3.5 h-3.5" />
-            ADMIN
+            {copy("ADMIN")}
             {underline("via-amber-300")}
           </Link>
         )}
         <Link to="/profile" className="relative group flex items-center gap-1.5 text-xs tracking-[0.2em] font-light text-white/70 hover:text-white transition-colors">
           <UserCircle className="w-3.5 h-3.5" />
-          PERFIL
+          {copy("PERFIL")}
           {underline()}
         </Link>
         <button type="button" onClick={handleLogout} className="relative group flex items-center gap-1.5 text-xs tracking-[0.2em] font-light text-white/70 hover:text-red-400 transition-colors">
           <LogOut className="w-3.5 h-3.5" />
-          SAIR
+          {copy("SAIR")}
           {underline("via-red-400")}
         </button>
       </div>
@@ -122,7 +124,7 @@ const Header = () => {
         <div className="w-full px-4 sm:px-6">
           <div className="flex items-center justify-between h-16 sm:h-20">
             <Link to="/" className="flex items-center xl:static absolute left-1/2 xl:left-0 -translate-x-1/2 xl:translate-x-0 z-[60]">
-              <img src={logo} alt="SevenDevX" className="h-10 sm:h-12 lg:h-14 w-auto transition-all duration-300" />
+              <img src={logo} alt={copy("SevenDevX")} className="h-10 sm:h-12 lg:h-14 w-auto transition-all duration-300" />
             </Link>
 
             <nav className="hidden xl:flex items-center gap-6 2xl:gap-8 ml-auto mr-4">
@@ -136,7 +138,7 @@ const Header = () => {
                       active ? "text-white" : "text-white/70 hover:text-white"
                     }`}
                   >
-                    {link.name}
+                    {copy(link.name)}
                     <span
                       className={`pointer-events-none absolute left-0 -bottom-1 h-px bg-gradient-to-r from-white/0 via-white to-white/0 transition-all duration-500 ease-out ${
                         active ? "w-full" : "w-0 group-hover:w-full"
@@ -153,7 +155,7 @@ const Header = () => {
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="text-white p-2 ml-auto xl:ml-0 relative z-[60]"
-              aria-label={isMenuOpen ? "Fechar menu" : "Abrir menu"}
+              aria-label={copy(isMenuOpen ? "Fechar menu" : "Abrir menu")}
             >
               {isMenuOpen ? <X size={28} className="sm:w-8 sm:h-8" strokeWidth={1.5} /> : <Menu size={24} className="sm:w-7 sm:h-7" strokeWidth={1.5} />}
             </button>
@@ -191,7 +193,7 @@ const Header = () => {
                       }`}
                     >
                       <span className="relative inline-block">
-                        {link.name}
+                        {copy(link.name)}
                         <span className="pointer-events-none absolute right-0 -bottom-1 h-px w-0 group-hover:w-full bg-gradient-to-l from-white/0 via-white to-white/0 transition-all duration-500 ease-out" />
                       </span>
                     </Link>
@@ -208,7 +210,7 @@ const Header = () => {
                           className="group flex items-center justify-end gap-2 py-6 text-right text-base md:text-lg tracking-[0.3em] font-light border-b border-white/10 text-amber-400/90 hover:text-amber-300 transition-colors">
                           <Shield className="w-4 h-4" />
                           <span className="relative inline-block">
-                            ADMIN
+                            {copy("ADMIN")}
                             <span className="pointer-events-none absolute right-0 -bottom-1 h-px w-0 group-hover:w-full bg-gradient-to-l from-amber-300/0 via-amber-300 to-amber-300/0 transition-all duration-500 ease-out" />
                           </span>
                         </Link>
@@ -222,7 +224,7 @@ const Header = () => {
                             className="group flex items-center justify-end gap-2 py-6 text-right text-base md:text-lg tracking-[0.3em] font-light border-b border-white/10 text-white/80 hover:text-white transition-colors">
                             <UserCircle className="w-4 h-4" />
                             <span className="relative inline-block">
-                              PERFIL
+                              {copy("PERFIL")}
                               <span className="pointer-events-none absolute right-0 -bottom-1 h-px w-0 group-hover:w-full bg-gradient-to-l from-white/0 via-white to-white/0 transition-all duration-500 ease-out" />
                             </span>
                           </Link>
@@ -233,7 +235,7 @@ const Header = () => {
                             className="group w-full flex items-center justify-end gap-2 py-6 text-right text-base md:text-lg tracking-[0.3em] font-light border-b border-white/10 text-white/80 hover:text-red-400 transition-colors">
                             <LogOut className="w-4 h-4" />
                             <span className="relative inline-block">
-                              SAIR
+                              {copy("SAIR")}
                               <span className="pointer-events-none absolute right-0 -bottom-1 h-px w-0 group-hover:w-full bg-gradient-to-l from-red-400/0 via-red-400 to-red-400/0 transition-all duration-500 ease-out" />
                             </span>
                           </button>
@@ -246,7 +248,7 @@ const Header = () => {
                         <Link to="/auth" onClick={() => setIsMenuOpen(false)}
                           className="group flex justify-end py-6 text-right text-base md:text-lg tracking-[0.3em] font-light border-b border-white/10 text-white/80 hover:text-white transition-colors">
                           <span className="relative inline-block">
-                            LOGIN
+                            {copy("LOGIN")}
                             <span className="pointer-events-none absolute right-0 -bottom-1 h-px w-0 group-hover:w-full bg-gradient-to-l from-white/0 via-white to-white/0 transition-all duration-500 ease-out" />
                           </span>
                         </Link>

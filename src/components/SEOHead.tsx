@@ -17,6 +17,8 @@
 
 // 📂 src/components/SEOHead.tsx
 import { Helmet } from "react-helmet";
+import { useLocation } from "react-router-dom";
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 
 // ============================================================================
 // 🧩 TYPES & CONTRACTS
@@ -58,7 +60,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
   title = "SevenDevX | Soluções Tecnológicas Modernas e Inovadoras",
   description = "Desenvolvimento web, criação de sites e sistemas, instalação de software e manutenção de computadores. Soluções digitais modernas e inovadoras para o seu negócio.",
   image = "/assets/img/share.webp",
-  url = "https://sevendevx.com",
+  url,
   type = "website",
   keywords = "SevenDevX, desenvolvimento web, criação de sites, software, manutenção de computadores, tecnologia, Belo Horizonte",
   phone = "+55-31-98474-0625",
@@ -89,7 +91,14 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     },
   ],
 }) => {
-  const fullImageUrl = image.startsWith("http") ? image : `${url}${image}`;
+  const { copy, language } = usePublicCopy();
+  const { pathname } = useLocation();
+  url = url || new URL(pathname, "https://www.sevendevx.com").href;
+  const locale = language === "pt" ? "pt-BR" : language === "es" ? "es-ES" : "en-US";
+  const origin = new URL(url, "https://www.sevendevx.com").origin;
+  title = copy(title);
+  description = copy(description);
+  const fullImageUrl = image.startsWith("http") ? image : new URL(image, origin).href;
   const pageTitle = title.includes("SevenDevX")
     ? title
     : `${title} | SevenDevX`;
@@ -100,8 +109,8 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     "@type": "Organization",
     name: "SevenDevX",
     url,
-    logo: `${url}/assets/img/logo.svg`,
-    image: `${url}/assets/img/banner.jpg`,
+    logo: `${origin}/assets/img/logo.svg`,
+    image: `${origin}/assets/img/banner.jpg`,
     email,
     telephone: phone,
     foundingDate: "2024-01-10",
@@ -124,7 +133,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
       contactType: "Suporte ao Cliente",
       email,
       telephone: phone,
-      url: `${url}/contato`,
+      url: `${origin}/#contact`,
     },
     sameAs: [
       "https://www.instagram.com/sevendevx",
@@ -146,7 +155,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     url,
     description:
       "Criação de sites, otimização de sistemas e suporte técnico especializado.",
-    inLanguage: "pt-BR",
+    inLanguage: locale,
     creator: {
       "@type": "Organization",
       name: "SevenDevX",
@@ -160,7 +169,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     name: pageTitle,
     url,
     description,
-    inLanguage: "pt-BR",
+    inLanguage: locale,
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
     isPartOf: { "@type": "WebSite", url },
     creator: { "@type": "Organization", name: "SevenDevX", url },
@@ -189,11 +198,10 @@ const SEOHead: React.FC<SEOHeadProps> = ({
       <meta name="keywords" content={keywords} />
       <meta name="robots" content="index, follow" />
       <meta name="author" content="SevenDevX" />
-      <meta name="language" content="Portuguese" />
-      <meta name="copyright" content="© 2025 SevenDevX" />
+      <meta name="language" content={locale} />
+      <meta name="copyright" content={`© ${new Date().getFullYear()} SevenDevX`} />
       <meta name="application-name" content="SevenDevX" />
       <link rel="canonical" href={url} />
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
 
       {/* 🧠 Open Graph */}
       <meta property="og:type" content={type} />
@@ -206,7 +214,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
         property="og:image:alt"
         content="SevenDevX - Soluções Digitais e Desenvolvimento de Software"
       />
-      <meta property="og:locale" content="pt_BR" />
+      <meta property="og:locale" content={locale.replace("-", "_")} />
       <meta property="og:site_name" content="SevenDevX" />
 
       {/* 🐦 Twitter */}

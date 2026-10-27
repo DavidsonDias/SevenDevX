@@ -15,6 +15,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { memo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ArrowUpRight, Sparkles, ExternalLink, Github, X } from "lucide-react";
@@ -91,6 +92,7 @@ interface FeaturedModalProps {
  * - Links externos interrompem a propagação do clique para não reabrir o modal.
  */
 const FeaturedModal = ({ project, onClose }: FeaturedModalProps) => {
+  const { copy } = usePublicCopy();
   const { t } = useLanguage();
 
   /**
@@ -125,7 +127,7 @@ const FeaturedModal = ({ project, onClose }: FeaturedModalProps) => {
           transition={{ type: "spring", stiffness: 200, damping: 28 }}
         >
           <div className="sticky top-0 z-10 flex items-center justify-between p-5 border-b border-border/30 bg-card/90 backdrop-blur-xl">
-            <h3 className="text-lg font-orbitron font-bold text-foreground">{project.title}</h3>
+            <h3 className="text-lg font-orbitron font-bold text-foreground">{copy(project.title)}</h3>
             <button
               onClick={onClose}
               className="p-2 hover:bg-muted/30 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
@@ -136,12 +138,12 @@ const FeaturedModal = ({ project, onClose }: FeaturedModalProps) => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
             <div className="relative overflow-hidden rounded-xl">
-              <img src={project.image} alt={project.title} className="w-full h-64 md:h-full object-cover" loading="lazy" />
+              <img src={project.image} alt={copy(project.title)} className="w-full h-64 md:h-full object-cover" loading="lazy" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
             </div>
             <div className="space-y-4">
               <p className="text-muted-foreground text-sm leading-relaxed">
-                {project.longDescription || project.description}
+                {copy(project.longDescription || project.description)}
               </p>
               {/* Estratégia de resolução do ícone de tecnologia:
                   1. `slug` → TechIconCDN (fonte preferencial, logo oficial);
@@ -159,7 +161,7 @@ const FeaturedModal = ({ project, onClose }: FeaturedModalProps) => {
                       ) : Icon ? (
                         <Icon className="text-base" style={{ color: tech.color }} />
                       ) : null}
-                      <span>{tech.name}</span>
+                      <span>{copy(tech.name)}</span>
                     </span>
                   );
                 })}
@@ -177,7 +179,7 @@ const FeaturedModal = ({ project, onClose }: FeaturedModalProps) => {
                   <Button size="sm" variant="outline" asChild>
                     <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
                       <Github className="h-4 w-4 mr-2" />
-                      Código
+                      {copy("Código")}
                     </a>
                   </Button>
                 )}
@@ -216,7 +218,9 @@ interface ProjectCardProps {
  * modal da seção muda — as props de um card só se alteram quando o projeto
  * correspondente muda.
  */
-const ProjectCard = memo(({ project, index, onOpen }: ProjectCardProps) => (
+const ProjectCard = memo(({ project, index, onOpen }: ProjectCardProps) => {
+  const { copy } = usePublicCopy();
+  return (
   <ProjectCard3D tiltIntensity={5} layoutId={`featured-card-${project.id}`}>
     <motion.div
       initial={{ opacity: 0, y: 30 }}
@@ -245,7 +249,7 @@ const ProjectCard = memo(({ project, index, onOpen }: ProjectCardProps) => (
         <h3 className="text-lg sm:text-xl font-bold uppercase tracking-tight mb-1">
           {project.title}
         </h3>
-        <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">{project.description}</p>
+        <p className="text-xs sm:text-sm text-muted-foreground line-clamp-2">{copy(project.description)}</p>
         <div className="flex gap-2 mt-3">
           {isValidLiveUrl(project.liveUrl) && (
             <a
@@ -264,7 +268,8 @@ const ProjectCard = memo(({ project, index, onOpen }: ProjectCardProps) => (
       </div>
     </motion.div>
   </ProjectCard3D>
-));
+  );
+});
 ProjectCard.displayName = "ProjectCard";
 
 // ============================================================================
@@ -281,6 +286,7 @@ ProjectCard.displayName = "ProjectCard";
  * meio da narrativa da Home.
  */
 const FeaturedProjects = () => {
+  const { copy } = usePublicCopy();
   const navigate = useNavigate();
 
   /**
@@ -307,12 +313,12 @@ const FeaturedProjects = () => {
           transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="mb-12 md:mb-16"
         >
-          <p className="text-xs text-muted-foreground uppercase tracking-[0.3em] mb-3">PORTFÓLIO</p>
+          <p className="text-xs text-muted-foreground uppercase tracking-[0.3em] mb-3">{copy("PORTFÓLIO")}</p>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold uppercase tracking-tight leading-tight mb-4">
-            Projetos em Destaque
+            {copy("Projetos em Destaque")}
           </h2>
           <p className="text-sm sm:text-base text-muted-foreground max-w-xl">
-            Soluções reais desenvolvidas com foco em performance, design e resultado
+            {copy("Soluções reais desenvolvidas com foco em performance, design e resultado")}
           </p>
         </motion.div>
 
@@ -333,7 +339,7 @@ const FeaturedProjects = () => {
               <div className="relative aspect-video lg:aspect-auto">
                 <img
                   src={heroProject.image}
-                  alt={heroProject.title}
+                  alt={copy(heroProject.title)}
                   loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
@@ -343,20 +349,20 @@ const FeaturedProjects = () => {
               <div className="flex flex-col justify-center p-6 sm:p-8 lg:p-10">
                 <div className="flex items-center gap-2 mb-4">
                   <span className="inline-flex items-center gap-1 text-[10px] px-3 py-1 rounded-full bg-primary/15 border border-primary/30 text-primary font-medium uppercase tracking-wider">
-                    <Sparkles size={10} /> Destaque Principal
+                    <Sparkles size={10} /> {copy("Destaque Principal")}
                   </span>
                 </div>
                 <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-tight mb-3">
-                  {heroProject.title}
+                  {copy(heroProject.title)}
                 </h3>
                 <p className="text-sm sm:text-base text-muted-foreground mb-4 leading-relaxed">
-                  {heroProject.description}
+                  {copy(heroProject.description)}
                 </p>
                 <div className="flex flex-wrap gap-2 mb-6">
                   {heroProject.techs.map(tech => (
                     <span key={tech.name} className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-muted-foreground border border-border px-2 py-1 rounded-sm">
                       {tech.slug && <TechIconCDN slug={tech.slug} name={tech.name} color={tech.color} size={12} />}
-                      {tech.name}
+                      {copy(tech.name)}
                     </span>
                   ))}
                   {heroProject.tags?.map(tag => (
@@ -376,7 +382,7 @@ const FeaturedProjects = () => {
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 border-2 border-foreground px-6 py-3 text-xs tracking-widest uppercase font-semibold hover:bg-foreground hover:text-background transition-all duration-300"
                     >
-                      Ver Projeto <ArrowUpRight size={14} />
+                      {copy("Ver Projeto")} <ArrowUpRight size={14} />
                     </a>
                   )}
                 </div>
@@ -412,7 +418,7 @@ const FeaturedProjects = () => {
             whileTap={{ scale: 0.95 }}
             className="group inline-flex items-center gap-2 border-2 border-foreground px-8 sm:px-12 py-3 sm:py-4 text-xs sm:text-sm tracking-widest uppercase font-semibold hover:bg-foreground hover:text-background transition-all duration-300 hover:shadow-[0_0_30px_rgba(255,255,255,0.15)]"
           >
-            Ver todos os projetos
+            {copy("Ver todos os projetos")}
             <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
           </motion.button>
         </motion.div>

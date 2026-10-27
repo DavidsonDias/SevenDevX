@@ -74,6 +74,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
@@ -90,6 +91,7 @@ import { GEO_PROGRAMMATIC } from "@/data/geoContent";
 // ============================================================================
 
 export default function LocalSeoPage() {
+  const { copy } = usePublicCopy();
   const { city } = useParams<{ city: string }>();
   const cityData = GEO_PROGRAMMATIC.cities.find((c) => c.slug === city);
   if (!cityData) return <NotFound />;
@@ -120,13 +122,13 @@ export default function LocalSeoPage() {
   return (
     <>
       <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={description} />
+        <title>{copy(title)}</title>
+        <meta name="description" content={copy(description)} />
         <link rel="canonical" href={url} />
         <meta name="geo.region" content={`BR-${cityData.state}`} />
         <meta name="geo.placename" content={cityData.name} />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
+        <meta property="og:title" content={copy(title)} />
+        <meta property="og:description" content={copy(description)} />
         <meta property="og:url" content={url} />
         <script type="application/ld+json">{JSON.stringify(localBusinessSchema)}</script>
       </Helmet>
@@ -137,15 +139,13 @@ export default function LocalSeoPage() {
           <Container>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
               <p className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-muted-foreground mb-4">
-                <MapPin className="w-3 h-3" /> {cityData.name} · {cityData.state}
+                <MapPin className="w-3 h-3" /> {copy(cityData.name)} · {cityData.state}
               </p>
               <h1 className="text-[clamp(1.5rem,4.5vw,3.75rem)] break-words font-bold tracking-tight mb-6 max-w-3xl">
-                Desenvolvimento Web em {cityData.name}
+                {copy("Desenvolvimento Web em")} {copy(cityData.name)}
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
-                A SevenDevX atende empresas em {cityData.name}/{cityData.state} com criação de
-                sites, landing pages, sistemas sob demanda, automações e integração de IA. Stack
-                moderna, performance Lighthouse 95+ e design enterprise.
+                {copy("A SevenDevX atende empresas em")} {copy(cityData.name)}/{cityData.state} {copy("com criação de sites, landing pages, sistemas sob demanda, automações e integração de IA. Stack moderna, performance Lighthouse 95+ e design enterprise.")}
               </p>
             </motion.div>
           </Container>
@@ -164,7 +164,7 @@ export default function LocalSeoPage() {
                   className="p-6 rounded-2xl border border-border bg-card"
                 >
                   <CheckCircle2 className="w-5 h-5 text-emerald-500 mb-3" />
-                  <h2 className="font-bold text-lg mb-1">{s.name} em {cityData.name}</h2>
+                  <h2 className="font-bold text-lg mb-1">{copy(s.name)} em {copy(cityData.name)}</h2>
                   <p className="text-sm text-muted-foreground">{s.desc}</p>
                 </motion.div>
               ))}
@@ -175,39 +175,39 @@ export default function LocalSeoPage() {
         <Section>
           <Container>
             <div className="rounded-2xl border border-border bg-card p-8 md:p-12">
-              <h2 className="text-2xl md:text-3xl font-bold mb-6">Fale com a SevenDevX</h2>
+              <h2 className="text-2xl md:text-3xl font-bold mb-6">{copy("Fale com a SevenDevX")}</h2>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <a href="https://wa.me/5531984740625" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-4 rounded-xl border border-border hover:border-foreground/30 transition">
                   <Phone className="w-5 h-5" />
                   <div>
-                    <p className="text-xs uppercase tracking-wider text-muted-foreground">WhatsApp</p>
+                    <p className="text-xs uppercase tracking-wider text-muted-foreground">{copy("WhatsApp")}</p>
                     <p className="font-medium">+55 (31) 98474-0625</p>
                   </div>
                 </a>
                 <a href="mailto:contato@sevendevx.com" className="flex items-center gap-3 p-4 rounded-xl border border-border hover:border-foreground/30 transition">
                   <Mail className="w-5 h-5" />
                   <div>
-                    <p className="text-xs uppercase tracking-wider text-muted-foreground">Email</p>
+                    <p className="text-xs uppercase tracking-wider text-muted-foreground">{copy("Email")}</p>
                     <p className="font-medium">contato@sevendevx.com</p>
                   </div>
                 </a>
                 <Link to="/services" className="flex items-center gap-3 p-4 rounded-xl border border-border hover:border-foreground/30 transition">
                   <CheckCircle2 className="w-5 h-5" />
                   <div>
-                    <p className="text-xs uppercase tracking-wider text-muted-foreground">Catálogo</p>
-                    <p className="font-medium">Ver todos os serviços</p>
+                    <p className="text-xs uppercase tracking-wider text-muted-foreground">{copy("Catálogo")}</p>
+                    <p className="font-medium">{copy("Ver todos os serviços")}</p>
                   </div>
                 </Link>
               </div>
 
               <div className="mt-8 pt-8 border-t border-border">
                 <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-3">
-                  Outras cidades atendidas
+                  {copy("Outras cidades atendidas")}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {GEO_PROGRAMMATIC.cities.filter((c) => c.slug !== cityData.slug).map((c) => (
                     <Link key={c.slug} to={`/local/${c.slug}`} className="px-3 py-1.5 rounded-full border border-border text-sm hover:border-foreground/30 transition">
-                      {c.name}
+                      {copy(c.name)}
                     </Link>
                   ))}
                 </div>

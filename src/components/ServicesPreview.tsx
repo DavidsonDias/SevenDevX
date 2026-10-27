@@ -30,6 +30,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { motion } from "framer-motion";
 import { ArrowRight, Code, Settings, Wrench, FileText, Lightbulb, Sparkles, Briefcase, Layers, Rocket, Palette, Database } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -65,6 +66,7 @@ const COVER_BY_SLUG: Record<string, string> = {
 // ============================================================================
 
 const ServicesPreview = () => {
+  const { copy } = usePublicCopy();
   const { t } = useLanguage();
   // Apenas serviços marcados explicitamente para a HOME (máx 3, ordenados por destaque)
   const { data: cmsServices } = useHomeServices();
@@ -94,7 +96,7 @@ const ServicesPreview = () => {
           <motion.section
             key={service.title}
             role="region"
-            aria-label={`${t.header.services}: ${service.title}`}
+            aria-label={copy(`${t.header.services}: ${service.title}`)}
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
@@ -140,16 +142,16 @@ const ServicesPreview = () => {
                 className="px-4 py-10 text-center space-y-4"
               >
                 <h2 className="text-2xl xs:text-3xl sm:text-4xl font-bold uppercase tracking-tight leading-tight">
-                  {service.title}
+                  {copy(service.title)}
                 </h2>
                 <p className="text-sm xs:text-base text-white/90 leading-relaxed max-w-xl mx-auto">
-                  {service.description}
+                  {copy(service.description)}
                 </p>
                 
                 {/* CTA Button */}
                 <Link 
                   to="/services"
-                  aria-label={`${t.services.viewMore} - ${service.title}`}
+                  aria-label={copy(`${t.services.viewMore} - ${service.title}`)}
                 >
                   <motion.button
                     whileHover={{ scale: 1.05 }}
@@ -199,16 +201,16 @@ const ServicesPreview = () => {
                   className="max-w-4xl mx-auto lg:max-w-5xl xl:max-w-6xl"
                 >
                   <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 uppercase tracking-tight leading-tight">
-                    {service.title}
+                    {copy(service.title)}
                   </h2>
                   <p className="text-lg md:text-xl text-white/90 mb-8 max-w-2xl leading-relaxed">
-                    {service.description}
+                    {copy(service.description)}
                   </p>
                   
                   {/* CTA Button */}
                   <Link 
                     to="/services"
-                    aria-label={`${t.services.viewMore} - ${service.title}`}
+                    aria-label={copy(`${t.services.viewMore} - ${service.title}`)}
                   >
                     <motion.button
                       whileHover={{ scale: 1.05 }}

@@ -74,6 +74,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
@@ -131,17 +132,18 @@ const HUB_SECTIONS = [
 // ============================================================================
 
 export default function AIHub() {
+  const { copy } = usePublicCopy();
   return (
     <>
       <Helmet>
-        <title>AI Hub — Knowledge Base da SevenDevX para LLMs e AI Search</title>
+        <title>{copy("AI Hub — Knowledge Base da SevenDevX para LLMs e AI Search")}</title>
         <meta
           name="description"
-          content="Hub de conhecimento da SevenDevX otimizado para descoberta em ChatGPT, Gemini, Claude, Perplexity e AI Overviews. Respostas, guias técnicos e dados estruturados."
+          content={copy("Hub de conhecimento da SevenDevX otimizado para descoberta em ChatGPT, Gemini, Claude, Perplexity e AI Overviews. Respostas, guias técnicos e dados estruturados.")}
         />
         <link rel="canonical" href="https://www.sevendevx.com/ai" />
-        <meta property="og:title" content="AI Hub — SevenDevX" />
-        <meta property="og:description" content="Knowledge base enterprise para LLMs e AI Search." />
+        <meta property="og:title" content={copy("AI Hub — SevenDevX")} />
+        <meta property="og:description" content={copy("Knowledge base enterprise para LLMs e AI Search.")} />
         <meta property="og:url" content="https://www.sevendevx.com/ai" />
       </Helmet>
 
@@ -156,15 +158,13 @@ export default function AIHub() {
               className="max-w-3xl"
             >
               <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-4">
-                GEO · Generative Engine Optimization
+                {copy("GEO · Generative Engine Optimization")}
               </p>
               <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
-                AI Hub da SevenDevX
+                {copy("AI Hub da SevenDevX")}
               </h1>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                Knowledge base enterprise estruturada para descoberta em ChatGPT, Gemini, Claude,
-                Perplexity, Copilot e Google AI Overviews. Cada página é otimizada para citação
-                em respostas geradas por IA.
+                {copy("Knowledge base enterprise estruturada para descoberta em ChatGPT, Gemini, Claude, Perplexity, Copilot e Google AI Overviews. Cada página é otimizada para citação em respostas geradas por IA.")}
               </p>
             </motion.div>
           </Container>
@@ -193,12 +193,12 @@ export default function AIHub() {
                         </div>
                         <ArrowUpRight className="w-5 h-5 opacity-0 group-hover:opacity-100 transition" />
                       </div>
-                      <h2 className="text-xl font-bold mb-2">{s.title}</h2>
+                      <h2 className="text-xl font-bold mb-2">{copy(s.title)}</h2>
                       <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
                         {s.desc}
                       </p>
                       <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                        {s.items}+ recursos
+                        {s.items}{copy("+ recursos")}
                       </span>
                     </Link>
                   </motion.div>
@@ -212,23 +212,23 @@ export default function AIHub() {
           <Container>
             <div className="rounded-2xl border border-border bg-card p-8 md:p-12">
               <h2 className="text-2xl md:text-3xl font-bold mb-4">
-                Para agentes de IA e sistemas RAG
+                {copy("Para agentes de IA e sistemas RAG")}
               </h2>
               <p className="text-muted-foreground mb-6 max-w-2xl">
-                A SevenDevX disponibiliza arquivos otimizados para descoberta automática:
+                {copy("A SevenDevX disponibiliza arquivos otimizados para descoberta automática:")}
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <a href="/llms.txt" className="p-4 rounded-lg border border-border hover:border-foreground/30 transition">
                   <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">/llms.txt</div>
-                  <div className="text-sm font-medium">Site map para LLMs</div>
+                  <div className="text-sm font-medium">{copy("Site map para LLMs")}</div>
                 </a>
                 <a href="/ai.txt" className="p-4 rounded-lg border border-border hover:border-foreground/30 transition">
                   <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">/ai.txt</div>
-                  <div className="text-sm font-medium">Política de uso por IA</div>
+                  <div className="text-sm font-medium">{copy("Política de uso por IA")}</div>
                 </a>
                 <a href="/sitemap.xml" className="p-4 rounded-lg border border-border hover:border-foreground/30 transition">
                   <div className="text-xs uppercase tracking-wider text-muted-foreground mb-1">/sitemap.xml</div>
-                  <div className="text-sm font-medium">Sitemap completo</div>
+                  <div className="text-sm font-medium">{copy("Sitemap completo")}</div>
                 </a>
               </div>
             </div>

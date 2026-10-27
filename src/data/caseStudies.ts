@@ -70,26 +70,20 @@ export const CASE_STUDIES: CaseStudy[] = [
     publishedAt: "2026-02-15",
   },
   {
+    // Legacy slug retained so existing inbound links remain valid.
     slug: "george-fiuza-site-institucional-advocacia",
-    title: "George Fiuza Advocacia — site institucional premium",
-    client: "George Fiuza Advocacia",
-    industry: "Jurídico",
-    summary:
-      "Site institucional sofisticado para escritório de advocacia empresarial com áreas de atuação, equipe, blog jurídico e captação qualificada.",
-    problem:
-      "Escritório com forte presença regional dependia de indicação. Não tinha autoridade digital, nem canal de captação online compatível com o porte da banca.",
-    solution:
-      "Site institucional em React + TypeScript com design editorial sério, motion design discreto, blog jurídico com Schema.org Article, formulários LGPD-compliant, integração WhatsApp Business e SEO técnico completo.",
-    outcome:
-      "Tráfego orgânico crescente, leads qualificados via formulário e WhatsApp, e percepção de autoridade alinhada ao posicionamento da banca.",
-    metrics: [
-      { label: "Lighthouse", value: "98/100" },
-      { label: "Tempo de carga", value: "<1s" },
-      { label: "SEO score", value: "100/100" },
-    ],
-    technologies: ["React", "TypeScript", "Tailwind CSS", "Framer Motion", "Supabase"],
-    services: ["Site Institucional", "SEO Técnico", "Integração WhatsApp"],
-    duration: "4 semanas",
+    title: "Barbearia George Fiuza — presença digital e agendamento",
+    client: "Barbearia George Fiuza",
+    industry: "Beleza e cuidados pessoais",
+    summary: "Landing page para apresentar a barbearia e facilitar o acesso ao agendamento.",
+    problem: "Apresentar serviços e identidade da barbearia com um caminho direto para o agendamento.",
+    solution: "Landing page responsiva com identidade visual própria, apresentação dos serviços e acesso ao agendamento.",
+    outcome: "Presença digital com navegação orientada à descoberta dos serviços e ao contato com a barbearia.",
+    metrics: [],
+    technologies: ["React", "TypeScript", "Tailwind CSS", "Framer Motion"],
+    services: ["Landing Page", "Design Responsivo"],
+    duration: "Não informado",
+    liveUrl: "https://georgefiuza.vercel.app/",
     imageHint: "GeorgeFiuza",
     publishedAt: "2026-01-20",
   },

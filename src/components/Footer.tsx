@@ -15,6 +15,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";
@@ -26,6 +27,7 @@ import logo from "@/assets/logo.svg";
 // ============================================================================
 
 export default function Footer() {
+  const { copy } = usePublicCopy();
   const { t } = useLanguage();
   const currentYear = new Date().getFullYear();
 
@@ -63,7 +65,7 @@ export default function Footer() {
   return (
     <footer
       role="contentinfo"
-      aria-label="Footer"
+      aria-label={copy("Footer")}
       className="relative border-t border-border bg-background"
     >
       <script type="application/ld+json">
@@ -83,19 +85,18 @@ export default function Footer() {
             <Link to="/" className="mb-6 inline-block">
               <img 
                 src={logo} 
-                alt="SevenDevX" 
+                alt={copy("SevenDevX")}
                 loading="lazy"
                 decoding="async"
                 className="mx-auto h-10 w-auto md:mx-0" />
             </Link>
 
             <p className="mx-auto max-w-xs text-sm leading-relaxed text-muted-foreground md:mx-0">
-              Desenvolvimento web com inovação, design e performance.
-              Transformamos visões em experiências digitais.
+              {copy("Desenvolvimento web com inovação, design e performance. Transformamos visões em experiências digitais.")}
             </p>
 
             <p className="mx-auto mt-2 max-w-xs text-sm leading-relaxed text-muted-foreground md:mx-0">
-              • Codificando o amanhã, hoje!
+              {copy("• Codificando o amanhã, hoje!")}
             </p>
           </motion.div>
 
@@ -108,7 +109,7 @@ export default function Footer() {
             className="col-span-2 md:col-span-1 lg:col-span-4"
           >
             <h3 className="mb-6 text-xs font-semibold uppercase tracking-[0.3em] text-foreground">
-              Navegação
+              {copy("Navegação")}
             </h3>
             {/* Links */}
             <ul className="grid grid-cols-2 gap-x-8 gap-y-3">
@@ -118,7 +119,7 @@ export default function Footer() {
                     to={link.path}
                     className="group inline-flex items-start gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
-                    <span>{link.name}</span>
+                    <span>{copy(link.name)}</span>
 
                     <ArrowUpRight className="mt-0.5 h-3 w-3 shrink-0 opacity-0 transition-opacity group-hover:opacity-100" />
                   </Link>
@@ -136,7 +137,7 @@ export default function Footer() {
             className="col-span-1 lg:col-span-2"
           >
             <h3 className="mb-6 text-xs font-semibold uppercase tracking-[0.3em] text-foreground">
-              Social
+              {copy("Social")}
             </h3>
 
             <ul className="space-y-3">
@@ -148,7 +149,7 @@ export default function Footer() {
                     rel="noopener noreferrer"
                     className="group inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
                   >
-                    {link.name}
+                    {copy(link.name)}
 
                     <ArrowUpRight className="h-3 w-3 opacity-0 transition-opacity group-hover:opacity-100" />
                   </a>
@@ -166,7 +167,7 @@ export default function Footer() {
             className="col-span-1 lg:col-span-3"
           >
             <h3 className="mb-6 text-xs font-semibold uppercase tracking-[0.3em] text-foreground">
-              Contato
+              {copy("Contato")}
             </h3>
 
             <ul className="space-y-4">
@@ -196,7 +197,7 @@ export default function Footer() {
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
 
                 <span className="text-sm text-muted-foreground">
-                  Belo Horizonte, MG — Brasil
+                  {copy("Belo Horizonte, MG — Brasil")}
                 </span>
               </li>
             </ul>
@@ -210,7 +211,7 @@ export default function Footer() {
           </p>
 
           <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground/30">
-            DESIGNED & BUILT WITH PRECISION
+            {copy("DESIGNED & BUILT WITH PRECISION")}
           </p>
         </div>
       </div>

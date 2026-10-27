@@ -73,6 +73,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { useEffect, useRef, useState } from "react";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { motion, useInView } from "framer-motion";
@@ -113,6 +114,7 @@ const useCounter = (target: number, isInView: boolean, duration = 2000) => {
 
 // ─── Stats Counter Component ───
 const StatCounter = ({ value, suffix, label, icon: Icon }: { value: number; suffix: string; label: string; icon: any }) => {
+  const { copy } = usePublicCopy();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
   const count = useCounter(value, isInView);
@@ -125,7 +127,7 @@ const StatCounter = ({ value, suffix, label, icon: Icon }: { value: number; suff
       <div className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-1">
         {count}{suffix}
       </div>
-      <div className="text-xs sm:text-sm text-muted-foreground uppercase tracking-widest">{label}</div>
+      <div className="text-xs sm:text-sm text-muted-foreground uppercase tracking-widest">{copy(label)}</div>
     </motion.div>
   );
 };
@@ -135,6 +137,7 @@ const StatCounter = ({ value, suffix, label, icon: Icon }: { value: number; suff
 // ============================================================================
 
 const About = () => {
+  const { copy } = usePublicCopy();
   const { t, language } = useLanguage();
   useAnalytics();
 
@@ -251,8 +254,8 @@ const About = () => {
                         <Calendar className="w-5 h-5 text-foreground/60" />
                         <span className="text-foreground font-bold text-lg">{item.year}</span>
                       </div>
-                      <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
-                      <p className="text-muted-foreground">{item.description}</p>
+                      <h3 className="text-xl font-semibold mb-2">{copy(item.title)}</h3>
+                      <p className="text-muted-foreground">{copy(item.description)}</p>
                     </div>
                   </div>
                 </motion.div>
@@ -305,8 +308,8 @@ const About = () => {
                         <div className="w-12 h-12 bg-foreground/5 flex items-center justify-center mb-4 group-hover:bg-foreground/10 transition-colors">
                           <Icon className="w-6 h-6 text-foreground/70" />
                         </div>
-                        <h3 className="text-xl font-semibold mb-2">{value.title}</h3>
-                        <p className="text-muted-foreground">{value.description}</p>
+                        <h3 className="text-xl font-semibold mb-2">{copy(value.title)}</h3>
+                        <p className="text-muted-foreground">{copy(value.description)}</p>
                       </div>
                     </ServiceCard3D>
                   </motion.div>

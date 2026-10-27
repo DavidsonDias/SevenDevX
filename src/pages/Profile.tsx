@@ -77,6 +77,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
@@ -103,6 +104,7 @@ type ProfileFormState = { fullName: string; bio: string; avatarUrl: string };
 // ============================================================================
 
 const Profile = () => {
+  const { copy } = usePublicCopy();
   const { user, isAdmin, signOut } = useAuthContext();
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -215,7 +217,7 @@ const Profile = () => {
 
   return (
     <>
-      <SEOHead title="Perfil - SevenDevX" description="Visualize e edite seus dados pessoais" url="https://www.sevendevx.com/profile" />
+      <SEOHead title={copy("Perfil - SevenDevX")} description={copy("Visualize e edite seus dados pessoais")} url="https://www.sevendevx.com/profile" />
       <div className="relative min-h-screen bg-background text-foreground py-12 px-4 sm:px-6 overflow-hidden">
         {/* Backdrop */}
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
@@ -237,7 +239,7 @@ const Profile = () => {
             onClick={() => navigate(-1)}
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors text-sm uppercase tracking-wider"
           >
-            <ArrowLeft className="w-4 h-4" /> Voltar
+            <ArrowLeft className="w-4 h-4" /> {copy("Voltar")}
           </motion.button>
 
           {/* Hero header */}
@@ -250,7 +252,7 @@ const Profile = () => {
               <div className="relative flex flex-col sm:flex-row sm:items-center gap-6">
                 <div className="relative">
                   <Avatar className="w-24 h-24 sm:w-28 sm:h-28 border-2 border-white/20 shadow-2xl">
-                    <AvatarImage src={form.avatarUrl || undefined} alt={form.fullName || user?.email || ""} />
+                    <AvatarImage src={form.avatarUrl || undefined} alt={copy(form.fullName || user?.email || "")} />
                     <AvatarFallback className="bg-gradient-to-br from-white/15 to-white/5 text-2xl font-orbitron">
                       {initials}
                     </AvatarFallback>
@@ -261,15 +263,15 @@ const Profile = () => {
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2 mb-1">
                     <h1 className="text-2xl sm:text-3xl font-bold font-orbitron truncate">
-                      {form.fullName || user?.email?.split("@")[0] || "Usuário"}
+                      {copy(form.fullName || user?.email?.split("@")[0] || "Usuário")}
                     </h1>
                     {isAdmin && (
                       <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] uppercase tracking-wider rounded-full border border-amber-400/40 text-amber-300 bg-amber-400/10">
-                        <Shield className="w-3 h-3" /> Admin
+                        <Shield className="w-3 h-3" /> {copy("Admin")}
                       </span>
                     )}
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] uppercase tracking-wider rounded-full border border-emerald-400/30 text-emerald-300 bg-emerald-400/10">
-                      <CheckCircle2 className="w-3 h-3" /> Ativo
+                      <CheckCircle2 className="w-3 h-3" /> {copy("Ativo")}
                     </span>
                   </div>
                   <p className="text-sm text-muted-foreground truncate">{user?.email}</p>
@@ -278,7 +280,7 @@ const Profile = () => {
                   <div className="mt-4">
                     <div className="flex items-center justify-between mb-1.5">
                       <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-1.5">
-                        <Sparkles className="w-3 h-3" /> Perfil completo
+                        <Sparkles className="w-3 h-3" /> {copy("Perfil completo")}
                       </span>
                       <span className="text-xs font-semibold tabular-nums">{completion}%</span>
                     </div>
@@ -304,13 +306,13 @@ const Profile = () => {
           >
             <GlassCard className="p-4">
               <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
-                <Calendar className="w-3 h-3" /> Membro desde
+                <Calendar className="w-3 h-3" /> {copy("Membro desde")}
               </div>
               <p className="text-sm font-semibold">{memberSince}</p>
             </GlassCard>
             <GlassCard className="p-4">
               <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
-                <KeyRound className="w-3 h-3" /> Último acesso
+                <KeyRound className="w-3 h-3" /> {copy("Último acesso")}
               </div>
               <p className="text-sm font-semibold truncate">{lastSignIn}</p>
             </GlassCard>
@@ -321,7 +323,7 @@ const Profile = () => {
               <button
                 onClick={copyId}
                 className="text-sm font-mono truncate w-full text-left hover:text-foreground transition-colors flex items-center gap-1.5"
-                title="Copiar ID"
+                title={copy("Copiar ID")}
               >
                 <span className="truncate">{user?.id?.slice(0, 12)}…</span>
                 <Copy className="w-3 h-3 opacity-60" />
@@ -338,9 +340,9 @@ const Profile = () => {
             >
               <GlassCard className="p-6 sm:p-8">
                 <div className="mb-6">
-                  <h2 className="text-lg font-bold font-orbitron">Dados pessoais</h2>
+                  <h2 className="text-lg font-bold font-orbitron">{copy("Dados pessoais")}</h2>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Essas informações podem aparecer publicamente no site.
+                    {copy("Essas informações podem aparecer publicamente no site.")}
                   </p>
                 </div>
 
@@ -352,12 +354,12 @@ const Profile = () => {
                   <form onSubmit={onSave} className="space-y-5">
                     <div>
                       <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-2">
-                        Nome completo
+                        {copy("Nome completo")}
                       </label>
                       <div className="relative">
                         <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <input
-                          type="text" value={form.fullName} onChange={onChange("fullName")} placeholder="Seu nome"
+                          type="text" value={form.fullName} onChange={onChange("fullName")} placeholder={copy("Seu nome")}
                           className="w-full pl-11 pr-4 py-3 bg-secondary/60 border border-border rounded-lg text-sm placeholder:text-muted-foreground focus:outline-none focus:border-foreground/40 focus:bg-secondary transition-all"
                         />
                       </div>
@@ -365,7 +367,7 @@ const Profile = () => {
 
                     <div>
                       <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-2">
-                        E-mail
+                        {copy("E-mail")}
                       </label>
                       <div className="relative">
                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -374,16 +376,16 @@ const Profile = () => {
                           className="w-full pl-11 pr-4 py-3 bg-secondary/40 border border-border rounded-lg text-sm opacity-60 cursor-not-allowed"
                         />
                       </div>
-                      <p className="text-[10px] text-muted-foreground mt-1.5">O e-mail não pode ser alterado por aqui.</p>
+                      <p className="text-[10px] text-muted-foreground mt-1.5">{copy("O e-mail não pode ser alterado por aqui.")}</p>
                     </div>
 
                     <div>
                       <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-2">
-                        Bio
+                        {copy("Bio")}
                       </label>
                       <textarea
                         value={form.bio} onChange={onChange("bio")} rows={4}
-                        placeholder="Conte um pouco sobre você, sua experiência e seus interesses."
+                        placeholder={copy("Conte um pouco sobre você, sua experiência e seus interesses.")}
                         className="w-full px-4 py-3 bg-secondary/60 border border-border rounded-lg text-sm placeholder:text-muted-foreground focus:outline-none focus:border-foreground/40 focus:bg-secondary transition-all resize-none"
                         maxLength={500}
                       />
@@ -394,13 +396,13 @@ const Profile = () => {
 
                     <div>
                       <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-2">
-                        Avatar URL
+                        {copy("Avatar URL")}
                       </label>
                       <div className="relative">
                         <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <input
                           type="url" value={form.avatarUrl} onChange={onChange("avatarUrl")}
-                          placeholder="https://exemplo.com/avatar.jpg"
+                          placeholder={copy("https://exemplo.com/avatar.jpg")}
                           className="w-full pl-11 pr-4 py-3 bg-secondary/60 border border-border rounded-lg text-sm placeholder:text-muted-foreground focus:outline-none focus:border-foreground/40 focus:bg-secondary transition-all"
                         />
                       </div>
@@ -411,7 +413,7 @@ const Profile = () => {
                       whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}
                       className="w-full py-3.5 bg-foreground text-background font-bold uppercase tracking-[0.2em] text-xs hover:bg-foreground/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 rounded-lg"
                     >
-                      {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Save className="w-4 h-4" /> Salvar alterações</>}
+                      {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Save className="w-4 h-4" /> {copy("Salvar alterações")}</>}
                     </motion.button>
                   </form>
                 )}
@@ -425,15 +427,15 @@ const Profile = () => {
               className="space-y-6"
             >
               <GlassCard className="p-6">
-                <h3 className="text-sm font-bold font-orbitron mb-1">Segurança</h3>
-                <p className="text-xs text-muted-foreground mb-4">Gerencie acesso e credenciais.</p>
+                <h3 className="text-sm font-bold font-orbitron mb-1">{copy("Segurança")}</h3>
+                <p className="text-xs text-muted-foreground mb-4">{copy("Gerencie acesso e credenciais.")}</p>
                 <button
                   onClick={handlePasswordReset}
                   disabled={isSendingReset}
                   className="group w-full flex items-center justify-between gap-3 px-4 py-3 border border-border rounded-lg text-xs uppercase tracking-wider hover:bg-white/5 hover:border-foreground/30 transition-all disabled:opacity-50"
                 >
                   <span className="flex items-center gap-2">
-                    <KeyRound className="w-4 h-4" /> Redefinir senha
+                    <KeyRound className="w-4 h-4" /> {copy("Redefinir senha")}
                   </span>
                   {isSendingReset ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ArrowLeft className="w-3.5 h-3.5 rotate-180 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all" />}
                 </button>
@@ -442,14 +444,14 @@ const Profile = () => {
               {isAdmin && (
                 <GlassCard className="p-6">
                   <h3 className="text-sm font-bold font-orbitron mb-1 flex items-center gap-2">
-                    <Compass className="w-4 h-4" /> Tour Guiado
+                    <Compass className="w-4 h-4" /> {copy("Tour Guiado")}
                   </h3>
-                  <p className="text-xs text-muted-foreground mb-4">Refaça o walkthrough inicial do SevenOS.</p>
+                  <p className="text-xs text-muted-foreground mb-4">{copy("Refaça o walkthrough inicial do SevenOS.")}</p>
                   <button
                     onClick={async () => { await resetTour(); toast({ title: "Tour reiniciado", description: "Abra o painel Admin para começar." }); }}
                     className="w-full px-4 py-3 border border-border rounded-lg text-xs uppercase tracking-wider hover:bg-white/5 transition-all"
                   >
-                    Refazer tour
+                    {copy("Refazer tour")}
                   </button>
                 </GlassCard>
               )}
@@ -457,26 +459,26 @@ const Profile = () => {
               {isAdmin && (
                 <GlassCard className="p-6 border-amber-400/20">
                   <h3 className="text-sm font-bold font-orbitron mb-1 flex items-center gap-2">
-                    <Shield className="w-4 h-4 text-amber-300" /> Área Admin
+                    <Shield className="w-4 h-4 text-amber-300" /> {copy("Área Admin")}
                   </h3>
-                  <p className="text-xs text-muted-foreground mb-4">Acesso privilegiado ao SevenOS.</p>
+                  <p className="text-xs text-muted-foreground mb-4">{copy("Acesso privilegiado ao SevenOS.")}</p>
                   <button
                     onClick={() => navigate("/admin")}
                     className="w-full px-4 py-3 bg-amber-400/10 border border-amber-400/30 text-amber-300 rounded-lg text-xs uppercase tracking-wider hover:bg-amber-400/15 transition-all"
                   >
-                    Abrir SevenOS
+                    {copy("Abrir SevenOS")}
                   </button>
                 </GlassCard>
               )}
 
               <GlassCard className="p-6 border-red-500/20">
-                <h3 className="text-sm font-bold font-orbitron mb-1">Sessão</h3>
-                <p className="text-xs text-muted-foreground mb-4">Sair desta conta neste dispositivo.</p>
+                <h3 className="text-sm font-bold font-orbitron mb-1">{copy("Sessão")}</h3>
+                <p className="text-xs text-muted-foreground mb-4">{copy("Sair desta conta neste dispositivo.")}</p>
                 <button
                   onClick={handleSignOut}
                   className="w-full flex items-center justify-center gap-2 px-4 py-3 border border-red-500/30 text-red-300 rounded-lg text-xs uppercase tracking-wider hover:bg-red-500/10 transition-all"
                 >
-                  <LogOut className="w-4 h-4" /> Encerrar sessão
+                  <LogOut className="w-4 h-4" /> {copy("Encerrar sessão")}
                 </button>
               </GlassCard>
             </motion.div>

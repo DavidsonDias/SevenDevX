@@ -85,6 +85,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { motion, useMotionValue, useSpring, useTransform, useInView } from "framer-motion";
@@ -212,6 +213,7 @@ function BrowserMockup3D({ src, alt, url }: { src: string; alt: string; url: str
 // ============================================================================
 
 export default function CriacaoSitesProfissionais() {
+  const { copy } = usePublicCopy();
   const { data } = useSitePage();
   const [diagOpen, setDiagOpen] = useState(false);
 
@@ -302,12 +304,12 @@ export default function CriacaoSitesProfissionais() {
   return (
     <>
       <Helmet>
-        <title>{TITLE}</title>
-        <meta name="description" content={DESCRIPTION} />
+        <title>{copy(TITLE)}</title>
+        <meta name="description" content={copy(DESCRIPTION)} />
         <meta name="keywords" content={KEYWORDS} />
         <link rel="canonical" href={seo.canonical || CANONICAL} />
-        <meta property="og:title" content={TITLE} />
-        <meta property="og:description" content={DESCRIPTION} />
+        <meta property="og:title" content={copy(TITLE)} />
+        <meta property="og:description" content={copy(DESCRIPTION)} />
         <meta property="og:url" content={seo.canonical || CANONICAL} />
         <meta property="og:type" content="website" />
         <meta name="twitter:card" content="summary_large_image" />
@@ -328,36 +330,36 @@ export default function CriacaoSitesProfissionais() {
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-border bg-white/[0.03] mb-6">
                   <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                   <span className="text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
-                    {badgeText} · {badgeYear}
+                    {copy(badgeText)} · {badgeYear}
                   </span>
                 </div>
                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-6 leading-[1.02]">
-                  {titlePrefix}{" "}
+                  {copy(titlePrefix)}{" "}
                   <span className="relative inline-block">
                     <span className="bg-gradient-to-r from-primary via-foreground to-primary bg-clip-text text-transparent">
-                      {titleHighlight}
+                      {copy(titleHighlight)}
                     </span>
                     <motion.span initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 0.6, duration: 0.8, ease: "easeOut" }} className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-primary to-transparent origin-left" />
                   </span>{" "}
-                  {titleSuffix}
+                  {copy(titleSuffix)}
                 </h1>
                 <p className="text-lg md:text-xl text-muted-foreground max-w-xl leading-relaxed mb-8">
-                  {heroDesc}
+                  {copy(heroDesc)}
                 </p>
                 <div className="flex flex-wrap gap-3 mb-10">
                   {ctaPrimaryAction === "diagnostico" ? (
                     <button onClick={openDiagnostico} className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-foreground text-background text-sm font-bold uppercase tracking-wider hover:opacity-90 transition">
                       <Rocket className="w-4 h-4 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
-                      {ctaPrimaryLabel}
+                      {copy(ctaPrimaryLabel)}
                     </button>
                   ) : (
                     <Link to={ctaPrimaryUrl} className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-foreground text-background text-sm font-bold uppercase tracking-wider hover:opacity-90 transition">
                       <Rocket className="w-4 h-4" />
-                      {ctaPrimaryLabel}
+                      {copy(ctaPrimaryLabel)}
                     </Link>
                   )}
                   <Link to={ctaSecondaryUrl} className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl border border-border text-sm font-bold uppercase tracking-wider hover:bg-white/5 transition">
-                    {ctaSecondaryLabel} <ArrowRight className="w-4 h-4" />
+                    {copy(ctaSecondaryLabel)} <ArrowRight className="w-4 h-4" />
                   </Link>
                 </div>
                 {showMetrics && (
@@ -367,7 +369,7 @@ export default function CriacaoSitesProfissionais() {
                         <div className="text-2xl md:text-3xl font-bold tracking-tight">
                           <Counter to={Number(m.value)} prefix={m.prefix} suffix={m.suffix} />
                         </div>
-                        <p className="text-[11px] uppercase tracking-wider text-muted-foreground mt-1">{m.label}</p>
+                        <p className="text-[11px] uppercase tracking-wider text-muted-foreground mt-1">{copy(m.label)}</p>
                       </div>
                     ))}
                   </div>
@@ -388,12 +390,12 @@ export default function CriacaoSitesProfissionais() {
                     <div className="absolute -inset-10 bg-gradient-to-tr from-primary/20 via-transparent to-primary/10 blur-3xl opacity-60 -z-10" />
                     <BrowserMockup3D
                       src={heroImg}
-                      alt={heroSpProject?.override_title || heroProject.title}
+                      alt={copy(heroSpProject?.override_title || heroProject.title)}
                       url={heroUrl}
                     />
                     {heroLive && (
                       <a href={heroLive} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-muted-foreground hover:text-foreground transition">
-                        Ver projeto ao vivo <ExternalLink className="w-3 h-3" />
+                        {copy("Ver projeto ao vivo")} <ExternalLink className="w-3 h-3" />
                       </a>
                     )}
                   </motion.div>
@@ -404,7 +406,7 @@ export default function CriacaoSitesProfissionais() {
         </Section>
 
         {/* MARQUEE STACK — ícones oficiais coloridos, loop infinito real */}
-        <section aria-label="Stack tecnológico" className="border-y border-border py-6 bg-white/[0.02] overflow-hidden">
+        <section aria-label={copy("Stack tecnológico")} className="border-y border-border py-6 bg-white/[0.02] overflow-hidden">
           <div className="relative flex w-full overflow-hidden">
             <div
               className="flex shrink-0 items-center gap-10 pr-10 whitespace-nowrap"
@@ -439,8 +441,8 @@ export default function CriacaoSitesProfissionais() {
         <Section>
           <Container>
             <div className="max-w-3xl mb-12">
-              <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-3">Diferenciais</p>
-              <h2 className="text-3xl md:text-5xl font-bold tracking-tight">Por que cada detalhe importa</h2>
+              <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-3">{copy("Diferenciais")}</p>
+              <h2 className="text-3xl md:text-5xl font-bold tracking-tight">{copy("Por que cada detalhe importa")}</h2>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
               {diffs.map((d: any, i: number) => (
@@ -451,8 +453,8 @@ export default function CriacaoSitesProfissionais() {
                       <div className="w-10 h-10 rounded-lg border border-border bg-white/[0.03] flex items-center justify-center mb-4">
                         <LucideIconRender name={d.icon} className="w-5 h-5 text-primary" />
                       </div>
-                      <h3 className="text-lg font-bold mb-2">{d.title}</h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{d.description}</p>
+                      <h3 className="text-lg font-bold mb-2">{copy(d.title)}</h3>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{copy(d.description)}</p>
                     </div>
                   </GlassCard>
                 </motion.div>
@@ -467,12 +469,12 @@ export default function CriacaoSitesProfissionais() {
             <div className="flex items-end justify-between flex-wrap gap-6 mb-12">
               <div className="max-w-2xl">
                 <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-3 flex items-center gap-2">
-                  <Trophy className="w-3.5 h-3.5" /> Projetos entregues
+                  <Trophy className="w-3.5 h-3.5" /> {copy("Projetos entregues")}
                 </p>
-                <h2 className="text-3xl md:text-5xl font-bold tracking-tight">Sites reais, resultados reais</h2>
+                <h2 className="text-3xl md:text-5xl font-bold tracking-tight">{copy("Sites reais, resultados reais")}</h2>
               </div>
               <Link to="/projects" className="text-sm uppercase tracking-wider text-muted-foreground hover:text-foreground transition inline-flex items-center gap-2">
-                Ver portfólio completo <ArrowRight className="w-4 h-4" />
+                {copy("Ver portfólio completo")} <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -497,11 +499,11 @@ export default function CriacaoSitesProfissionais() {
                     className={`group block rounded-2xl border ${isHighlight ? "border-primary/40" : "border-border"} bg-card overflow-hidden hover:border-foreground/40 transition-colors relative`}
                   >
                     {isHighlight && (
-                      <span className="absolute top-3 right-3 z-10 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider bg-primary/90 text-primary-foreground font-bold">Destaque</span>
+                      <span className="absolute top-3 right-3 z-10 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider bg-primary/90 text-primary-foreground font-bold">{copy("Destaque")}</span>
                     )}
                     <div className="relative aspect-[16/10] overflow-hidden bg-black">
                       {image && (
-                        <img src={image} alt={title} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                        <img src={image} alt={copy(title)} loading="lazy" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
                       {(category || tags.length > 0) && (
@@ -520,8 +522,8 @@ export default function CriacaoSitesProfissionais() {
                       )}
                     </div>
                     <div className="p-5">
-                      <h3 className="text-lg font-bold mb-1.5 group-hover:text-primary transition-colors">{title}</h3>
-                      <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed mb-4">{desc}</p>
+                      <h3 className="text-lg font-bold mb-1.5 group-hover:text-primary transition-colors">{copy(title)}</h3>
+                      <p className="text-sm text-muted-foreground line-clamp-2 leading-relaxed mb-4">{copy(desc)}</p>
                       {techs.length > 0 && (
                         <div className="pt-4 border-t border-border flex flex-wrap gap-2">
                           {techs.slice(0, 5).map((t: any, ti: number) => {
@@ -538,13 +540,13 @@ export default function CriacaoSitesProfissionais() {
                           })}
                           {techs.length > 5 && (
                             <span className="inline-flex items-center px-2 py-1 rounded-md text-[11px] font-medium text-muted-foreground">
-                              +{techs.length - 5}
+                              +{copy(techs.length - 5)}
                             </span>
                           )}
                         </div>
                       )}
                       <div className="mt-4 inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.2em] text-muted-foreground group-hover:text-foreground transition-colors">
-                        Ver projeto <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                        {copy("Ver projeto")} <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                       </div>
                     </div>
                   </motion.a>
@@ -559,9 +561,9 @@ export default function CriacaoSitesProfissionais() {
           <Container>
             <div className="max-w-3xl mb-12">
               <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-3 flex items-center gap-2">
-                <Zap className="w-3.5 h-3.5" /> Processo
+                <Zap className="w-3.5 h-3.5" /> {copy("Processo")}
               </p>
-              <h2 className="text-3xl md:text-5xl font-bold tracking-tight">Do briefing ao launch</h2>
+              <h2 className="text-3xl md:text-5xl font-bold tracking-tight">{copy("Do briefing ao launch")}</h2>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 relative">
               <div className="hidden lg:block absolute top-8 left-[12%] right-[12%] h-px bg-gradient-to-r from-transparent via-border to-transparent" />
@@ -570,8 +572,8 @@ export default function CriacaoSitesProfissionais() {
                   <div className="w-16 h-16 rounded-full border border-border bg-card flex items-center justify-center mb-5 font-mono text-sm text-primary relative z-10">
                     {p.step_number}
                   </div>
-                  <h3 className="text-lg font-bold mb-2">{p.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{p.description}</p>
+                  <h3 className="text-lg font-bold mb-2">{copy(p.title)}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{copy(p.description)}</p>
                   {p.estimated_time && <p className="text-[11px] uppercase tracking-wider text-primary/70 mt-2">{p.estimated_time}</p>}
                 </motion.div>
               ))}
@@ -583,29 +585,29 @@ export default function CriacaoSitesProfissionais() {
         <Section>
           <Container>
             <div className="max-w-3xl mb-10">
-              <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-3">Comparativo</p>
-              <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">{compTitle}</h2>
+              <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-3">{copy("Comparativo")}</p>
+              <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-4">{copy(compTitle)}</h2>
             </div>
             <div className="rounded-2xl border border-border overflow-hidden bg-card">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm min-w-[640px]">
                   <thead className="bg-white/[0.03]">
                     <tr>
-                      <th className="text-left p-4 font-semibold">Critério</th>
-                      <th className="text-left p-4 font-semibold">{compColA}</th>
-                      <th className="text-left p-4 font-semibold text-muted-foreground">{compColB}</th>
+                      <th className="text-left p-4 font-semibold">{copy("Critério")}</th>
+                      <th className="text-left p-4 font-semibold">{copy(compColA)}</th>
+                      <th className="text-left p-4 font-semibold text-muted-foreground">{copy(compColB)}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
                     {comp.map((row: any, i: number) => (
                       <motion.tr key={row.id || row.criterion} initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}>
-                        <td className="p-4 font-medium">{row.criterion}</td>
+                        <td className="p-4 font-medium">{copy(row.criterion)}</td>
                         <td className="p-4 text-primary">
                           <span className="inline-flex items-center gap-2">
-                            <CheckCircle2 className="w-4 h-4" /> {row.value_a}
+                            <CheckCircle2 className="w-4 h-4" /> {copy(row.value_a)}
                           </span>
                         </td>
-                        <td className="p-4 text-muted-foreground">{row.value_b}</td>
+                        <td className="p-4 text-muted-foreground">{copy(row.value_b)}</td>
                       </motion.tr>
                     ))}
                   </tbody>
@@ -623,10 +625,10 @@ export default function CriacaoSitesProfissionais() {
               <div className="relative">
                 <div className="flex items-center gap-2 mb-4">
                   <TrendingUp className="w-5 h-5 text-primary" />
-                  <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">{roiCfg.badge || "ROI real"}</p>
+                  <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">{copy(roiCfg.badge || "ROI real")}</p>
                 </div>
                 <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-10 max-w-3xl">
-                  {roiCfg.title || "Por que investir em site profissional paga a conta rápido"}
+                  {copy(roiCfg.title || "Por que investir em site profissional paga a conta rápido")}
                 </h2>
                 <div className="grid md:grid-cols-3 gap-8">
                   {roi.map((r: any, i: number) => {
@@ -636,11 +638,11 @@ export default function CriacaoSitesProfissionais() {
                         <div className="text-5xl md:text-6xl font-bold mb-3 bg-gradient-to-br from-primary to-foreground bg-clip-text text-transparent">
                           {r.prefix}<Counter to={num} suffix={r.suffix} />
                         </div>
-                        <p className="text-lg font-semibold mb-1">{r.title}</p>
-                        <p className="text-sm text-muted-foreground leading-relaxed">{r.description}</p>
+                        <p className="text-lg font-semibold mb-1">{copy(r.title)}</p>
+                        <p className="text-sm text-muted-foreground leading-relaxed">{copy(r.description)}</p>
                         {r.source_label && (
                           <p className="text-[11px] uppercase tracking-wider text-muted-foreground/70 mt-2">
-                            Fonte: {r.source_url ? <a href={r.source_url} target="_blank" rel="noopener noreferrer" className="hover:text-foreground underline">{r.source_label}</a> : r.source_label}
+                            {copy("Fonte:")} {r.source_url ? <a href={r.source_url} target="_blank" rel="noopener noreferrer" className="hover:text-foreground underline">{r.source_label}</a> : r.source_label}
                           </p>
                         )}
                       </motion.div>
@@ -659,17 +661,17 @@ export default function CriacaoSitesProfissionais() {
         <Section>
           <Container narrow>
             <div className="mb-10">
-              <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-3">Perguntas frequentes</p>
-              <h2 className="text-3xl md:text-5xl font-bold tracking-tight">Tire suas dúvidas</h2>
+              <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-3">{copy("Perguntas frequentes")}</p>
+              <h2 className="text-3xl md:text-5xl font-bold tracking-tight">{copy("Tire suas dúvidas")}</h2>
             </div>
             <div className="space-y-3">
               {faqs.map((f, i) => (
-                <motion.details key={f.question} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="group p-5 rounded-xl border border-border bg-card hover:border-foreground/30 transition-colors">
+                <motion.details key={copy(f.question)} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }} className="group p-5 rounded-xl border border-border bg-card hover:border-foreground/30 transition-colors">
                   <summary className="cursor-pointer font-semibold list-none flex justify-between items-center gap-4">
-                    <span>{f.question}</span>
+                    <span>{copy(f.question)}</span>
                     <span className="text-muted-foreground group-open:rotate-45 transition-transform text-2xl leading-none">+</span>
                   </summary>
-                  <p className="mt-4 text-sm text-muted-foreground leading-relaxed">{f.answer}</p>
+                  <p className="mt-4 text-sm text-muted-foreground leading-relaxed">{copy(f.answer)}</p>
                 </motion.details>
               ))}
             </div>
@@ -683,10 +685,10 @@ export default function CriacaoSitesProfissionais() {
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,hsl(var(--primary)/0.15),transparent_60%)]" />
               <div className="relative">
                 <h2 className="text-3xl md:text-6xl font-bold tracking-tight mb-6 max-w-3xl mx-auto">
-                  {ctaTitle}
+                  {copy(ctaTitle)}
                 </h2>
                 <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
-                  {ctaDesc}
+                  {copy(ctaDesc)}
                 </p>
                 {ctaAction === "diagnostico" ? (
                   <button onClick={openDiagnostico} className="group inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-foreground text-background text-sm font-bold uppercase tracking-wider hover:opacity-90 transition">

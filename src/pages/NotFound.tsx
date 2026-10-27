@@ -62,6 +62,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -93,6 +94,7 @@ const glitchKeyframes = `
 // ============================================================================
 
 const NotFound = () => {
+  const { copy } = usePublicCopy();
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const [counter, setCounter] = useState(0);
 
@@ -181,7 +183,7 @@ const NotFound = () => {
           className="flex items-center justify-center gap-3 mb-6"
         >
           <span className="text-xs font-mono text-muted-foreground tracking-[0.3em] uppercase">
-            ERR_CODE
+            {copy("ERR_CODE")}
           </span>
           <span className="font-mono text-xs text-foreground/40 tabular-nums">
             {String(counter).padStart(4, '0')}
@@ -194,7 +196,7 @@ const NotFound = () => {
           transition={{ delay: 0.4, duration: 0.6 }}
           className="text-lg md:text-xl text-muted-foreground mb-2 tracking-wide uppercase font-light"
         >
-          Página não encontrada
+          {copy("Página não encontrada")}
         </motion.p>
 
         <motion.p
@@ -203,7 +205,7 @@ const NotFound = () => {
           transition={{ delay: 0.5, duration: 0.6 }}
           className="text-sm text-muted-foreground mb-12 max-w-md mx-auto"
         >
-          O destino que você procura não existe neste servidor. Verifique o endereço ou retorne à base.
+          {copy("O destino que você procura não existe neste servidor. Verifique o endereço ou retorne à base.")}
         </motion.p>
 
         {/* Actions */}
@@ -220,7 +222,7 @@ const NotFound = () => {
               className="inline-flex items-center gap-3 border-2 border-foreground px-8 py-4 text-sm tracking-widest uppercase font-semibold hover:bg-foreground hover:text-background transition-all duration-300 group"
             >
               <Home className="w-4 h-4" />
-              <span>Voltar ao Início</span>
+              <span>{copy("Voltar ao Início")}</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </motion.button>
           </Link>
@@ -232,7 +234,7 @@ const NotFound = () => {
               className="inline-flex items-center gap-3 border border-border px-8 py-4 text-sm tracking-widest uppercase font-semibold text-muted-foreground hover:text-foreground hover:border-foreground/50 transition-all duration-300"
             >
               <Search className="w-4 h-4" />
-              <span>Nossos Serviços</span>
+              <span>{copy("Nossos Serviços")}</span>
             </motion.button>
           </Link>
         </motion.div>
@@ -250,7 +252,7 @@ const NotFound = () => {
           transition={{ delay: 1 }}
           className="mt-4 text-[10px] text-muted-foreground/30 uppercase tracking-[0.4em] font-mono"
         >
-          SEVENDEVX • SYSTEM ERROR • HTTP 404
+          {copy("SEVENDEVX • SYSTEM ERROR • HTTP 404")}
         </motion.p>
       </div>
     </div>

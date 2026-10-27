@@ -1,3 +1,4 @@
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,6 +7,7 @@ import GlassCard from "@/components/GlassCard";
 
 /** Supabase validates the recovery session and authorizes changes to its own user. */
 export default function ResetPassword() {
+  const { copy } = usePublicCopy();
   const { user, isLoading, resetPassword } = useAuthContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -56,28 +58,28 @@ export default function ResetPassword() {
 
   return <main className="min-h-screen bg-background text-foreground flex items-center justify-center p-6">
     <GlassCard className="w-full max-w-md p-8">
-      <h1 className="text-2xl font-bold mb-3">Redefinir senha</h1>
-      {isLoading ? <p role="status">Validando sua sessão…</p> : <>
+      <h1 className="text-2xl font-bold mb-3">{copy("Redefinir senha")}</h1>
+      {isLoading ? <p role="status">{copy("Validando sua sessão…")}</p> : <>
         {!done && <form onSubmit={submit} className="space-y-4">
           {user ? <>
-            <p className="text-sm text-muted-foreground">A nova senha será aplicada à conta autenticada nesta sessão.</p>
-            <label className="block">Nova senha
+            <p className="text-sm text-muted-foreground">{copy("A nova senha será aplicada à conta autenticada nesta sessão.")}</p>
+            <label className="block">{copy("Nova senha")}
               <input className="block w-full rounded border bg-background p-3 mt-1" type="password" autoComplete="new-password" minLength={8} required value={password} onChange={e => setPassword(e.target.value)} disabled={busy} />
             </label>
-            <label className="block">Confirmar nova senha
+            <label className="block">{copy("Confirmar nova senha")}
               <input className="block w-full rounded border bg-background p-3 mt-1" type="password" autoComplete="new-password" minLength={8} required value={confirmation} onChange={e => setConfirmation(e.target.value)} disabled={busy} />
             </label>
           </> : <>
-            <p className="text-sm text-muted-foreground">Abra o link de recuperação recebido por email ou solicite um novo.</p>
-            <label className="block">Email
+            <p className="text-sm text-muted-foreground">{copy("Abra o link de recuperação recebido por email ou solicite um novo.")}</p>
+            <label className="block">{copy("Email")}
               <input className="block w-full rounded border bg-background p-3 mt-1" type="email" autoComplete="email" required value={email} onChange={e => setEmail(e.target.value)} disabled={busy} />
             </label>
           </>}
-          <button className="w-full rounded bg-primary text-primary-foreground p-3 disabled:opacity-50" disabled={busy} type="submit">{busy ? "Aguarde…" : user ? "Atualizar senha" : "Enviar link de recuperação"}</button>
+          <button className="w-full rounded bg-primary text-primary-foreground p-3 disabled:opacity-50" disabled={busy} type="submit">{copy(busy ? "Aguarde…" : user ? "Atualizar senha" : "Enviar link de recuperação")}</button>
         </form>}
-        {error && <p role="alert" className="mt-4 text-red-400">{error}</p>}
-        {message && <p role="status" className="mt-4">{message}</p>}
-        <Link className="block mt-6 underline" to="/auth">Voltar ao acesso</Link>
+        {error && <p role="alert" className="mt-4 text-red-400">{copy(error)}</p>}
+        {message && <p role="status" className="mt-4">{copy(message)}</p>}
+        <Link className="block mt-6 underline" to="/auth">{copy("Voltar ao acesso")}</Link>
       </>}
     </GlassCard>
   </main>;

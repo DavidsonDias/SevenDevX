@@ -74,6 +74,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { Link, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
@@ -97,6 +98,7 @@ const BASE = "https://www.sevendevx.com";
 // ============================================================================
 
 export function CaseStudiesIndex() {
+  const { copy } = usePublicCopy();
   const itemList = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -112,8 +114,8 @@ export function CaseStudiesIndex() {
   return (
     <>
       <Helmet>
-        <title>Cases — Projetos reais entregues pela SevenDevX</title>
-        <meta name="description" content="Cases reais de desenvolvimento web, SaaS, sistemas e integrações IA entregues pela SevenDevX. Problema, solução, resultado e tecnologias de cada projeto." />
+        <title>{copy("Cases — Projetos reais entregues pela SevenDevX")}</title>
+        <meta name="description" content={copy("Cases reais de desenvolvimento web, SaaS, sistemas e integrações IA entregues pela SevenDevX. Problema, solução, resultado e tecnologias de cada projeto.")} />
         <link rel="canonical" href={`${BASE}/cases`} />
         <script type="application/ld+json">{JSON.stringify(itemList)}</script>
       </Helmet>
@@ -122,13 +124,12 @@ export function CaseStudiesIndex() {
         <Section>
           <Container>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-              <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-4">Case Studies</p>
+              <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-4">{copy("Case Studies")}</p>
               <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 max-w-3xl">
-                Projetos reais. Resultados mensuráveis.
+                {copy("Projetos reais. Resultados mensuráveis.")}
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
-                Cada case abaixo mostra o problema original do cliente, a solução técnica que entregamos
-                e os números reais do impacto. Tecnologias, prazos e arquitetura totalmente transparentes.
+                {copy("Cada case abaixo mostra o problema original do cliente, a solução técnica que entregamos e os números reais do impacto. Tecnologias, prazos e arquitetura totalmente transparentes.")}
               </p>
             </motion.div>
 
@@ -143,18 +144,18 @@ export function CaseStudiesIndex() {
                   <Link to={`/cases/${c.slug}`} className="block group">
                     <GlassCard className="p-6 h-full hover:border-primary/40 transition-colors">
                       <p className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
-                        {c.industry} · {c.duration}
+                        {copy(c.industry)} · {copy(c.duration)}
                       </p>
                       <h2 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors">
-                        {c.title}
+                        {copy(c.title)}
                       </h2>
                       <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                        {c.summary}
+                        {copy(c.summary)}
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {c.metrics.slice(0, 3).map((m) => (
                           <span key={m.label} className="text-xs px-2 py-1 rounded-md border border-white/10 bg-white/5">
-                            <strong>{m.value}</strong> · {m.label}
+                            <strong>{m.value}</strong> · {copy(m.label)}
                           </span>
                         ))}
                       </div>
@@ -176,6 +177,7 @@ export function CaseStudiesIndex() {
 // ============================================================================
 
 export function CaseStudyPage() {
+  const { copy } = usePublicCopy();
   const { slug } = useParams<{ slug: string }>();
   const c = slug ? getCaseStudyBySlug(slug) : undefined;
   if (!c) return <NotFound />;
@@ -196,10 +198,10 @@ export function CaseStudyPage() {
     <>
       <Helmet>
         <title>{c.title} — Case SevenDevX</title>
-        <meta name="description" content={c.summary} />
+        <meta name="description" content={copy(c.summary)} />
         <link rel="canonical" href={`${BASE}/cases/${c.slug}`} />
-        <meta property="og:title" content={c.title} />
-        <meta property="og:description" content={c.summary} />
+        <meta property="og:title" content={copy(c.title)} />
+        <meta property="og:description" content={copy(c.summary)} />
         <meta property="og:type" content="article" />
         <script type="application/ld+json">{JSON.stringify(caseSchema)}</script>
       </Helmet>
@@ -208,22 +210,22 @@ export function CaseStudyPage() {
         <Section>
           <Container>
             <Link to="/cases" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8">
-              <ArrowLeft className="w-4 h-4" /> Todos os cases
+              <ArrowLeft className="w-4 h-4" /> {copy("Todos os cases")}
             </Link>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-4">
-                {c.client} · {c.industry}
+                {c.client} · {copy(c.industry)}
               </p>
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 max-w-4xl">{c.title}</h1>
-              <p className="text-lg text-muted-foreground max-w-3xl leading-relaxed">{c.summary}</p>
+              <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 max-w-4xl">{copy(c.title)}</h1>
+              <p className="text-lg text-muted-foreground max-w-3xl leading-relaxed">{copy(c.summary)}</p>
             </motion.div>
 
             <div className="grid md:grid-cols-4 gap-3 mt-10">
               {c.metrics.map((m) => (
                 <GlassCard key={m.label} className="p-4 text-center">
                   <p className="text-2xl font-bold text-primary">{m.value}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{m.label}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{copy(m.label)}</p>
                 </GlassCard>
               ))}
             </div>
@@ -232,29 +234,29 @@ export function CaseStudyPage() {
               <GlassCard className="p-6">
                 <div className="flex items-center gap-2 mb-3">
                   <Zap className="w-4 h-4 text-amber-400" />
-                  <h3 className="font-semibold">Problema</h3>
+                  <h3 className="font-semibold">{copy("Problema")}</h3>
                 </div>
-                <p className="text-sm text-muted-foreground leading-relaxed">{c.problem}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">{copy(c.problem)}</p>
               </GlassCard>
               <GlassCard className="p-6">
                 <div className="flex items-center gap-2 mb-3">
                   <Clock className="w-4 h-4 text-blue-400" />
-                  <h3 className="font-semibold">Solução</h3>
+                  <h3 className="font-semibold">{copy("Solução")}</h3>
                 </div>
-                <p className="text-sm text-muted-foreground leading-relaxed">{c.solution}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">{copy(c.solution)}</p>
               </GlassCard>
               <GlassCard className="p-6">
                 <div className="flex items-center gap-2 mb-3">
                   <TrendingUp className="w-4 h-4 text-emerald-400" />
-                  <h3 className="font-semibold">Resultado</h3>
+                  <h3 className="font-semibold">{copy("Resultado")}</h3>
                 </div>
-                <p className="text-sm text-muted-foreground leading-relaxed">{c.outcome}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">{copy(c.outcome)}</p>
               </GlassCard>
             </div>
 
             <div className="mt-12 grid md:grid-cols-2 gap-6">
               <GlassCard className="p-6">
-                <h3 className="font-semibold mb-3">Stack utilizada</h3>
+                <h3 className="font-semibold mb-3">{copy("Stack utilizada")}</h3>
                 <div className="flex flex-wrap gap-2">
                   {c.technologies.map((t) => (
                     <span key={t} className="text-xs px-2.5 py-1 rounded-md border border-white/10 bg-white/5">{t}</span>
@@ -262,7 +264,7 @@ export function CaseStudyPage() {
                 </div>
               </GlassCard>
               <GlassCard className="p-6">
-                <h3 className="font-semibold mb-3">Serviços envolvidos</h3>
+                <h3 className="font-semibold mb-3">{copy("Serviços envolvidos")}</h3>
                 <ul className="space-y-1 text-sm text-muted-foreground">
                   {c.services.map((s) => <li key={s}>· {s}</li>)}
                 </ul>
@@ -277,7 +279,7 @@ export function CaseStudyPage() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground hover:opacity-90 transition-opacity"
                 >
-                  Ver projeto ao vivo <ExternalLink className="w-4 h-4" />
+                  {copy("Ver projeto ao vivo")} <ExternalLink className="w-4 h-4" />
                 </a>
               </div>
             )}

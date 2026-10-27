@@ -30,6 +30,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
@@ -49,6 +50,7 @@ import { useAnalytics } from "@/hooks/useAnalytics";
 // ============================================================================
 
 const Home = () => {
+  const { copy } = usePublicCopy();
   // 📊 Track page view
   useAnalytics();
 
@@ -58,8 +60,8 @@ const Home = () => {
           SEO Optimized
          ========================= */}
       <SEOHead
-        title="SevenDevX | Criação de Sites & Desenvolvimento Web Profissional"
-        description="Criação de sites profissionais, landing pages de alta conversão, sistemas web e SaaS. Desenvolvimento full stack com React, TypeScript e Node.js em Belo Horizonte."
+        title={copy("SevenDevX | Criação de Sites & Desenvolvimento Web Profissional")}
+        description={copy("Criação de sites profissionais, landing pages de alta conversão, sistemas web e SaaS. Desenvolvimento full stack com React, TypeScript e Node.js em Belo Horizonte.")}
         keywords="criação de sites, desenvolvimento web, landing page, desenvolvedor full stack, criação de sites profissionais, sistemas web, SaaS, React, TypeScript, Node.js, Belo Horizonte, SevenDevX, como criar um site profissional, quanto custa um site, melhores tecnologias para desenvolvimento web"
         image="https://www.sevendevx.com/og-image.jpg"
         url="https://www.sevendevx.com"

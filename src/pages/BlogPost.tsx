@@ -94,6 +94,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -156,6 +157,7 @@ const formatDate = (dateString: string | null, lang: string) => {
 // ============================================================================
 
 const BlogPost = () => {
+  const { copy } = usePublicCopy();
   const { slug } = useParams<{ slug: string }>();
   const { toast } = useToast();
   const { t, language } = useLanguage();
@@ -276,7 +278,7 @@ const BlogPost = () => {
             <div className="text-6xl mb-4 opacity-20">📝</div>
             <h1 className="text-3xl font-bold mb-4">{t.blog.noResults}</h1>
             <p className="text-muted-foreground mb-8">
-              O artigo que você procura não existe ou foi removido.
+              {copy("O artigo que você procura não existe ou foi removido.")}
             </p>
             <Link
               to="/blog"
@@ -324,8 +326,8 @@ const BlogPost = () => {
   return (
     <>
       <SEOHead
-        title={`${post.title} — SevenDevX Blog`}
-        description={post.excerpt || `Leia "${post.title}" no blog da SevenDevX.`}
+        title={copy(`${post.title} — SevenDevX Blog`)}
+        description={copy(post.excerpt || `Leia "${post.title}" no blog da SevenDevX.`)}
         keywords={post.tags?.join(", ") || "blog, tecnologia, desenvolvimento"}
         url={`https://www.sevendevx.com/blog/${post.slug}`}
         type="article"
@@ -350,7 +352,7 @@ const BlogPost = () => {
             <div className="relative h-[35vh] md:h-[45vh] w-full overflow-hidden">
               <img
                 src={post.cover_image}
-                alt={post.title}
+                alt={copy(post.title)}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
@@ -389,12 +391,12 @@ const BlogPost = () => {
                       color: post.category.color,
                     }}
                   >
-                    {post.category.name}
+                    {copy(post.category.name)}
                   </span>
                 )}
 
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-[1.1] tracking-tight">
-                  {post.title}
+                  {copy(post.title)}
                 </h1>
 
                 <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-8">
@@ -404,11 +406,11 @@ const BlogPost = () => {
                   </span>
                   <span className="flex items-center gap-1.5">
                     <Clock className="w-4 h-4" />
-                    {post.read_time || 5} {t.blog.readingTime}
+                    {copy(post.read_time || 5)} {t.blog.readingTime}
                   </span>
                   <span className="flex items-center gap-1.5">
                     <Eye className="w-4 h-4" />
-                    {post.views_count || 0} {t.blog.views}
+                    {copy(post.views_count || 0)} {t.blog.views}
                   </span>
                 </div>
 
@@ -420,7 +422,7 @@ const BlogPost = () => {
                     </div>
                     <div>
                       <p className="font-semibold text-sm">
-                        {post.author?.full_name || "SevenDevX"}
+                        {copy(post.author?.full_name || "SevenDevX")}
                       </p>
                       <p className="text-xs text-muted-foreground">{t.blog.authorTeam}</p>
                     </div>
@@ -454,7 +456,7 @@ const BlogPost = () => {
                   prose-img:rounded-xl prose-img:my-10
                   prose-strong:text-foreground prose-strong:font-semibold"
               >
-                <ReactMarkdown>{post.content}</ReactMarkdown>
+                <ReactMarkdown>{copy(post.content)}</ReactMarkdown>
               </motion.div>
 
               {/* Tags */}
@@ -486,7 +488,7 @@ const BlogPost = () => {
                     <span className="text-xl font-bold text-primary">S</span>
                   </div>
                   <div>
-                    <p className="font-bold">SevenDevX</p>
+                    <p className="font-bold">{copy("SevenDevX")}</p>
                     <p className="text-sm text-muted-foreground mt-0.5">
                       {t.blog.authorDescription}
                     </p>
@@ -517,7 +519,7 @@ const BlogPost = () => {
                           {relatedPost.cover_image ? (
                             <img
                               src={relatedPost.cover_image}
-                              alt={relatedPost.title}
+                              alt={copy(relatedPost.title)}
                               loading="lazy"
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             />
@@ -529,7 +531,7 @@ const BlogPost = () => {
                         </div>
                         <div className="p-5">
                           <h3 className="font-bold text-sm group-hover:text-primary/90 transition-colors line-clamp-2">
-                            {relatedPost.title}
+                            {copy(relatedPost.title)}
                           </h3>
                           <p className="text-muted-foreground text-xs mt-2 line-clamp-2">
                             {relatedPost.excerpt}
@@ -563,15 +565,15 @@ const BlogPost = () => {
                   to="/services"
                   className="inline-flex items-center gap-2 border border-border px-6 py-3.5 text-xs tracking-widest uppercase font-semibold hover:bg-muted/20 transition-all duration-300"
                 >
-                  {language === "pt" ? "Nossos Serviços" : language === "es" ? "Nuestros Servicios" : "Our Services"} <ArrowRight className="w-3 h-3" />
+                  {copy(language === "pt" ? "Nossos Serviços" : language === "es" ? "Nuestros Servicios" : "Our Services")} <ArrowRight className="w-3 h-3" />
                 </Link>
               </div>
               <div className="flex gap-4 justify-center text-sm text-muted-foreground pt-4">
                 <Link to="/projects-hub" className="hover:text-primary transition-colors">
-                  {language === "pt" ? "Ver Portfólio →" : language === "es" ? "Ver Portafolio →" : "View Portfolio →"}
+                  {copy(language === "pt" ? "Ver Portfólio →" : language === "es" ? "Ver Portafolio →" : "View Portfolio →")}
                 </Link>
                 <Link to="/blog" className="hover:text-primary transition-colors">
-                  {language === "pt" ? "Mais Artigos →" : language === "es" ? "Más Artículos →" : "More Articles →"}
+                  {copy(language === "pt" ? "Mais Artigos →" : language === "es" ? "Más Artículos →" : "More Articles →")}
                 </Link>
               </div>
             </Container>
