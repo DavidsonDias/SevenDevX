@@ -74,6 +74,7 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bell, Check, Trash2, AlertCircle, Info, AlertTriangle, CheckCircle2, ArrowRight } from "lucide-react";
+import { notificationPath } from "@/lib/notification-links";
 import { Link } from "react-router-dom";
 import { useNotifications, type Notification } from "@/hooks/useNotifications";
 import { formatDistanceToNow } from "date-fns";
@@ -90,7 +91,7 @@ export default function NotificationBell() {
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState<"all" | "unread" | "critical">("all");
   const ref = useRef<HTMLDivElement>(null);
-  const { items, unread, markRead, markAllRead, remove } = useNotifications(30);
+  const { items, unread, error, markRead, markAllRead, remove } = useNotifications(30);
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false); };
@@ -146,6 +147,7 @@ export default function NotificationBell() {
                 </button>
               ))}
             </div>
+            {error && <p role="alert" className="p-3 text-xs text-amber-300">{error}</p>}
             {/* List */}
             <div className="max-h-[60vh] overflow-y-auto">
               {filtered.length === 0 ? (
@@ -187,7 +189,7 @@ function Item({ n, onRead, onRemove, onClose }: { n: Notification; onRead: (id: 
             {formatDistanceToNow(new Date(n.created_at), { addSuffix: true, locale: ptBR })}
           </div>
         </div>
-        <div className="opacity-0 group-hover:opacity-100 transition-opacity flex flex-col gap-1">
+        <div className="opacity-100 md:opacity-0 md:group-hover:opacity-100 focus-within:opacity-100 transition-opacity flex flex-col gap-1">
           {isUnread && (
             <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); onRead(n.id); }}
               className="p-1 rounded hover:bg-white/10" title="Marcar lida">
@@ -205,7 +207,7 @@ function Item({ n, onRead, onRemove, onClose }: { n: Notification; onRead: (id: 
   );
   if (n.url) {
     return (
-      <Link to={n.url} onClick={() => { onRead(n.id); onClose(); }} className="block">{body}</Link>
+      <Link to={notificationPath(n.url)} onClick={() => { onRead(n.id); onClose(); }} className="block">{body}</Link>
     );
   }
   return <div onClick={() => onRead(n.id)} className="cursor-pointer">{body}</div>;

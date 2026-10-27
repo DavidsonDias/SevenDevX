@@ -75,6 +75,7 @@
  */
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { notificationPath } from "@/lib/notification-links";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import { useNotifications } from "@/hooks/useNotifications";
 import { Check, Trash2, Filter, Download, Settings2, Bell, AlertCircle, AlertTriangle, Info, CheckCircle2 } from "lucide-react";
@@ -89,7 +90,8 @@ const sevColor: any = { info: "text-sky-300", warning: "text-amber-300", error: 
 // ============================================================================
 
 export default function NotificationsAdmin() {
-  const { items, unread, loading, markRead, markAllRead, remove } = useNotifications(200);
+  const [historyLimit,setHistoryLimit]=useState(50);
+  const { items, unread, loading, error, markRead, markAllRead, remove } = useNotifications(historyLimit);
   const [filter, setFilter] = useState<"all" | "unread" | "info" | "warning" | "error">("all");
 
   const filtered = items.filter((n) => {
@@ -107,7 +109,7 @@ export default function NotificationsAdmin() {
   };
 
   return (
-    <AdminPageShell title="Notificações" subtitle={`${unread} não lidas · ${items.length} totais`}
+    <AdminPageShell title="Notificações" subtitle={`${unread} não lidas · ${items.length} carregadas`}
       actions={
         <div className="flex gap-2">
           <button onClick={exportJson} className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-white/15 text-xs hover:bg-white/5">
@@ -121,6 +123,8 @@ export default function NotificationsAdmin() {
           </Link>
         </div>
       }>
+      {error && <p role="alert" className="mb-4 text-amber-300">{error}</p>}
+      <Link className="inline-block mb-4 underline" to="/admin/notifications/diagnostics">Diagnóstico e teste deste dispositivo</Link>
       <div className="flex gap-1.5 mb-4 flex-wrap">
         {(["all", "unread", "info", "warning", "error"] as const).map((f) => (
           <button key={f} onClick={() => setFilter(f)}
@@ -158,8 +162,8 @@ export default function NotificationsAdmin() {
                     {formatDistanceToNow(new Date(n.created_at), { addSuffix: true, locale: ptBR })} · {new Date(n.created_at).toLocaleString("pt-BR")}
                   </div>
                 </div>
-                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                  {n.url && <Link to={n.url} className="text-[11px] px-2 py-1 rounded border border-white/10 hover:bg-white/5">Abrir</Link>}
+                <div className="flex gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+                  {n.url && <Link to={notificationPath(n.url)} className="text-[11px] px-2 py-1 rounded border border-white/10 hover:bg-white/5">Abrir</Link>}
                   {!n.read_at && (
                     <button onClick={() => markRead(n.id)} className="p-1.5 rounded hover:bg-white/10" title="Marcar lida">
                       <Check className="w-3 h-3" />
@@ -174,6 +178,7 @@ export default function NotificationsAdmin() {
           })}
         </div>
        )}
+      {!loading && items.length === historyLimit && <button className="mt-4 border rounded px-4 py-3" onClick={()=>setHistoryLimit(n=>n+50)}>Carregar avisos anteriores</button>}
     </AdminPageShell>
   );
 }

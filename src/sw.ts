@@ -504,34 +504,48 @@ self.addEventListener("message", (event) => {
 /* ═══════════════════════════════════════════════════════════════════
    PUSH NOTIFICATIONS
    ═══════════════════════════════════════════════════════════════════ */
-self.addEventListener("push", (event: any) => {
-  let data: any = {};
-  try {
-    data = event.data?.json() ?? {};
-  } catch {
-    data = { title: "SevenOS", body: event.data?.text() ?? "" };
+const pushUuid = /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i;
+// This is a public endpoint. The one-delivery capability cannot read data or send pushes.
+async function acknowledgePush(data: Record<string, unknown>, clicked = false) {
+  if (!pushUuid.test(String(data.deliveryId)) || !pushUuid.test(String(data.receiptToken))) return;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const response = await fetch("https://ajxsfjmcpolfgzpzpehl.supabase.co/functions/v1/push-receipt", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: data.deliveryId, token: data.receiptToken, clicked }),
+        cache: "no-store", credentials: "omit", signal: AbortSignal.timeout(3000),
+      });
+      if (response.ok || response.status < 500 && response.status !== 429) return;
+    } catch { /* receipt failure never prevents showing or opening the notification */ }
   }
-  const title = data.title ?? "SevenOS";
-  const options = {
-    body: data.body ?? "",
-    icon: "/logo-192.png",
-    badge: "/logo-192.png",
-    data: { url: data.url ?? "/admin" },
-  };
-  event.waitUntil((self as any).registration.showNotification(title, options));
+}
+self.addEventListener("push", (event: any) => {
+  let data: Record<string, unknown> = {};
+  try { data = event.data?.json() ?? {}; } catch { /* never show untrusted/raw sensitive payloads */ }
+  const valid = pushUuid.test(String(data.notificationId));
+  const url = valid ? `/admin/notifications/open/${data.notificationId}` : "/admin/notifications";
+  event.waitUntil((async () => {
+    // Show first: a failed acknowledgement cannot suppress the visible notification.
+    await self.registration.showNotification("SevenDevX · SevenOS", {
+      body: "Você tem uma nova atualização. Abra o sistema para consultar.",
+      icon: "/logo-192.png", badge: "/logo-192.png",
+      tag: valid ? `sevenos-${data.notificationId}` : "sevenos-update",
+      data: { url, deliveryId: data.deliveryId, receiptToken: data.receiptToken },
+    });
+    await acknowledgePush(data);
+  })());
 });
-
 self.addEventListener("notificationclick", (event: any) => {
   event.notification.close();
-  const url = event.notification.data?.url ?? "/admin";
-  event.waitUntil(
-    (self as any).clients.matchAll({ type: "window", includeUncontrolled: true }).then((list: any[]) => {
-      for (const c of list) {
-        if (c.url.includes(url) && "focus" in c) return c.focus();
-      }
-      return (self as any).clients.openWindow(url);
-    }),
-  );
+  const data = event.notification.data ?? {};
+  const path = /^\/admin\/notifications\/open\/[a-f0-9-]{36}$/.test(data.url ?? "") ? data.url : "/admin/notifications";
+  const target = new URL(path, self.location.origin).href;
+  event.waitUntil((async () => {
+    const list = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+    const existing = list.find(c => c.url === target);
+    // Preserve other open editors; do not navigate a window that may contain a draft.
+    await Promise.allSettled([existing ? existing.focus() : self.clients.openWindow(target), acknowledgePush(data, true)]);
+  })());
 });
 
 /* ═══════════════════════════════════════════════════════════════════

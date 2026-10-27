@@ -1,186 +1,219 @@
-import { integrationFetch as fetch } from '../_shared/integration-http.ts';
-/**
- * 🚀 push-send/index.ts — SevenDevX Enterprise Platform
- * ═══════════════════════════════════════════════════════════════════════
- *
- * @file supabase/functions/push-send/index.ts
- * @module Edge Functions
- * @layer Backend / Edge Function
- * @status Active
- *
- * @description
- * Edge Function `push-send` do módulo Edge Functions.
- *
- * ┌─────────────────────────────────────────────────────────────────────┐
- * │ ✅ RESPONSABILIDADES PRINCIPAIS                                      │
- * └─────────────────────────────────────────────────────────────────────┘
- *
- * ✅ Lê/escreve nas tabelas: `user_roles`, `push_subscriptions`
- * ✅ Invoca RPC: `has_role`
- *
- * ┌─────────────────────────────────────────────────────────────────────┐
- * │ 🔄 FLUXO DE DADOS                                                   │
- * └─────────────────────────────────────────────────────────────────────┘
- *
- * Supabase (RLS aplicada)
- *    ↓
- * Consulta direta via client
- *    ↓
- * Edge Function `push-send`
- *
- * ┌─────────────────────────────────────────────────────────────────────┐
- * │ 🔒 REGRAS DE NEGÓCIO E INVARIANTES                                  │
- * └─────────────────────────────────────────────────────────────────────┘
- *
- * ✅ O papel administrativo é verificado via RPC `has_role` (SECURITY DEFINER)
- * 🔒 Secrets permanecem em `Deno.env` e nunca retornam ao cliente
- *
- * ┌─────────────────────────────────────────────────────────────────────┐
- * │ 🔐 SEGURANÇA                                                        │
- * └─────────────────────────────────────────────────────────────────────┘
- *
- * ✅ Valida o JWT antes de qualquer operação privilegiada
- * ✅ Sessão obtida do AuthContext; nunca de storage local
- * 🔒 A autoridade final é a RLS do banco, não o corpo da requisição
- *
- * ┌─────────────────────────────────────────────────────────────────────┐
- * │ 🔧 MANUTENÇÃO                                                       │
- * └─────────────────────────────────────────────────────────────────────┘
- *
- * ✅ Atualizar este cabeçalho quando a responsabilidade do arquivo mudar
- * ✅ Manter regras de negócio próximas da implementação
- * ✅ Registrar decisões arquiteturais relevantes em ADR
- *
- * ┌─────────────────────────────────────────────────────────────────────┐
- * │ 🔗 DOCUMENTAÇÃO RELACIONADA                                         │
- * └─────────────────────────────────────────────────────────────────────┘
- *
- * @see docs/architecture/MODULE_MAP.md
- * @see docs/code-standards/CODE_ANATOMY.md
- * @see docs/security/EDGE_FUNCTION_SECURITY.md
- *
- * @updated 2026-08-02
- * @license Proprietary — SevenDevX
- * ═══════════════════════════════════════════════════════════════════════
- */
+import webpush from "npm:web-push@3.6.7";
+import { requestBody, failure } from "../_shared/integration-auth.ts";
+import {
+  database,
+  config,
+  checked,
+  userContext,
+  schedulerValid,
+  corsHeaders,
+  json,
+  IntegrationError,
+} from "../_shared/push-runtime.ts";
+import { validPushEndpoint } from "../_shared/push-policy.ts";
+import { retryDecision } from "../_shared/push-policy.ts";
 
-// ============================================================================
-// 📦 IMPORTS
-// ============================================================================
-
-/**
- * ⚡ push-send/index.ts — SevenOS Edge Function
- * ═══════════════════════════════════════════════════════════════════════
- *
- * @file supabase/functions/push-send/index.ts
- * @module Notifications
- *
- * @description
- * Envia notificações Web Push às inscrições registradas.
- *
- * @security
- * JWT / token de job. Segredos permanecem em Deno.env e nunca são retornados.
- *
- * @external-api
- * Web Push
- *
- * @remarks
- * Inscrições inválidas devem ser removidas de push_subscriptions.
- *
- * @see docs/security/EDGE_FUNCTION_SECURITY.md
- * @see supabase/functions/README.md
- * ═══════════════════════════════════════════════════════════════════════
- */
-import { createClient, serveIntegration } from '../_shared/integration-runtime.ts';
-import webpush from "https://esm.sh/web-push@3.6.7";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
-
-// ============================================================================
-// ⚙️ CONSTANTS & CONFIGURATION
-// ============================================================================
-
-const VAPID_PUBLIC = Deno.env.get("VAPID_PUBLIC_KEY")!;
-const VAPID_PRIVATE = Deno.env.get("VAPID_PRIVATE_KEY")!;
-const VAPID_SUBJECT = Deno.env.get("VAPID_SUBJECT") ?? "mailto:admin@sevendevx.com";
-
-
-
-// ============================================================================
-// 🔒 BUSINESS RULES & INVARIANTS
-// ============================================================================
-//
-// ✅ A sessão autenticada é validada antes de qualquer operação privilegiada.
-// 🔒 Requisições sem sessão válida são rejeitadas antes de tocar os dados.
-// ✅ Operações administrativas exigem o papel `admin`; o papel nunca vem do cliente.
-// 🔒 A service role key permanece no servidor e nunca é devolvida ao frontend.
-// 🔒 Secrets são lidos de `Deno.env`; valores brutos nunca retornam na resposta.
-// ⚠️ Exclusões são definitivas e exigem confirmação explícita antes do disparo.
-// 🔒 A autoridade final de acesso é a RLS do banco, não a validação do cliente.
-//
-
-// ============================================================================
-// 🌐 REQUEST HANDLER
-// ============================================================================
-
-serveIntegration(async (req) => {
-  if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
-
+Deno.serve(async (req) => {
+  if (req.method === "OPTIONS")
+    return new Response(null, { headers: corsHeaders });
   try {
-    const auth = req.headers.get("Authorization") ?? "";
-    const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const isInternal = auth === `Bearer ${SERVICE_KEY}`;
-
-    if (!isInternal) {
-      if (!auth) return new Response(JSON.stringify({ error: "no auth" }), { status: 401, headers: corsHeaders });
-      const sb = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_ANON_KEY")!, {
-        global: { headers: { Authorization: auth } },
-      });
-      const { data: { user } } = await sb.auth.getUser();
-      if (!user) return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401, headers: corsHeaders });
-      const { data: isAdmin } = await sb.rpc("has_role", { _user_id: user.id, _role: "admin" });
-      if (!isAdmin) return new Response(JSON.stringify({ error: "forbidden" }), { status: 403, headers: corsHeaders });
-    }
-
-    if(!VAPID_PUBLIC || !VAPID_PRIVATE) return new Response(JSON.stringify({error:'Configure VAPID_PUBLIC_KEY e VAPID_PRIVATE_KEY.',code:'missing_credentials'}),{status:503,headers:{...corsHeaders,'Content-Type':'application/json'}});
-    webpush.setVapidDetails(VAPID_SUBJECT,VAPID_PUBLIC,VAPID_PRIVATE);
-    const { title, body, url } = await req.json();
-    if (!title) return new Response(JSON.stringify({ error: "title required" }), { status: 400, headers: corsHeaders });
-
-    // Use service role to read all admin push subscriptions
-    const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
-    const { data: adminUsers } = await admin.from("user_roles").select("user_id").eq("role", "admin");
-    const userIds = (adminUsers ?? []).map((r: any) => r.user_id);
-    if (!userIds.length) return new Response(JSON.stringify({ sent: 0 }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
-
-    const { data: subs } = await admin.from("push_subscriptions").select("*").in("user_id", userIds);
-
-    const allowedPushEndpoint = (raw: string) => { try { const u=new URL(raw);return u.protocol==='https:' && !u.username && !u.password && (!u.port||u.port==='443') && ['fcm.googleapis.com','updates.push.services.mozilla.com','web.push.apple.com'].includes(u.hostname); } catch {return false;} };
-    const payload = JSON.stringify({ title, body: body ?? "", url: url ?? "/admin" });
-    let sent = 0, failed = 0;
-    for (const s of subs ?? []) {
-      try {
-        if(!allowedPushEndpoint(s.endpoint)) throw new Error('Unsupported push endpoint');
-        await webpush.sendNotification(
-          { endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } },
-          payload, { timeout: 10000, TTL: 3600 },
+    const body = await requestBody(req),
+      db = database();
+    let cfg = await config(db);
+    const internal = await schedulerValid(body, cfg.sevenos_push_scheduler_v1);
+    let onlyUser: string | null = null,
+      onlyNotification: string | null = null;
+    if (internal && body.action === "configure") {
+      if (!cfg.sevenos_vapid_private_v1) {
+        const pair = webpush.generateVAPIDKeys();
+        await checked(
+          await db.rpc("sevenos_push_initialize", {
+            _public: pair.publicKey,
+            _private: pair.privateKey,
+          }),
         );
-        sent++;
-      } catch (err: any) {
+        cfg = await config(db);
+      }
+      return json({ ok: true, configured: !!cfg.sevenos_vapid_public_v1 });
+    }
+    if (!internal) {
+      const { user, client } = await userContext(req);
+      onlyUser = user.id;
+      const role = await client.rpc("has_role", {
+        _user_id: user.id,
+        _role: "admin",
+      });
+      if (role.error || role.data !== true)
+        throw new IntegrationError(
+          "forbidden",
+          403,
+          "Acesso administrativo necessário.",
+        );
+      if(!cfg.sevenos_vapid_public_v1 || !cfg.sevenos_vapid_private_v1)throw new IntegrationError("vapid_missing",503,"As chaves VAPID exclusivas da SevenDevX ainda não foram configuradas.");
+      if (body.action !== "test" || typeof body.subscriptionId !== "string")
+        throw new IntegrationError(
+          "self_test_only",
+          403,
+          "Somente teste da própria conta é permitido.",
+        );
+      const sub = await checked(
+        await db
+          .from("push_subscriptions")
+          .select("id")
+          .eq("id", body.subscriptionId)
+          .eq("user_id", user.id)
+          .eq("enabled", true)
+          .maybeSingle(),
+      );
+      if (!sub)
+        throw new IntegrationError(
+          "not_registered",
+          409,
+          "Ative este dispositivo e confirme o registro no servidor antes do teste.",
+        );
+      // Serialize self-tests per user, rate-limit and deduplicate in the database.
+      onlyNotification = await checked(
+        await db.rpc("sevenos_push_self_test", {
+          _user: user.id,
+          _subscription: sub.id,
+          _request: body.requestId,
+        }),
+      );
+    }
+    if (!cfg.sevenos_vapid_public_v1 || !cfg.sevenos_vapid_private_v1)
+      throw new IntegrationError(
+        "vapid_missing",
+        503,
+        "As chaves VAPID exclusivas da SevenDevX ainda não foram configuradas.",
+      );
+    webpush.setVapidDetails(
+      "mailto:contato@sevendevx.com",
+      cfg.sevenos_vapid_public_v1,
+      cfg.sevenos_vapid_private_v1,
+    );
+    const jobs = await checked(
+      await db.rpc("sevenos_claim_push", {
+        _only_user: onlyUser,
+        _only_notification: onlyNotification,
+      }),
+    );
+    let accepted = 0,
+      failed = 0;
+    for (const job of jobs ?? []) {
+      const sub = await checked(
+        await db
+          .from("push_subscriptions")
+          .select("id,user_id,endpoint,p256dh,auth,enabled,vapid_public_key")
+          .eq(
+            "id",
+            job.subscription_id ?? "00000000-0000-0000-0000-000000000000",
+          )
+          .maybeSingle(),
+      );
+      const notice = await checked(
+        await db
+          .from("notifications")
+          .select("id,type,user_id")
+          .eq("id", job.notification_id)
+          .maybeSingle(),
+      );
+      const membership = await checked(await db.from("user_roles").select("user_id").eq("user_id",job.user_id).eq("role","admin").maybeSingle());
+      const pref = notice
+        ? await checked(
+            await db
+              .from("notification_preferences")
+              .select("enabled")
+              .eq("user_id", job.user_id)
+              .eq("event_type", notice.type)
+              .eq("channel", "push")
+              .maybeSingle(),
+          )
+        : null;
+      if (
+        !membership ||
+        !sub ||
+        !notice ||
+        sub.user_id !== job.user_id ||
+        notice.user_id !== job.user_id ||
+        !sub.enabled ||
+        pref?.enabled === false ||
+        sub.vapid_public_key !== cfg.sevenos_vapid_public_v1 ||
+        !validPushEndpoint(sub.endpoint)
+      ) {
+        await checked(
+          await db
+            .from("push_delivery_jobs")
+            .update({
+              state: "cancelled",
+              error_code: "subscription_or_preference_changed",
+            })
+            .eq("id", job.id)
+            .eq("state", "processing"),
+        );
+        continue;
+      }
+      try {
+        // Lockscreen never contains contact names, messages, security details or project data.
+        const payload = JSON.stringify({
+          title: "SevenDevX · SevenOS",
+          body: "Você tem uma nova atualização. Abra o sistema para consultar.",
+          notificationId: notice.id,
+          deliveryId: job.id,
+          receiptToken: job.receipt_token,
+          url: `/admin/notifications/open/${notice.id}`,
+        });
+        await webpush.sendNotification(
+          {
+            endpoint: sub.endpoint,
+            keys: { p256dh: sub.p256dh, auth: sub.auth },
+          },
+          payload,
+          { TTL: 3600, timeout: 5000, urgency: "normal" },
+        );
+        await checked(await db.rpc("sevenos_push_accepted", {_id:job.id}));
+        accepted++;
+      } catch (e) {
+        const status = Number((e as { statusCode?: number }).statusCode) || 0;
+        const decision = retryDecision(status, job.attempts);
         failed++;
-        if (err?.statusCode === 404 || err?.statusCode === 410) {
-          await admin.from("push_subscriptions").delete().eq("id", s.id);
-        }
+        await checked(
+          await db
+            .from("push_delivery_jobs")
+            .update({
+              state: decision.state,
+              error_code: decision.code,
+              next_attempt_at: new Date(
+                Date.now() + Math.min(900000, 60000 * 2 ** job.attempts),
+              ).toISOString(),
+            })
+            .eq("id", job.id)
+            .eq("state", "processing"),
+        );
+        if (status === 404 || status === 410)
+          await checked(
+            await db
+              .from("push_subscriptions")
+              .delete()
+              .eq("id", sub.id)
+              .eq("user_id", job.user_id),
+          );
+        console.warn(
+          JSON.stringify({
+            component: "sevenos_push",
+            delivery: job.id,
+            code: decision.code,
+          }),
+        );
       }
     }
-
-    return new Response(JSON.stringify({ sent, failed }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    return json({
+      ok: true,
+      notificationId: onlyNotification,
+      accepted,
+      failed,
+      meaning: "accepted_by_push_service_not_device_receipt",
     });
   } catch (e) {
-    return new Response(JSON.stringify({ error: 'integration_failed' }), { status: 500, headers: corsHeaders });
+    return failure(e);
   }
 });
