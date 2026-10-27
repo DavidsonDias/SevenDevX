@@ -309,6 +309,14 @@ button, a, input, textarea, select {
 .group:hover .bp-ring-multicolor { opacity: 1; filter: blur(.5px) saturate(1.35) brightness(1.2); }
 .bp-ring-multicolor.bp-always-on { opacity: .95; }
 
+/* Operational cards retain brand identity without washing out labels or controls. */
+.bp-halo-multicolor.bp-readable,
+.bp-halo-multicolor.bp-readable.bp-always-on { --bp-base: .08; opacity: .08; animation: bp-rotate 22s linear infinite; }
+.group:hover .bp-halo-multicolor.bp-readable { opacity: .12; }
+.bp-ring-multicolor.bp-readable { opacity: .3; }
+.group:hover .bp-ring-multicolor.bp-readable,
+.bp-ring-multicolor.bp-readable.bp-always-on { opacity: .5; }
+
 /* 🎛️ Native <select> options — força contraste legível em modo escuro */
 select { color-scheme: dark; }
 select option { background-color: #0a0a0a; color: #ffffff; }

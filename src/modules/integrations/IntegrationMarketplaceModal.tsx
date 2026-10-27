@@ -111,7 +111,7 @@ function MarketplaceCard({
       whileHover={{ y: -3 }}
       className="group relative min-h-[162px] p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:border-white/30 hover:bg-white/[0.04] transition-all flex flex-col gap-3 overflow-hidden"
     >
-      <BrandHalo tokens={tokens} />
+      <BrandHalo readable tokens={tokens} />
       {!tokens.isMulticolor && (
         <div className="absolute inset-x-0 top-0 h-px opacity-80 pointer-events-none" style={{ background: tokens.topBorderGradient }} />
       )}
@@ -120,7 +120,7 @@ function MarketplaceCard({
       )}
       <button
         onClick={(e) => { e.stopPropagation(); onFav(); }}
-        className={`absolute top-2.5 right-2.5 z-10 p-1.5 rounded-md border transition-all ${isFav ? "border-amber-400/60 bg-amber-400/15 text-amber-300" : "border-white/10 bg-black/40 text-white/40 hover:text-amber-300 hover:border-amber-400/40 opacity-0 group-hover:opacity-100"}`}
+        className={`absolute top-2.5 right-2.5 z-10 p-1.5 rounded-md border transition-all ${isFav ? "border-amber-400/60 bg-amber-400/15 text-amber-300" : "border-white/10 bg-black/40 text-white/65 hover:text-amber-300 hover:border-amber-400/40 opacity-0 group-hover:opacity-100"}`}
         title={isFav ? "Remover dos favoritos" : "Adicionar aos favoritos"}
         aria-label="Favoritar provider"
       >
@@ -131,9 +131,9 @@ function MarketplaceCard({
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <h4 className="font-semibold truncate">{i.name}</h4>
-            {i.tagline && <span className="hidden sm:inline text-[9px] uppercase tracking-wider text-white/40 truncate">· {i.tagline}</span>}
+            {i.tagline && <span className="hidden sm:inline text-[9px] uppercase tracking-wider text-white/65 truncate">· {i.tagline}</span>}
           </div>
-          <p className="text-xs text-white/50 mt-0.5 line-clamp-2">{i.description}</p>
+          <p className="text-xs text-white/75 mt-0.5 line-clamp-2">{i.description}</p>
         </div>
       </div>
       <div className="relative flex flex-wrap gap-1.5">
@@ -147,7 +147,7 @@ function MarketplaceCard({
             <Zap className="w-2.5 h-2.5" /> teste real
           </span>
         ) : (
-          <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-white/5 text-white/40 border border-white/10">
+          <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-white/5 text-white/65 border border-white/10">
             em breve
           </span>
         )}
@@ -252,11 +252,11 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
             <header className="p-5 border-b border-white/10">
               <div className="flex items-start justify-between">
                 <div>
-                  <div className="flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-white/40">
+                  <div className="flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-white/65">
                     <Sparkles className="w-3.5 h-3.5" /> Integration Marketplace
                   </div>
                   <h2 className="text-2xl font-bold mt-1">Conecte seu ecossistema</h2>
-                  <p className="text-sm text-white/50 mt-1">
+                  <p className="text-sm text-white/75 mt-1">
                     {PROVIDER_CATALOG.length} providers enterprise prontos para conectar.
                   </p>
                 </div>
@@ -276,7 +276,7 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
               <>
                 <div className="p-4 border-b border-white/5 flex flex-col gap-3">
                   <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/65" />
                     <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Buscar provider (ex: stripe, github)…"
                       className="w-full bg-black/40 border border-white/10 rounded-lg pl-9 pr-3 py-2.5 text-sm focus:outline-none focus:border-white/30" />
                   </div>
@@ -309,7 +309,7 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
                     />
                   ))}
                   {items.length === 0 && (
-                    <p className="sm:col-span-2 lg:col-span-3 text-center text-white/40 text-sm py-12">Nenhum resultado.</p>
+                    <p className="sm:col-span-2 lg:col-span-3 text-center text-white/65 text-sm py-12">Nenhum resultado.</p>
                   )}
                 </div>
               </>
@@ -318,9 +318,9 @@ export default function IntegrationMarketplaceModal({ open, onClose }: { open: b
                 <div className="flex items-center gap-3 p-3 rounded-xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent">
                   <LogoRenderer slug={custom.id || "custom"} color="#8B5CF6" name={custom.name || "Custom"} variant="card" glow />
                   <div className="min-w-0">
-                    <p className="text-xs uppercase tracking-[0.2em] text-white/40">Preview</p>
+                    <p className="text-xs uppercase tracking-[0.2em] text-white/65">Preview</p>
                     <p className="text-sm font-semibold truncate">{custom.name || "Sua integração"}</p>
-                    <p className="text-[11px] text-white/50 truncate">{custom.baseUrl || "https://api.exemplo.com"}</p>
+                    <p className="text-[11px] text-white/75 truncate">{custom.baseUrl || "https://api.exemplo.com"}</p>
                   </div>
                 </div>
                 <p className="text-sm text-white/60">Conecte qualquer API REST ou Webhook customizado.</p>

@@ -76,7 +76,7 @@ export const AdminPageShell = ({ title, subtitle, actions, children, backFallbac
         }`}
         style={{ paddingTop: "env(safe-area-inset-top)" }}
       >
-        <div className="container mx-auto min-h-14 px-2 sm:px-4 lg:px-6 py-1.5 lg:py-4 flex flex-nowrap items-center justify-between gap-1 lg:gap-3">
+        <div className="w-full max-w-none min-h-14 px-2 sm:px-4 lg:px-6 py-1.5 lg:py-4 flex flex-nowrap items-center justify-between gap-1 lg:gap-3">
           <div className="flex flex-1 items-center gap-1 lg:gap-3 min-w-0">
             <AdminMenu />
             <button
@@ -92,9 +92,9 @@ export const AdminPageShell = ({ title, subtitle, actions, children, backFallbac
                 SEVEN<span className="text-white/60">DEVX</span>
               </h1>
             </Link>
-            <span data-header-secondary className="hidden lg:inline text-xs uppercase tracking-wider text-white/40 border border-white/20 px-2 py-1 rounded">
+            <Link to="/admin" aria-label="Admin — ir para o dashboard" data-header-secondary className="hidden lg:inline-flex min-h-11 items-center text-xs uppercase tracking-wider text-white/80 border border-white/20 px-2 py-1 rounded hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
               Admin
-            </span>
+            </Link>
           </div>
           <div className="flex shrink-0 items-center justify-end gap-0.5 lg:gap-2">
             <div data-header-secondary data-tour="global-search" className="[&>button]:hidden lg:[&>button]:inline-flex"><GlobalSearch /></div>
@@ -107,7 +107,7 @@ export const AdminPageShell = ({ title, subtitle, actions, children, backFallbac
               <HomeIcon className="w-3.5 h-3.5" />
               Site
             </Link>
-            <span data-header-secondary className="text-sm text-white/60 hidden lg:inline truncate max-w-[180px]">
+            <span data-header-secondary className="text-sm text-white/75 hidden xl:inline truncate max-w-[180px]">
               {user?.email}
             </span>
             <button

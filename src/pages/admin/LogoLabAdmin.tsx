@@ -146,7 +146,7 @@ function IntegrationCardMock({ slug, name, description, fallback }: { slug: stri
   return (
     <div className="group relative">
       <GlassCard padding="md" hover={false} className="h-full flex flex-col gap-3.5 transition-all overflow-hidden relative">
-        <BrandHalo tokens={tokens} alwaysOn />
+        <BrandHalo readable tokens={tokens} alwaysOn />
         {!tokens.isMulticolor && (
           <div className="absolute inset-x-0 top-0 h-px opacity-80 pointer-events-none" style={{ background: tokens.topBorderGradient }} />
         )}
@@ -160,7 +160,7 @@ function IntegrationCardMock({ slug, name, description, fallback }: { slug: stri
               <h4 className="font-semibold truncate">{name}</h4>
               <span className="text-[9px] uppercase tracking-[0.18em] px-1.5 py-0.5 rounded border border-emerald-400/40 text-emerald-300 bg-emerald-400/10">connected</span>
             </div>
-            <p className="text-xs text-white/50 mt-0.5 line-clamp-2">{description}</p>
+            <p className="text-xs text-white/75 mt-0.5 line-clamp-2">{description}</p>
           </div>
         </div>
         <div className="flex items-center gap-1.5 mt-auto relative">
@@ -180,7 +180,7 @@ function MarketplaceCardMock({ slug, name, description, fallback }: { slug: stri
   const tokens = useBrandPalette(slug, fallback);
   return (
     <div className="group relative min-h-[162px] p-4 rounded-xl border border-white/10 bg-white/[0.02] flex flex-col gap-3 overflow-hidden">
-      <BrandHalo tokens={tokens} alwaysOn />
+      <BrandHalo readable tokens={tokens} alwaysOn />
       {!tokens.isMulticolor && (
         <div className="absolute inset-x-0 top-0 h-px opacity-80 pointer-events-none" style={{ background: tokens.topBorderGradient }} />
       )}
@@ -191,7 +191,7 @@ function MarketplaceCardMock({ slug, name, description, fallback }: { slug: stri
         <LogoRenderer slug={slug} color={tokens.primary} name={name} variant="card" glow />
         <div className="min-w-0 flex-1">
           <h4 className="font-semibold truncate">{name}</h4>
-          <p className="text-xs text-white/50 mt-0.5 line-clamp-2">{description}</p>
+          <p className="text-xs text-white/75 mt-0.5 line-clamp-2">{description}</p>
         </div>
       </div>
       <div className="relative flex items-center gap-2 mt-auto">
@@ -210,7 +210,7 @@ function HeroPreview({ slug, name, fallback }: { slug: string; name: string; fal
   const tokens = useBrandPalette(slug, fallback);
   return (
     <div className="group relative rounded-2xl p-8 border border-white/10 bg-black/40 overflow-hidden">
-      <BrandHalo tokens={tokens} alwaysOn intensity={2} />
+      <BrandHalo readable tokens={tokens} alwaysOn intensity={2} />
       <div className="relative flex flex-col items-center gap-4">
         <LogoRenderer slug={slug} name={name} color={tokens.primary} variant="hero" glow />
         <h3 className="text-2xl font-bold">{name}</h3>
@@ -317,7 +317,7 @@ export default function LogoLabAdmin() {
             <p className="text-xs uppercase tracking-[0.2em] text-purple-300 inline-flex items-center gap-2">
               <ImageIcon className="w-3.5 h-3.5" /> Variações IA · {selected.name}
             </p>
-            <span className="text-[10px] text-white/40">Gemini 2.5 Flash Image</span>
+            <span className="text-[10px] text-white/65">Gemini 2.5 Flash Image</span>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {aiVariations.map((v: any) => (
@@ -335,15 +335,15 @@ export default function LogoLabAdmin() {
       {/* Live preview do provider selecionado */}
       <div className="grid lg:grid-cols-3 gap-4 mb-8">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-2">Integration Card</p>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-white/65 mb-2">Integration Card</p>
           <IntegrationCardMock slug={selected.slug} name={selected.name} description={selected.description} fallback={selected.color} />
         </div>
         <div>
-          <p className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-2">Marketplace Card</p>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-white/65 mb-2">Marketplace Card</p>
           <MarketplaceCardMock slug={selected.slug} name={selected.name} description={selected.description} fallback={selected.color} />
         </div>
         <div>
-          <p className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-2">Hero / Detail</p>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-white/65 mb-2">Hero / Detail</p>
           <HeroPreview slug={selected.slug} name={selected.name} fallback={selected.color} />
         </div>
       </div>
@@ -352,7 +352,7 @@ export default function LogoLabAdmin() {
       <div className="grid lg:grid-cols-[1fr_auto] gap-4 mb-6">
         <div className="p-4 rounded-2xl border border-white/10 bg-white/[0.02] space-y-4">
           <div>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-white/40 mb-2">Variant</p>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-white/65 mb-2">Variant</p>
             <div className="flex flex-wrap gap-1.5">
               {VARIANTS.map((v) => (
                 <button
@@ -380,14 +380,14 @@ export default function LogoLabAdmin() {
         </div>
         <div className="p-4 rounded-2xl border border-white/10 bg-gradient-to-br from-white/[0.04] to-transparent min-w-[200px] flex flex-col items-center justify-center gap-3">
           <LogoRenderer slug={selected.slug} color={selected.color} name={selected.name} variant={variant} glow={glow} bare={bare} />
-          <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">{selected.name}</p>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-white/65">{selected.name}</p>
         </div>
       </div>
 
       {/* Filters */}
       <div className="flex flex-wrap gap-2 items-center mb-4">
         <div className="relative flex-1 min-w-[200px]">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/65" />
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
@@ -396,6 +396,7 @@ export default function LogoLabAdmin() {
           />
         </div>
         <select
+          aria-label="Filtrar por categoria"
           value={cat}
           onChange={(e) => setCat(e.target.value as any)}
           className="px-3 py-2.5 rounded-lg bg-white/5 border border-white/10 text-sm focus:outline-none focus:border-white/30"
@@ -412,6 +413,7 @@ export default function LogoLabAdmin() {
         {filtered.map((p) => (
           <button
             key={p.id}
+            aria-pressed={selectedSlug===p.slug}
             onClick={() => setSelectedSlug(p.slug)}
             className={`group p-4 rounded-2xl border bg-white/[0.02] hover:bg-white/[0.05] transition-all flex flex-col items-center gap-3 text-left ${
               selectedSlug === p.slug ? "border-white/40 ring-2 ring-white/30" : "border-white/10 hover:border-white/25"
@@ -420,7 +422,7 @@ export default function LogoLabAdmin() {
             <LogoRenderer slug={p.slug} color={p.color} name={p.name} variant={variant} glow={glow} bare={bare} />
             <div className="text-center min-w-0 w-full">
               <p className="text-xs font-semibold truncate">{p.name}</p>
-              <p className="text-[10px] text-white/40 uppercase tracking-wider truncate">{CATEGORY_LABEL[p.category]}</p>
+              <p className="text-[10px] text-white/65 uppercase tracking-wider truncate">{CATEGORY_LABEL[p.category]}</p>
             </div>
             <PalettePreview slug={p.slug} name={p.name} fallback={p.color} />
           </button>
@@ -428,7 +430,7 @@ export default function LogoLabAdmin() {
       </div>
 
       {filtered.length === 0 && (
-        <div className="text-center py-16 text-white/40">Nenhum provider encontrado.</div>
+        <div className="text-center py-16 text-white/65">Nenhum provider encontrado.</div>
       )}
     </AdminPageShell>
   );
