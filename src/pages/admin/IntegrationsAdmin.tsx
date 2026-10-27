@@ -315,7 +315,7 @@ export default function IntegrationsAdmin() {
       {/* Search + filtros */}
       <GlassCard padding="md" className="mb-6">
         <div className="flex flex-col lg:flex-row gap-3">
-          <div className="relative w-full lg:w-64 lg:flex-none">
+          <div className="relative w-full self-start lg:w-64 lg:flex-none">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/65" />
             <input
               value={q}
