@@ -75,8 +75,11 @@ Deno.serve(async (req) => {
       const selfTest = await db.rpc("sevenos_push_self_test", {
         _user: user.id, _subscription: sub.id, _request: body.requestId,
       });
-      if(selfTest.error?.message?.includes("Aguarde um minuto"))
-        return json({ok:false,code:"test_cooldown",retryAfter:60,error:"O último teste já foi registrado. Aguarde até um minuto antes de enviar outro; isso não é falha na inscrição."},429);
+      if(selfTest.error?.message?.includes("Aguarde um minuto")){
+        const recent=await db.from("notifications").select("created_at").eq("user_id",user.id).eq("type","push.test").order("created_at",{ascending:false}).limit(1).maybeSingle();
+        const retryAfter=recent.data?.created_at?Math.max(1,Math.min(60,Math.ceil((Date.parse(recent.data.created_at)+60000-Date.now())/1000))):60;
+        return json({ok:false,code:"test_cooldown",retryAfter,error:"O último teste já foi registrado. Aguarde até um minuto antes de enviar outro; isso não é falha na inscrição."},429);
+      }
       onlyNotification = await checked(selfTest);
     }
     if (!cfg.sevenos_vapid_public_v1 || !cfg.sevenos_vapid_private_v1)

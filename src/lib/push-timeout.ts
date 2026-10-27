@@ -16,3 +16,6 @@ export async function pushTimeout<T>(
     clearTimeout(timer!);
   }
 }
+
+/** Background timers are throttled; countdowns must follow elapsed wall-clock time. */
+export function pushCooldownSeconds(deadline:number,now=Date.now()){return Math.max(0,Math.ceil((deadline-now)/1000));}

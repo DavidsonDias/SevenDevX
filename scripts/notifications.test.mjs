@@ -60,3 +60,5 @@ test("Permission timeout reports unanswered browser prompts and releases activat
  assert.equal(await timeout.pushTimeout(Promise.resolve("granted"),100,"unexpected"),"granted");
  await assert.rejects(timeout.pushTimeout(Promise.reject(new Error("denied")),100,"unexpected"),/denied/);
 });
+
+test("Cooldown expires by elapsed time after backgrounding, rather than counting timer callbacks",()=>{assert.equal(timeout.pushCooldownSeconds(61000,1000),60);assert.equal(timeout.pushCooldownSeconds(61000,60900),1);assert.equal(timeout.pushCooldownSeconds(61000,120000),0);});

@@ -1,6 +1,7 @@
 /** Device-only diagnostics; no endpoint, encryption key or receipt capability is displayed. */
 import { useEffect, useState, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
+import {pushCooldownSeconds} from "@/lib/push-timeout";
 import AdminPageShell from "@/components/admin/AdminPageShell";
 import {
   usePushSubscription,
@@ -76,6 +77,8 @@ export default function NotificationDiagnostics() {
   const [checkError, setCheckError] = useState("");
   const [checking, setChecking] = useState(false),
     [cooldown, setCooldown] = useState(0);
+  const cooldownDeadline=useRef(0);
+  const startCooldown=(seconds:number)=>{cooldownDeadline.current=Date.now()+seconds*1000;setCooldown(seconds);};
   const loadInFlight = useRef(false);
   const load = useCallback(async () => {
     if (!userId || loadInFlight.current) return;
@@ -158,7 +161,7 @@ export default function NotificationDiagnostics() {
   useEffect(() => {
     if (cooldown <= 0) return;
     const timer = setTimeout(
-      () => setCooldown((n) => Math.max(0, n - 1)),
+      () => setCooldown(pushCooldownSeconds(cooldownDeadline.current)),
       1000,
     );
     return () => clearTimeout(timer);
@@ -175,6 +178,7 @@ export default function NotificationDiagnostics() {
     }, 5000);
     return () => clearInterval(timer);
   }, [watchUntil, load]);
+  useEffect(()=>{const visible=()=>{if(document.visibilityState==="visible")setCooldown(pushCooldownSeconds(cooldownDeadline.current));};document.addEventListener("visibilitychange",visible);return()=>document.removeEventListener("visibilitychange",visible);},[]);
   async function test() {
     if (!push.subscriptionId || busy || cooldown > 0) return;
     setBusy(true);
@@ -194,13 +198,13 @@ export default function NotificationDiagnostics() {
           const body = await result.error.context.json();
           if (typeof body.error === "string") explanation = body.error;
           if (body.code === "test_cooldown")
-            setCooldown(Math.min(60, Number(body.retryAfter) || 60));
+            startCooldown(Math.min(60, Number(body.retryAfter) || 60));
         } catch {
           /* retain safe message */
         }
         throw new Error(explanation);
       }
-      setCooldown(60);
+      startCooldown(60);
       setMessage(
         "Aviso interno registrado. A aceitação pelo serviço de push não comprova recebimento. Aguarde a confirmação abaixo e confira o aviso na tela do seu dispositivo.",
       );
