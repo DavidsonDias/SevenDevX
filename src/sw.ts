@@ -469,7 +469,7 @@ self.addEventListener("message", (event) => {
 
   if (data?.type === "SKIP_WAITING") {
     console.log(`${LOG_PREFIX} ⏭️ Skip waiting solicitado`);
-    self.skipWaiting();
+    event.waitUntil(self.skipWaiting());
   }
 
   if (data?.type === "GET_VERSION") {

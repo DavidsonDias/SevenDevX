@@ -16,7 +16,7 @@ export async function checked<T>(result: {
     throw new IntegrationError(
       "database_unavailable",
       503,
-      "Não foi possível confirmar o registro no servidor.",
+      "Não foi possível concluir a operação no servidor. Confira a conexão e tente novamente.",
     );
   return result.data;
 }

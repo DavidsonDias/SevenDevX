@@ -1,12 +1,12 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import ts from 'typescript';import {webcrypto} from 'node:crypto';
 const read=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
-function fixture(name,{admin=true,validUser=true,env={},rows=[]}={}) {
+function fixture(name,{admin=true,validUser=true,env={},rows=[],pushConfigured=false,ownSub=null,selfTestError=null}={}) {
  let handler,writes=0,outbound=0;
  const q={};for(const method of ['select','eq','in','not','order','limit','gte','lte','or'])q[method]=()=>q;
  for(const method of ['insert','update','upsert','delete'])q[method]=()=>{writes++;return q;};
- q.maybeSingle=async()=>({data:null,error:null});q.single=async()=>({data:null,error:null});q.then=(resolve,reject)=>Promise.resolve({data:rows,error:null}).then(resolve,reject);
- const client={auth:{getUser:async()=>({data:{user:validUser?{id:'owner'}:null},error:null}),admin:{listUsers:async()=>({data:{users:[]},error:null})}},rpc:async(name)=>({data:name==='sevenos_push_config'?{}:admin,error:null}),from:()=>q};
- const source=[read('supabase/functions/_shared/integration-auth.ts'),read('supabase/functions/_shared/integration-runtime.ts'),...(name==='push-send'?[read('supabase/functions/_shared/push-runtime.ts'),read('supabase/functions/_shared/push-policy.ts')]:[]),read(`supabase/functions/${name}/index.ts`)].join('\n').replace(/^import[\s\S]*?;[ \t]*\r?\n/gm,'').replace(/^export\s*\{[^}]+\};?\r?\n/gm,'').replaceAll('export ','').replace(/const corsHeaders = \{[\s\S]*?\};/g,'');
+ q.maybeSingle=async()=>({data:ownSub,error:null});q.single=async()=>({data:null,error:null});q.then=(resolve,reject)=>Promise.resolve({data:rows,error:null}).then(resolve,reject);
+ const client={auth:{getUser:async()=>({data:{user:validUser?{id:'owner'}:null},error:null}),admin:{listUsers:async()=>({data:{users:[]},error:null})}},rpc:async(name)=>({data:name==='sevenos_push_config'?(pushConfigured?{sevenos_vapid_public_v1:'public-test',sevenos_vapid_private_v1:'private-test'}:{}):name==='sevenos_push_self_test'?null:admin,error:name==='sevenos_push_self_test'?selfTestError:null}),from:()=>q};
+ const source=[read('supabase/functions/_shared/integration-auth.ts'),(name==='push-send'?'const createClient=sdkClient;':read('supabase/functions/_shared/integration-runtime.ts')),...(name==='push-send'?[read('supabase/functions/_shared/push-runtime.ts'),read('supabase/functions/_shared/push-policy.ts')]:[]),read(`supabase/functions/${name}/index.ts`)].join('\n').replace(/^import[\s\S]*?;[ \t]*\r?\n/gm,'').replace(/^export\s*\{[^}]+\};?\r?\n/gm,'').replaceAll('export ','').replace(/const corsHeaders = \{[\s\S]*?\};/g,'');
  // Supply one CORS declaration after removing the original duplicate declarations.
  const compiled=ts.transpileModule("const corsHeaders={'Access-Control-Allow-Origin':'https://www.sevendevx.com'};\n"+source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
  const deno={serve:fn=>{handler=fn;},env:{get:k=>Object.hasOwn(env,k)?env[k]:k==='SUPABASE_SERVICE_ROLE_KEY'?'internal-key':k==='SUPABASE_URL'?'https://fixture.supabase.co':k==='SUPABASE_ANON_KEY'?'public':undefined}};
@@ -23,3 +23,9 @@ test('automation runner rejects unsupported actions and failed provider response
 
 test('WhatsApp webhook rejects unsigned requests and invalid HMAC before writes',async()=>{const f=fixture('whatsapp-webhook',{env:{WHATSAPP_APP_SECRET:'synthetic-secret'}});for(const signature of ['', 'sha256='+'0'.repeat(64)]){assert.equal((await f.run('','POST',{object:'whatsapp_business_account',entry:[]},{'x-hub-signature-256':signature})).status,401);assert.equal(f.writes(),0);}});
 test('WhatsApp webhook accepts verified Meta envelopes without sending any messages',async()=>{const body={object:'whatsapp_business_account',entry:[]},key=await webcrypto.subtle.importKey('raw',new TextEncoder().encode('synthetic-secret'),{name:'HMAC',hash:'SHA-256'},false,['sign']),signature=Buffer.from(await webcrypto.subtle.sign('HMAC',key,new TextEncoder().encode(JSON.stringify(body)))).toString('hex');const f=fixture('whatsapp-webhook',{env:{WHATSAPP_APP_SECRET:'synthetic-secret'}});assert.equal((await f.run('','POST',body,{'x-hub-signature-256':'sha256='+signature})).status,200);assert.equal(f.outbound(),0);assert.equal(f.writes(),0);});
+
+test('push self-test cooldown returns an actionable 429 without sending or claiming registration failure',async()=>{
+ const f=fixture('push-send',{pushConfigured:true,ownSub:{id:'owned-sub'},selfTestError:{message:'Aguarde um minuto antes de testar novamente'}});
+ const r=await f.run('owner','POST',{action:'test',subscriptionId:'owned-sub',requestId:'synthetic-request'});
+ assert.equal(r.status,429);const body=await r.json();assert.equal(body.code,'test_cooldown');assert.equal(body.retryAfter,60);assert.doesNotMatch(body.error,/confirmar o registro/);assert.equal(f.outbound(),0);assert.equal(f.writes(),0);
+});

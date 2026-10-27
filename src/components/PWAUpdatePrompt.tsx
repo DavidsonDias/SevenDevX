@@ -94,6 +94,9 @@ const isPreview = () => {
 
 const PWAUpdatePrompt = () => {
   const approvedUpdate = useRef(false);
+  const updateTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
+  const [updating,setUpdating]=useState(false);
+  const [updateMessage,setUpdateMessage]=useState("");
   const [show, setShow] = useState(false);
   const [waiting, setWaiting] = useState<ServiceWorker | null>(null);
 
@@ -106,7 +109,8 @@ const PWAUpdatePrompt = () => {
     const cleanups: Array<() => void> = [];
     const onControllerChange = () => {
       if (refreshing || !approvedUpdate.current) return;
-      if (hasUnsavedEdits()) { approvedUpdate.current = false; setWaiting(null); setShow(true); return; }
+      if (hasUnsavedEdits()) { approvedUpdate.current = false; if(updateTimer.current)clearTimeout(updateTimer.current);setUpdating(false);setUpdateMessage("Salve as alterações abertas antes de recarregar."); setWaiting(null); setShow(true); return; }
+      if(updateTimer.current)clearTimeout(updateTimer.current);
       refreshing = true;
       window.location.reload();
     };
@@ -140,20 +144,39 @@ const PWAUpdatePrompt = () => {
     navigator.serviceWorker.getRegistration().then((reg) => { if (active && reg) attach(reg); }).catch(() => {});
 
     return () => {
+      if(updateTimer.current)clearTimeout(updateTimer.current);
       active = false; cleanups.forEach(cleanup => cleanup());
       navigator.serviceWorker.removeEventListener("controllerchange", onControllerChange);
     };
   }, []);
 
   const apply = async () => {
-    if (!(await canApplyPwaUpdate())) {
-      window.alert("Salve ou descarte as alterações nas abas abertas antes de atualizar. Seu trabalho continua aberto.");
-      return;
+    if(updating)return;
+    setUpdating(true);setUpdateMessage("Conferindo alterações abertas…");
+    try{
+      if (!(await canApplyPwaUpdate())) {
+        setUpdateMessage("Salve ou descarte as alterações nas abas abertas antes de atualizar. Seu trabalho continua aberto.");
+        setUpdating(false);return;
+      }
+      approvedUpdate.current = true;
+      setUpdateMessage("Aplicando a nova versão…");
+      const registration=await navigator.serviceWorker.getRegistration();
+      const worker=registration?.waiting ?? waiting;
+      if(worker?.state==="installed")worker.postMessage({type:"SKIP_WAITING"});
+      else if(!worker || worker.state==="activated"){
+        if(!hasUnsavedEdits())window.location.reload();
+        else {approvedUpdate.current=false;setUpdating(false);setUpdateMessage("Salve as alterações antes de recarregar.");}
+        return;
+      }
+      // Never spin indefinitely or force reload a page containing unsaved work.
+      updateTimer.current=setTimeout(()=>{
+        approvedUpdate.current=false;setUpdating(false);
+        setUpdateMessage("A nova versão ainda não confirmou a ativação. Confira a conexão e tente novamente. Seus dados continuam abertos.");
+      },12000);
+    }catch{
+      approvedUpdate.current=false;setUpdating(false);
+      setUpdateMessage("Não foi possível aplicar agora. Confira a conexão e tente novamente.");
     }
-    approvedUpdate.current = true;
-    if (waiting) waiting.postMessage({ type: "SKIP_WAITING" });
-    else window.location.reload();
-    // Não fecha o card: aguardamos controllerchange → reload
   };
 
   const later = () => setShow(false);
@@ -202,12 +225,15 @@ const PWAUpdatePrompt = () => {
                 </button>
               </div>
 
+              {updateMessage&&<p role="status" className="mt-3 text-xs text-white/70">{updateMessage}</p>}
               <div className="mt-4 flex gap-2.5">
                 <button
                   onClick={apply}
+                  disabled={updating}
+                  aria-busy={updating}
                   className="flex-1 px-4 py-3 rounded-xl bg-white text-black text-[12px] font-bold uppercase tracking-[0.18em] hover:bg-white/90 transition-colors flex items-center justify-center gap-2"
                 >
-                  Atualizar agora
+                  {updating?"Atualizando…":"Atualizar agora"}
                   <ArrowUpRight className="w-3.5 h-3.5" />
                 </button>
                 <button

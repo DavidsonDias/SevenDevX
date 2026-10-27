@@ -72,13 +72,12 @@ Deno.serve(async (req) => {
           "Ative este dispositivo e confirme o registro no servidor antes do teste.",
         );
       // Serialize self-tests per user, rate-limit and deduplicate in the database.
-      onlyNotification = await checked(
-        await db.rpc("sevenos_push_self_test", {
-          _user: user.id,
-          _subscription: sub.id,
-          _request: body.requestId,
-        }),
-      );
+      const selfTest = await db.rpc("sevenos_push_self_test", {
+        _user: user.id, _subscription: sub.id, _request: body.requestId,
+      });
+      if(selfTest.error?.message?.includes("Aguarde um minuto"))
+        return json({ok:false,code:"test_cooldown",retryAfter:60,error:"O último teste já foi registrado. Aguarde até um minuto antes de enviar outro; isso não é falha na inscrição."},429);
+      onlyNotification = await checked(selfTest);
     }
     if (!cfg.sevenos_vapid_public_v1 || !cfg.sevenos_vapid_private_v1)
       throw new IntegrationError(
