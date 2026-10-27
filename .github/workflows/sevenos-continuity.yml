@@ -1,10 +1,10 @@
 name: SevenOS session and editing continuity
 on:
   pull_request:
-    paths: ['src/**', 'scripts/editor-*', 'scripts/auth-session-regression.test.mjs', 'scripts/offline-queue-read.test.mjs', 'scripts/proposals.test.mjs', 'scripts/stage-workspaces.test.mjs', 'scripts/permission-boundaries.test.mjs', 'package*.json', '.github/workflows/sevenos-continuity.yml']
+    paths: ['src/**', 'scripts/editor-*', 'scripts/auth-session-regression.test.mjs', 'scripts/offline-queue-read.test.mjs', 'scripts/proposals.test.mjs', 'scripts/stage-workspaces.test.mjs', 'scripts/notifications.test.mjs', 'scripts/integration-runtime.test.mjs', 'supabase/functions/push-*/**', 'supabase/functions/_shared/push-*', 'supabase/migrations/**', 'scripts/permission-boundaries.test.mjs', 'package*.json', '.github/workflows/sevenos-continuity.yml']
   push:
     branches: [main]
-    paths: ['src/**', 'scripts/editor-*', 'scripts/auth-session-regression.test.mjs', 'scripts/offline-queue-read.test.mjs', 'scripts/proposals.test.mjs', 'scripts/stage-workspaces.test.mjs', 'scripts/permission-boundaries.test.mjs', 'package*.json', '.github/workflows/sevenos-continuity.yml']
+    paths: ['src/**', 'scripts/editor-*', 'scripts/auth-session-regression.test.mjs', 'scripts/offline-queue-read.test.mjs', 'scripts/proposals.test.mjs', 'scripts/stage-workspaces.test.mjs', 'scripts/notifications.test.mjs', 'scripts/integration-runtime.test.mjs', 'supabase/functions/push-*/**', 'supabase/functions/_shared/push-*', 'supabase/migrations/**', 'scripts/permission-boundaries.test.mjs', 'package*.json', '.github/workflows/sevenos-continuity.yml']
 permissions:
   contents: read
 jobs:
@@ -20,5 +20,5 @@ jobs:
           cache: npm
       - run: npm ci --ignore-scripts
       - run: npm run typecheck
-      - run: node --test scripts/auth-session-regression.test.mjs scripts/editor-continuity.test.mjs scripts/editor-save-conflicts.test.mjs scripts/native-mfa.test.mjs scripts/auth-redirect-safety.test.mjs scripts/offline-queue-read.test.mjs scripts/proposals.test.mjs scripts/stage-workspaces.test.mjs scripts/permission-boundaries.test.mjs
+      - run: node --test scripts/auth-session-regression.test.mjs scripts/editor-continuity.test.mjs scripts/editor-save-conflicts.test.mjs scripts/native-mfa.test.mjs scripts/auth-redirect-safety.test.mjs scripts/offline-queue-read.test.mjs scripts/proposals.test.mjs scripts/stage-workspaces.test.mjs scripts/notifications.test.mjs scripts/integration-runtime.test.mjs scripts/permission-boundaries.test.mjs
       - run: npm run build

@@ -72,7 +72,9 @@
 // 📦 IMPORTS
 // ============================================================================
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
+import type { Json } from "@/integrations/supabase/types";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthContext } from "@/contexts/AuthContext";
 
@@ -87,7 +89,7 @@ export type Notification = {
   body: string | null;
   url: string | null;
   severity: "info" | "warning" | "error" | "success";
-  payload: any;
+  payload: Json;
   read_at: string | null;
   created_at: string;
 };
@@ -96,41 +98,137 @@ export type Notification = {
 // 🪝 HOOK IMPLEMENTATION
 // ============================================================================
 
+const announced = new Set<string>();
+
 export function useNotifications(limit = 20) {
   const { user } = useAuthContext();
+  const userId = user?.id;
   const [items, setItems] = useState<Notification[]>([]);
   const [unread, setUnread] = useState(0);
   const [loading, setLoading] = useState(true);
-
+  const [error, setError] = useState("");
+  const owner = useRef(userId);
+  owner.current = userId;
   const refresh = useCallback(async () => {
-    if (!user) return;
-    const [{ data }, { count }] = await Promise.all([
-      supabase.from("notifications").select("*").eq("user_id", user.id).order("created_at", { ascending: false }).limit(limit),
-      supabase.from("notifications").select("*", { count: "exact", head: true }).eq("user_id", user.id).is("read_at", null),
+    if (!userId) return;
+    const [list, total] = await Promise.all([
+      supabase
+        .from("notifications")
+        .select("*")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(limit),
+      supabase
+        .from("notifications")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", userId)
+        .is("read_at", null),
     ]);
-    setItems((data ?? []) as any);
-    setUnread(count ?? 0);
+    if (owner.current !== userId) return;
+    if (list.error || total.error) {
+      setError("Não foi possível atualizar os avisos. Tente novamente.");
+      setLoading(false);
+      return;
+    }
+    setError("");
+    setItems((list.data ?? []) as Notification[]);
+    setUnread(total.count ?? 0);
     setLoading(false);
-  }, [user, limit]);
-
+  }, [userId, limit]);
   useEffect(() => {
-    if (!user) return;
-    refresh();
+    setItems([]);
+    setUnread(0);
+    setError("");
+    setLoading(!!userId);
+    if (!userId) return;
+    void refresh();
     const ch = supabase
-      .channel(`notif-${user.id}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${user.id}` }, () => refresh())
-      .subscribe();
-    return () => { supabase.removeChannel(ch); };
-  }, [user, refresh]);
-
-  const markRead = async (id: string) => {
-    await supabase.from("notifications").update({ read_at: new Date().toISOString() }).eq("id", id);
+      .channel(`notif-${userId}-${limit}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "notifications",
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          if (
+            payload.eventType === "INSERT" &&
+            payload.new.user_id === owner.current &&
+            !announced.has(payload.new.id)
+          ) {
+            announced.add(payload.new.id);
+            if (announced.size > 200)
+              announced.delete(announced.values().next().value!);
+            toast("Novo aviso SevenDevX", {
+              description: "Consulte sua central de notificações.",
+              action: {
+                label: "Abrir",
+                onClick: () => {
+                  window.location.assign(
+                    `/admin/notifications/open/${payload.new.id}`,
+                  );
+                },
+              },
+            });
+          }
+          void refresh();
+        },
+      )
+      .subscribe((status) => {
+        if (status === "CHANNEL_ERROR" || status === "TIMED_OUT")
+          setError(
+            "Tempo real indisponível. Os avisos continuam no histórico; atualização automática a cada minuto.",
+          );
+      });
+    const timer = setInterval(() => {
+      if (document.visibilityState === "visible") void refresh();
+    }, 60000);
+    const visible = () => {
+      if (document.visibilityState === "visible") void refresh();
+    };
+    document.addEventListener("visibilitychange", visible);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener("visibilitychange", visible);
+      void supabase.removeChannel(ch);
+    };
+  }, [userId, refresh, limit]);
+  const mutate = async (action: "read" | "all" | "delete", id?: string) => {
+    if (!userId) return;
+    const result =
+      action === "delete"
+        ? await supabase
+            .from("notifications")
+            .delete()
+            .eq("id", id!)
+            .eq("user_id", userId)
+        : action === "read"
+          ? await supabase
+              .from("notifications")
+              .update({ read_at: new Date().toISOString() })
+              .eq("id", id!)
+              .eq("user_id", userId)
+          : await supabase
+              .from("notifications")
+              .update({ read_at: new Date().toISOString() })
+              .eq("user_id", userId)
+              .is("read_at", null);
+    if (result.error) {
+      toast.error("Não foi possível salvar a alteração do aviso.");
+      return;
+    }
+    await refresh();
   };
-  const markAllRead = async () => {
-    if (!user) return;
-    await supabase.from("notifications").update({ read_at: new Date().toISOString() }).eq("user_id", user.id).is("read_at", null);
+  return {
+    items,
+    unread,
+    loading,
+    error,
+    refresh,
+    markRead: (id: string) => mutate("read", id),
+    markAllRead: () => mutate("all"),
+    remove: (id: string) => mutate("delete", id),
   };
-  const remove = async (id: string) => { await supabase.from("notifications").delete().eq("id", id); };
-
-  return { items, unread, loading, refresh, markRead, markAllRead, remove };
 }

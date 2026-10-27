@@ -96,14 +96,17 @@ import { toast } from "sonner";
 // ============================================================================
 
 const EVENTS = [
+  { type: "contact.message_received", label: "Nova mensagem de atendimento" },
+  { type: "push.test", label: "Teste da própria conta" },
   { type: "contact.created", label: "Novo contato/lead" },
   { type: "project.pipeline_changed", label: "Projeto muda de estágio" },
   { type: "automation.failed", label: "Automação falhou" },
   { type: "role.granted", label: "Role concedida a usuário" },
-  { type: "deployment.failed", label: "Deploy falhou" },
-  { type: "deployment.ready", label: "Deploy concluído" },
+  { type: "incident.opened", label: "Incidente operacional aberto" },
+  { type: "session.suspicious", label: "Atividade suspeita da minha sessão" },
+  { type: "audit.critical", label: "Evento crítico de auditoria" },
 ];
-const CHANNELS = ["inapp", "push", "email"] as const;
+const CHANNELS = ["inapp", "push"] as const;
 const CHANNEL_LABEL: Record<string, string> = { inapp: "Sino 🔔", push: "Push 📱", email: "Email 📧" };
 
 // ============================================================================
@@ -118,7 +121,8 @@ export default function NotificationPreferencesAdmin() {
   useEffect(() => {
     if (!user) return;
     (async () => {
-      const { data } = await supabase.from("notification_preferences").select("*").eq("user_id", user.id);
+      const { data, error } = await supabase.from("notification_preferences").select("*").eq("user_id", user.id);
+      if(error){toast.error("Não foi possível ler as preferências.");setLoading(false);return;}
       const map: Record<string, boolean> = {};
       (data ?? []).forEach((p: any) => { map[`${p.event_type}:${p.channel}`] = p.enabled; });
       setPrefs(map);
@@ -134,7 +138,7 @@ export default function NotificationPreferencesAdmin() {
     const { error } = await supabase.from("notification_preferences").upsert({
       user_id: user.id, event_type, channel, enabled: next,
     } as any, { onConflict: "user_id,event_type,channel" });
-    if (error) toast.error(error.message);
+    if (error) { setPrefs(p=>({...p,[key]:!next})); toast.error("Não foi possível salvar sua preferência."); }
   };
 
   return (
@@ -159,7 +163,7 @@ export default function NotificationPreferencesAdmin() {
                     const enabled = prefs[`${e.type}:${c}`] ?? true;
                     return (
                       <td key={c} className="px-4 py-3 text-center">
-                        <button onClick={() => toggle(e.type, c)}
+                        <button aria-label={`${e.label}: ${CHANNEL_LABEL[c]}`} role="switch" aria-checked={enabled} onClick={() => toggle(e.type, c)}
                           className={`relative inline-flex w-10 h-5 rounded-full transition-colors ${enabled ? "bg-emerald-500/60" : "bg-white/10"}`}>
                           <span className={`absolute top-0.5 ${enabled ? "left-5" : "left-0.5"} transition-all w-4 h-4 rounded-full bg-white`} />
                         </button>
@@ -172,7 +176,7 @@ export default function NotificationPreferencesAdmin() {
           </table>
         </div>
       )}
-      <p className="mt-4 text-xs text-white/40">As preferências do canal <span className="text-white/70">Sino</span> aplicam-se imediatamente. Push e Email são consumidos pelos próximos dispatchers.</p>
+      <p className="mt-4 text-xs text-white/40">As preferências são conferidas antes de registrar cada aviso e antes de enviar o push. Não alteram avisos antigos. Desativar o Sino também impede novos pushes dessa categoria. Email não é enviado por esta central.</p>
     </AdminPageShell>
   );
 }

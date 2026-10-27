@@ -119,6 +119,8 @@ const CaseStudyPage = lazy(() => import("@/pages/geo/CaseStudies").then(m => ({ 
 const ContentClusters = lazy(() => import("@/pages/geo/ContentClusters"));
 const CitationsAdmin = lazy(() => import("@/pages/admin/CitationsAdmin"));
 const SearchConsoleAdmin = lazy(() => import("@/pages/admin/SearchConsoleAdmin"));
+const NotificationDiagnostics = lazy(() => import("@/pages/admin/NotificationDiagnostics"));
+const NotificationOpen = lazy(() => import("@/pages/admin/NotificationOpen"));
 const NotificationsAdmin = lazy(() => import("@/pages/admin/NotificationsAdmin"));
 const NotificationPreferencesAdmin = lazy(() => import("@/pages/admin/NotificationPreferencesAdmin"));
 const AutomationRunsAdmin = lazy(() => import("@/pages/admin/AutomationRunsAdmin"));
@@ -312,6 +314,8 @@ function AnimatedRoutes() {
             <Route path="/admin/notifications" element={
               <ProtectedRoute requiredRole="admin"><NotificationsAdmin /></ProtectedRoute>
             } />
+            <Route path="/admin/notifications/diagnostics" element={<ProtectedRoute requiredRole="admin"><NotificationDiagnostics /></ProtectedRoute>} />
+            <Route path="/admin/notifications/open/:id" element={<ProtectedRoute requiredRole="admin"><NotificationOpen /></ProtectedRoute>} />
             <Route path="/admin/notifications/preferences" element={
               <ProtectedRoute requiredRole="admin"><NotificationPreferencesAdmin /></ProtectedRoute>
             } />

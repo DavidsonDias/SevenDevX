@@ -2146,6 +2146,9 @@ export type Database = {
       }
       push_subscriptions: {
         Row: {
+          device_id: string | null
+          enabled: boolean
+          vapid_public_key: string | null
           auth: string
           created_at: string
           endpoint: string
@@ -2156,6 +2159,9 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          device_id?: string | null
+          enabled?: boolean
+          vapid_public_key?: string | null
           auth: string
           created_at?: string
           endpoint: string
@@ -2166,6 +2172,9 @@ export type Database = {
           user_id: string
         }
         Update: {
+          device_id?: string | null
+          enabled?: boolean
+          vapid_public_key?: string | null
           auth?: string
           created_at?: string
           endpoint?: string
@@ -3726,6 +3735,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      sevenos_register_push: {
+        Args: { _endpoint: string; _p256dh: string; _auth: string; _device: string; _public_key: string; _agent: string }
+        Returns: string
+      }
+      sevenos_push_status: {
+        Args: Record<PropertyKey, never>
+        Returns: {id: string; notification_id: string; subscription_id: string | null; state: string; attempts: number; created_at: string; accepted_at: string | null; received_at: string | null; clicked_at: string | null; error_code: string | null}[]
+      }
+
       submit_site_diagnostic: {
         Args: { _answers: Json; _source_url?: string; _utm?: Json }
         Returns: boolean

@@ -96,6 +96,7 @@ const NAV: { label: string; to: string; icon: any; group: string }[] = [
 
   // Notificações
   { group: "Notificações", label: "Caixa",        to: "/admin/notifications",              icon: Bell },
+  { group: "Notificações", label: "Diagnóstico Push", to: "/admin/notifications/diagnostics", icon: Bell },
   { group: "Notificações", label: "Preferências", to: "/admin/notifications/preferences",  icon: Bell },
 
   // Segurança
