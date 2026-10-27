@@ -315,16 +315,17 @@ export default function IntegrationsAdmin() {
       {/* Search + filtros */}
       <GlassCard padding="md" className="mb-6">
         <div className="flex flex-col lg:flex-row gap-3">
-          <div className="relative flex-1">
+          <div className="relative w-full lg:w-64 lg:flex-none">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/65" />
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
+              aria-label="Buscar integração"
               placeholder="Buscar integração..."
               className="w-full bg-black/40 border border-white/10 rounded-lg pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:border-white/30"
             />
           </div>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex min-w-0 flex-1 flex-wrap gap-2">
             {[["all", "Todas"], ...Object.entries(CATEGORIES).map(([k, v]) => [k, v.label])].map(
               ([k, label]) => (
                 <button
