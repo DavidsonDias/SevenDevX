@@ -31,6 +31,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
@@ -47,6 +48,7 @@ gsap.registerPlugin(ScrollTrigger);
 // ============================================================================
 
 const TechShowcase = () => {
+  const { copy } = usePublicCopy();
   const sectionRef = useRef<HTMLElement>(null);
 
   // Estado da tecnologia selecionada (para o modal)
@@ -128,11 +130,11 @@ const TechShowcase = () => {
             className="max-w-7xl mx-auto"
           >
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 uppercase tracking-tight text-center">
-              Stack Tecnológica Completa
+              {copy("Stack Tecnológica Completa")}
             </h2>
 
             <p className="text-white/60 text-center mb-12 text-sm md:text-base uppercase tracking-wider">
-              Dominamos as principais tecnologias do mercado
+              {copy("Dominamos as principais tecnologias do mercado")}
             </p>
 
             {/* ============================================================
@@ -141,7 +143,7 @@ const TechShowcase = () => {
             <div className="flex flex-wrap justify-center gap-3 md:gap-4 mb-16">
               {categories.map((category) => (
                 <button
-                  key={category}
+                  key={copy(category)}
                   onClick={() => setActiveCategory(category)}
                   className={`px-4 md:px-6 py-2 md:py-3 text-xs md:text-sm uppercase tracking-wider font-semibold border transition-all duration-300
                     ${
@@ -150,7 +152,7 @@ const TechShowcase = () => {
                         : "bg-transparent text-white/80 border-white/30 hover:border-white hover:bg-white/10"
                     }`}
                 >
-                  {category}
+                  {copy(category)}
                 </button>
               ))}
             </div>
@@ -234,28 +236,28 @@ const TechShowcase = () => {
                   {techData.length}+
                 </div>
                 <div className="text-xs md:text-sm text-white/60 uppercase tracking-wider">
-                  Tecnologias
+                  {copy("Tecnologias")}
                 </div>
               </div>
 
               <div className="text-center border border-white/20 p-6">
                 <div className="text-3xl md:text-4xl font-bold mb-2">5</div>
                 <div className="text-xs md:text-sm text-white/60 uppercase tracking-wider">
-                  Categorias
+                  {copy("Categorias")}
                 </div>
               </div>
 
               <div className="text-center border border-white/20 p-6">
                 <div className="text-3xl md:text-4xl font-bold mb-2">100%</div>
                 <div className="text-xs md:text-sm text-white/60 uppercase tracking-wider">
-                  Full Stack
+                  {copy("Full Stack")}
                 </div>
               </div>
 
               <div className="text-center border border-white/20 p-6">
                 <div className="text-3xl md:text-4xl font-bold mb-2">24/7</div>
                 <div className="text-xs md:text-sm text-white/60 uppercase tracking-wider">
-                  Suporte
+                  {copy("Suporte")}
                 </div>
               </div>
             </motion.div>

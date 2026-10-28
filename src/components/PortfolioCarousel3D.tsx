@@ -44,6 +44,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { ExternalLink, Github, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { isValidLiveUrl, type Project } from "@/data/projects";
 import { useProjects } from "@/hooks/useProjects";
@@ -98,6 +99,7 @@ interface ProjectModalProps {
 
 const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
   const { t } = useLanguage();
+  const { copy } = usePublicCopy();
   const modalRef = useRef<HTMLDivElement | null>(null);
 
   useScrollLock(!!project);
@@ -203,7 +205,7 @@ const ProjectModal = ({ project, onClose }: ProjectModalProps) => {
 
             <div className="space-y-4">
               <p className="text-muted-foreground leading-relaxed text-sm">
-                {project.longDescription || project.description}
+                {copy(project.longDescription || project.description)}
               </p>
 
               <div className="flex flex-wrap gap-2">
@@ -299,6 +301,7 @@ const ProjectCard3D = ({
   onOpenModal 
 }: ProjectCard3DProps) => {
   const { t } = useLanguage();
+  const { copy } = usePublicCopy();
   const distance = index - activeIndex;
   const absDistance = Math.abs(distance);
   
@@ -378,7 +381,7 @@ const ProjectCard3D = ({
               {project.title}
             </h3>
             <p className="text-muted-foreground text-sm mt-2 leading-relaxed line-clamp-2">
-              {project.description}
+              {copy(project.description)}
             </p>
           </div>
 
@@ -645,6 +648,7 @@ const Carousel3D = ({ projects, onCardClick, onOpenModal }: Carousel3DProps) => 
 // ============================================================================
 
 const PortfolioCarousel3D = () => {
+  const { copy } = usePublicCopy();
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
@@ -776,7 +780,7 @@ const PortfolioCarousel3D = () => {
             className="group px-8 py-3 rounded-full shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all duration-300"
             onClick={() => navigate('/projects-hub')}
           >
-            Ver todos os projetos
+            {copy("Ver todos os projetos")}
             <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
           </Button>
         </motion.div>

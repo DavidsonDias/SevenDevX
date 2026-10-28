@@ -1,3 +1,4 @@
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 /**
  * AIChatbot.tsx — SevenDevX
  * ─────────────────────────────────────────────────────────────────────
@@ -73,6 +74,7 @@ const getSessionId = (): string => {
 // ============================================================================
 
 export const AIChatbot = () => {
+  const { copy } = usePublicCopy();
   const { t } = useLanguage();
   const { pathname } = useLocation();
   const isAdminCtx = pathname.startsWith("/admin") || pathname.startsWith("/profile");
@@ -303,7 +305,8 @@ export const AIChatbot = () => {
                   className="hidden md:block pointer-events-none whitespace-nowrap rounded-lg bg-black/90 px-3 py-2 text-xs font-medium text-white shadow-lg backdrop-blur-sm"
                 >
                   <Sparkles className="w-3 h-3 inline mr-1" />
-                  Fale com a 7AI
+
+                  {copy("Fale com a 7AI")}
                 </motion.span>
               )}
             </AnimatePresence>
@@ -319,7 +322,7 @@ export const AIChatbot = () => {
               onAnimationComplete={() => setShouldShake(false)}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              aria-label="Abrir chat com IA"
+              aria-label={copy("Abrir chat com IA")}
               className="relative flex h-14 w-14 items-center justify-center rounded-full bg-white text-black shadow-[0_4px_20px_rgba(255,255,255,0.3)] outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black transition-shadow duration-300 hover:shadow-[0_4px_30px_rgba(255,255,255,0.5)]"
             >
               {/* Pulse ring */}
@@ -362,8 +365,8 @@ export const AIChatbot = () => {
                   <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 rounded-full border-2 border-black" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm">7AI Assistant</h3>
-                  <p className="text-xs text-white/60">Online • SevenDevX</p>
+                  <h3 className="font-bold text-sm">{copy("7AI Assistant")}</h3>
+                  <p className="text-xs text-white/60">{copy("Online • SevenDevX")}</p>
                 </div>
               </div>
               <div className="flex gap-2">
@@ -377,7 +380,7 @@ export const AIChatbot = () => {
                 <button
                   onClick={() => setIsOpen(false)}
                   className="p-2 hover:bg-white/10 rounded-lg transition-colors"
-                  aria-label="Fechar chat"
+                  aria-label={copy("Fechar chat")}
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -416,7 +419,7 @@ export const AIChatbot = () => {
                             ? "[&_*]:!text-black"
                             : "prose-invert [&_*]:!text-white/95"
                         }`}>
-                          <ReactMarkdown>{message.content}</ReactMarkdown>
+                          <ReactMarkdown>{message.id === "welcome" || message.id.startsWith("error_") ? copy(message.content) : message.content}</ReactMarkdown>
                         </div>
                         <span className={`text-[10px] mt-1 block ${message.role === "user" ? "text-black/50" : "text-white/55"}`}>
                           {message.timestamp.toLocaleTimeString("pt-BR", { 
@@ -471,7 +474,7 @@ export const AIChatbot = () => {
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       onKeyPress={handleKeyPress}
-                      placeholder="Digite sua mensagem..."
+                      placeholder={copy("Digite sua mensagem...")}
                       disabled={isLoading}
                       className="flex-1 bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-sm placeholder:text-white/40 focus:outline-none focus:border-white/40 disabled:opacity-50"
                     />
@@ -481,7 +484,7 @@ export const AIChatbot = () => {
                       onClick={sendMessage}
                       disabled={!input.trim() || isLoading}
                       className="bg-white text-black p-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                      aria-label="Enviar mensagem"
+                      aria-label={copy("Enviar mensagem")}
                     >
                       {isLoading ? (
                         <Loader2 className="w-5 h-5 animate-spin" />
@@ -491,7 +494,8 @@ export const AIChatbot = () => {
                     </motion.button>
                   </div>
                   <p className="text-[10px] text-white/40 mt-2 text-center">
-                    Powered by 7AI • SevenDevX
+
+                    {copy("Powered by 7AI • SevenDevX")}
                   </p>
                 </div>
               </>

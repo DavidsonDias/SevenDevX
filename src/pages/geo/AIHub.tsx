@@ -195,7 +195,7 @@ export default function AIHub() {
                       </div>
                       <h2 className="text-xl font-bold mb-2">{copy(s.title)}</h2>
                       <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-                        {s.desc}
+                        {copy(s.desc)}
                       </p>
                       <span className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
                         {s.items}{copy("+ recursos")}

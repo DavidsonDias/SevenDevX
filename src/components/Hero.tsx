@@ -27,6 +27,7 @@ const HERO_VIDEO_DESKTOP = "/videos/hero-bg.mp4";
 const HERO_VIDEO_MOBILE = "/videos/hero-bg-mobile.mp4";
 
 
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 // ============================================================================
@@ -35,6 +36,7 @@ import { useLanguage } from "@/i18n/LanguageContext";
 
 const Hero = () => {
   const { t } = useLanguage();
+  const { copy } = usePublicCopy();
   const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
   const [videoFailed, setVideoFailed] = useState(false);
@@ -87,7 +89,7 @@ const Hero = () => {
       ref={sectionRef}
       className="viewport-hero relative min-h-[100svh] flex items-end overflow-hidden"
       tabIndex={-1}
-      aria-label="Seção principal de destaque com vídeo e introdução da SevenDevX"
+      aria-label={copy("Seção principal de destaque com vídeo e introdução da SevenDevX")}
     >
       {/* Background */}
       <div className="absolute inset-0 z-0">

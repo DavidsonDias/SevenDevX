@@ -121,14 +121,14 @@ const CATS = Object.keys(CATEGORY_LABEL) as ProviderCategory[];
 // ============================================================================
 
 export default function IntegrationsMarketplace() {
-  const { copy } = usePublicCopy();
+  const { copy, message } = usePublicCopy();
   const { user, isAdmin } = useAuthContext();
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<ProviderCategory | "all">("all");
   const [installing, setInstalling] = useState<string | null>(null);
 
   const install = async (p: typeof PROVIDER_CATALOG[number]) => {
-    if (!user) { toast({ title: "Faça login para instalar", variant: "destructive" }); return; }
+    if (!user) { toast({ title: copy("Faça login para instalar"), variant: "destructive" }); return; }
     setInstalling(p.id);
     try {
       // Admins: cria registro real em integration_providers
@@ -143,17 +143,17 @@ export default function IntegrationsMarketplace() {
           provider_slug: p.id, provider_name: p.name, installed_by: user.id,
           requested_secrets: p.secrets, status: "installed",
         });
-        toast({ title: `${p.name} instalado`, description: "Configure em /admin/integrations" });
+        toast({ title: message("{provider} instalado", { provider: p.name }), description: copy("Configure em /admin/integrations") });
       } else {
         // Não-admins: solicita instalação
         await supabase.from("marketplace_installs" as any).insert({
           provider_slug: p.id, provider_name: p.name, installed_by: user.id,
           requested_secrets: p.secrets, status: "requested",
         });
-        toast({ title: "Solicitação enviada", description: "Um admin será notificado." });
+        toast({ title: copy("Solicitação enviada"), description: copy("Um admin será notificado.") });
       }
     } catch (e: any) {
-      toast({ title: "Falha", description: e?.message, variant: "destructive" });
+      toast({ title: copy("Falha"), description: e?.message, variant: "destructive" });
     } finally { setInstalling(null); }
   };
 
@@ -163,9 +163,9 @@ export default function IntegrationsMarketplace() {
       if (cat !== "all" && p.category !== cat) return false;
       if (!q) return true;
       const t = q.toLowerCase();
-      return p.name.toLowerCase().includes(t) || p.description.toLowerCase().includes(t);
+      return p.name.toLowerCase().includes(t) || p.description.toLowerCase().includes(t) || copy(p.description).toLowerCase().includes(t);
     });
-  }, [q, cat]);
+  }, [q, cat, copy]);
 
   const totalsByCat = useMemo(() => {
     const m: Record<string, number> = {};
@@ -177,7 +177,7 @@ export default function IntegrationsMarketplace() {
     <>
       <SEOHead
         title={copy("Marketplace de Integrações | SevenDevX")}
-        description={copy(`Conectamos seu produto a ${PROVIDER_CATALOG.length}+ ferramentas enterprise. GitHub, Vercel, Stripe, OpenAI, Slack, WhatsApp e muito mais.`)}
+        description={message("Conectamos seu produto a {count}+ ferramentas enterprise. GitHub, Vercel, Stripe, OpenAI, Slack, WhatsApp e muito mais.", { count: PROVIDER_CATALOG.length })}
       />
       <Header />
       <main className="min-h-screen bg-background pt-24 pb-24">
@@ -208,7 +208,7 @@ export default function IntegrationsMarketplace() {
             <Input
               value={q}
               onChange={(e) => setQ(e.target.value)}
-              placeholder={copy(`Buscar entre ${PROVIDER_CATALOG.length} integrações…`)}
+              placeholder={message("Buscar entre {count} integrações…", { count: PROVIDER_CATALOG.length })}
               className="pl-11 h-12 bg-white/5 border-white/10"
             />
           </div>
@@ -230,7 +230,7 @@ export default function IntegrationsMarketplace() {
                   cat === c ? "bg-white text-black" : "bg-white/5 text-white/60 hover:bg-white/10"
                 }`}
               >
-                {CATEGORY_LABEL[c]} · {copy(totalsByCat[c] || 0)}
+                {copy(CATEGORY_LABEL[c])} · {copy(totalsByCat[c] || 0)}
               </button>
             ))}
           </div>
@@ -239,7 +239,7 @@ export default function IntegrationsMarketplace() {
         {/* Grid */}
         <section className="container mx-auto px-4">
           {filtered.length === 0 ? (
-            <div className="text-center text-white/50 py-24">{copy("Nenhuma integração encontrada para \"")}{q}".</div>
+            <div className="text-center text-white/50 py-24">{message("Nenhuma integração encontrada para {query}.", { query: q })}</div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {filtered.map((p, i) => (
@@ -256,15 +256,15 @@ export default function IntegrationsMarketplace() {
                     </div>
                     <div className="min-w-0">
                       <div className="text-sm font-semibold truncate">{p.name}</div>
-                      <div className="text-[10px] uppercase tracking-wider text-white/40 truncate">{CATEGORY_LABEL[p.category]}</div>
+                      <div className="text-[10px] uppercase tracking-wider text-white/40 truncate">{copy(CATEGORY_LABEL[p.category])}</div>
                     </div>
                   </div>
                   <p className="text-xs text-white/55 line-clamp-2 leading-relaxed">{copy(p.description)}</p>
                   {p.badges && p.badges.length > 0 && (
                     <div className="mt-2 flex flex-wrap gap-1">
                       {p.badges.slice(0, 2).map((b) => (
-                        <Badge key={b} variant="outline" className="text-[9px] border-white/10 text-white/50 px-1.5 py-0">
-                          {b}
+                        <Badge key={copy(b)} variant="outline" className="text-[9px] border-white/10 text-white/50 px-1.5 py-0">
+                          {copy(b)}
                         </Badge>
                       ))}
                     </div>

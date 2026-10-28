@@ -1,3 +1,4 @@
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 /**
  * AppInstallerButton.tsx — SevenDevX
  * ─────────────────────────────────────────────────────────────────────
@@ -84,6 +85,7 @@ const isPreview = () => {
 // ============================================================================
 
 export default function AppInstallerButton() {
+  const { copy, message: formatMessage } = usePublicCopy();
   const [prompt, setPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [open, setOpen] = useState(false);
   const [dock, setDock] = useState(false);
@@ -225,19 +227,19 @@ export default function AppInstallerButton() {
           >
             <button
               onClick={() => setOpen(true)}
-              aria-label="Instalar SevenDevX"
+              aria-label={copy("Instalar SevenDevX")}
               className="group relative"
             >
               <span className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/25 via-white/5 to-transparent blur-xl opacity-70 group-hover:opacity-100 transition-opacity" />
               <span className="relative flex items-center gap-2 px-3.5 py-2.5 rounded-2xl bg-black/85 backdrop-blur-xl border border-white/15 text-white text-[11px] uppercase tracking-[0.18em] font-semibold shadow-2xl hover:bg-white hover:text-black transition-colors">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 <Download className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Instalar app</span>
+                <span className="hidden sm:inline">{copy("Instalar app")}</span>
               </span>
             </button>
             <button
               onClick={dismissDock}
-              aria-label="Ocultar"
+              aria-label={copy("Ocultar")}
               className="w-6 h-6 rounded-full bg-black/70 border border-white/10 text-white/50 hover:text-white flex items-center justify-center"
             >
               <X className="w-3 h-3" />
@@ -274,10 +276,12 @@ export default function AppInstallerButton() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-[10px] uppercase tracking-[0.25em] text-white/45 font-semibold">
-                      SevenDevX · Progressive App
+
+                      {copy("SevenDevX · Progressive App")}
                     </p>
                     <h3 className="mt-1 font-orbitron text-[15px] sm:text-base font-bold text-white leading-tight">
-                      Instale a experiência completa
+
+                      {copy("Instale a experiência completa")}
                     </h3>
                     <p className="mt-1.5 text-[12px] text-white/60 leading-relaxed">
                       {iosMode
@@ -287,7 +291,7 @@ export default function AppInstallerButton() {
                   </div>
                   <button
                     onClick={dismissCard}
-                    aria-label="Dispensar"
+                    aria-label={copy("Dispensar")}
                     className="shrink-0 p-1.5 rounded-lg text-white/50 hover:text-white hover:bg-white/5 transition-colors"
                   >
                     <X className="w-4 h-4" />
@@ -300,13 +304,15 @@ export default function AppInstallerButton() {
                       <span className="w-6 h-6 rounded-md bg-white/10 border border-white/10 flex items-center justify-center">
                         <Share className="w-3.5 h-3.5" />
                       </span>
-                      Toque no ícone <b className="font-semibold">Compartilhar</b>
+
+                      {copy("Toque no ícone")} <b className="font-semibold">{copy("Compartilhar")}</b>
                     </div>
                     <div className="flex items-center gap-2.5 text-[12px] text-white/80">
                       <span className="w-6 h-6 rounded-md bg-white/10 border border-white/10 flex items-center justify-center">
                         <PlusSquare className="w-3.5 h-3.5" />
                       </span>
-                      Escolha <b className="font-semibold">Adicionar à Tela de Início</b>
+
+                      {copy("Escolha")} <b className="font-semibold">{copy("Adicionar à Tela de Início")}</b>
                     </div>
                   </div>
                 ) : (
@@ -316,7 +322,8 @@ export default function AppInstallerButton() {
                       className="flex-1 relative overflow-hidden group px-4 py-3 rounded-xl bg-white text-black text-[12px] font-bold uppercase tracking-[0.18em] hover:bg-white/90 transition-colors"
                     >
                       <span className="relative flex items-center justify-center gap-2">
-                        Instalar agora
+
+                        {copy("Instalar agora")}
                         <ArrowUpRight className="w-3.5 h-3.5" />
                       </span>
                     </button>
@@ -324,14 +331,15 @@ export default function AppInstallerButton() {
                       onClick={dismissCard}
                       className="px-4 py-3 rounded-xl border border-white/15 text-white/70 hover:text-white hover:bg-white/5 text-[12px] font-semibold uppercase tracking-[0.18em] transition-colors"
                     >
-                      Depois
+
+                      {copy("Depois")}
                     </button>
                   </div>
                 )}
 
                 <div className="mt-4 flex items-center justify-between text-[10px] uppercase tracking-[0.25em] text-white/35">
-                  <span>Fecha em {countdown}s</span>
-                  <span>#instalar</span>
+                  <span>{formatMessage("Fecha em {seconds}s", { seconds: countdown })}</span>
+                  <span>{copy("#instalar")}</span>
                 </div>
                 <div className="mt-1.5 h-[2px] w-full rounded-full bg-white/8 overflow-hidden">
                   <motion.div

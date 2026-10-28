@@ -26,6 +26,7 @@
 import { useState, useCallback, useMemo } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { ChevronDown, Clock, Package, Wrench, ArrowRight } from "lucide-react";
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { useDefaultProcessTemplate } from "@/hooks/useEcosystem";
@@ -36,6 +37,7 @@ import { useDefaultProcessTemplate } from "@/hooks/useEcosystem";
 
 const ProcessSection = () => {
   const { t } = useLanguage();
+  const { copy } = usePublicCopy();
   const { trackEvent } = useAnalytics();
   const reduce = useReducedMotion();
   const data = t.servicesPage.process;
@@ -51,11 +53,11 @@ const ProcessSection = () => {
         const deliverables = (s.default_deliverables as any[]) || [];
         return {
           n: String(i + 1).padStart(2, "0"),
-          t: s.name,
-          d: s.description || fallback.d || "",
+          t: copy(s.name),
+          d: copy(s.description || fallback.d || ""),
           duration: fallback.duration || "",
           deliverables: deliverables.length > 0
-            ? deliverables.map((d: any) => (typeof d === "string" ? d : d.title || d.name || ""))
+            ? deliverables.map((d: any) => copy(typeof d === "string" ? d : d.title || d.name || ""))
             : (fallback.deliverables || []),
           tools: fallback.tools || [],
           cta: fallback.cta || data.deliverablesLabel,
@@ -63,7 +65,7 @@ const ProcessSection = () => {
       });
     }
     return data.steps;
-  }, [tpl, data]);
+  }, [tpl, data, copy]);
 
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
@@ -113,7 +115,7 @@ const ProcessSection = () => {
           className="text-center mb-16 md:mb-20"
         >
           <span className="inline-block text-xs md:text-sm font-mono uppercase tracking-[0.3em] text-primary mb-4">
-            METHOD
+            {copy("METHOD")}
           </span>
           <h2
             id="process-heading"

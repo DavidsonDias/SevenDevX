@@ -1,3 +1,4 @@
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 /**
  * 🚀 PWAUpdatePrompt.tsx — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -93,6 +94,7 @@ const isPreview = () => {
 // ============================================================================
 
 const PWAUpdatePrompt = () => {
+  const { copy } = usePublicCopy();
   const approvedUpdate = useRef(false);
   const updateTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
   const [updating,setUpdating]=useState(false);
@@ -207,25 +209,28 @@ const PWAUpdatePrompt = () => {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-[10px] uppercase tracking-[0.25em] text-emerald-300/80 font-semibold">
-                    Nova versão · SevenDevX
+
+                    {copy("Nova versão · SevenDevX")}
                   </p>
                   <h3 className="mt-1 font-orbitron text-[15px] font-bold text-white leading-tight">
-                    Atualização disponível
+
+                    {copy("Atualização disponível")}
                   </h3>
                   <p className="mt-1 text-[12px] text-white/60 leading-relaxed">
-                    Novos recursos, melhorias e correções prontos para instalar.
+
+                    {copy("Novos recursos, melhorias e correções prontos para instalar.")}
                   </p>
                 </div>
                 <button
                   onClick={later}
-                  aria-label="Depois"
+                  aria-label={copy("Depois")}
                   className="shrink-0 p-1.5 rounded-lg text-white/50 hover:text-white hover:bg-white/5 transition-colors"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              {updateMessage&&<p role="status" className="mt-3 text-xs text-white/70">{updateMessage}</p>}
+              {updateMessage&&<p role="status" className="mt-3 text-xs text-white/70">{copy(updateMessage)}</p>}
               <div className="mt-4 flex gap-2.5">
                 <button
                   onClick={apply}
@@ -233,14 +238,15 @@ const PWAUpdatePrompt = () => {
                   aria-busy={updating}
                   className="flex-1 px-4 py-3 rounded-xl bg-white text-black text-[12px] font-bold uppercase tracking-[0.18em] hover:bg-white/90 transition-colors flex items-center justify-center gap-2"
                 >
-                  {updating?"Atualizando…":"Atualizar agora"}
+                  {copy(updating ? "Atualizando…" : "Atualizar agora")}
                   <ArrowUpRight className="w-3.5 h-3.5" />
                 </button>
                 <button
                   onClick={later}
                   className="px-4 py-3 rounded-xl border border-white/15 text-white/70 hover:text-white hover:bg-white/5 text-[12px] font-semibold uppercase tracking-[0.18em] transition-colors"
                 >
-                  Depois
+
+                  {copy("Depois")}
                 </button>
               </div>
             </div>

@@ -42,7 +42,7 @@ const BASE = "https://www.sevendevx.com";
 
 export default function ContentClusters() {
   const { copy } = usePublicCopy();
-  const schema = buildClusterJsonLd();
+  const schema = buildClusterJsonLd(copy);
   return (
     <>
       <Helmet>

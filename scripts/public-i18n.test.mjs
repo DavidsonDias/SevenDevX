@@ -15,11 +15,12 @@ function load(name) {
   return exports;
 }
 const { translatePublicText: copy, publicCopy } = load('publicCopy');
+const { publicRouteCopy } = load('publicRouteCopy');
 const { commercialCopy } = load('publicCommercialCopy');
 const { projectCopy } = load('publicProjectCopy');
 
 test('all supplemental public copy has nonempty English and Spanish versions', () => {
-  for (const [pt, pair] of Object.entries({ ...publicCopy, ...commercialCopy, ...projectCopy })) {
+  for (const [pt, pair] of Object.entries({ ...publicCopy, ...commercialCopy, ...projectCopy, ...publicRouteCopy })) {
     assert.equal(pair.length, 2, pt);
     assert.ok(pair.every(text => typeof text === 'string' && text.trim()), pt);
     assert.equal(copy(pt, 'pt'), pt);
@@ -71,4 +72,59 @@ test('corrected barbershop case preserves the old inbound URL and removes unsupp
   assert.match(segment, /client: "Barbearia George Fiuza"/);
   assert.match(segment, /metrics: \[\]/);
   assert.doesNotMatch(segment, /escritório|98\/100|<1s/);
+});
+
+
+test('every provider and technology description is reviewed in both languages', () => {
+  const { hasReviewedPublicText } = load('publicCopy');
+  for (const [file, expected] of [['src/modules/integrations/providerCatalog.ts',117],['src/utils/techData.ts',39]]) {
+    const source = ts.createSourceFile(file, fs.readFileSync(file,'utf8'),ts.ScriptTarget.Latest,true);
+    const descriptions=[];
+    function visit(n) {
+      if(ts.isPropertyAssignment(n) && n.name.getText(source)==='description' && ts.isStringLiteralLike(n.initializer)) descriptions.push(n.initializer.text);
+      ts.forEachChild(n,visit);
+    }
+    visit(source);
+    assert.equal(descriptions.length,expected,file);
+    for(const text of descriptions) assert.ok(hasReviewedPublicText(text),text);
+  }
+});
+
+test('reviewed message placeholders survive translation and user values are not translated', () => {
+  const { formatPublicMessage } = load('publicCopy');
+  for(const [source,pair] of Object.entries(publicRouteCopy)) {
+    const fields = value => [...value.matchAll(/\{(\w+)\}/g)].map(x=>x[1]).sort();
+    for(const translated of pair) assert.deepEqual(fields(translated),fields(source),source);
+  }
+  assert.equal(formatPublicMessage('Buscar entre {count} integrações…',{count:116},'en'),'Search 116 integrations…');
+  assert.ok(formatPublicMessage('Nenhuma integração encontrada para {query}.',{query:'Desenvolvimento'},'es').includes('Desenvolvimento'));
+});
+
+
+test('lazy public showcases translate visible copy while preserving filter identities', () => {
+  const showcase=fs.readFileSync('src/components/TechShowcase.tsx','utf8');
+  assert.ok(showcase.includes('{copy(category)}'));
+  assert.ok(showcase.includes('setActiveCategory(category)'));
+  assert.ok(showcase.includes('copy("Stack Tecnológica Completa")'));
+  for(const file of ['src/components/PortfolioCarousel3D.tsx','src/pages/ProjectsHub.tsx']) {
+    const source=fs.readFileSync(file,'utf8');
+    assert.ok(source.includes('copy(project.longDescription || project.description)'),file);
+    assert.ok(source.includes('copy(project.description)'),file);
+  }
+});
+
+
+test('all programmatic solution labels and descriptions are translated, not just page headings', () => {
+  const { hasReviewedPublicText }=load('publicCopy');
+  const file='src/data/geoContent.ts';
+  const source=ts.createSourceFile(file,fs.readFileSync(file,'utf8'),ts.ScriptTarget.Latest,true);
+  const descriptions=[];
+  function visit(n) {
+    if(ts.isObjectLiteralExpression(n)) {
+      const fields=Object.fromEntries(n.properties.filter(p=>ts.isPropertyAssignment(p)&&ts.isStringLiteralLike(p.initializer)).map(p=>[p.name.getText(source),p.initializer.text]));
+      if(fields.desc) {descriptions.push(fields.desc); assert.ok(hasReviewedPublicText(fields.desc),fields.desc); if(!['React','TypeScript','Node.js','PostgreSQL','Supabase','OpenAI'].includes(fields.name)) assert.ok(hasReviewedPublicText(fields.name),fields.name);}
+    }
+    ts.forEachChild(n,visit);
+  }
+  visit(source);assert.equal(descriptions.length,20);
 });

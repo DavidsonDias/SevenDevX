@@ -118,6 +118,7 @@ const ProjectModal = memo(({ project, onClose, isPrimary, isFeatured }: {
   isFeatured?: boolean;
 }) => {
   const { t } = useLanguage();
+  const { copy } = usePublicCopy();
   const modalRef = useRef<HTMLDivElement | null>(null);
 
   useScrollLock(!!project);
@@ -196,7 +197,7 @@ const ProjectModal = memo(({ project, onClose, isPrimary, isFeatured }: {
             </div>
             <div className="space-y-4">
               <p className="text-muted-foreground leading-relaxed text-sm">
-                {project.longDescription || project.description}
+                {copy(project.longDescription || project.description)}
               </p>
               <div className="flex flex-wrap gap-2">
                 {project.techs.map((tech) => {
@@ -262,6 +263,7 @@ const ProjectCard = memo(({ project, index, isFeatured, isHero, onOpenModal }: {
   onOpenModal: (p: UIProject) => void;
 }) => {
   const { t } = useLanguage();
+  const { copy } = usePublicCopy();
 
   if (isHero) {
     return (
@@ -305,7 +307,7 @@ const ProjectCard = memo(({ project, index, isFeatured, isHero, onOpenModal }: {
                   {project.title}
                 </h3>
                 <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-                  {project.longDescription || project.description}
+                  {copy(project.longDescription || project.description)}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {project.techs.map((tech) => {
@@ -398,7 +400,7 @@ const ProjectCard = memo(({ project, index, isFeatured, isHero, onOpenModal }: {
                 {project.title}
               </h3>
               <p className="text-muted-foreground text-sm mt-1.5 leading-relaxed line-clamp-2">
-                {project.description}
+                {copy(project.description)}
               </p>
             </div>
 

@@ -76,6 +76,7 @@
 /**
  * 🔐 OAuthCallback — recebe ?code&state do provider, troca por token via edge.
  */
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -86,6 +87,7 @@ import { Loader2, CheckCircle2, XCircle } from "lucide-react";
 // ============================================================================
 
 export default function OAuthCallback() {
+  const { copy, message } = usePublicCopy();
   const [params] = useSearchParams();
   const nav = useNavigate();
   const [status, setStatus] = useState<"loading" | "ok" | "error">("loading");
@@ -126,9 +128,9 @@ export default function OAuthCallback() {
   return (
     <div className="min-h-screen grid place-items-center bg-background">
       <div className="text-center max-w-md p-8 border border-white/10 rounded-2xl bg-black/40">
-        {status === "loading" && <><Loader2 className="w-10 h-10 mx-auto animate-spin text-emerald-400 mb-3" /><p>Finalizando conexão...</p></>}
-        {status === "ok" && <><CheckCircle2 className="w-10 h-10 mx-auto text-emerald-400 mb-3" /><p>Conectado: {msg}</p><p className="text-xs text-white/40 mt-2">Redirecionando...</p></>}
-        {status === "error" && <><XCircle className="w-10 h-10 mx-auto text-red-400 mb-3" /><p>Falha</p><p className="text-xs text-red-300 mt-2">{msg}</p><button onClick={() => nav("/admin/oauth")} className="mt-4 px-4 py-2 bg-white text-black rounded-lg text-sm">Voltar</button></>}
+        {status === "loading" && <><Loader2 className="w-10 h-10 mx-auto animate-spin text-emerald-400 mb-3" /><p>{copy("Finalizando conexão...")}</p></>}
+        {status === "ok" && <><CheckCircle2 className="w-10 h-10 mx-auto text-emerald-400 mb-3" /><p>{message("Conectado: {account}", { account: copy(msg) })}</p><p className="text-xs text-white/40 mt-2">{copy("Redirecionando...")}</p></>}
+        {status === "error" && <><XCircle className="w-10 h-10 mx-auto text-red-400 mb-3" /><p>{copy("Falha")}</p><p className="text-xs text-red-300 mt-2">{copy(msg)}</p><button onClick={() => nav("/admin/oauth")} className="mt-4 px-4 py-2 bg-white text-black rounded-lg text-sm">{copy("Voltar")}</button></>}
       </div>
     </div>
   );

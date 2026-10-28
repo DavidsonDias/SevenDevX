@@ -1,3 +1,4 @@
+import { publicRouteCopy } from "./publicRouteCopy";
 import { translations, type Language } from "./translations";
 import { commercialCopy } from "./publicCommercialCopy";
 import { projectCopy } from "./publicProjectCopy";
@@ -195,7 +196,7 @@ function indexTree(pt: unknown, en: unknown, es: unknown) {
   }
 }
 indexTree(translations.pt, translations.en, translations.es);
-for (const [pt, [en, es]] of Object.entries({ ...publicCopy, ...commercialCopy, ...projectCopy, ...articleHeadlines, ...blogHeadlines, ...projectDetailsCopy })) {
+for (const [pt, [en, es]] of Object.entries({ ...publicCopy, ...commercialCopy, ...projectCopy, ...articleHeadlines, ...blogHeadlines, ...projectDetailsCopy, ...publicRouteCopy })) {
   indexes.en.set(normalize(pt), en);
   indexes.es.set(normalize(pt), es);
 }
@@ -208,4 +209,15 @@ export function translatePublicText<T>(value: T, language: Language): T {
   const leading = value.match(/^\s*/)?.[0] || "";
   const trailing = value.match(/\s*$/)?.[0] || "";
   return (leading + translated + trailing) as T;
+}
+
+
+/** Interpolate named values in a complete reviewed message, without translating user data. */
+export function formatPublicMessage(template: string, values: Record<string, string | number>, language: Language): string {
+  return translatePublicText(template, language).replace(/\{(\w+)\}/g, (token, key: string) => Object.prototype.hasOwnProperty.call(values, key) ? String(values[key]) : token);
+}
+
+/** Coverage check also accepts intentionally identical translations such as brand terms. */
+export function hasReviewedPublicText(value: string): boolean {
+  return indexes.en.has(normalize(value)) && indexes.es.has(normalize(value));
 }

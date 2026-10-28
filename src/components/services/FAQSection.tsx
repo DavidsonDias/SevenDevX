@@ -32,6 +32,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { useFaqPublic } from "@/hooks/useEcosystem";
@@ -42,6 +43,7 @@ import { useFaqPublic } from "@/hooks/useEcosystem";
 
 const FAQSection = () => {
   const { t } = useLanguage();
+  const { copy } = usePublicCopy();
   const { trackEvent } = useAnalytics();
   const reduce = useReducedMotion();
   const data = t.servicesPage.faq;
@@ -56,24 +58,24 @@ const FAQSection = () => {
       return dbFaq.items.map((it: any) => {
         const cat = dbFaq.categories.find((c: any) => c.id === it.category_id);
         return {
-          q: it.question,
-          a: it.answer,
+          q: copy(it.question),
+          a: copy(it.answer),
           categoryId: cat?.slug || "geral",
-          categoryLabel: cat?.name || "Geral",
+          categoryLabel: copy(cat?.name || "Geral"),
         };
       });
     }
     return data.categories.flatMap((cat) =>
       cat.items.map((it) => ({ ...it, categoryId: cat.id, categoryLabel: cat.label }))
     );
-  }, [dbFaq, data.categories]);
+  }, [dbFaq, data.categories, copy]);
 
   const dbCategories = useMemo(
     () =>
       dbFaq && dbFaq.categories.length > 0
-        ? dbFaq.categories.map((c: any) => ({ id: c.slug, label: c.name, icon: "•" }))
+        ? dbFaq.categories.map((c: any) => ({ id: c.slug, label: copy(c.name), icon: "•" }))
         : data.categories,
-    [dbFaq, data.categories]
+    [dbFaq, data.categories, copy]
   );
 
   // Items filtrados (categoria + busca)
@@ -204,7 +206,7 @@ const FAQSection = () => {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="flex flex-wrap justify-center gap-2 mb-10 md:mb-12"
           role="tablist"
-          aria-label="FAQ categories"
+          aria-label={copy("FAQ categories")}
         >
           <button
             type="button"

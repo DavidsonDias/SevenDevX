@@ -75,3 +75,12 @@ Os 10 cases têm versões completas com revisão do original e metadados no idio
 O Blog renderiza tabelas e listas com GFM, mantém exemplos de código, trata respostas fora de ordem e impede exibir o artigo anterior após falha de navegação. Links legados /contact no Markdown levam à seção pública /#contact. Conteúdo HTML bruto continua sem execução.
 
 Limites: novos conteúdos exigem tradução revisada. CT031 contém o marcador TESTE no cadastro público e precisa de texto final do proprietário. Resultados numéricos, depoimentos e promessas de saúde/privacidade/performance do conteúdo original continuam sujeitos à comprovação editorial; não foram certificados por testes de software. As fixtures de teste contêm somente textos que já estavam publicados.
+
+
+## Public route and section coverage (2026-10-28)
+
+The public-route dictionary now covers the 116-provider catalogue (plus its custom fallback), 39 technology descriptions, all programmatic service/industry descriptions, current CMS process steps, shared PWA/install/offline messages, diagnostic form labels and OAuth feedback. Lazy-loaded technology and portfolio showcases must apply `copy` inside each card/modal, not only in their parent page. Category IDs, provider IDs, URLs, prices and customer-entered values remain unchanged. Named messages use `message(template, values)`; interpolated values are not translated recursively.
+
+Verification: 133 continuity/localization tests; TypeScript; production build and PWA artifact check; browser section checks on 16 public routes in both English and Spanish, plus home, integrations, solution/city/case details, authentication, reset and OAuth failure presentation. Technology modal and chat welcome were checked without submitting leads, sending chat messages, or changing accounts. Browser evidence is retained locally under `evidence/route-i18n-browser.json`.
+
+Limits: new or edited CMS/editorial content requires reviewed translations and retains its source text when absent; the test catalogue is not a guarantee for future content. Public case metrics and commercial claims were preserved, not independently verified. The public content map also contains pre-existing links to unpublished articles; no articles were fabricated in this translation change. Private SevenOS screens are outside this public-site translation scope.
