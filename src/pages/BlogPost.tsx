@@ -94,16 +94,18 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { resolveBlogPost } from "@/i18n/editorial/blog";
+import { Helmet } from "react-helmet";
 import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { Calendar, Clock, Eye, ArrowLeft, Share2, Tag, ArrowRight } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
-import AIChatbot from "@/components/AIChatbot";
 import SEOHead from "@/components/SEOHead";
 import { BlogPostSkeleton } from "@/components/SkeletonLoader";
 import { Container } from "@/components/layout/Container";
@@ -174,88 +176,103 @@ const BlogPost = () => {
       const rect = el.getBoundingClientRect();
       const total = el.scrollHeight - window.innerHeight;
       const scrolled = -rect.top;
-      setReadProgress(Math.min(Math.max(scrolled / total, 0), 1) * 100);
+      setReadProgress(total > 0 ? Math.min(Math.max(scrolled / total, 0), 1) * 100 : 100);
     };
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, [post]);
 
   useEffect(() => {
+    let cancelled = false;
     const fetchPost = async () => {
       if (!slug) return;
       setIsLoading(true);
+      setPost(null);
+      setRelatedPosts([]);
+      setReadProgress(0);
+      try {
 
-      const { data: postData, error } = await supabase
-        .from("blog_posts")
-        .select(`
-          id, title, slug, content, excerpt, cover_image,
-          published_at, read_time, views_count, tags,
-          category:blog_categories(name, slug, color)
-        `)
-        .eq("slug", slug)
-        .eq("status", "published")
-        .single();
+        const { data: postData, error } = await supabase
+          .from("blog_posts")
+          .select(`
+            id, title, slug, content, excerpt, cover_image,
+            published_at, read_time, views_count, tags,
+            category:blog_categories(name, slug, color)
+          `)
+          .eq("slug", slug)
+          .eq("status", "published")
+          .single();
 
-      if (error || !postData) {
-        setIsLoading(false);
-        return;
-      }
+        if (cancelled) return;
+        if (error || !postData) {
+          setIsLoading(false);
+          return;
+        }
 
-      const transformedPost: BlogPostData = {
-        ...postData,
-        category: Array.isArray(postData.category) ? postData.category[0] || null : postData.category,
-        author: null,
-      };
-
-      setPost(transformedPost);
-
-      await supabase
-        .from("blog_posts")
-        .update({ views_count: (transformedPost.views_count || 0) + 1 })
-        .eq("id", transformedPost.id);
-
-      const { data: related } = await supabase
-        .from("blog_posts")
-        .select(`
-          id, title, slug, excerpt, cover_image, published_at,
-          read_time, views_count, tags,
-          category:blog_categories(name, slug, color)
-        `)
-        .eq("status", "published")
-        .neq("id", transformedPost.id)
-        .limit(3);
-
-      if (related) {
-        setRelatedPosts(related.map(p => ({
-          ...p,
-          content: "",
-          category: Array.isArray(p.category) ? p.category[0] || null : p.category,
+        const transformedPost: BlogPostData = {
+          ...postData,
+          category: Array.isArray(postData.category) ? postData.category[0] || null : postData.category,
           author: null,
-        })));
-      }
+        };
 
-      setIsLoading(false);
+        setPost(transformedPost);
+
+        await supabase
+          .from("blog_posts")
+          .update({ views_count: (transformedPost.views_count || 0) + 1 })
+          .eq("id", transformedPost.id);
+
+        const { data: related } = await supabase
+          .from("blog_posts")
+          .select(`
+            id, title, slug, excerpt, cover_image, published_at,
+            read_time, views_count, tags,
+            category:blog_categories(name, slug, color)
+          `)
+          .eq("status", "published")
+          .neq("id", transformedPost.id)
+          .limit(3);
+
+        if (cancelled) return;
+        if (related) {
+          setRelatedPosts(related.map(p => ({
+            ...p,
+            content: "",
+            category: Array.isArray(p.category) ? p.category[0] || null : p.category,
+            author: null,
+          })));
+        }
+
+      } catch {
+        // Keep an already loaded article if an ancillary request fails.
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
     };
 
-    fetchPost();
+    void fetchPost();
+    return () => { cancelled = true; };
   }, [slug]);
 
+  const resolved = post ? resolveBlogPost(post, language) : null;
+  const displayPost = resolved?.post;
+  const contentLanguage = resolved?.language ?? "pt";
   const handleShare = useCallback(async () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: post?.title,
-          text: post?.excerpt || "",
+          title: displayPost?.title,
+          text: displayPost?.excerpt || "",
           url: window.location.href,
         });
       } catch { /* cancelled */ }
     } else {
       await navigator.clipboard.writeText(window.location.href);
-      toast({ title: "Link copiado!", description: "Link do artigo copiado para a área de transferência." });
+      toast({ title: copy("Link copiado!"), description: copy("Link do artigo copiado para a área de transferência.") });
     }
-  }, [post, toast]);
+  }, [displayPost, toast, copy]);
 
-  if (isLoading) {
+  if (isLoading || (post && post.slug !== slug)) {
     return (
       <div className="min-h-screen bg-background text-foreground">
         <Header />
@@ -269,7 +286,7 @@ const BlogPost = () => {
     );
   }
 
-  if (!post) {
+  if (!displayPost) {
     return (
       <div className="min-h-screen bg-background text-foreground">
         <Header />
@@ -297,10 +314,11 @@ const BlogPost = () => {
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "Article",
-    headline: post.title,
-    description: post.excerpt || "",
-    image: post.cover_image || "",
-    datePublished: post.published_at,
+    headline: displayPost.title,
+    inLanguage: contentLanguage === "pt" ? "pt-BR" : contentLanguage === "en" ? "en-US" : "es-ES",
+    description: displayPost.excerpt || "",
+    image: displayPost.cover_image || "",
+    datePublished: displayPost.published_at,
     author: {
       "@type": "Organization",
       name: "SevenDevX",
@@ -319,19 +337,21 @@ const BlogPost = () => {
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: "https://www.sevendevx.com" },
       { "@type": "ListItem", position: 2, name: "Blog", item: "https://www.sevendevx.com/blog" },
-      { "@type": "ListItem", position: 3, name: post.title, item: `https://www.sevendevx.com/blog/${post.slug}` },
+      { "@type": "ListItem", position: 3, name: displayPost.title, item: `https://www.sevendevx.com/blog/${displayPost.slug}` },
     ],
   };
 
   return (
     <>
       <SEOHead
-        title={copy(`${post.title} — SevenDevX Blog`)}
-        description={copy(post.excerpt || `Leia "${post.title}" no blog da SevenDevX.`)}
-        keywords={post.tags?.join(", ") || "blog, tecnologia, desenvolvimento"}
-        url={`https://www.sevendevx.com/blog/${post.slug}`}
+        title={`${displayPost.title} — SevenDevX Blog`}
+        contentLanguage={contentLanguage}
+        translateContent={false}
+        description={displayPost.excerpt || displayPost.title}
+        keywords={displayPost.tags?.join(", ") || "blog, tecnologia, desenvolvimento"}
+        url={`https://www.sevendevx.com/blog/${displayPost.slug}`}
         type="article"
-        image={post.cover_image || undefined}
+        image={displayPost.cover_image || undefined}
       />
 
       <div className="min-h-screen bg-background text-foreground">
@@ -348,11 +368,11 @@ const BlogPost = () => {
 
         <main className="pt-20" id="article-content">
           {/* Hero Image */}
-          {post.cover_image && (
+          {displayPost.cover_image && (
             <div className="relative h-[35vh] md:h-[45vh] w-full overflow-hidden">
               <img
-                src={post.cover_image}
-                alt={copy(post.title)}
+                src={displayPost.cover_image}
+                alt={displayPost.title}
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
@@ -360,7 +380,7 @@ const BlogPost = () => {
           )}
 
           {/* Article */}
-          <article>
+          <article lang={contentLanguage === "pt" ? "pt-BR" : contentLanguage}>
             <Container narrow className="py-12">
               {/* Back */}
               <motion.div
@@ -383,34 +403,34 @@ const BlogPost = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="mb-14"
               >
-                {post.category && (
+                {displayPost.category && (
                   <span
                     className="inline-block px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider mb-5"
                     style={{
-                      backgroundColor: `${post.category.color}15`,
-                      color: post.category.color,
+                      backgroundColor: `${displayPost.category.color}15`,
+                      color: displayPost.category.color,
                     }}
                   >
-                    {copy(post.category.name)}
+                    {copy(displayPost.category.name)}
                   </span>
                 )}
 
                 <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6 leading-[1.1] tracking-tight">
-                  {copy(post.title)}
+                  {displayPost.title}
                 </h1>
 
                 <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-8">
                   <span className="flex items-center gap-1.5">
                     <Calendar className="w-4 h-4" />
-                    {formatDate(post.published_at, language)}
+                    {formatDate(displayPost.published_at, language)}
                   </span>
                   <span className="flex items-center gap-1.5">
                     <Clock className="w-4 h-4" />
-                    {copy(post.read_time || 5)} {t.blog.readingTime}
+                    {copy(displayPost.read_time || 5)} {t.blog.readingTime}
                   </span>
                   <span className="flex items-center gap-1.5">
                     <Eye className="w-4 h-4" />
-                    {copy(post.views_count || 0)} {t.blog.views}
+                    {copy(displayPost.views_count || 0)} {t.blog.views}
                   </span>
                 </div>
 
@@ -422,7 +442,7 @@ const BlogPost = () => {
                     </div>
                     <div>
                       <p className="font-semibold text-sm">
-                        {copy(post.author?.full_name || "SevenDevX")}
+                        {copy(displayPost.author?.full_name || "SevenDevX")}
                       </p>
                       <p className="text-xs text-muted-foreground">{t.blog.authorTeam}</p>
                     </div>
@@ -456,11 +476,14 @@ const BlogPost = () => {
                   prose-img:rounded-xl prose-img:my-10
                   prose-strong:text-foreground prose-strong:font-semibold"
               >
-                <ReactMarkdown>{copy(post.content)}</ReactMarkdown>
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}
+                  components={{ a: ({ href, children }) => <a href={href === "/contact" ? "/#contact" : href}>{children}</a>, table: ({ children }) => <div className="overflow-x-auto"><table>{children}</table></div>, pre: ({ children }) => <pre className="overflow-x-auto">{children}</pre> }}
+                >{displayPost.content}</ReactMarkdown>
               </motion.div>
 
               {/* Tags */}
-              {post.tags && post.tags.length > 0 && (
+              {displayPost.tags && displayPost.tags.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
@@ -469,7 +492,7 @@ const BlogPost = () => {
                 >
                   <div className="flex items-center gap-2 flex-wrap">
                     <Tag className="w-4 h-4 text-muted-foreground/50" />
-                    {post.tags.map((tag) => (
+                    {displayPost.tags.map((tag) => (
                       <span
                         key={tag}
                         className="px-3 py-1 bg-muted/10 rounded-full text-xs text-muted-foreground border border-border/10"
@@ -534,7 +557,7 @@ const BlogPost = () => {
                             {copy(relatedPost.title)}
                           </h3>
                           <p className="text-muted-foreground text-xs mt-2 line-clamp-2">
-                            {relatedPost.excerpt}
+                            {copy(relatedPost.excerpt)}
                           </p>
                         </div>
                       </div>
@@ -582,16 +605,11 @@ const BlogPost = () => {
 
         <Footer />
         <WhatsAppButton />
-        <AIChatbot />
 
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-        />
+        <Helmet>
+          <script type="application/ld+json">{JSON.stringify(articleSchema).replace(/</g, "\\u003c")}</script>
+          <script type="application/ld+json">{JSON.stringify(breadcrumbSchema).replace(/</g, "\\u003c")}</script>
+        </Helmet>
       </div>
     </>
   );

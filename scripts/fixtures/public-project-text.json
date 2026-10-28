@@ -1,0 +1,132 @@
+[
+  {
+    "slug": "acaios",
+    "description": "Plataforma operacional completa para açaiterias e franquias — do PDV à inteligência de dados.",
+    "long_description": "AçaíOS é um sistema operacional SaaS projetado para negócios de açaí, sorveterias e dark kitchens no Brasil. A plataforma unifica PDV, montagem de pedidos personalizados, painel de cozinha em tempo real (KDS com Kanban), gestão de produtos e categorias, CRM de clientes e relatórios analíticos — tudo em uma única interface dark-mode com design enterprise."
+  },
+  {
+    "slug": "agendamento-medico",
+    "description": "Consultórios e clínicas com agendamento online, prontuário digital e automações.",
+    "long_description": "Plataforma completa para clínicas médicas com agendamento online, prontuário eletrônico, integração WhatsApp para lembretes automáticos e relatórios de atendimento."
+  },
+  {
+    "slug": "amigo-oculto-inteligente",
+    "description": "SaaS multi-tenant com sorteio automatizado e notificações.",
+    "long_description": "Plataforma SaaS multi-tenant que digitaliza e eleva a experiência de organizar sorteios de Amigo Oculto para famílias, empresas e comunidades. Oferece gerenciamento centralizado de participantes com perfis visuais, wishlists interativas, algoritmo de sorteio justo com isolamento criptográfico por token, notificação automatizada via WhatsApp, e landing pages públicas personalizáveis por grupo."
+  },
+  {
+    "slug": "analytics-pro",
+    "description": "Dashboard com dados dinâmicos e gráficos avançados utilizando D3.js.",
+    "long_description": "Painel de business intelligence com visualização de dados em tempo real, gráficos interativos D3.js, KPIs customizáveis e exportação de relatórios em múltiplos formatos."
+  },
+  {
+    "slug": "arquitetura-premium",
+    "description": "Website institucional premium, lightbox, animações suaves e SEO avançado.",
+    "long_description": null
+  },
+  {
+    "slug": "art-lar-planejados",
+    "description": "Art&Lar Planejados",
+    "long_description": null
+  },
+  {
+    "slug": "barbearia-george-fiuza",
+    "description": "Landing page de alta conversão com agendamento e experiência cinematográfica.",
+    "long_description": "Landing page de performance projetada para posicionar a Barbearia George Fiuza como referência premium em Belo Horizonte. A solução integra agendamento direto via WhatsApp e AppBarber, exibe avaliações no estilo Google Reviews com contadores animados de prova social, e entrega uma experiência dark-mode cinematográfica com microinterações em Framer Motion — tudo otimizado para SEO local e conversão mobile-first."
+  },
+  {
+    "slug": "clinicone",
+    "description": "Agenda inteligente, prontuário digital, anamnese com assinatura LGPD, IA e WhatsApp — em uma plataforma desenhada para esteticistas e clínicas que não aceitam menos que excelência.",
+    "long_description": null
+  },
+  {
+    "slug": "ct031",
+    "description": "TESTE",
+    "long_description": "TESTE"
+  },
+  {
+    "slug": "delivery-express",
+    "description": "Landing de alta conversão com CTA animado e integração WhatsApp.",
+    "long_description": null
+  },
+  {
+    "slug": "erp-empresarial",
+    "description": "ERP completo com estoque, financeiro, vendas e relatórios avançados em tempo real.",
+    "long_description": "Sistema completo de gestão empresarial com módulos integrados de estoque, vendas, financeiro e RH. Dashboard com mais de 50 relatórios personalizados e análise de dados em tempo real."
+  },
+  {
+    "slug": "fashion-plus",
+    "description": "Loja virtual com checkout integrado, painel administrativo e performance otimizada.",
+    "long_description": "Plataforma completa de e-commerce com catálogo dinâmico, checkout seguro, painel administrativo, integração com gateways de pagamento e métricas de vendas em tempo real."
+  },
+  {
+    "slug": "fitflow-pro",
+    "description": "Plataforma SaaS premium que centraliza gestão de alunos, treinos inteligentes com IA, agenda e financeiro para personal trainers escalarem sua operação com performance de academia profissional.",
+    "long_description": "FitFlow Pro é um sistema web e PWA instalável criado para personal trainers autônomos e estúdios de treinamento que precisam profissionalizar sua gestão. A plataforma resolve a fragmentação de ferramentas — planilhas, WhatsApp, agendas físicas e apps avulsos — unificando cadastro de alunos, anamnese PAR-Q, biblioteca de exercícios, criação de treinos com drag-and-drop, agenda inteligente com detecção de conflitos, controle financeiro com MRR e inadimplência, relatórios PDF de evolução e uma experiência gamificada para o aluno com execução guiada passo a passo. Seu diferencial é o motor de IA Fitness que gera treinos individualizados a partir do perfil real, histórico de cargas e restrições médicas de cada aluno, elevando a entrega ao padrão de marketplaces enterprise."
+  },
+  {
+    "slug": "foodops-x",
+    "description": "Plataforma completa de gestão para restaurantes — do pedido à cozinha em tempo real.",
+    "long_description": "FoodOps X é um sistema SaaS de gestão operacional para restaurantes, bares e food services. Projetado para eliminar gargalos entre salão, cozinha e caixa, a plataforma oferece mapa interativo de mesas, pedidos em tempo real via garçom digital, KDS para a cozinha, cardápio digital com QR Code, PDV completo e assistente com IA integrada."
+  },
+  {
+    "slug": "geizamarketing",
+    "description": "Plataforma digital premium para estrategista de marketing, com captura inteligente de leads, quiz de diagnóstico interativo e experiência PWA instalável. Conversão, autoridade e performance em uma única vitrine.",
+    "long_description": "Site institucional de alta conversão desenvolvido para Geiza Stefany, especialista em marketing digital que precisava transformar visitantes em clientes qualificados de forma previsível. A plataforma combina branding sofisticado, prova social dinâmica, quiz de maturidade digital e captação automatizada de leads conectada a um backend em tempo real, posicionando a profissional no mesmo patamar visual de marcas globais. O diferencial está na engenharia invisível: PWA instalável, modo offline avançado, splash screen branded, micro-interações magnéticas e SEO técnico de nível enterprise — tudo entregue com a assinatura SevenDevX."
+  },
+  {
+    "slug": "github-repo-viewer",
+    "description": "Dashboard com analytics de repositórios e AI code review.",
+    "long_description": "SaaS analítico que consolida dados de repositórios GitHub em um dashboard visual de nível enterprise. Oferece contribution heatmaps, distribuição de linguagens, AI code review automatizado, comparação lado a lado de repositórios e command palette inspirado no VS Code. Como PWA com suporte offline completo, funciona como app instalável em qualquer dispositivo — um diferencial inexistente em concorrentes como GitKraken ou Sourcegraph."
+  },
+  {
+    "slug": "homeos",
+    "description": "Sistema inteligente de gestão doméstica que centraliza tarefas, finanças, estoque e compras.",
+    "long_description": "O HomeOS é uma plataforma SaaS multi-tenant de gestão residencial inteligente, projetada para famílias e grupos que compartilham um lar. Resolve o caos da organização doméstica unificando finanças, tarefas com Kanban, controle de estoque com alertas, lista de compras colaborativa e insights gerados por IA em uma interface premium com dark mode. RBAC granular, sistema de convites, auditoria completa e painel administrativo separado."
+  },
+  {
+    "slug": "ibanps",
+    "description": "Plataforma de gestão para ministério de louvor: escalas, repertório, ensaios e planejamento de culto.",
+    "long_description": "O IBANPS é uma plataforma SaaS desenvolvida para a Igreja Batista Nacional Porto Seguro, projetada para centralizar toda a operação do Ministério de Louvor. Substitui grupos de WhatsApp, planilhas dispersas e comunicação fragmentada por um sistema unificado com gestão de membros, escalas com rodízio, repertório musical com cifras e transposição, planejamento de culto com cronômetro, calendário de eventos, biblioteca digital e analytics de participação."
+  },
+  {
+    "slug": "losinestetica",
+    "description": "Experiência digital premium para clínica de estética avançada — uma vitrine editorial que traduz sofisticação, confiança clínica e conversão em cada rolagem. Design cinematográfico, performance enterprise e SEO de alto padrão.",
+    "long_description": "A Losin Estética Avançada é a presença digital oficial da Drª Lorena Xavier, biomédica especialista em harmonização facial, tratamentos faciais, corporais e capilares em Belo Horizonte. O projeto foi concebido para um público feminino exigente que busca resultados naturais e atendimento humanizado — resolvendo o problema comum no setor de estética: sites genéricos que não comunicam autoridade clínica nem geram agendamentos qualificados. O diferencial está na estética editorial de luxo (paleta nude + dourado fosco, tipografia serif display), nas microinterações cinematográficas, no fluxo direto de captação via WhatsApp integrado e em uma arquitetura SSR de alta performance otimizada para SEO local."
+  },
+  {
+    "slug": "nutrismart",
+    "description": "Plataforma SaaS com IA que transforma restrições alimentares em receitas seguras e personalizadas.",
+    "long_description": "O NutriSmart é uma plataforma inteligente para pessoas com restrições alimentares — celíacos, intolerantes à lactose, veganos e adeptos de dietas low-carb. A IA embarcada detecta alérgenos, sugere substituições seguras e nunca recomenda ingredientes proibidos. Com 19+ calculadoras especializadas, importação de receitas via vídeo, versionamento, planejamento semanal e análise de custos com margem de lucro, é uma ferramenta enterprise-grade para alimentação segura."
+  },
+  {
+    "slug": "osena",
+    "description": "Ô Sena Barbearia, onde cada detalhe é pensado para proporcionar uma experiência única e exclusiva. Nossa missão é oferecer mais do que um simples corte de cabelo; queremos que você se sinta valorizado e confortável. Aqui acreditamos que o cuidado pessoal é essencial, venha nos visitar e descubra como podemos transformar sua experiência de barbearia em algo verdadeiramente especial",
+    "long_description": "Ô Sena Barbearia, onde cada detalhe é pensado para proporcionar uma experiência única e exclusiva. Nossa missão é oferecer mais do que um simples corte de cabelo; queremos que você se sinta valorizado e confortável. Aqui acreditamos que o cuidado pessoal é essencial, venha nos visitar e descubra como podemos transformar sua experiência de barbearia em algo verdadeiramente especial"
+  },
+  {
+    "slug": "portfolio-davidson",
+    "description": "Portfólio 3D imersivo com animações avançadas e experiência interativa.",
+    "long_description": "Portfólio de desenvolvedor full stack que transcende o padrão de sites pessoais. Construído com identidade visual futurista inspirada na SpaceX, combina cenas 3D com Three.js, micro-interações magnéticas, terminal interativo com comandos reais (neofetch, matrix), cursor neon customizado com trail de partículas e intro cinematográfica com clip-path reveal. A fusão entre desenvolvimento de software de alto nível e design de produto premium entrega performance 60fps mesmo com múltiplas camadas de efeitos visuais."
+  },
+  {
+    "slug": "psicologa-roane",
+    "description": "Site institucional premium focado em conversão e experiência do paciente.",
+    "long_description": "Site institucional premium desenvolvido para a Psicóloga Roane Stéphane, especialista em Terapia Cognitivo-Comportamental e Psicologia Infantojuvenil. A interface combina animações cinematográficas, tipografia refinada e uma paleta de tons verdes e dourados que transmitem equilíbrio emocional. O diferencial está na arquitetura de conversão silenciosa: cada seção guia o visitante naturalmente até o agendamento via WhatsApp, sem fricção."
+  },
+  {
+    "slug": "psicoone",
+    "description": "Plataforma SaaS para psicólogos com IA, prontuário inteligente, agenda e teleatendimento.",
+    "long_description": "PsicoOne é um SaaS vertical projetado exclusivamente para psicólogos e clínicas de psicologia no Brasil. A plataforma centraliza prontuário eletrônico com geração assistida por IA e transcrição de sessões, agenda com detecção de conflitos e sincronização com Google Calendar, teleatendimento WebRTC com sala de espera e chat em tempo real, gestão financeira com projeções e categorização, e portal do paciente. O diferencial está na integração profunda entre módulos — uma sessão de teleatendimento gera automaticamente o prontuário, vincula à agenda e registra a transação financeira — eliminando retrabalho e devolvendo ao profissional o tempo que deveria ser dedicado ao paciente."
+  },
+  {
+    "slug": "stellar-navigator",
+    "description": "Simulador 3D do sistema solar com dados da NASA.",
+    "long_description": "Aplicação web que renderiza o Sistema Solar completo em 3D com simulação orbital realista, dados científicos ao vivo da NASA e narração educativa gerada por inteligência artificial. Combina precisão científica (posições, órbitas e rotações reais), interface cinematográfica com HUD holográfico, scanner planetário com estrutura interna animada e sonificação espacial via Web Audio API — tudo rodando diretamente no navegador, sem instalação, em qualquer dispositivo."
+  },
+  {
+    "slug": "vortexx",
+    "description": "Plataforma privacy-first com processamento local e pipeline avançado.",
+    "long_description": "SaaS privacy-first projetado para usuários e equipes que precisam capturar mídia de mais de 50 plataformas com qualidade até 4K, sem comprometer dados pessoais. O processamento acontece inteiramente no navegador via FFmpeg.wasm — nenhum arquivo toca um servidor externo. Pipeline profissional de 7 estágios, sistema de agendamento, downloads em lote e assistente IA contextual. Arquitetura zero-trust: processamento local, zero logs, remoção automática de EXIF/GPS e criptografia ponta-a-ponta."
+  }
+]

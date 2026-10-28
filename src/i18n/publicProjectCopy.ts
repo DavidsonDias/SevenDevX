@@ -1,5 +1,6 @@
 /** Approved presentation summaries. Source project names, URLs and technical identifiers are preserved. */
 export const projectCopy: Record<string, readonly [string, string]> = {
+  "Projeto SevenDevX": ["SevenDevX Project", "Proyecto SevenDevX"],
   "Plataforma SaaS para psicólogos com IA, prontuário inteligente, agenda e teleatendimento.": ["SaaS platform for psychologists with AI, smart clinical records, scheduling and telehealth.", "Plataforma SaaS para psicólogos con IA, historial clínico inteligente, agenda y teleconsulta."],
   "Landing page de alta conversão com agendamento e experiência cinematográfica.": ["Conversion-focused landing page with booking and a cinematic experience.", "Landing page orientada a la conversión con reservas y una experiencia cinematográfica."],
   "Site institucional premium focado em conversão e experiência do paciente.": ["Premium business website focused on conversion and the patient experience.", "Sitio institucional premium centrado en la conversión y la experiencia del paciente."],

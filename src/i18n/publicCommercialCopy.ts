@@ -1,5 +1,7 @@
 /** Supplemental public-site copy, reviewed in English and Spanish. BRL prices are not converted. */
 export const commercialCopy: Record<string, readonly [string, string]> = {
+  "SaaS & Arquitetura": ["SaaS & Architecture", "SaaS y Arquitectura"],
+  "UX & Product": ["UX & Product", "UX y Producto"],
   "Valores e prazos são estimativas. Escopo, condições e entregas são definidos na proposta.": ["Amounts and timelines are estimates. Scope, terms and deliverables are defined in the proposal.", "Los importes y los plazos son estimaciones. El alcance, las condiciones y las entregas se definen en la propuesta."],
   "R$ 297/mês": ["R$ 297/month (BRL)", "R$ 297/mes (BRL)"],
   "Site Institucional": ["Business Website", "Sitio Institucional"],
