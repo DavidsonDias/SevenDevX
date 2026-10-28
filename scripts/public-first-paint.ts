@@ -14,6 +14,16 @@ export function publicFirstPaint(): Plugin {
     transformIndexHtml: {
       order: "post",
       async handler(html, ctx) {
+        // The one global stylesheet is needed on every route. Inline its exact
+        // emitted contents so first paint does not wait for another request.
+        // Keep the emitted asset for service-worker caches and dynamic imports.
+        html = html.replace(/<link\b[^>]*rel="stylesheet"[^>]*>/g, tag => {
+          const file = tag.match(/href="\/([^\"]+)"/)?.[1];
+          const asset = file && ctx.bundle?.[file];
+          if (!asset || asset.type !== "asset" || typeof asset.source !== "string") return tag;
+          if (/<\/style/i.test(asset.source)) throw new Error("Unsafe inline stylesheet boundary");
+          return `<style data-initial-styles="${file}">${asset.source}</style>`;
+        });
         const poster = Object.keys(ctx.bundle || {}).find(name => /hero-tech-workspace.*\.webp$/.test(name));
         if (!poster) throw new Error("Public first paint requires the real hero poster");
         const root = process.cwd();
