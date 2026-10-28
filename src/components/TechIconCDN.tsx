@@ -28,9 +28,11 @@
  * If the slug doesn't resolve to a known icon, we render a colored letter
  * badge as a graceful fallback (using the `color` prop or a default tint).
  */
-import * as SiIcons from "react-icons/si";
-import type { IconType } from "react-icons";
+import { useState } from "react";
+import iconAssets from "@/data/techIconAssets.json";
 import { Code2 } from "lucide-react";
+
+const availableIcons = new Set(iconAssets.names);
 
 // ============================================================================
 // 🧩 TYPES & CONTRACTS
@@ -143,6 +145,7 @@ const slugToComponentName = (slug: string): string => {
  * @remarks Fonte canônica de ícones de stack: `tech_registry` → `useRegistry` → este componente.
  */
 export const TechIconCDN = ({ slug, name, color, size = 20, className = "", iconUrl }: TechIconCDNProps) => {
+  const [failedIcon, setFailedIcon] = useState<string | null>(null);
   // 1) Custom uploaded icon takes priority
   if (iconUrl) {
     return (
@@ -150,6 +153,8 @@ export const TechIconCDN = ({ slug, name, color, size = 20, className = "", icon
         src={iconUrl}
         alt={name}
         title={name}
+        width={size}
+        height={size}
         loading="lazy"
         className={`inline-block shrink-0 object-contain ${className}`}
         style={{ width: size, height: size }}
@@ -158,9 +163,9 @@ export const TechIconCDN = ({ slug, name, color, size = 20, className = "", icon
   }
 
   const compName = slug ? slugToComponentName(slug) : "";
-  const IconComp = (SiIcons as unknown as Record<string, IconType>)[compName];
+  const assetUrl = `/tech-icons/${iconAssets.version}/${compName}.svg`;
 
-  if (!IconComp) {
+  if (!availableIcons.has(compName) || failedIcon === assetUrl) {
     const fallbackColor = color || "#8B5CF6";
     return (
       <span
@@ -180,12 +185,11 @@ export const TechIconCDN = ({ slug, name, color, size = 20, className = "", icon
   }
 
   return (
-    <IconComp
-      title={name}
-      aria-label={name}
+    <span title={name} role="img" aria-label={name}
       className={`inline-block shrink-0 ${className}`}
-      style={{ width: size, height: size, color: color || undefined }}
-    />
+      style={{ width: size, height: size, backgroundColor: color || "currentColor", maskImage: `url("${assetUrl}")`, WebkitMaskImage: `url("${assetUrl}")`, maskSize: "contain", maskRepeat: "no-repeat", maskPosition: "center" }}>
+      <img src={assetUrl} alt="" aria-hidden="true" width={size} height={size} loading="lazy" className="opacity-0" onError={() => setFailedIcon(assetUrl)} />
+    </span>
   );
 };
 

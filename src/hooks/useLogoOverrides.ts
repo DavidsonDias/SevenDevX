@@ -171,7 +171,10 @@ async function hydrate() {
     commit(next);
   } catch { hydrated = false; }
 
-  // Realtime — propaga mudanças em qualquer dispositivo
+}
+
+// The admin needs live editing updates; public pages revalidate without opening a socket.
+function bindBrandingRealtime() {
   if (realtimeChannel) return;
   realtimeChannel = supabase
     .channel("branding-assets-rt")
@@ -246,6 +249,7 @@ export function getLogoOverride(slug?: string): LogoOverride | undefined {
 }
 
 /** Dispara hidratação manualmente (útil em boot do app). */
-export function ensureBrandingHydrated() {
+export function ensureBrandingHydrated(realtime = false) {
   hydrate();
+  if (realtime) bindBrandingRealtime();
 }

@@ -303,10 +303,10 @@ let realtimeBound = false;
  * invalida a query key `["projects"]` (todas as variações) a cada evento. O
  * canal é removido no cleanup, liberando o singleton para o próximo consumidor.
  */
-const useProjectsRealtime = () => {
+const useProjectsRealtime = (enabled = true) => {
   const qc = useQueryClient();
   useEffect(() => {
-    if (realtimeBound) return;
+    if (!enabled || realtimeBound) return;
     realtimeBound = true;
     const channel = supabase
       .channel("projects-realtime")
@@ -322,7 +322,7 @@ const useProjectsRealtime = () => {
       supabase.removeChannel(channel);
       realtimeBound = false;
     };
-  }, [qc]);
+  }, [qc, enabled]);
 };
 
 /**
@@ -335,9 +335,11 @@ const useProjectsRealtime = () => {
  * @returns Query result com `UIProject[]`.
  */
 export const useProjects = () => {
-  useProjectsRealtime();
+  useProjectsRealtime(false);
   return useQuery({
     queryKey: ["projects", "published"],
+    refetchInterval: 60_000,
+    refetchIntervalInBackground: false,
     queryFn: fetchPublishedProjects,
     staleTime: 60 * 1000,
   });

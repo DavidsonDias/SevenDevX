@@ -48,7 +48,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { LanguageProvider } from "@/i18n/LanguageContext";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { AuthProvider, useAuthContext } from "@/contexts/AuthContext";
 import { ensureBrandingHydrated } from "@/hooks/useLogoOverrides";
 import GeoKnowledgeGraph from "@/components/GeoKnowledgeGraph";
 import EntityGraphSchema from "@/components/EntityGraphSchema";
@@ -75,11 +75,17 @@ const queryClient = new QueryClient({
  *
  * @param children - Árvore da aplicação envolvida pelos providers.
  */
+function BrandingHydration() {
+  const { isAdmin } = useAuthContext();
+  useEffect(() => { ensureBrandingHydrated(isAdmin); }, [isAdmin]);
+  return null;
+}
+
 export default function Providers({ children }: { children: ReactNode }) {
-  useEffect(() => { ensureBrandingHydrated(); }, []);
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
+        <BrandingHydration />
         <LanguageProvider>
           <TooltipProvider delayDuration={300}>
             <GeoKnowledgeGraph />

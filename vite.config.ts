@@ -20,6 +20,7 @@ import react from "@vitejs/plugin-react-swc";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { componentTagger } from "lovable-tagger";
+import { techIconAssets } from "./scripts/tech-icon-assets";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig(({ mode }) => ({
@@ -36,6 +37,7 @@ export default defineConfig(({ mode }) => ({
      ================================================================== */
   plugins: [
     react(),
+    techIconAssets(),
 
     // Executa o componentTagger apenas no modo desenvolvimento
     mode === "development" && componentTagger(),
@@ -64,6 +66,7 @@ export default defineConfig(({ mode }) => ({
         ],
         globIgnores: [
           "**/node_modules/**/*",
+          "**/tech-icons/**",
           "**/sw.ts",
           "**/workbox-*.js",
           "**/*.mp4",

@@ -19,7 +19,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback, useEffect, forwardRef } from "react";
 import { motion, AnimatePresence, PanInfo } from "framer-motion";
 import { Star, Quote, ChevronLeft, ChevronRight, Shield } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
@@ -63,7 +63,7 @@ interface CardProps {
 // 🎨 INTERNAL COMPONENTS
 // ============================================================================
 
-const TestimonialCard3D = ({ testimonial, avatarIndex, index, activeIndex, onClick, t }: CardProps) => {
+const TestimonialCard3D = forwardRef<HTMLDivElement, CardProps>(({ testimonial, avatarIndex, index, activeIndex, onClick, t }, ref) => {
   const distance = index - activeIndex;
   const abs = Math.abs(distance);
   const scale = CONFIG.SCALE[Math.min(abs, 2)];
@@ -71,6 +71,7 @@ const TestimonialCard3D = ({ testimonial, avatarIndex, index, activeIndex, onCli
 
   return (
     <motion.div
+      ref={ref}
       className="absolute left-1/2 top-0 cursor-pointer"
       style={{ width: "90%", maxWidth: "420px", transformStyle: "preserve-3d", zIndex: 10 - abs }}
       animate={{
@@ -109,7 +110,7 @@ const TestimonialCard3D = ({ testimonial, avatarIndex, index, activeIndex, onCli
         <div className="flex items-center gap-3 sm:gap-4 mt-auto">
           <div className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden border-2 transition-colors flex-shrink-0
             ${abs === 0 ? "border-foreground/30" : "border-border"}`}>
-            <img src={avatars[avatarIndex]} alt={testimonial.name} className="w-full h-full object-cover" loading="lazy" />
+            <img src={avatars[avatarIndex]} alt={testimonial.name} width={56} height={56} className="w-full h-full object-cover" loading="lazy" />
           </div>
           <div>
             <p className="text-sm sm:text-base font-semibold uppercase tracking-wide">{testimonial.name}</p>
@@ -128,7 +129,7 @@ const TestimonialCard3D = ({ testimonial, avatarIndex, index, activeIndex, onCli
       </div>
     </motion.div>
   );
-};
+});
 
 // ============================================================================
 // 🏗️ MAIN COMPONENT
@@ -213,11 +214,11 @@ const TestimonialsCarousel3D = () => {
         <div className="flex justify-center gap-2 mt-10 sm:mt-12">
           {testimonials.map((_, index) => (
             <button key={index} onClick={() => setActiveIndex(index)}
-              className={`h-2 sm:h-2.5 rounded-full transition-all duration-300 ${
-                index === activeIndex ? "bg-foreground w-6 sm:w-8" : "bg-foreground/20 w-2 sm:w-2.5 hover:bg-foreground/40"
-              }`}
+              className="inline-flex min-h-6 min-w-6 items-center justify-center rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
               aria-label={`${t.accessibility.goToPage} ${index + 1}`}
-              aria-current={index === activeIndex ? "true" : "false"} />
+              aria-current={index === activeIndex ? "true" : "false"}>
+              <span aria-hidden="true" className={`block h-2 sm:h-2.5 rounded-full transition-all duration-300 ${index === activeIndex ? "bg-foreground w-6 sm:w-8" : "bg-foreground/40 w-2 sm:w-2.5"}`} />
+            </button>
           ))}
         </div>
 

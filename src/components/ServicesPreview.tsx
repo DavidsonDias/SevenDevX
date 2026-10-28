@@ -30,6 +30,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { optimizedServiceImage } from "@/lib/optimizedServiceImages";
 import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { motion } from "framer-motion";
 import { ArrowRight, Code, Settings, Wrench, FileText, Lightbulb, Sparkles, Briefcase, Layers, Rocket, Palette, Database } from "lucide-react";
@@ -116,12 +117,15 @@ const ServicesPreview = () => {
                 className="viewport-feature-image w-full h-[50svh] min-h-[280px] relative"
               >
                 <picture>
-                  <source srcSet={service.image} type="image/webp" />
+                  <source srcSet={optimizedServiceImage(service.image).srcSet || service.image} type="image/webp" />
                   <img
-                    src={service.image}
+                    src={optimizedServiceImage(service.image).src}
                     alt=""
                     aria-hidden="true"
-                    loading={index === 0 ? "eager" : "lazy"}
+                    loading="lazy"
+                    width={1454}
+                    height={1024}
+                    sizes="(max-width: 767px) 100vw, 100vw"
                     className="w-full h-full object-cover"
                   />
                 </picture>
@@ -172,12 +176,15 @@ const ServicesPreview = () => {
               {/* Background Image */}
               <div className="absolute inset-0 z-0" aria-hidden="true">
                 <picture>
-                  <source srcSet={service.image} type="image/webp" />
+                  <source srcSet={optimizedServiceImage(service.image).srcSet || service.image} type="image/webp" />
                   <img
-                    src={service.image}
+                    src={optimizedServiceImage(service.image).src}
                     alt=""
                     aria-hidden="true"
-                    loading={index === 0 ? "eager" : "lazy"}
+                    loading="lazy"
+                    width={1454}
+                    height={1024}
+                    sizes="(max-width: 767px) 100vw, 100vw"
                     className="w-full h-full object-cover"
                   />
                 </picture>
