@@ -82,6 +82,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { optimizedServiceImage } from "@/lib/optimizedServiceImages";
 import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
@@ -358,7 +359,11 @@ const Services = () => {
                           {/* Image */}
                           <div className="relative h-48 overflow-hidden">
                             <img
-                              src={service.image}
+                              src={optimizedServiceImage(service.image).src}
+                              srcSet={optimizedServiceImage(service.image).srcSet}
+                              sizes="(max-width: 767px) 100vw, 50vw"
+                              width={1454}
+                              height={1024}
                               alt={copy(service.title)}
                               loading="lazy"
                               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"

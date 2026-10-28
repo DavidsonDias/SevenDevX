@@ -60,7 +60,8 @@ import AIChatbot from "@/components/AIChatbot";
 // 🎨 INTERNAL COMPONENTS
 // ============================================================================
 
-const Index = lazy(() => import("@/pages/Index"));
+// The small home/hero shell is critical; below-fold home sections remain lazy.
+import Index from "@/pages/Index";
 const About = lazy(() => import("@/pages/About"));
 const Services = lazy(() => import("@/pages/Services"));
 const Projects = lazy(() => import("@/pages/Projects"));

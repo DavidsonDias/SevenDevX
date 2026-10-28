@@ -6,6 +6,16 @@ import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 const read=file=>fs.readFileSync(file,'utf8');
 
+test('initial entry stays below its transfer-source budget and robots uses crawler-compatible directives',()=>{
+ const scripts=[...read('dist/index.html').matchAll(/<script[^>]+src="(\/assets\/[^\"]+\.js)"/g)].map(m=>m[1]);
+ assert.ok(scripts.length>0);
+ for(const script of scripts) assert.ok(fs.statSync('dist'+script).size<200_000,script);
+ for(const line of read('public/robots.txt').split(/\r?\n/).map(x=>x.trim()).filter(x=>x&&!x.startsWith('#'))) {
+  assert.match(line,/^(User-agent|Allow|Disallow|Sitemap):/i,line);
+ }
+ assert.ok(read('index.html').includes('rel="ard"'), 'Discover resources through HTML without unsupported robots directives');
+});
+
 test('individual icon assets preserve the complete installed library without a client namespace import',()=>{
  const manifest=JSON.parse(read('src/data/techIconAssets.json'));
  assert.equal(manifest.version,JSON.parse(read('node_modules/react-icons/package.json')).version);

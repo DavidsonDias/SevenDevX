@@ -21,7 +21,7 @@ import { usePublicCopy } from "@/i18n/usePublicCopy";
 // 📦 IMPORTS
 // ============================================================================
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, lazy, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
 import { 
@@ -34,7 +34,7 @@ import {
   Sparkles,
   Loader2
 } from "lucide-react";
-import ReactMarkdown from "react-markdown";
+const ReactMarkdown = lazy(() => import("react-markdown"));
 import { useLanguage } from "@/i18n/LanguageContext";
 import { getOrCreateSafeId } from "@/utils/safeStorage";
 
@@ -419,7 +419,9 @@ export const AIChatbot = () => {
                             ? "[&_*]:!text-black"
                             : "prose-invert [&_*]:!text-white/95"
                         }`}>
-                          <ReactMarkdown>{message.id === "welcome" || message.id.startsWith("error_") ? copy(message.content) : message.content}</ReactMarkdown>
+                          <Suspense fallback={<span>{message.id === "welcome" || message.id.startsWith("error_") ? copy(message.content) : message.content}</span>}>
+                            <ReactMarkdown>{message.id === "welcome" || message.id.startsWith("error_") ? copy(message.content) : message.content}</ReactMarkdown>
+                          </Suspense>
                         </div>
                         <span className={`text-[10px] mt-1 block ${message.role === "user" ? "text-black/50" : "text-white/55"}`}>
                           {message.timestamp.toLocaleTimeString("pt-BR", { 
