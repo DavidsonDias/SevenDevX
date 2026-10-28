@@ -150,3 +150,5 @@ Disallow: /profile
 # ─────────────────────────────────────────────────────────────
 
 Sitemap: https://www.sevendevx.com/sitemap.xml
+
+Agentmap: https://www.sevendevx.com/.well-known/ard.json

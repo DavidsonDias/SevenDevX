@@ -1,0 +1,17 @@
+{
+  "specVersion": "1.0",
+  "host": {
+    "displayName": "SevenDevX",
+    "documentationUrl": "https://www.sevendevx.com/ai",
+    "logoUrl": "https://www.sevendevx.com/icons/icon-512x512.png"
+  },
+  "entries": [
+    {
+      "identifier": "urn:air:sevendevx.com:content:public-guide",
+      "displayName": "SevenDevX public guide",
+      "type": "text/plain",
+      "url": "https://www.sevendevx.com/llms.txt",
+      "description": "Public overview, services and documentation links. Does not grant access to SevenOS, private data or transactional actions."
+    }
+  ]
+}

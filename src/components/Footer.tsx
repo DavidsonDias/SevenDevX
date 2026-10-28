@@ -210,7 +210,7 @@ export default function Footer() {
             {t.footer.copyright} © {currentYear}
           </p>
 
-          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground/30">
+          <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-muted-foreground">
             {copy("DESIGNED & BUILT WITH PRECISION")}
           </p>
         </div>
