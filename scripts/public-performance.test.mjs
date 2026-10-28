@@ -7,6 +7,14 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import vm from 'node:vm';
 const read=file=>fs.readFileSync(file,'utf8');
 
+test('initial styles preserve the emitted CSS exactly without a blocking stylesheet request',()=>{
+ const html=read('dist/index.html');
+ const styles=[...html.matchAll(/<style data-initial-styles="([^\"]+)">([\s\S]*?)<\/style>/g)];
+ assert.ok(styles.length>0);
+ for(const [,file,css] of styles) assert.equal(css,read('dist/'+file));
+ assert.doesNotMatch(html,/<link\b[^>]*rel="stylesheet"/);
+});
+
 test('built first paint is restricted to home, matches locale selection and never replaces private routes',()=>{
  const html=read('dist/index.html');
  const match=html.match(/<template id="public-first-paint">([\s\S]*?)<\/template><script>([\s\S]*?)<\/script>/);
