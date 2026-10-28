@@ -30,24 +30,26 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { lazy, Suspense } from "react";
 import { usePublicCopy } from "@/i18n/usePublicCopy";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
-import ServicesPreview from "@/components/ServicesPreview";
-import FeaturedProjects from "@/components/FeaturedProjects";
-import TechPreview from "@/components/TechPreview";
-import TestimonialsCarousel3D from "@/components/TestimonialsCarousel3D";
-import ContactMultiStep from "@/components/ContactMultiStep";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import SEOHead from "@/components/SEOHead";
-import ExitIntentPopup from "@/components/ExitIntentPopup";
-import SectionDivider from "@/components/SectionDivider";
 import { useAnalytics } from "@/hooks/useAnalytics";
 
 // ============================================================================
 // 🏗️ MAIN COMPONENT
 // ============================================================================
+
+const ServicesPreview = lazy(() => import("@/components/ServicesPreview"));
+const FeaturedProjects = lazy(() => import("@/components/FeaturedProjects"));
+const TechPreview = lazy(() => import("@/components/TechPreview"));
+const TestimonialsCarousel3D = lazy(() => import("@/components/TestimonialsCarousel3D"));
+const ContactMultiStep = lazy(() => import("@/components/ContactMultiStep"));
+const ExitIntentPopup = lazy(() => import("@/components/ExitIntentPopup"));
+const SectionDivider = lazy(() => import("@/components/SectionDivider"));
 
 const Home = () => {
   const { copy } = usePublicCopy();
@@ -91,6 +93,7 @@ const Home = () => {
           {/* ---------------------------------------------------------
              SERVICES PREVIEW
              --------------------------------------------------------- */}
+          <Suspense fallback={<div className="min-h-screen" aria-hidden="true" />}>
           <ServicesPreview />
 
           {/* 🔽 DIVISOR 2 — SERVICES → PROJECTS */}
@@ -152,11 +155,12 @@ const Home = () => {
             glowIntensity="subtle"
             className="mt-16 mb-10"
           />
+          </Suspense>
         </main>
 
         <Footer />
         <WhatsAppButton />
-        <ExitIntentPopup />
+        <Suspense fallback={null}><ExitIntentPopup /></Suspense>
       </div>
     </>
   );

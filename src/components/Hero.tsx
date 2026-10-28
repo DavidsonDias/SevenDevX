@@ -59,10 +59,14 @@ const Hero = () => {
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (slow) return;
 
-    const start = () => {
-      // adia para depois do first paint / idle, liberando a main thread do LCP
-      const idle = (window as any).requestIdleCallback || ((cb: any) => setTimeout(cb, 1200));
-      idle(() => setShouldLoadVideo(true));
+    let cancelled = false;
+    const start = async () => {
+      // The background video must not compete with the text font and poster.
+      await document.fonts.ready;
+      await sectionRef.current?.querySelector("img")?.decode().catch(() => {});
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (!cancelled) setShouldLoadVideo(true);
+      }));
     };
 
     const observer = new IntersectionObserver(
@@ -74,7 +78,7 @@ const Hero = () => {
       { rootMargin: "50px", threshold: 0.1 }
     );
     observer.observe(sectionRef.current);
-    return () => observer.disconnect();
+    return () => { cancelled = true; observer.disconnect(); };
   }, []);
 
   useEffect(() => {
