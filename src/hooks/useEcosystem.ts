@@ -199,8 +199,9 @@ export const useAddInteraction = () => {
 };
 
 /* ───────────────────────── PROCESS TEMPLATE ───────────────────────── */
-export const useDefaultProcessTemplate = () =>
+export const useDefaultProcessTemplate = (enabled = true) =>
   useQuery({
+    enabled,
     queryKey: ["process_template", "default"],
     queryFn: async () => {
       const { data: tpl, error } = await supabase

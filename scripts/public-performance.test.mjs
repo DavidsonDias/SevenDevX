@@ -32,7 +32,7 @@ test('built first paint preserves exact locale markup only on the public home',(
   const shell=window.document.getElementById('public-first-paint-shell');
   assert.equal(!!shell,!!expected,pathname);
   assert.equal(window.document.querySelectorAll('template[data-public-first-paint]').length,0);
-  assert.equal(window.document.getElementById('root').childNodes.length,0,'Main React root must not destroy the island');
+  if(expected) assert.equal(window.document.getElementById('public-app-root').childNodes.length,0,'Main React mount must not contain the island');
   if(expected){
    assert.equal(window.document.documentElement.lang,expected==='pt'?'pt-BR':expected);
    assert.equal(shell.innerHTML,expectedMarkup,'Do not mutate SSR markup before hydration');

@@ -84,7 +84,9 @@ export function publicFirstPaint(): Plugin {
             }
             if(contact){contact.addEventListener('click',initialContact);shell.addEventListener('public-hero:attached',function(){contact.removeEventListener('click',initialContact);},{once:true});}
             document.documentElement.lang=language==='pt'?'pt-BR':language;
-            root.before(shell);templates.forEach(function(t){t.remove();});
+            var header=document.createElement('div');header.id='public-header-root';header.style.display='contents';
+            var app=document.createElement('div');app.id='public-app-root';app.style.display='contents';
+            root.append(header,shell,app);templates.forEach(function(t){t.remove();});
           })();
         </script>`;
         return html.replace('<div id="root"></div>', '<div id="root"></div>' + bootstrap);
