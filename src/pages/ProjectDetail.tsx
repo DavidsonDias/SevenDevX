@@ -80,6 +80,8 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import { Helmet } from "react-helmet";
+import { resolveProjectText } from "@/i18n/editorial/project";
 import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
@@ -103,10 +105,14 @@ import { TagIcon } from "@/components/TagIcon";
 // ============================================================================
 
 const ProjectDetail = () => {
-  const { copy } = usePublicCopy();
+  const { copy, language } = usePublicCopy();
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
-  const { data: project, isLoading, error } = useProjectBySlug(slug);
+  const { data: sourceProject, isLoading, error } = useProjectBySlug(slug);
+
+  const resolved = sourceProject ? resolveProjectText(sourceProject, language) : null;
+  const project = resolved?.project;
+  const contentLanguage = resolved?.language ?? "pt";
 
   useEffect(() => {
     if (!isLoading && (error || project === null)) {
@@ -132,7 +138,7 @@ const ProjectDetail = () => {
   }
 
   const canonicalUrl = `https://www.sevendevx.com/projects/${slug}`;
-  const seoTitle = `${project.title} — Projeto SevenDevX | Case de Desenvolvimento`;
+  const seoTitle = `${project.title} — ${copy("Projeto SevenDevX")}`;
   const seoDescription =
     project.longDescription?.slice(0, 158) || project.description.slice(0, 158);
 
@@ -141,6 +147,7 @@ const ProjectDetail = () => {
     "@type": "CreativeWork",
     name: project.title,
     description: project.description,
+    inLanguage: contentLanguage === "pt" ? "pt-BR" : contentLanguage,
     image: project.image,
     url: canonicalUrl,
     author: {
@@ -158,6 +165,8 @@ const ProjectDetail = () => {
     <>
       <SEOHead
         title={seoTitle}
+        contentLanguage={contentLanguage}
+        translateContent={false}
         description={seoDescription}
         keywords={[...(project.tags || []), ...(project.techs?.map((t) => t.name) || []), "SevenDevX"].join(", ")}
         url={canonicalUrl}
@@ -167,7 +176,7 @@ const ProjectDetail = () => {
       <div className="min-h-screen bg-background text-foreground">
         <Header />
 
-        <main className="pt-20">
+        <main lang={contentLanguage === "pt" ? "pt-BR" : contentLanguage} className="pt-20">
           {/* Hero */}
           <section className="relative overflow-hidden py-16 sm:py-20 lg:py-28 border-b border-border/30">
             <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background to-background" />
@@ -200,7 +209,7 @@ const ProjectDetail = () => {
                       {copy(project.title)}
                     </h1>
                     <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                      {copy(project.description)}
+                      {project.description}
                     </p>
 
                     <div className="flex flex-wrap gap-2 pt-2">
@@ -258,7 +267,7 @@ const ProjectDetail = () => {
                   {copy("Sobre o projeto")}
                 </h2>
                 <p className="text-base sm:text-lg leading-relaxed text-foreground/90 whitespace-pre-line">
-                  {copy(project.longDescription)}
+                  {project.longDescription}
                 </p>
               </div>
             </section>
@@ -317,10 +326,9 @@ const ProjectDetail = () => {
         <Footer />
         <WhatsAppButton />
 
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-        />
+        <Helmet>
+          <script type="application/ld+json">{JSON.stringify(jsonLd).replace(/</g, "\\u003c")}</script>
+        </Helmet>
       </div>
     </>
   );

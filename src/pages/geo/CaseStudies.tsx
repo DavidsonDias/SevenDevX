@@ -86,6 +86,7 @@ import { Section } from "@/components/layout/Section";
 import GlassCard from "@/components/GlassCard";
 import NotFound from "@/pages/NotFound";
 import { CASE_STUDIES, getCaseStudyBySlug } from "@/data/caseStudies";
+import { resolveCaseStudy } from "@/i18n/editorial/cases";
 
 // ============================================================================
 // ⚙️ CONSTANTS & CONFIGURATION
@@ -98,12 +99,13 @@ const BASE = "https://www.sevendevx.com";
 // ============================================================================
 
 export function CaseStudiesIndex() {
-  const { copy } = usePublicCopy();
+  const { copy, language } = usePublicCopy();
+  const cases = CASE_STUDIES.map(source => resolveCaseStudy(source, language));
   const itemList = {
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: "Cases SevenDevX",
-    itemListElement: CASE_STUDIES.map((c, i) => ({
+    itemListElement: cases.map(({ caseStudy: c }, i) => ({
       "@type": "ListItem",
       position: i + 1,
       url: `${BASE}/cases/${c.slug}`,
@@ -134,28 +136,28 @@ export function CaseStudiesIndex() {
             </motion.div>
 
             <div className="grid md:grid-cols-2 gap-6 mt-12">
-              {CASE_STUDIES.map((c, i) => (
+              {cases.map(({ caseStudy: c, language: contentLanguage }, i) => (
                 <motion.div
                   key={c.slug}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.05 }}
                 >
-                  <Link to={`/cases/${c.slug}`} className="block group">
+                  <Link lang={contentLanguage} to={`/cases/${c.slug}`} className="block group">
                     <GlassCard className="p-6 h-full hover:border-primary/40 transition-colors">
                       <p className="text-xs uppercase tracking-widest text-muted-foreground mb-2">
-                        {copy(c.industry)} · {copy(c.duration)}
+                        {c.industry} · {c.duration}
                       </p>
                       <h2 className="text-xl font-semibold mb-3 group-hover:text-primary transition-colors">
-                        {copy(c.title)}
+                        {c.title}
                       </h2>
                       <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-                        {copy(c.summary)}
+                        {c.summary}
                       </p>
                       <div className="flex flex-wrap gap-2">
                         {c.metrics.slice(0, 3).map((m) => (
                           <span key={m.label} className="text-xs px-2 py-1 rounded-md border border-white/10 bg-white/5">
-                            <strong>{m.value}</strong> · {copy(m.label)}
+                            <strong>{m.value}</strong> · {m.label}
                           </span>
                         ))}
                       </div>
@@ -177,16 +179,19 @@ export function CaseStudiesIndex() {
 // ============================================================================
 
 export function CaseStudyPage() {
-  const { copy } = usePublicCopy();
+  const { copy, language } = usePublicCopy();
   const { slug } = useParams<{ slug: string }>();
-  const c = slug ? getCaseStudyBySlug(slug) : undefined;
-  if (!c) return <NotFound />;
+  const source = slug ? getCaseStudyBySlug(slug) : undefined;
+  if (!source) return <NotFound />;
+  const { caseStudy: c, language: contentLanguage } = resolveCaseStudy(source, language);
+  const locale = contentLanguage === "pt" ? "pt-BR" : contentLanguage === "en" ? "en-US" : "es-ES";
 
   const caseSchema = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: c.title,
     description: c.summary,
+    inLanguage: locale,
     datePublished: c.publishedAt,
     author: { "@type": "Organization", name: "SevenDevX", url: BASE },
     publisher: { "@type": "Organization", name: "SevenDevX", logo: { "@type": "ImageObject", url: `${BASE}/logo-512.png` } },
@@ -197,16 +202,17 @@ export function CaseStudyPage() {
   return (
     <>
       <Helmet>
-        <title>{copy(c.title)} — Case SevenDevX</title>
-        <meta name="description" content={copy(c.summary)} />
+        <title>{c.title} — Case SevenDevX</title>
+        <meta name="description" content={c.summary} />
         <link rel="canonical" href={`${BASE}/cases/${c.slug}`} />
-        <meta property="og:title" content={copy(c.title)} />
-        <meta property="og:description" content={copy(c.summary)} />
+        <meta property="og:title" content={c.title} />
+        <meta property="og:description" content={c.summary} />
+        <meta property="og:locale" content={locale.replace("-", "_")} />
         <meta property="og:type" content="article" />
         <script type="application/ld+json">{JSON.stringify(caseSchema)}</script>
       </Helmet>
       <Header />
-      <main className="min-h-screen bg-background text-foreground pt-24">
+      <main lang={locale} className="min-h-screen bg-background text-foreground pt-24">
         <Section>
           <Container>
             <Link to="/cases" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8">
@@ -215,17 +221,17 @@ export function CaseStudyPage() {
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-4">
-                {c.client} · {copy(c.industry)}
+                {c.client} · {c.industry}
               </p>
-              <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 max-w-4xl">{copy(c.title)}</h1>
-              <p className="text-lg text-muted-foreground max-w-3xl leading-relaxed">{copy(c.summary)}</p>
+              <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 max-w-4xl">{c.title}</h1>
+              <p className="text-lg text-muted-foreground max-w-3xl leading-relaxed">{c.summary}</p>
             </motion.div>
 
             <div className="grid md:grid-cols-4 gap-3 mt-10">
               {c.metrics.map((m) => (
                 <GlassCard key={m.label} className="p-4 text-center">
                   <p className="text-2xl font-bold text-primary">{m.value}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{copy(m.label)}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{m.label}</p>
                 </GlassCard>
               ))}
             </div>
@@ -236,21 +242,21 @@ export function CaseStudyPage() {
                   <Zap className="w-4 h-4 text-amber-400" />
                   <h3 className="font-semibold">{copy("Problema")}</h3>
                 </div>
-                <p className="text-sm text-muted-foreground leading-relaxed">{copy(c.problem)}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">{c.problem}</p>
               </GlassCard>
               <GlassCard className="p-6">
                 <div className="flex items-center gap-2 mb-3">
                   <Clock className="w-4 h-4 text-blue-400" />
                   <h3 className="font-semibold">{copy("Solução")}</h3>
                 </div>
-                <p className="text-sm text-muted-foreground leading-relaxed">{copy(c.solution)}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">{c.solution}</p>
               </GlassCard>
               <GlassCard className="p-6">
                 <div className="flex items-center gap-2 mb-3">
                   <TrendingUp className="w-4 h-4 text-emerald-400" />
                   <h3 className="font-semibold">{copy("Resultado")}</h3>
                 </div>
-                <p className="text-sm text-muted-foreground leading-relaxed">{copy(c.outcome)}</p>
+                <p className="text-sm text-muted-foreground leading-relaxed">{c.outcome}</p>
               </GlassCard>
             </div>
 

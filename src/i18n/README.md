@@ -64,3 +64,14 @@ Os títulos compartilhados ficam em um índice pequeno; o corpo dos artigos perm
 Essa cobertura não inclui automaticamente artigos do Blog/CMS, cases ou descrições extensas de projetos. Valores e prazos continuam estimativas do conteúdo comercial e dependem da proposta; tradução não comprova resultados ou depoimentos.
 
 Validação adicional: `node --test scripts/editorial-i18n.test.mjs` confere os 13 artigos, revisões, fallback integral, estrutura, títulos compartilhados e preservação dos identificadores.
+
+
+## Blog, cases e projetos — 2026-10-28
+
+Os 12 artigos publicados do Blog têm adaptações editoriais completas EN/ES, com exemplos de código preservados literalmente. As traduções revisam a redação de promessas absolutas e deixam estimativas ou resultados relatados em contexto; não são certificação dos indicadores. O fingerprint abrange título, resumo e conteúdo: qualquer mudança no CMS retorna o artigo inteiro ao português até revisão. Os títulos/resumos para listagens ficam separados do corpo carregado pela rota.
+
+Os 10 cases têm versões completas com revisão do original e metadados no idioma efetivamente mostrado. Os textos dos 26 projetos públicos atuais têm cobertura EN/ES; a página de detalhe usa fallback integral quando uma descrição não é conhecida. Nomes, identificadores, links, datas e dados originais não são reescritos no banco.
+
+O Blog renderiza tabelas e listas com GFM, mantém exemplos de código, trata respostas fora de ordem e impede exibir o artigo anterior após falha de navegação. Links legados /contact no Markdown levam à seção pública /#contact. Conteúdo HTML bruto continua sem execução.
+
+Limites: novos conteúdos exigem tradução revisada. CT031 contém o marcador TESTE no cadastro público e precisa de texto final do proprietário. Resultados numéricos, depoimentos e promessas de saúde/privacidade/performance do conteúdo original continuam sujeitos à comprovação editorial; não foram certificados por testes de software. As fixtures de teste contêm somente textos que já estavam publicados.

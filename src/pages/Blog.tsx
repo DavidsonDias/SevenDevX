@@ -97,7 +97,6 @@ import { Calendar, Clock, Eye, Search, ArrowRight, ChevronRight } from "lucide-r
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
-import AIChatbot from "@/components/AIChatbot";
 import SEOHead from "@/components/SEOHead";
 import { BlogPostSkeleton } from "@/components/SkeletonLoader";
 import { Container } from "@/components/layout/Container";
@@ -211,7 +210,7 @@ const FeaturedArticle = ({ post, lang }: { post: BlogPost; lang: string }) => {
 
             {post.excerpt && (
               <p className="text-muted-foreground leading-relaxed line-clamp-3 text-sm lg:text-base">
-                {post.excerpt}
+                {copy(post.excerpt)}
               </p>
             )}
 
@@ -291,7 +290,7 @@ const ArticleCard = ({ post, index, variant = "default", lang }: { post: BlogPos
 
             {post.excerpt && (
               <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">
-                {post.excerpt}
+                {copy(post.excerpt)}
               </p>
             )}
 
@@ -382,11 +381,13 @@ const Blog = () => {
     if (!debouncedSearch) return posts;
     const q = debouncedSearch.toLowerCase();
     return posts.filter(post =>
+      copy(post.title).toLowerCase().includes(q) ||
+      copy(post.excerpt)?.toLowerCase().includes(q) ||
       post.title.toLowerCase().includes(q) ||
       post.excerpt?.toLowerCase().includes(q) ||
       post.tags?.some(tag => tag.toLowerCase().includes(q))
     );
-  }, [posts, debouncedSearch]);
+  }, [posts, debouncedSearch, copy]);
 
   const featuredPost = filteredPosts[0];
   const gridPosts = filteredPosts.slice(1);
@@ -563,7 +564,6 @@ const Blog = () => {
 
         <Footer />
         <WhatsAppButton />
-        <AIChatbot />
       </div>
     </>
   );

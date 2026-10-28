@@ -1,6 +1,8 @@
 import { translations, type Language } from "./translations";
 import { commercialCopy } from "./publicCommercialCopy";
 import { projectCopy } from "./publicProjectCopy";
+import { projectDetailsCopy } from "./publicProjectDetailsCopy";
+import { blogHeadlines } from "./editorial/blogHeadlines";
 import { articleHeadlines } from "./editorial/headlines";
 
 /** Reviewed supplemental copy for public routes. Brands, URLs and source content stay intact. */
@@ -193,7 +195,7 @@ function indexTree(pt: unknown, en: unknown, es: unknown) {
   }
 }
 indexTree(translations.pt, translations.en, translations.es);
-for (const [pt, [en, es]] of Object.entries({ ...publicCopy, ...commercialCopy, ...projectCopy, ...articleHeadlines })) {
+for (const [pt, [en, es]] of Object.entries({ ...publicCopy, ...commercialCopy, ...projectCopy, ...articleHeadlines, ...blogHeadlines, ...projectDetailsCopy })) {
   indexes.en.set(normalize(pt), en);
   indexes.es.set(normalize(pt), es);
 }

@@ -26,6 +26,8 @@ import { usePublicCopy } from "@/i18n/usePublicCopy";
 
 interface SEOHeadProps {
   title?: string;
+  contentLanguage?: "pt" | "en" | "es";
+  translateContent?: boolean;
   description?: string;
   image?: string;
   url?: string;
@@ -57,6 +59,8 @@ interface SEOHeadProps {
  * - PWA + SEO local + Lighthouse 100%
  */
 const SEOHead: React.FC<SEOHeadProps> = ({
+  contentLanguage,
+  translateContent = true,
   title = "SevenDevX | Soluções Tecnológicas Modernas e Inovadoras",
   description = "Desenvolvimento web, criação de sites e sistemas, instalação de software e manutenção de computadores. Soluções digitais modernas e inovadoras para o seu negócio.",
   image = "/assets/img/share.webp",
@@ -94,10 +98,13 @@ const SEOHead: React.FC<SEOHeadProps> = ({
   const { copy, language } = usePublicCopy();
   const { pathname } = useLocation();
   url = url || new URL(pathname, "https://www.sevendevx.com").href;
-  const locale = language === "pt" ? "pt-BR" : language === "es" ? "es-ES" : "en-US";
+  const metadataLanguage = contentLanguage ?? language;
+  const locale = metadataLanguage === "pt" ? "pt-BR" : metadataLanguage === "es" ? "es-ES" : "en-US";
   const origin = new URL(url, "https://www.sevendevx.com").origin;
-  title = copy(title);
-  description = copy(description);
+  if (translateContent) {
+    title = copy(title);
+    description = copy(description);
+  }
   const fullImageUrl = image.startsWith("http") ? image : new URL(image, origin).href;
   const pageTitle = title.includes("SevenDevX")
     ? title
