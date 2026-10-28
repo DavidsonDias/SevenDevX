@@ -230,7 +230,7 @@ const WEBSITE = {
   description:
     "Desenvolvimento web, landing pages, sistemas sob demanda, automações e integração de IA.",
   publisher: { "@id": `${BASE}/#organization` },
-  inLanguage: "pt-BR",
+  inLanguage: ["pt-BR", "en-US", "es-ES"],
   potentialAction: {
     "@type": "SearchAction",
     target: {

@@ -1,5 +1,9 @@
 /** Supplemental public-site copy, reviewed in English and Spanish. BRL prices are not converted. */
 export const commercialCopy: Record<string, readonly [string, string]> = {
+  "Valores e prazos são estimativas. Escopo, condições e entregas são definidos na proposta.": ["Amounts and timelines are estimates. Scope, terms and deliverables are defined in the proposal.", "Los importes y los plazos son estimaciones. El alcance, las condiciones y las entregas se definen en la propuesta."],
+  "R$ 297/mês": ["R$ 297/month (BRL)", "R$ 297/mes (BRL)"],
+  "Site Institucional": ["Business Website", "Sitio Institucional"],
+  "Sistema Customizado": ["Custom System", "Sistema a Medida"],
   "Todos os Projetos | SevenDevX — Portfólio Completo de Software": ["All Projects | SevenDevX — Complete Software Portfolio", "Todos los Proyectos | SevenDevX — Portafolio Completo de Software"],
   "Explore todos os projetos da SevenDevX: SaaS, landing pages de alta conversão, dashboards, simuladores 3D e aplicações web modernas. Soluções reais com tecnologia enterprise.": ["Explore SevenDevX projects: SaaS, conversion-focused landing pages, dashboards, 3D simulators and modern web applications. Real solutions with enterprise technology.", "Explora los proyectos de SevenDevX: SaaS, landing pages orientadas a la conversión, paneles, simuladores 3D y aplicaciones web modernas. Soluciones reales con tecnología empresarial."],
   "AI Answers — Respostas Diretas": ["AI Answers — Direct Answers", "Respuestas de IA — Respuestas Directas"],

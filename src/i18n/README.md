@@ -54,3 +54,13 @@ Depoimentos fixos, selos de verificação, percentuais de resultados e promessas
 ## Escopo
 
 O painel administrativo (SevenOS) é de uso interno e opera em pt-BR; a tradução cobre o site público.
+
+## Artigos completos — 2026-10-28
+
+Os 13 artigos de Answers e Conhecimento têm versões completas EN/ES: título, resumo, corpo, FAQ e palavras-chave. `editorial/resolve.ts` verifica completude e revisão do original; tradução ausente ou desatualizada retorna o artigo inteiro em português. O idioma dos metadados acompanha o conteúdo efetivamente exibido.
+
+Os títulos compartilhados ficam em um índice pequeno; o corpo dos artigos permanece no carregamento da rota. A referência antiga à Lovable no artigo sobre IA foi substituída por uma arquitetura de referência com processamento OpenAI no servidor.
+
+Essa cobertura não inclui automaticamente artigos do Blog/CMS, cases ou descrições extensas de projetos. Valores e prazos continuam estimativas do conteúdo comercial e dependem da proposta; tradução não comprova resultados ou depoimentos.
+
+Validação adicional: `node --test scripts/editorial-i18n.test.mjs` confere os 13 artigos, revisões, fallback integral, estrutura, títulos compartilhados e preservação dos identificadores.

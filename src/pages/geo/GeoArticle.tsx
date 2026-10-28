@@ -85,6 +85,7 @@ import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import NotFound from "@/pages/NotFound";
 import { GEO_ARTICLES, type GeoArticle } from "@/data/geoContent";
+import { resolveGeoArticle } from "@/i18n/editorial/resolve";
 
 // ============================================================================
 // 🧩 TYPES & CONTRACTS
@@ -105,8 +106,8 @@ interface Props {
  * Índice dos artigos GEO, agrupados por cluster de conteúdo.
  */
 export function GeoArticleIndex({ basePath, filterCategory, title, intro }: Props) {
-  const { copy } = usePublicCopy();
-  const articles = GEO_ARTICLES.filter((a) => a.category === filterCategory);
+  const { copy, language } = usePublicCopy();
+  const articles = GEO_ARTICLES.filter((a) => a.category === filterCategory).map(a => resolveGeoArticle(a, language).article);
   return (
     <>
       <Helmet>
@@ -123,7 +124,7 @@ export function GeoArticleIndex({ basePath, filterCategory, title, intro }: Prop
                 {copy(basePath === "answers" ? "AI Answers" : "Knowledge Base")}
               </p>
               <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 max-w-3xl">{copy(title)}</h1>
-              <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">{intro}</p>
+              <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">{copy(intro)}</p>
             </motion.div>
           </Container>
         </Section>
@@ -146,7 +147,7 @@ export function GeoArticleIndex({ basePath, filterCategory, title, intro }: Prop
                       <Clock className="w-3 h-3" />
                       {a.readingMinutes} {copy("min de leitura")}
                     </div>
-                    <h2 className="text-2xl font-bold mb-3 group-hover:underline">{copy(a.title)}</h2>
+                    <h2 className="text-2xl font-bold mb-3 group-hover:underline">{a.title}</h2>
                     <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">{a.shortAnswer}</p>
                   </Link>
                 </motion.div>
@@ -168,10 +169,12 @@ export function GeoArticleIndex({ basePath, filterCategory, title, intro }: Prop
  * Página de artigo GEO resolvida pelo slug da rota.
  */
 export function GeoArticlePage({ basePath }: { basePath: "answers" | "knowledge-base" }) {
-  const { copy } = usePublicCopy();
+  const { copy, language } = usePublicCopy();
   const { slug } = useParams<{ slug: string }>();
-  const article = GEO_ARTICLES.find((a) => a.slug === slug);
-  if (!article) return <NotFound />;
+  const sourceArticle = GEO_ARTICLES.find((a) => a.slug === slug);
+  if (!sourceArticle) return <NotFound />;
+  const { article, language: contentLanguage } = resolveGeoArticle(sourceArticle, language);
+  const locale = contentLanguage === "pt" ? "pt-BR" : contentLanguage === "es" ? "es-ES" : "en-US";
   const url = `https://www.sevendevx.com/${basePath}/${article.slug}`;
 
   const faqSchema = {
@@ -192,7 +195,7 @@ export function GeoArticlePage({ basePath }: { basePath: "answers" | "knowledge-
     author: { "@type": "Organization", name: "SevenDevX", url: "https://www.sevendevx.com" },
     publisher: { "@type": "Organization", name: "SevenDevX", logo: { "@type": "ImageObject", url: "https://www.sevendevx.com/logo-512.png" } },
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
-    inLanguage: "pt-BR",
+    inLanguage: locale,
     keywords: article.keywords.join(", "),
     about: { "@type": "Thing", name: article.question },
   };
@@ -218,16 +221,17 @@ export function GeoArticlePage({ basePath }: { basePath: "answers" | "knowledge-
   return (
     <>
       <Helmet>
-        <title>{copy(article.title)} — SevenDevX</title>
-        <meta name="description" content={copy(article.summary)} />
+        <title>{article.title} — SevenDevX</title>
+        <meta name="description" content={article.summary} />
         <meta name="keywords" content={article.keywords.join(", ")} />
         <link rel="canonical" href={url} />
-        <meta property="og:title" content={copy(article.title)} />
-        <meta property="og:description" content={copy(article.summary)} />
+        <meta property="og:title" content={article.title} />
+        <meta property="og:description" content={article.summary} />
         <meta property="og:url" content={url} />
         <meta property="og:type" content="article" />
+        <meta property="og:locale" content={locale.replace("-", "_")} />
         <script type="application/ld+json">{JSON.stringify(articleSchema)}</script>
-        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
+        {article.faq.length > 0 && <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>}
         <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(speakableSchema)}</script>
       </Helmet>
@@ -239,6 +243,7 @@ export function GeoArticlePage({ basePath }: { basePath: "answers" | "knowledge-
           </Link>
 
           <motion.article
+            lang={locale}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -247,7 +252,7 @@ export function GeoArticlePage({ basePath }: { basePath: "answers" | "knowledge-
               {copy(basePath === "answers" ? "AI Answer" : "Knowledge Base")} · {article.readingMinutes} {copy("min")}
             </p>
             <h1 className="text-3xl md:text-5xl font-bold tracking-tight mb-6 leading-tight">
-              {copy(article.title)}
+              {article.title}
             </h1>
 
             {/* Short answer block — optimized for featured snippets & AI Overviews */}
@@ -267,7 +272,7 @@ export function GeoArticlePage({ basePath }: { basePath: "answers" | "knowledge-
                 </section>
               ))}
 
-              <section>
+              {article.faq.length > 0 && <section>
                 <h2 className="text-2xl font-bold tracking-tight mb-6">{copy("Perguntas Frequentes")}</h2>
                 <div className="space-y-4">
                   {article.faq.map((f) => (
@@ -280,22 +285,27 @@ export function GeoArticlePage({ basePath }: { basePath: "answers" | "knowledge-
                     </details>
                   ))}
                 </div>
-              </section>
+              </section>}
+
+              <p className="text-xs text-muted-foreground leading-relaxed" lang={language === "pt" ? "pt-BR" : language}>
+                {copy("Valores e prazos são estimativas. Escopo, condições e entregas são definidos na proposta.")}
+              </p>
 
               {article.relatedSlugs?.length ? (
                 <section>
                   <h2 className="text-2xl font-bold tracking-tight mb-6">{copy("Conteúdo relacionado")}</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {article.relatedSlugs.map((rs) => {
-                      const rel = GEO_ARTICLES.find((x) => x.slug === rs);
-                      if (!rel) return null;
+                      const related = GEO_ARTICLES.find((x) => x.slug === rs);
+                      if (!related) return null;
+                      const rel = resolveGeoArticle(related, language).article;
                       const path = rel.category === "answer" ? "answers" : "knowledge-base";
                       return (
                         <Link key={rs} to={`/${path}/${rs}`} className="block p-5 rounded-xl border border-border bg-card hover:border-foreground/30 transition">
                           <p className="text-xs uppercase tracking-wider text-muted-foreground mb-2">
                             {copy(path === "answers" ? "AI Answer" : "Knowledge")}
                           </p>
-                          <p className="font-semibold">{copy(rel.title)}</p>
+                          <p className="font-semibold">{rel.title}</p>
                         </Link>
                       );
                     })}
