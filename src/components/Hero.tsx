@@ -169,9 +169,9 @@ const Hero = () => {
         "Seção principal de destaque com vídeo e introdução da SevenDevX"
       )}
     >
-      {/* ================================================================ */}
+      {/* ================================================================== */}
       {/* BACKGROUND */}
-      {/* ================================================================ */}
+      {/* ================================================================== */}
 
       <div className="absolute inset-0 z-0">
         <img
@@ -211,9 +211,9 @@ const Hero = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/65 to-background/90" />
       </div>
 
-      {/* ================================================================ */}
+      {/* ================================================================== */}
       {/* CONTENT */}
-      {/* ================================================================ */}
+      {/* ================================================================== */}
 
       <div className="viewport-hero-content relative z-10 w-full px-4 sm:px-6 lg:px-8 pb-10 sm:pb-16 md:pb-20 lg:pb-28">
         <motion.div
@@ -224,30 +224,36 @@ const Hero = () => {
           }}
           className="max-w-7xl mx-auto"
         >
+          {/* ============================================================ */}
           {/* TITLE */}
+          {/* ============================================================ */}
 
           <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6 uppercase tracking-tight leading-[1.1] sm:leading-tight max-w-5xl">
             {t.hero.title}
           </h1>
 
+          {/* ============================================================ */}
           {/* SUBTITLE */}
+          {/* ============================================================ */}
 
           <p className="text-sm xs:text-base sm:text-lg md:text-xl text-foreground/90 mb-6 sm:mb-8 max-w-2xl leading-relaxed">
             {t.hero.subtitle}
           </p>
 
           {/* ============================================================ */}
-          {/* CTA — CORRECTED ANIMATED BUTTON */}
+          {/* CTA — SevenDevX | Desktop + Mobile */}
           {/* ============================================================ */}
 
           <motion.button
             type="button"
             onClick={scrollToContact}
-            initial="rest"
-            animate="rest"
-            whileHover="hover"
-            whileTap="tap"
-            variants={buttonVariants}
+            initial={false}
+            whileHover={{
+              scale: reduceMotion ? 1 : 1.05,
+            }}
+            whileTap={{
+              scale: reduceMotion ? 1 : 0.97,
+            }}
             transition={{
               duration: reduceMotion ? 0 : 0.25,
               ease: "easeOut",
@@ -274,6 +280,9 @@ const Hero = () => {
               font-semibold
               text-foreground
               cursor-pointer
+              select-none
+              touch-manipulation
+              [-webkit-tap-highlight-color:transparent]
               focus-visible:outline-none
               focus-visible:ring-2
               focus-visible:ring-primary
@@ -282,9 +291,13 @@ const Hero = () => {
             "
             aria-label={t.hero.cta}
           >
-            {/* Animated white background */}
+            {/* ========================================================== */}
+            {/* ANIMATED BACKGROUND */}
+            {/* ========================================================== */}
 
-            <motion.span
+            {/* Preenchimento: hover real apenas em dispositivos compatíveis */}
+
+            <span
               aria-hidden="true"
               className="
                 pointer-events-none
@@ -292,15 +305,18 @@ const Hero = () => {
                 inset-0
                 z-0
                 bg-foreground
+                -translate-x-full
+                transition-transform
+                duration-300
+                ease-out
+                motion-reduce:transition-none
+                [@media(hover:hover)_and_(pointer:fine)]:group-hover:translate-x-0
               "
-              variants={fillVariants}
-              transition={{
-                duration: reduceMotion ? 0 : 0.35,
-                ease: [0.22, 1, 0.36, 1],
-              }}
             />
 
-            {/* CTA label and arrow */}
+            {/* ========================================================== */}
+            {/* CTA LABEL AND ARROW */}
+            {/* ========================================================== */}
 
             <span
               className="
@@ -313,8 +329,8 @@ const Hero = () => {
                 text-foreground
                 transition-colors
                 duration-300
-                group-hover:text-background
-                group-focus-visible:text-background
+                motion-reduce:transition-none
+                [@media(hover:hover)_and_(pointer:fine)]:group-hover:text-background
               "
             >
               <span>{t.hero.cta}</span>
@@ -325,7 +341,8 @@ const Hero = () => {
                   inline-block
                   transition-transform
                   duration-300
-                  group-hover:translate-x-1
+                  motion-reduce:transition-none
+                  [@media(hover:hover)_and_(pointer:fine)]:group-hover:translate-x-1
                 "
               >
                 →
