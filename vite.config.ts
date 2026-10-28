@@ -21,6 +21,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { componentTagger } from "lovable-tagger";
 import { techIconAssets } from "./scripts/tech-icon-assets";
+import { publicFirstPaint } from "./scripts/public-first-paint";
 import { VitePWA } from "vite-plugin-pwa";
 
 export default defineConfig(({ mode }) => ({
@@ -38,6 +39,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     techIconAssets(),
+    publicFirstPaint(),
 
     // Executa o componentTagger apenas no modo desenvolvimento
     mode === "development" && componentTagger(),

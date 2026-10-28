@@ -4,7 +4,38 @@ import fs from 'node:fs';
 import * as icons from 'react-icons/si';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import vm from 'node:vm';
 const read=file=>fs.readFileSync(file,'utf8');
+
+test('built first paint is restricted to home, matches locale selection and never replaces private routes',()=>{
+ const html=read('dist/index.html');
+ const match=html.match(/<template id="public-first-paint">([\s\S]*?)<\/template><script>([\s\S]*?)<\/script>/);
+ assert.ok(match,'Hero generated during the build');
+ assert.equal((match[1].match(/<h1\b/g)||[]).length,1);
+ assert.match(match[1],/<a href="\/#contact" data-initial-contact/);
+ assert.doesNotMatch(match[1],/type="button"/);
+ const image=match[1].match(/src="(\/assets\/hero-tech-workspace[^\"]+\.webp)"/);
+ assert.ok(image);assert.ok(fs.existsSync('dist'+image[1]));
+ const languages=JSON.parse(match[2].match(/var languages=([^\n]+),saved;/)[1]);
+ for(const [pathname,saved,browser,expected] of [
+  ['/','pt','en-US','pt'],['/','en','pt-BR','en'],['/','es','en-US','es'],
+  ['/',null,'es-MX','es'],['/','invalid','fr-FR','pt'],
+  ['/admin',null,'en-US',null],['/auth',null,'en-US',null],['/services',null,'en-US',null],
+ ]){
+  const nodes=['title','subtitle','cta'].map(key=>({textContent:languages.pt[key]}));
+  let appended=false,removed=false,index=0;
+  const fragment={querySelector:()=>({setAttribute(){},addEventListener(){}})};
+  const root={appendChild(value){assert.equal(value,fragment);appended=true;}};
+  const template={content:fragment,remove(){removed=true;}};
+  const document={documentElement:{},getElementById:id=>id==='root'?root:template,
+   createTreeWalker:()=>({nextNode:()=>nodes[index++]||null})};
+  vm.runInNewContext(match[2],{document,location:{pathname},navigator:{language:browser},
+   localStorage:{getItem:()=>saved},NodeFilter:{SHOW_TEXT:4}});
+  assert.equal(removed,true);assert.equal(appended,expected!==null,pathname);
+  if(expected){assert.equal(document.documentElement.lang,expected==='pt'?'pt-BR':expected);
+   assert.deepEqual(nodes.map(n=>n.textContent),['title','subtitle','cta'].map(key=>languages[expected][key]));}
+ }
+});
 
 test('initial entry stays below its transfer-source budget and robots uses crawler-compatible directives',()=>{
  const scripts=[...read('dist/index.html').matchAll(/<script[^>]+src="(\/assets\/[^\"]+\.js)"/g)].map(m=>m[1]);
