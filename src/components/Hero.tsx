@@ -40,6 +40,7 @@ const Hero = () => {
 
   const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
   const [videoFailed, setVideoFailed] = useState(false);
+  const [ctaActive, setCtaActive] = useState(false);
 
   const isMobile =
     typeof window !== "undefined" && window.innerWidth < 768;
@@ -131,28 +132,12 @@ const Hero = () => {
   }, [shouldLoadVideo, videoFailed]);
 
   // ==========================================================================
-  // 🎨 CTA ANIMATION VARIANTS
+  // 🎨 CTA — ANIMAÇÃO SINCRONIZADA PARA MOUSE E TOQUE
   // ==========================================================================
 
-  const buttonVariants = {
-    rest: {
-      scale: 1,
-    },
-    hover: {
-      scale: reduceMotion ? 1 : 1.05,
-    },
-    tap: {
-      scale: reduceMotion ? 1 : 0.97,
-    },
-  };
-
-  const fillVariants = {
-    rest: {
-      x: "-101%",
-    },
-    hover: {
-      x: "0%",
-    },
+  const ctaTransition = {
+    duration: reduceMotion ? 0 : 0.35,
+    ease: [0.22, 1, 0.36, 1] as const,
   };
 
   // ==========================================================================
@@ -247,106 +232,50 @@ const Hero = () => {
           <motion.button
             type="button"
             onClick={scrollToContact}
+            onPointerEnter={(event) => {
+              if (event.pointerType === "mouse" || event.pointerType === "pen") {
+                setCtaActive(true);
+              }
+            }}
+            onPointerLeave={() => setCtaActive(false)}
+            onPointerDown={(event) => {
+              if (event.pointerType === "touch") setCtaActive(true);
+            }}
+            onPointerUp={(event) => {
+              if (event.pointerType === "touch") setCtaActive(false);
+            }}
+            onPointerCancel={() => setCtaActive(false)}
             initial={false}
-            whileHover={{
-              scale: reduceMotion ? 1 : 1.05,
-            }}
-            whileTap={{
-              scale: reduceMotion ? 1 : 0.97,
-            }}
-            transition={{
-              duration: reduceMotion ? 0 : 0.25,
-              ease: "easeOut",
-            }}
-            className="
-              group
-              relative
-              isolate
-              inline-flex
-              items-center
-              justify-center
-              overflow-hidden
-              border-2
-              border-foreground
-              bg-transparent
-              px-8
-              sm:px-12
-              py-3
-              sm:py-4
-              text-xs
-              sm:text-sm
-              tracking-widest
-              uppercase
-              font-semibold
-              text-foreground
-              cursor-pointer
-              select-none
-              touch-manipulation
-              [-webkit-tap-highlight-color:transparent]
-              focus-visible:outline-none
-              focus-visible:ring-2
-              focus-visible:ring-primary
-              focus-visible:ring-offset-2
-              focus-visible:ring-offset-background
-            "
+            animate={{ scale: ctaActive && !reduceMotion ? 1.04 : 1 }}
+            whileTap={{ scale: reduceMotion ? 1 : 0.97 }}
+            transition={{ duration: reduceMotion ? 0 : 0.2 }}
+            className="group relative isolate inline-flex items-center justify-center overflow-hidden border-2 border-foreground bg-transparent px-8 sm:px-12 py-3 sm:py-4 text-xs sm:text-sm tracking-widest uppercase font-semibold text-foreground cursor-pointer select-none touch-manipulation [-webkit-tap-highlight-color:transparent] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
             aria-label={t.hero.cta}
           >
-            {/* ========================================================== */}
-            {/* ANIMATED BACKGROUND */}
-            {/* ========================================================== */}
-
-            {/* Preenchimento: hover real apenas em dispositivos compatíveis */}
-
-            <span
+            {/* Fundo e conteúdo seguem o MESMO estado, inclusive no touch. */}
+            <motion.span
               aria-hidden="true"
-              className="
-                pointer-events-none
-                absolute
-                inset-0
-                z-0
-                bg-foreground
-                -translate-x-full
-                transition-transform
-                duration-300
-                ease-out
-                motion-reduce:transition-none
-                [@media(hover:hover)_and_(pointer:fine)]:group-hover:translate-x-0
-              "
+              className="pointer-events-none absolute inset-0 z-0 bg-foreground"
+              initial={false}
+              animate={{ x: ctaActive ? "0%" : "-101%" }}
+              transition={ctaTransition}
             />
 
-            {/* ========================================================== */}
-            {/* CTA LABEL AND ARROW */}
-            {/* ========================================================== */}
-
             <span
-              className="
-                relative
-                z-10
-                inline-flex
-                items-center
-                justify-center
-                gap-2
-                text-foreground
-                transition-colors
-                duration-300
-                motion-reduce:transition-none
-                [@media(hover:hover)_and_(pointer:fine)]:group-hover:text-background
-              "
+              className={`relative z-10 inline-flex items-center justify-center gap-2 transition-colors motion-reduce:transition-none ${
+                ctaActive ? "text-background" : "text-foreground"
+              }`}
+              style={{ transitionDuration: reduceMotion ? "0ms" : "200ms" }}
             >
               <span>{t.hero.cta}</span>
-
-              <span
+              <motion.span
                 aria-hidden="true"
-                className="
-                  inline-block
-                  transition-transform
-                  duration-300
-                  motion-reduce:transition-none
-                  [@media(hover:hover)_and_(pointer:fine)]:group-hover:translate-x-1
-                "
+                initial={false}
+                animate={{ x: ctaActive && !reduceMotion ? 4 : 0 }}
+                transition={ctaTransition}
               >
                 →
-              </span>
+              </motion.span>
             </span>
           </motion.button>
         </motion.div>
