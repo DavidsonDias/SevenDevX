@@ -3,9 +3,9 @@ import { build } from "esbuild";
 import { createRequire } from "node:module";
 import path from "node:path";
 
-/** Static, replaceable first-paint content, generated from the real public Hero.
+/** Hydratable first-paint content, generated from the real public Hero.
  * No Auth provider, API call, customer record or administrator screen is rendered.
- * React still owns the interactive application; this is not hydration markup.
+ * Only this public island is hydrated; the rest of the app starts normally.
  */
 export function publicFirstPaint(): Plugin {
   return {
@@ -31,12 +31,12 @@ export function publicFirstPaint(): Plugin {
           absWorkingDir: root,
           stdin: {
             contents: `import React from 'react';
-              import {renderToStaticMarkup} from 'react-dom/server';
-              import Hero from './src/components/Hero';
-              import {LanguageProvider} from './src/i18n/LanguageContext';
+              import {renderToString} from 'react-dom/server';
+              import Hero from './src/components/HeroContent';
+              import {LanguageSnapshotProvider} from './src/i18n/LanguageContext';
               import {translations} from './src/i18n/translations';
-              export const markup = renderToStaticMarkup(React.createElement(LanguageProvider,null,React.createElement(Hero)));
-              export const languages = Object.fromEntries(Object.entries(translations).map(([key,value])=>[key,value.hero]));`,
+              export const markups = Object.fromEntries(Object.entries(translations).map(([language,t])=>
+                [language,renderToString(React.createElement(LanguageSnapshotProvider,{value:{language,t,setLanguage:()=>{}}},React.createElement(Hero)),{identifierPrefix:'public-hero-'})]));`,
             resolveDir: root,
             loader: "tsx",
           },
@@ -57,42 +57,34 @@ export function publicFirstPaint(): Plugin {
             },
           }],
         });
-        const exports: { markup?: string; languages?: Record<string, { title: string; subtitle: string; cta: string }> } = {};
+        const exports: { markups?: Record<string, string> } = {};
         const compiled = { exports };
         new Function("module", "exports", "require", result.outputFiles[0].text)(compiled, exports, createRequire(path.join(root, "package.json")));
         const rendered = compiled.exports;
-        if (!rendered.markup?.includes("<h1") || !rendered.languages?.pt) throw new Error("Public first paint did not render the hero");
-        const markup = rendered.markup
-          .replace(/\s+type="button"/, "")
-          .replace(/<button\b([^>]*)>/, '<a href="/#contact" data-initial-contact $1>')
-          .replace(/<\/button>/, "</a>");
-        const languages = JSON.stringify(rendered.languages).replaceAll("<", "\\u003c");
-        const bootstrap = `<template id="public-first-paint">${markup}</template><script>
+        if (!rendered.markups?.pt?.includes("<h1")) throw new Error("Public first paint did not render the hero");
+        const templates = Object.entries(rendered.markups).map(([locale,markup])=>
+          `<template data-public-first-paint="${locale}">${markup}</template>`).join("");
+        const bootstrap = `${templates}<script data-public-first-paint-bootstrap>
           (function(){
-            var template=document.getElementById('public-first-paint'),root=document.getElementById('root');
-            if(location.pathname!=='/'||!root){template.remove();return;}
-            var languages=${languages},saved;
+            var templates=Array.from(document.querySelectorAll('template[data-public-first-paint]')),root=document.getElementById('root');
+            if(location.pathname!=='/'||!root){templates.forEach(function(t){t.remove();});return;}
+            var languages=['pt','en','es'],saved;
             try{saved=localStorage.getItem('sevendevx-language');}catch(e){}
-            var language=languages[saved]?saved:(navigator.language||'pt').slice(0,2);
-            if(!languages[language])language='pt';
-            var selected=languages[language],fragment=template.content;
-            var walker=document.createTreeWalker(fragment,NodeFilter.SHOW_TEXT),node;
-            while(node=walker.nextNode()){
-              for(var key of ['title','subtitle','cta']){
-                if(Object.values(languages).some(function(value){return node.textContent.trim()===value[key];})){
-                  node.textContent=selected[key];break;
-                }
-              }
-            }
-            var contact=fragment.querySelector('[data-initial-contact]');
-            if(contact){contact.setAttribute('aria-label',selected.cta);contact.addEventListener('click',function(event){
+            var language=languages.includes(saved)?saved:(navigator.language||'pt').toLowerCase().slice(0,2);
+            if(!languages.includes(language))language='pt';
+            var template=templates.find(function(t){return t.getAttribute('data-public-first-paint')===language;});
+            var shell=document.createElement('div');shell.id='public-first-paint-shell';shell.style.display='contents';
+            shell.appendChild(template.content);
+            var contact=shell.querySelector('button');
+            function initialContact(event){
               event.preventDefault();
               var observer=new MutationObserver(scroll);
               function scroll(){var target=document.getElementById('contact');if(target){observer.disconnect();target.scrollIntoView();}}
               observer.observe(root,{childList:true,subtree:true});scroll();setTimeout(function(){observer.disconnect();},30000);
-            });}
+            }
+            if(contact){contact.addEventListener('click',initialContact);shell.addEventListener('public-hero:attached',function(){contact.removeEventListener('click',initialContact);},{once:true});}
             document.documentElement.lang=language==='pt'?'pt-BR':language;
-            root.appendChild(fragment);template.remove();
+            root.before(shell);templates.forEach(function(t){t.remove();});
           })();
         </script>`;
         return html.replace('<div id="root"></div>', '<div id="root"></div>' + bootstrap);

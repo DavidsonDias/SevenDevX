@@ -1,291 +1,47 @@
+import { useLayoutEffect, useRef } from "react";
+import { hydrateRoot, type Root } from "react-dom/client";
+import { LanguageSnapshotProvider, useLanguage } from "@/i18n/LanguageContext";
+import HeroContent from "./HeroContent";
 
-/**
- * Hero.tsx — SevenDevX
- * ─────────────────────────────────────────────────────────────────────
- * @file src/components/Hero.tsx
- * @module UI
- *
- * @description
- * Hero da home; controla o vídeo de fundo com fallback
- * para conexões lentas e prioriza o LCP.
- *
- * @see src/components/README.md
- * ─────────────────────────────────────────────────────────────────────
+/** Reuse the build-rendered public hero instead of destroying its first paint.
+ * All subsequent visits without that HTML use normal React rendering.
+ * This island has no auth or customer state; language remains owned by the app.
  */
+export default function Hero() {
+  const language = useLanguage();
+  const host = useRef<HTMLDivElement>(null);
+  const shell = useRef(typeof document === "undefined" ? null : document.getElementById("public-first-paint-shell"));
+  const island = useRef<Root | null>(null);
+  const currentLanguage = useRef(language.language);
+  const mounted = useRef(false);
 
-// ============================================================================
-// 📦 IMPORTS
-// ============================================================================
-
-import { useState, useEffect, useRef } from "react";
-import { motion, useReducedMotion } from "framer-motion";
-import heroBackground from "@/assets/images/hero-tech-workspace.webp";
-import { usePublicCopy } from "@/i18n/usePublicCopy";
-import { useLanguage } from "@/i18n/LanguageContext";
-
-// ============================================================================
-// ⚙️ CONSTANTS & CONFIGURATION
-// ============================================================================
-
-const HERO_VIDEO_DESKTOP = "/videos/hero-bg.mp4";
-const HERO_VIDEO_MOBILE = "/videos/hero-bg-mobile.mp4";
-
-// ============================================================================
-// 🏗️ MAIN COMPONENT
-// ============================================================================
-
-const Hero = () => {
-  const { t } = useLanguage();
-  const { copy } = usePublicCopy();
-
-  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
-  const [videoFailed, setVideoFailed] = useState(false);
-  const [ctaActive, setCtaActive] = useState(false);
-
-  const isMobile =
-    typeof window !== "undefined" && window.innerWidth < 768;
-
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const sectionRef = useRef<HTMLElement>(null);
-
-  const reduceMotion = useReducedMotion();
-
-  // ==========================================================================
-  // 📍 SCROLL TO CONTACT
-  // ==========================================================================
-
-  const scrollToContact = () => {
-    document.getElementById("contact")?.scrollIntoView({
-      behavior: reduceMotion ? "auto" : "smooth",
-    });
-  };
-
-  // ==========================================================================
-  // 🎬 VIDEO LOADING — LCP OPTIMIZATION
-  // ==========================================================================
-
-  useEffect(() => {
-    if (!sectionRef.current) return;
-
-    const conn = (navigator as any).connection;
-
-    const slow =
-      conn?.saveData === true ||
-      /2g|slow-2g|3g/.test(conn?.effectiveType || "") ||
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-    if (slow) return;
-
-    let cancelled = false;
-
-    const start = async () => {
-      // Preserve LCP optimization.
-      await document.fonts.ready;
-
-      await sectionRef.current
-        ?.querySelector("img")
-        ?.decode()
-        .catch(() => {});
-
-      requestAnimationFrame(() =>
-        requestAnimationFrame(() => {
-          if (!cancelled) {
-            setShouldLoadVideo(true);
-          }
-        })
-      );
-    };
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            void start();
-            observer.disconnect();
-          }
-        });
-      },
-      {
-        rootMargin: "50px",
-        threshold: 0.1,
-      }
-    );
-
-    observer.observe(sectionRef.current);
-
-    return () => {
-      cancelled = true;
-      observer.disconnect();
-    };
-  }, []);
-
-  // ==========================================================================
-  // ▶️ VIDEO PLAYBACK
-  // ==========================================================================
-
-  useEffect(() => {
-    if (shouldLoadVideo && videoRef.current && !videoFailed) {
-      videoRef.current.play().catch(() => {
-        setVideoFailed(true);
-      });
+  useLayoutEffect(() => {
+    const element = shell.current;
+    if (!element || !host.current) return;
+    mounted.current = true;
+    if (!island.current) {
+      host.current.appendChild(element);
+      island.current = hydrateRoot(element,
+        <LanguageSnapshotProvider value={language}><HeroContent /></LanguageSnapshotProvider>,
+        { identifierPrefix: "public-hero-" });
+      element.dispatchEvent(new Event("public-hero:attached"));
+    } else if (currentLanguage.current !== language.language) {
+      island.current.render(<LanguageSnapshotProvider value={language}><HeroContent /></LanguageSnapshotProvider>);
     }
-  }, [shouldLoadVideo, videoFailed]);
+    currentLanguage.current = language.language;
+    return () => {
+      mounted.current = false;
+      // StrictMode runs setup/cleanup/setup synchronously. Only destroy the
+      // independent root after a real removal, outside the parent's commit.
+      queueMicrotask(() => {
+        if (!mounted.current) {
+          island.current?.unmount();
+          island.current = null;
+          element.remove();
+        }
+      });
+    };
+  }, [language]);
 
-  // ==========================================================================
-  // 🎨 CTA — ANIMAÇÃO SINCRONIZADA PARA MOUSE E TOQUE
-  // ==========================================================================
-
-  const ctaTransition = {
-    duration: reduceMotion ? 0 : 0.35,
-    ease: [0.22, 1, 0.36, 1] as const,
-  };
-
-  // ==========================================================================
-  // 🖥️ RENDER
-  // ==========================================================================
-
-  return (
-    <section
-      id="main-content"
-      ref={sectionRef}
-      className="viewport-hero relative min-h-[100svh] flex items-end overflow-hidden"
-      tabIndex={-1}
-      aria-label={copy(
-        "Seção principal de destaque com vídeo e introdução da SevenDevX"
-      )}
-    >
-      {/* ================================================================== */}
-      {/* BACKGROUND */}
-      {/* ================================================================== */}
-
-      <div className="absolute inset-0 z-0">
-        <img
-          src={heroBackground}
-          alt="SevenDevX"
-          width={1920}
-          height={1080}
-          className="absolute inset-0 w-full h-full object-cover"
-          loading="eager"
-          fetchPriority="high"
-          decoding="async"
-        />
-
-        {shouldLoadVideo && !videoFailed && (
-          <video
-            ref={videoRef}
-            muted
-            loop
-            playsInline
-            autoPlay
-            preload="none"
-            poster={heroBackground}
-            className="absolute inset-0 w-full h-full object-cover"
-            onError={() => setVideoFailed(true)}
-          >
-            <source
-              src={
-                isMobile
-                  ? HERO_VIDEO_MOBILE
-                  : HERO_VIDEO_DESKTOP
-              }
-              type="video/mp4"
-            />
-          </video>
-        )}
-
-        <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/65 to-background/90" />
-      </div>
-
-      {/* ================================================================== */}
-      {/* CONTENT */}
-      {/* ================================================================== */}
-
-      <div className="viewport-hero-content relative z-10 w-full px-4 sm:px-6 lg:px-8 pb-10 sm:pb-16 md:pb-20 lg:pb-28">
-        <motion.div
-          initial={false}
-          animate={{
-            opacity: 1,
-            y: 0,
-          }}
-          className="max-w-7xl mx-auto"
-        >
-          {/* ============================================================ */}
-          {/* TITLE */}
-          {/* ============================================================ */}
-
-          <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6 uppercase tracking-tight leading-[1.1] sm:leading-tight max-w-5xl">
-            {t.hero.title}
-          </h1>
-
-          {/* ============================================================ */}
-          {/* SUBTITLE */}
-          {/* ============================================================ */}
-
-          <p className="text-sm xs:text-base sm:text-lg md:text-xl text-foreground/90 mb-6 sm:mb-8 max-w-2xl leading-relaxed">
-            {t.hero.subtitle}
-          </p>
-
-          {/* ============================================================ */}
-          {/* CTA — SevenDevX | Desktop + Mobile */}
-          {/* ============================================================ */}
-
-          <motion.button
-            type="button"
-            onClick={scrollToContact}
-            onPointerEnter={(event) => {
-              if (event.pointerType === "mouse" || event.pointerType === "pen") {
-                setCtaActive(true);
-              }
-            }}
-            onPointerLeave={() => setCtaActive(false)}
-            onPointerDown={(event) => {
-              if (event.pointerType === "touch") setCtaActive(true);
-            }}
-            onPointerUp={(event) => {
-              if (event.pointerType === "touch") setCtaActive(false);
-            }}
-            onPointerCancel={() => setCtaActive(false)}
-            initial={false}
-            animate={{ scale: ctaActive && !reduceMotion ? 1.04 : 1 }}
-            whileTap={{ scale: reduceMotion ? 1 : 0.97 }}
-            transition={{ duration: reduceMotion ? 0 : 0.2 }}
-            className="group relative isolate inline-flex items-center justify-center overflow-hidden border-2 border-foreground bg-transparent px-8 sm:px-12 py-3 sm:py-4 text-xs sm:text-sm tracking-widest uppercase font-semibold text-foreground cursor-pointer select-none touch-manipulation [-webkit-tap-highlight-color:transparent] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-            aria-label={t.hero.cta}
-          >
-            {/* Fundo e conteúdo seguem o MESMO estado, inclusive no touch. */}
-            <motion.span
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 z-0 bg-foreground"
-              initial={false}
-              animate={{ x: ctaActive ? "0%" : "-101%" }}
-              transition={ctaTransition}
-            />
-
-            <span
-              className={`relative z-10 inline-flex items-center justify-center gap-2 transition-colors motion-reduce:transition-none ${
-                ctaActive ? "text-background" : "text-foreground"
-              }`}
-              style={{ transitionDuration: reduceMotion ? "0ms" : "200ms" }}
-            >
-              <span>{t.hero.cta}</span>
-              <motion.span
-                aria-hidden="true"
-                initial={false}
-                animate={{ x: ctaActive && !reduceMotion ? 4 : 0 }}
-                transition={ctaTransition}
-              >
-                →
-              </motion.span>
-            </span>
-          </motion.button>
-        </motion.div>
-      </div>
-    </section>
-  );
-};
-
-// ============================================================================
-// 📤 EXPORTS
-// ============================================================================
-
-export default Hero;
+  return shell.current ? <div ref={host} style={{ display: "contents" }} /> : <HeroContent />;
+}

@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import * as icons from 'react-icons/si';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import vm from 'node:vm';
+import { JSDOM } from 'jsdom';
 const read=file=>fs.readFileSync(file,'utf8');
 
 test('initial styles preserve the emitted CSS exactly without a blocking stylesheet request',()=>{
@@ -15,33 +15,32 @@ test('initial styles preserve the emitted CSS exactly without a blocking stylesh
  assert.doesNotMatch(html,/<link\b[^>]*rel="stylesheet"/);
 });
 
-test('built first paint is restricted to home, matches locale selection and never replaces private routes',()=>{
+test('built first paint preserves exact locale markup only on the public home',()=>{
  const html=read('dist/index.html');
- const match=html.match(/<template id="public-first-paint">([\s\S]*?)<\/template><script>([\s\S]*?)<\/script>/);
- assert.ok(match,'Hero generated during the build');
- assert.equal((match[1].match(/<h1\b/g)||[]).length,1);
- assert.match(match[1],/<a href="\/#contact" data-initial-contact/);
- assert.doesNotMatch(match[1],/type="button"/);
- const image=match[1].match(/src="(\/assets\/hero-tech-workspace[^\"]+\.webp)"/);
- assert.ok(image);assert.ok(fs.existsSync('dist'+image[1]));
- const languages=JSON.parse(match[2].match(/var languages=([^\n]+),saved;/)[1]);
+ const bootstrap=html.match(/<script data-public-first-paint-bootstrap>([\s\S]*?)<\/script>/)[1];
  for(const [pathname,saved,browser,expected] of [
   ['/','pt','en-US','pt'],['/','en','pt-BR','en'],['/','es','en-US','es'],
   ['/',null,'es-MX','es'],['/','invalid','fr-FR','pt'],
   ['/admin',null,'en-US',null],['/auth',null,'en-US',null],['/services',null,'en-US',null],
  ]){
-  const nodes=['title','subtitle','cta'].map(key=>({textContent:languages.pt[key]}));
-  let appended=false,removed=false,index=0;
-  const fragment={querySelector:()=>({setAttribute(){},addEventListener(){}})};
-  const root={appendChild(value){assert.equal(value,fragment);appended=true;}};
-  const template={content:fragment,remove(){removed=true;}};
-  const document={documentElement:{},getElementById:id=>id==='root'?root:template,
-   createTreeWalker:()=>({nextNode:()=>nodes[index++]||null})};
-  vm.runInNewContext(match[2],{document,location:{pathname},navigator:{language:browser},
-   localStorage:{getItem:()=>saved},NodeFilter:{SHOW_TEXT:4}});
-  assert.equal(removed,true);assert.equal(appended,expected!==null,pathname);
-  if(expected){assert.equal(document.documentElement.lang,expected==='pt'?'pt-BR':expected);
-   assert.deepEqual(nodes.map(n=>n.textContent),['title','subtitle','cta'].map(key=>languages[expected][key]));}
+  const dom=new JSDOM(html,{url:'https://www.sevendevx.com'+pathname,runScripts:'outside-only'});
+  const {window}=dom;
+  Object.defineProperty(window.navigator,'language',{value:browser});
+  if(saved)window.localStorage.setItem('sevendevx-language',saved);
+  const expectedMarkup=expected?window.document.querySelector(`template[data-public-first-paint="${expected}"]`).innerHTML:null;
+  window.eval(bootstrap);
+  const shell=window.document.getElementById('public-first-paint-shell');
+  assert.equal(!!shell,!!expected,pathname);
+  assert.equal(window.document.querySelectorAll('template[data-public-first-paint]').length,0);
+  assert.equal(window.document.getElementById('root').childNodes.length,0,'Main React root must not destroy the island');
+  if(expected){
+   assert.equal(window.document.documentElement.lang,expected==='pt'?'pt-BR':expected);
+   assert.equal(shell.innerHTML,expectedMarkup,'Do not mutate SSR markup before hydration');
+   assert.equal(shell.querySelectorAll('h1').length,1);
+   const image=shell.querySelector('img').getAttribute('src');
+   assert.ok(fs.existsSync('dist'+image));
+  }
+  dom.window.close();
  }
 });
 
@@ -77,8 +76,8 @@ test('agent discovery is actual JSON containing public documents, with no admin 
 });
 
 test('hero content is visible immediately and optimized CMS covers preserve unknown future images',()=>{
- assert.ok(read('src/components/Hero.tsx').includes('initial={false}'));
- assert.doesNotMatch(read('src/components/Hero.tsx'),/initial=\{\{ opacity: 0, y: 30 \}\}/);
+ assert.ok(read('src/components/HeroContent.tsx').includes('initial={false}'));
+ assert.doesNotMatch(read('src/components/HeroContent.tsx'),/initial=\{\{ opacity: 0, y: 30 \}\}/);
  const images=read('src/lib/optimizedServiceImages.ts');
  assert.ok(images.includes('images[source] || {src: source, srcSet: undefined}'));
  for(const width of [640,1024,1600])assert.ok(images.includes(`-${width}.webp`));
