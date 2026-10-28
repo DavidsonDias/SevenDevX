@@ -1,6 +1,7 @@
 import { translations, type Language } from "./translations";
 import { commercialCopy } from "./publicCommercialCopy";
 import { projectCopy } from "./publicProjectCopy";
+import { articleHeadlines } from "./editorial/headlines";
 
 /** Reviewed supplemental copy for public routes. Brands, URLs and source content stay intact. */
 export const publicCopy: Record<string, readonly [string, string]> = {
@@ -192,7 +193,7 @@ function indexTree(pt: unknown, en: unknown, es: unknown) {
   }
 }
 indexTree(translations.pt, translations.en, translations.es);
-for (const [pt, [en, es]] of Object.entries({ ...publicCopy, ...commercialCopy, ...projectCopy })) {
+for (const [pt, [en, es]] of Object.entries({ ...publicCopy, ...commercialCopy, ...projectCopy, ...articleHeadlines })) {
   indexes.en.set(normalize(pt), en);
   indexes.es.set(normalize(pt), es);
 }

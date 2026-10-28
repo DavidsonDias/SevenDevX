@@ -297,9 +297,9 @@ export const GEO_ARTICLES: GeoArticle[] = [
           "• Edge Functions: processar prompts em backend, nunca expor API keys no client.",
       },
       {
-        heading: "Stack que a SevenDevX usa",
+        heading: "Arquitetura de referência para projetos de IA",
         body:
-          "• Lovable AI Gateway / OpenAI API / Anthropic API\n" +
+          "• OpenAI API com processamento no servidor\n" +
           "• Supabase + pgvector para RAG\n" +
           "• Edge Functions (Deno) para orquestração\n" +
           "• WhatsApp Business API para chat\n" +

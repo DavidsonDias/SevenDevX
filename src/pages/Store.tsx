@@ -303,7 +303,7 @@ const ComparisonTable: React.FC = () => {
             <tr className="text-sm text-white/70">
               <th className="pb-3">{copy("Recurso")}</th>
               {plans.map((p) => (
-                <th key={p.id} className="pb-3 text-right">{p.name}</th>
+                <th key={p.id} className="pb-3 text-right">{copy(p.name)}</th>
               ))}
             </tr>
           </thead>
@@ -556,7 +556,7 @@ const Store: React.FC = () => {
                           className={`flex-1 px-4 py-3 text-sm uppercase font-semibold transition-all duration-300 ${
                             plan.highlight ? "bg-white text-black border border-white" : "border border-white/20 hover:bg-white/5"
                           }`}
-                          aria-label={copy(`Solicitar orçamento para ${plan.name}`)}
+                          aria-label={`${copy("Solicitar Orçamento")} — ${plan.name}`}
                         >
                           {copy("Solicitar Orçamento")}
                         </button>
