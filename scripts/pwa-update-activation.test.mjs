@@ -13,7 +13,7 @@ function fixture({workerState="installed",allowed=true}={}){
  const exports={};
  const win={location:{hostname:"www.sevendevx.com",reload:()=>reloads++}};win.self=win;win.top=win;
  const navigator={serviceWorker:{controller:{},getRegistration:async()=>registration,addEventListener:(event,fn)=>{listeners[event]=fn;},removeEventListener(){}}};
- new Function("exports","require","window","navigator","setTimeout","clearTimeout",compiled)(exports,name=>name==="react"?react:name==="@/lib/pwaUpdateSafety"?{canApplyPwaUpdate:async()=>allowed}:name==="@/lib/unsavedChanges"?{hasUnsavedEdits:()=>dirty}:name==="framer-motion"?{motion:{div:"div"},AnimatePresence:"div"}:require(name),win,navigator,(fn)=>{timers.push(fn);return timers.length;},()=>{});
+ new Function("exports","require","window","navigator","setTimeout","clearTimeout",compiled)(exports,name=>name==="react"?react:name==="@/i18n/usePublicCopy"?{usePublicCopy:()=>({copy:value=>value})}:name==="@/lib/pwaUpdateSafety"?{canApplyPwaUpdate:async()=>allowed}:name==="@/lib/unsavedChanges"?{hasUnsavedEdits:()=>dirty}:name==="framer-motion"?{motion:{div:"div"},AnimatePresence:"div"}:require(name),win,navigator,(fn)=>{timers.push(fn);return timers.length;},()=>{});
  const tree=exports.default();for(const effect of effects)effect();
  function find(node){if(!node||typeof node!=="object")return;if(node.type==="button"&&node.props?.onClick?.name==="apply")return node;for(const child of [node.props?.children].flat(Infinity)){const found=find(child);if(found)return found;}}
  const button=find(tree);assert.ok(button,"Update action is rendered");

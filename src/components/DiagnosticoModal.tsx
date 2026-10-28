@@ -89,7 +89,7 @@ const DEADLINES = ["Urgente (até 15 dias)", "Rápido (15-30 dias)", "Normal (1-
  * @param onOpenChange - Notifica abertura/fechamento para o componente pai.
  */
 export default function DiagnosticoModal({ open, onClose, config }: Props) {
-  const { copy } = usePublicCopy();
+  const { copy, message } = usePublicCopy();
   const { toast } = useToast();
   useScrollLock(open);
   const [step, setStep] = useState(0);
@@ -186,7 +186,7 @@ export default function DiagnosticoModal({ open, onClose, config }: Props) {
           ) : (
             <>
               <div className="px-6 pt-6 pb-4 border-b border-border">
-                <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground mb-1">{copy("Passo")} {copy(step + 1)} de {STEPS.length}</p>
+                <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground mb-1">{message("Passo {current} de {total}", { current: step + 1, total: STEPS.length })}</p>
                 <h3 className="text-2xl font-bold">{copy(config?.title || "Diagnóstico gratuito")}</h3>
                 <p className="text-sm text-muted-foreground mt-1">{copy(config?.description || "Preencha em 2 minutos e retornamos em até 24h.")}</p>
                 {/* Progress */}
@@ -307,9 +307,9 @@ function Select({ label, value, onChange, options }: { label: string; value: str
       <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-1.5">{copy(label)}</label>
       <div className="grid grid-cols-2 gap-2">
         {options.map(o => (
-          <button key={o} type="button" onClick={() => onChange(o)}
+          <button key={copy(o)} type="button" onClick={() => onChange(o)}
             className={`px-3 py-2 rounded-lg border text-sm transition ${value === o ? "border-primary bg-primary/10 text-foreground" : "border-border hover:bg-white/5 text-muted-foreground"}`}>
-            {o}
+            {copy(o)}
           </button>
         ))}
       </div>

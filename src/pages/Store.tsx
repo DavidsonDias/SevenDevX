@@ -247,11 +247,11 @@ const sanitize = (value: string) =>
    Product & Service JSON-LD (for rich snippets)
    - Generates structured data for each plan/service
    ------------------------- */
-const buildJsonLd = () => {
+const buildJsonLd = (copy: (value: string) => string) => {
   const productEntries = plans.map((p) => ({
     "@type": "Product",
-    "name": p.name,
-    "description": p.description,
+    "name": copy(p.name),
+    "description": copy(p.description),
     "sku": p.id,
     "offers": {
       "@type": "Offer",
@@ -264,8 +264,8 @@ const buildJsonLd = () => {
 
   const servicesEntries = services.map((s) => ({
     "@type": "Service",
-    "name": s.title,
-    "description": s.description,
+    "name": copy(s.title),
+    "description": copy(s.description),
     "provider": {
       "@type": "Organization",
       "name": "SevenDevX",
@@ -278,9 +278,9 @@ const buildJsonLd = () => {
     "@graph": [
       {
         "@type": "WebPage",
-        "name": "Loja - SevenDevX",
+        "name": copy("Loja - SevenDevX"),
         "url": "https://www.sevendevx.com/store",
-        "description": "Catálogo de soluções digitais SevenDevX — landing pages, sites institucionais e sistemas customizados."
+        "description": copy("Catálogo de soluções digitais SevenDevX — landing pages, sites institucionais e sistemas customizados.")
       },
       ...productEntries,
       ...servicesEntries
@@ -341,7 +341,7 @@ const ComparisonTable: React.FC = () => {
 
    ------------------------- */
 const Store: React.FC = () => {
-  const { copy } = usePublicCopy();
+  const { copy, message } = usePublicCopy();
   const { t } = useLanguage();
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
 
@@ -388,11 +388,11 @@ const Store: React.FC = () => {
     { id: "manutencao", title: t.store.services.maintenance.title, description: t.store.services.maintenance.description, price: "R$ 297/mês" },
   ], [t]);
 
-  const jsonLd = useMemo(() => JSON.stringify(buildJsonLd()), []);
+  const jsonLd = useMemo(() => JSON.stringify(buildJsonLd(copy)), [copy]);
 
   const handleContact = (planName: string) => {
     // Compose sanitized message
-    const sanitized = sanitize(`Olá! Gostaria de saber mais sobre: ${planName}`);
+    const sanitized = sanitize(message("Olá! Gostaria de saber mais sobre: {plan}", { plan: copy(planName) }));
     const encoded = encodeURIComponent(sanitized);
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encoded}`, "_blank", "noopener,noreferrer");
   };

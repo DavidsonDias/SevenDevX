@@ -185,13 +185,13 @@ const SEOHead: React.FC<SEOHeadProps> = ({
   const offerCatalogSchema = {
     "@context": "https://schema.org",
     "@type": "OfferCatalog",
-    name: "Serviços da SevenDevX",
+    name: copy("Serviços da SevenDevX"),
     itemListElement: services.map((service) => ({
       "@type": "Offer",
       itemOffered: {
         "@type": "Service",
-        name: service.name,
-        description: service.description,
+        name: copy(service.name),
+        description: copy(service.description),
       },
     })),
   };

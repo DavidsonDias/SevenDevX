@@ -93,16 +93,16 @@ export const CONTENT_CLUSTERS: ContentCluster[] = [
 // 🧠 BUSINESS LOGIC
 // ============================================================================
 
-export function buildClusterJsonLd() {
+export function buildClusterJsonLd(copy: (value: string) => string = value => value) {
   return CONTENT_CLUSTERS.map((c) => ({
     "@context": "https://schema.org",
     "@type": "DefinedTermSet",
     "@id": `https://www.sevendevx.com/clusters#${c.id}`,
-    name: c.hub.title,
-    description: c.description,
+    name: copy(c.hub.title),
+    description: copy(c.description),
     hasDefinedTerm: c.spokes.map((s) => ({
       "@type": "DefinedTerm",
-      name: s.title,
+      name: copy(s.title),
       url: `https://www.sevendevx.com${s.url}`,
     })),
   }));

@@ -1,3 +1,4 @@
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 /**
  * 🌌 AppLoaderOrbital.tsx — SevenDevX Orbital Loader v1.0 PRO++
  * -------------------------------------------------------------
@@ -14,6 +15,7 @@ import { motion } from "framer-motion";
 import logo from "@/assets/logo.svg";
 
 const AppLoaderOrbital = () => {
+  const { copy } = usePublicCopy();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -81,7 +83,7 @@ const AppLoaderOrbital = () => {
       {/* 🚀 Logo flutuante */}
       <motion.img
         src={logo}
-        alt="SevenDevX Logo"
+        alt={copy("SevenDevX Logo")}
         className="w-28 sm:w-36 md:w-44 drop-shadow-[0_0_20px_rgba(255,255,255,0.2)]"
         initial={{ opacity: 0, y: 30, scale: 0.9 }}
         animate={{
@@ -120,7 +122,7 @@ const AppLoaderOrbital = () => {
           repeat: Infinity,
         }}
       >
-        Preparando decolagem...
+        {copy("Preparando decolagem...")}
       </motion.p>
     </div>
   );

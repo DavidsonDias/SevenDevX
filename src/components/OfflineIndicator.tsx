@@ -1,3 +1,4 @@
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 /**
  * 🚀 OfflineIndicator.tsx — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -76,6 +77,7 @@ import { getQueueSize, flushQueue, subscribeQueue } from "@/utils/offlineQueue";
 // ============================================================================
 
 export default function OfflineIndicator() {
+  const { copy, message: formatMessage } = usePublicCopy();
   const [online, setOnline] = useState(navigator.onLine);
   const [justReconnected, setJustReconnected] = useState(false);
   const [queueSize, setQueueSize] = useState(0);
@@ -127,11 +129,11 @@ export default function OfflineIndicator() {
         >
           <div className="pointer-events-auto flex items-center gap-2 px-4 py-2 rounded-full bg-yellow-500/95 text-black text-xs font-bold uppercase tracking-wider shadow-2xl backdrop-blur-sm border border-yellow-300">
             <WifiOff size={14} />
-            <span>Modo Offline</span>
+            <span>{copy("Modo Offline")}</span>
             {queueSize > 0 && (
               <span className="ml-1 px-2 py-0.5 rounded-full bg-black/20 text-[10px]">
                 <CloudOff size={10} className="inline mr-1" />
-                {queueSize} pendente{queueSize > 1 ? "s" : ""}
+                {formatMessage(queueSize === 1 ? "{count} pendente" : "{count} pendentes", { count: queueSize })}
               </span>
             )}
           </div>
@@ -149,7 +151,7 @@ export default function OfflineIndicator() {
         >
           <div className="pointer-events-auto flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/95 text-black text-xs font-bold uppercase tracking-wider shadow-2xl backdrop-blur-sm border border-emerald-300">
             {flushing ? <RefreshCw size={14} className="animate-spin" /> : <Wifi size={14} />}
-            <span>{flushing ? "Sincronizando…" : "Online de novo"}</span>
+            <span>{copy(flushing ? "Sincronizando…" : "Online de novo")}</span>
           </div>
         </motion.div>
       )}

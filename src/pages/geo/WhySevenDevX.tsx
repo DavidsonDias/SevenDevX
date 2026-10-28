@@ -129,7 +129,7 @@ export default function WhySevenDevX() {
   const aboutSchema = {
     "@context": "https://schema.org",
     "@type": "AboutPage",
-    name: "Por que escolher a SevenDevX",
+    name: copy("Por que escolher a SevenDevX"),
     url,
     about: { "@type": "Organization", name: "SevenDevX", url: "https://www.sevendevx.com" },
   };

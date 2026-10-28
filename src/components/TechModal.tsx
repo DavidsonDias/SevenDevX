@@ -20,6 +20,7 @@ import { X, ExternalLink } from "lucide-react";
 import { Technology } from "@/utils/techData";
 import { useEffect } from "react";
 import TechIcon from "./TechIcon";
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useScrollLock } from "@/hooks/useScrollLock";
 
@@ -38,6 +39,7 @@ interface TechModalProps {
 
 const TechModal = ({ tech, onClose }: TechModalProps) => {
   const { t } = useLanguage();
+  const { copy } = usePublicCopy();
 
   useScrollLock(!!tech);
 
@@ -112,7 +114,7 @@ const TechModal = ({ tech, onClose }: TechModalProps) => {
                     borderColor: tech.color 
                   }}
                 >
-                  {tech.category}
+                  {copy(tech.category)}
                 </span>
               </motion.div>
 
@@ -122,7 +124,7 @@ const TechModal = ({ tech, onClose }: TechModalProps) => {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
               >
-                {tech.description}
+                {copy(tech.description)}
               </motion.p>
 
               <motion.a

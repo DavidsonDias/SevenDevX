@@ -91,13 +91,13 @@ import { GEO_PROGRAMMATIC } from "@/data/geoContent";
 // ============================================================================
 
 export default function LocalSeoPage() {
-  const { copy, language } = usePublicCopy();
+  const { copy, message, language } = usePublicCopy();
   const { city } = useParams<{ city: string }>();
   const cityData = GEO_PROGRAMMATIC.cities.find((c) => c.slug === city);
   if (!cityData) return <NotFound />;
 
   const url = `https://www.sevendevx.com/local/${cityData.slug}`;
-  const title = `${copy("Desenvolvimento Web em")} ${cityData.name} — SevenDevX`;
+  const title = `${message("Desenvolvimento Web em {city}", { city: cityData.name })} — SevenDevX`;
   const descriptions = {
     pt: `Criação de sites, landing pages e sistemas sob demanda em ${cityData.name}/${cityData.state}. Software house full stack com performance Lighthouse 95+ e design enterprise.`,
     en: `Websites, landing pages and custom systems in ${cityData.name}/${cityData.state}, Brazil. Full-stack software development with Lighthouse 95+ performance and enterprise design.`,
@@ -108,7 +108,7 @@ export default function LocalSeoPage() {
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
-    name: `SevenDevX — Desenvolvimento Web em ${cityData.name}`,
+    name: title,
     image: "https://www.sevendevx.com/logo-512.png",
     url,
     telephone: "+55-31-98474-0625",
@@ -150,7 +150,7 @@ export default function LocalSeoPage() {
                 {copy("Desenvolvimento Web em")} {copy(cityData.name)}
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
-                {copy("A SevenDevX atende empresas em")} {copy(cityData.name)}/{cityData.state} {copy("com criação de sites, landing pages, sistemas sob demanda, automações e integração de IA. Stack moderna, performance Lighthouse 95+ e design enterprise.")}
+                {message("A SevenDevX atende empresas em {city}/{state} com criação de sites, landing pages, sistemas sob demanda, automações e integração de IA. Stack moderna, performance Lighthouse 95+ e design enterprise.", { city: cityData.name, state: cityData.state })}
               </p>
             </motion.div>
           </Container>
@@ -169,8 +169,8 @@ export default function LocalSeoPage() {
                   className="p-6 rounded-2xl border border-border bg-card"
                 >
                   <CheckCircle2 className="w-5 h-5 text-emerald-500 mb-3" />
-                  <h2 className="font-bold text-lg mb-1">{copy(s.name)} em {copy(cityData.name)}</h2>
-                  <p className="text-sm text-muted-foreground">{s.desc}</p>
+                  <h2 className="font-bold text-lg mb-1">{message("{service} em {city}", { service: copy(s.name), city: cityData.name })}</h2>
+                  <p className="text-sm text-muted-foreground">{copy(s.desc)}</p>
                 </motion.div>
               ))}
             </div>

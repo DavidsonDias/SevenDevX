@@ -68,6 +68,7 @@
  * 🧩 SolutionPage — programmatic SEO por serviço.
  * Rota /solucoes/:slug — gera página otimizada para AI Search por vertical de serviço.
  */
+import { resolveGeoArticle } from "@/i18n/editorial/resolve";
 import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { useParams, Link, Navigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
@@ -81,14 +82,14 @@ import { GEO_PROGRAMMATIC, GEO_ARTICLES } from "@/data/geoContent";
 // ⚙️ CONSTANTS & CONFIGURATION
 // ============================================================================
 
-const BASE = "https://sevendevx.com";
+const BASE = "https://www.sevendevx.com";
 
 // ============================================================================
 // 🎨 INTERNAL COMPONENTS
 // ============================================================================
 
 export default function SolutionPage() {
-  const { copy } = usePublicCopy();
+  const { copy, message, language } = usePublicCopy();
   const { slug } = useParams<{ slug: string }>();
   const service = GEO_PROGRAMMATIC.services.find((s) => s.slug === slug);
 
@@ -97,16 +98,16 @@ export default function SolutionPage() {
   const url = `${BASE}/solucoes/${service.slug}`;
   const related = GEO_ARTICLES.filter((a) => a.keywords.some((k) =>
     k.toLowerCase().includes(service.name.toLowerCase().split(" ")[0])
-  )).slice(0, 3);
+  )).slice(0, 3).map(a => resolveGeoArticle(a, language).article);
 
   const schema = {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: service.name,
-    description: service.desc,
+    name: copy(service.name),
+    description: copy(service.desc),
     provider: { "@type": "Organization", name: "SevenDevX", url: BASE },
     areaServed: { "@type": "Country", name: "Brasil" },
-    serviceType: service.name,
+    serviceType: copy(service.name),
     url,
   };
 
@@ -114,9 +115,9 @@ export default function SolutionPage() {
     <div className="min-h-screen bg-black text-white">
       <Helmet>
         <title>{copy(service.name)} — SevenDevX | {copy("Software House Enterprise")}</title>
-        <meta name="description" content={`${service.desc} Entregue pela SevenDevX com performance, SEO e GEO enterprise.`} />
+        <meta name="description" content={message("{description} Entregue pela SevenDevX com performance, SEO e GEO enterprise.", { description: copy(service.desc) })} />
         <link rel="canonical" href={url} />
-        <meta property="og:title" content={`${service.name} | SevenDevX`} />
+        <meta property="og:title" content={`${copy(service.name)} | SevenDevX`} />
         <meta property="og:description" content={copy(service.desc)} />
         <meta property="og:url" content={url} />
         <script type="application/ld+json">{JSON.stringify(schema)}</script>
@@ -128,14 +129,14 @@ export default function SolutionPage() {
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
           <p className="text-[10px] uppercase tracking-[0.3em] text-emerald-400 mb-3">{copy("Solução SevenDevX")}</p>
           <h1 className="text-3xl sm:text-5xl font-bold font-orbitron mb-4">{copy(service.name)}</h1>
-          <p className="text-lg text-white/70 max-w-2xl">{service.desc}</p>
+          <p className="text-lg text-white/70 max-w-2xl">{copy(service.desc)}</p>
         </motion.div>
 
         <section className="grid md:grid-cols-3 gap-3 mt-12">
           {GEO_PROGRAMMATIC.technologies.slice(0, 6).map((t) => (
             <div key={t.slug} className="p-4 border border-white/10 rounded-xl hover:border-white/30 transition">
               <p className="text-xs font-bold uppercase tracking-wider text-white/90">{t.name}</p>
-              <p className="text-xs text-white/50 mt-1">{t.desc}</p>
+              <p className="text-xs text-white/50 mt-1">{copy(t.desc)}</p>
             </div>
           ))}
         </section>
@@ -162,7 +163,7 @@ export default function SolutionPage() {
               "Garantia de 90 dias e treinamento de handoff",
             ].map((f) => (
               <li key={f} className="flex items-start gap-2">
-                <Check className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" /> {f}
+                <Check className="w-4 h-4 text-emerald-400 mt-0.5 shrink-0" /> {copy(f)}
               </li>
             ))}
           </ul>
@@ -177,7 +178,7 @@ export default function SolutionPage() {
               {related.map((a) => (
                 <Link key={a.slug} to={`/${a.category === "answer" ? "answers" : "knowledge-base"}/${a.slug}`}
                   className="p-4 border border-white/10 rounded-xl hover:border-white/30 transition group">
-                  <p className="text-sm font-bold group-hover:text-emerald-400">{copy(a.title)}</p>
+                  <p className="text-sm font-bold group-hover:text-emerald-400">{a.title}</p>
                   <p className="text-xs text-white/50 mt-1 line-clamp-2">{a.shortAnswer}</p>
                 </Link>
               ))}
@@ -188,7 +189,7 @@ export default function SolutionPage() {
         <div className="mt-16 p-6 border border-white/10 rounded-2xl bg-gradient-to-br from-emerald-500/5 to-cyan-500/5 text-center">
           <h3 className="text-lg font-bold mb-2">{copy("Pronto para começar?")}</h3>
           <p className="text-sm text-white/60 mb-4">{copy("Solicite um orçamento gratuito em 24h.")}</p>
-          <Link to="/#contato" className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-black rounded-full text-xs uppercase tracking-wider font-bold hover:bg-emerald-400 transition">
+          <Link to="/#contact" className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-black rounded-full text-xs uppercase tracking-wider font-bold hover:bg-emerald-400 transition">
             {copy("Solicitar orçamento")} <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -221,7 +222,7 @@ export function SolutionsIndex() {
             <Link key={s.slug} to={`/solucoes/${s.slug}`}
               className="p-5 border border-white/10 rounded-xl hover:border-emerald-400/50 hover:bg-white/5 transition group">
               <p className="text-sm font-bold uppercase tracking-wider group-hover:text-emerald-400">{copy(s.name)}</p>
-              <p className="text-xs text-white/50 mt-2">{s.desc}</p>
+              <p className="text-xs text-white/50 mt-2">{copy(s.desc)}</p>
             </Link>
           ))}
         </div>

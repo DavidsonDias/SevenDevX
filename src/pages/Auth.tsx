@@ -189,7 +189,7 @@ const Auth = () => {
 
   return (
     <>
-      <SEOHead title={copy(`${mode === "login" ? "Login" : "Cadastro"} - SevenDevX`)} description={copy("Acesse sua conta SevenDevX")} url="https://www.sevendevx.com/auth" />
+      <SEOHead title={copy(mode === "login" ? "Login - SevenDevX" : "Cadastro - SevenDevX")} description={copy("Acesse sua conta SevenDevX")} url="https://www.sevendevx.com/auth" />
       <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-6">
         <div className="fixed inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-1/4 -left-1/4 w-1/2 h-1/2 bg-white/5 rounded-full blur-[120px]" />
