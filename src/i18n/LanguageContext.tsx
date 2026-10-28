@@ -40,6 +40,9 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
+/** Carries the existing language into a separately hydrated public island. */
+export const LanguageSnapshotProvider = LanguageContext.Provider;
+
 // Detectar idioma do navegador
 const detectBrowserLanguage = (): Language => {
   if (typeof navigator === "undefined") return "pt";
