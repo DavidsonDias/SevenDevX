@@ -35,7 +35,11 @@ test('home hydration preserves its first H1, survives StrictMode, changes langua
  const h1=window.document.querySelector('h1');
  const video=window.document.querySelector('video');
  assert.ok(video,'Mobile poster exists before hydration');
- assert.equal(video.querySelector('source'),null,'Video bytes remain deferred');
+ assert.equal(video.querySelector('source').getAttribute('src'),'/videos/hero-bg-mobile.mp4');
+ let reloads=0;
+ video.load=()=>{reloads++;};
+ video.play=()=>Promise.resolve();
+ Object.defineProperty(video,'currentSrc',{value:'https://www.sevendevx.com/videos/hero-bg-mobile.mp4'});
  const shellParent=window.document.getElementById('public-first-paint-shell').parentNode;
  const errors=[];
  const originalError=console.error;
@@ -46,6 +50,7 @@ test('home hydration preserves its first H1, survives StrictMode, changes langua
   await act(async()=>{root.render(view('en'));});
   assert.equal(window.document.querySelector('h1'),h1,'Hydration must keep the original DOM node');
   assert.equal(window.document.querySelector('video'),video,'Mobile video poster must not be recreated');
+  assert.equal(reloads,0,'Hydration must not restart an already selected mobile video');
   assert.equal(window.document.getElementById('public-first-paint-shell').parentNode,shellParent,'Hydration must not reparent the hero');
   assert.equal(window.document.querySelectorAll('h1').length,1);
   await act(async()=>{root.render(view('es'));});
