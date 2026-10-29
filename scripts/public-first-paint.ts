@@ -15,6 +15,9 @@ export function publicFirstPaint(): Plugin {
     transformIndexHtml: {
       order: "post",
       async handler(html, ctx) {
+        // Build-only registration: development keeps its existing SW-disabled
+        // behavior, and the same helper URL remains backward compatible.
+        html = html.replace("</head>", '<script id="vite-plugin-pwa:register-sw" src="/registerSW.js" defer></script></head>');
         // The one global stylesheet is needed on every route. Inline its exact
         // emitted contents so first paint does not wait for another request.
         // Keep the emitted asset for service-worker caches and dynamic imports.
