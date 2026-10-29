@@ -27,7 +27,7 @@ test('built first paint preserves exact locale markup only on the public home',(
   const {window}=dom;
   Object.defineProperty(window.navigator,'language',{value:browser});
   if(saved)window.localStorage.setItem('sevendevx-language',saved);
-  const expectedMarkup=expected?window.document.querySelector(`template[data-public-first-paint="${expected}"]`).innerHTML:null;
+  const expectedMarkup=expected?window.document.querySelector(`template[data-public-first-paint="${expected}"][data-first-paint-viewport="desktop"]`).innerHTML:null;
   window.eval(bootstrap);
   const shell=window.document.getElementById('public-first-paint-shell');
   assert.equal(!!shell,!!expected,pathname);
@@ -52,6 +52,24 @@ test('initial entry stays below its transfer-source budget and robots uses crawl
   assert.match(line,/^(User-agent|Allow|Disallow|Sitemap):/i,line);
  }
  assert.ok(read('index.html').includes('rel="ard"'), 'Discover resources through HTML without unsupported robots directives');
+});
+
+test('only mobile gets an initial video poster, with no early video download',()=>{
+ const html=read('dist/index.html');
+ const bootstrap=html.match(/<script data-public-first-paint-bootstrap>([\s\S]*?)<\/script>/)[1];
+ for(const width of [390,767,768,1280])for(const locale of ['pt','en','es']){
+  const dom=new JSDOM(html,{url:'https://www.sevendevx.com/',runScripts:'outside-only'});
+  Object.defineProperty(dom.window,'innerWidth',{value:width});
+  dom.window.localStorage.setItem('sevendevx-language',locale);
+  dom.window.eval(bootstrap);
+  const shell=dom.window.document.getElementById('public-first-paint-shell');
+  assert.equal(shell.querySelectorAll('video').length,width<768?1:0);
+  assert.equal(shell.querySelectorAll('source').length,0);
+  assert.equal(shell.querySelectorAll('h1').length,1);
+  const video=shell.querySelector('video');
+  if(video){assert.equal(video.muted,true);assert.equal(video.preload,'none');assert.equal(video.poster,shell.querySelector('img').src);}
+  dom.window.close();
+ }
 });
 
 test('individual icon assets preserve the complete installed library without a client namespace import',()=>{
