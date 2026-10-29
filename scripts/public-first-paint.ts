@@ -2,6 +2,7 @@ import type { Plugin } from "vite";
 import { build } from "esbuild";
 import { createRequire } from "node:module";
 import path from "node:path";
+import { readFileSync } from "node:fs";
 
 /** Hydratable first-paint content, generated from the real public Hero.
  * No Auth provider, API call, customer record or administrator screen is rendered.
@@ -30,6 +31,11 @@ export function publicFirstPaint(): Plugin {
         // The media condition leaves desktop loading behavior unchanged.
         html = html.replace(/(<meta\s+name="viewport"[^>]*>)/,
           `$1\n<link rel="preload" as="image" href="/${poster}" fetchpriority="high" media="(max-width: 767px)">`);
+        // The mobile LCP is the title. Embed its exact existing 16 KB font so
+        // rendering does not wait for a competing font request or repaint when
+        // that request finishes. Desktop keeps its original font selection.
+        const mobileTitleFont = readFileSync("public/fonts/Orbitron-VariableFont_wght.woff2").toString("base64");
+        html = html.replace("</head>", `<style data-mobile-hero-font>@font-face{font-family:SevenDevXMobileHero;font-style:normal;font-weight:400 900;font-display:swap;src:url(data:font/woff2;base64,${mobileTitleFont}) format('woff2-variations')}@media(max-width:767px){.viewport-hero h1{font-family:SevenDevXMobileHero,Orbitron,sans-serif}}</style></head>`);
         const root = process.cwd();
         const result = await build({
           absWorkingDir: root,

@@ -25,6 +25,14 @@ test('PWA registration preserves the single worker without blocking HTML parsing
  assert.match(read('dist/registerSW.js'),/register\('\/sw\.js', \{ scope: '\/' \}\)/);
 });
 
+test('mobile title embeds the identical brand font without overriding desktop typography',()=>{
+ const css=read('dist/index.html').match(/<style data-mobile-hero-font>([^<]+)<\/style>/)[1];
+ const encoded=css.match(/base64,([A-Za-z0-9+/=]+)/)[1];
+ assert.deepEqual(Buffer.from(encoded,'base64'),fs.readFileSync('public/fonts/Orbitron-VariableFont_wght.woff2'));
+ assert.match(css,/@media\(max-width:767px\)\{\.viewport-hero h1\{font-family:SevenDevXMobileHero,Orbitron,sans-serif\}\}/);
+ assert.match(css,/font-display:swap/);
+});
+
 test('built first paint preserves exact locale markup only on the public home',()=>{
  const html=read('dist/index.html');
  const bootstrap=html.match(/<script data-public-first-paint-bootstrap>([\s\S]*?)<\/script>/)[1];
