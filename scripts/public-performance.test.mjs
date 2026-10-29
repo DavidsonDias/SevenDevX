@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import path from 'node:path';
 import * as icons from 'react-icons/si';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -72,6 +73,27 @@ test('only mobile gets an initial video poster, with no early video download',()
  }
 });
 
+test('mobile service preview avoids downloading the complete desktop icon namespace',()=>{
+ const files=fs.readdirSync('dist/assets');
+ const closureBytes=prefix=>{
+  const entry=files.find(file=>file.startsWith(prefix+'-')&&file.endsWith('.js'));
+  assert.ok(entry,prefix);
+  const seen=new Set();
+  function visit(file){
+   if(seen.has(file))return;seen.add(file);
+   const source=read('dist/assets/'+file);
+   for(const match of source.matchAll(/(?:from|import)\s*["'](\.\/[^"']+\.js)["']/g)){
+    const dependency=path.basename(match[1]);if(files.includes(dependency))visit(dependency);
+   }
+  }
+  visit(entry);
+  return [...seen].reduce((sum,file)=>sum+fs.statSync('dist/assets/'+file).size,0);
+ };
+ assert.ok(closureBytes('ServicesPreview')-closureBytes('ServicesPreviewMobile')>300_000,'Mobile must avoid the full icon-library parse cost');
+ const html=read('dist/index.html');
+ assert.match(html,/<link rel="preload" as="image"[^>]+media="\(max-width: 767px\)"/);
+});
+
 test('individual icon assets preserve the complete installed library without a client namespace import',()=>{
  const manifest=JSON.parse(read('src/data/techIconAssets.json'));
  assert.equal(manifest.version,JSON.parse(read('node_modules/react-icons/package.json')).version);
@@ -99,7 +121,7 @@ test('hero content is visible immediately and optimized CMS covers preserve unkn
  const images=read('src/lib/optimizedServiceImages.ts');
  assert.ok(images.includes('images[source] || {src: source, srcSet: undefined}'));
  for(const width of [640,1024,1600])assert.ok(images.includes(`-${width}.webp`));
- assert.ok(read('src/components/ServicesPreview.tsx').includes('optimizedServiceImage(service.image)'));
+ assert.ok(read('src/components/ServicesPreviewContent.tsx').includes('optimizedServiceImage(service.image)'));
 });
 
 test('admin realtime remains active while public project refresh avoids an unnecessary websocket',()=>{
