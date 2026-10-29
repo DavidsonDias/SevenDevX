@@ -240,21 +240,21 @@ export function CaseStudyPage() {
               <GlassCard className="p-6">
                 <div className="flex items-center gap-2 mb-3">
                   <Zap className="w-4 h-4 text-amber-400" />
-                  <h3 className="font-semibold">{copy("Problema")}</h3>
+                  <h2 className="font-semibold !text-base">{copy("Problema")}</h2>
                 </div>
                 <p className="text-sm text-muted-foreground leading-relaxed">{c.problem}</p>
               </GlassCard>
               <GlassCard className="p-6">
                 <div className="flex items-center gap-2 mb-3">
                   <Clock className="w-4 h-4 text-blue-400" />
-                  <h3 className="font-semibold">{copy("Solução")}</h3>
+                  <h2 className="font-semibold !text-base">{copy("Solução")}</h2>
                 </div>
                 <p className="text-sm text-muted-foreground leading-relaxed">{c.solution}</p>
               </GlassCard>
               <GlassCard className="p-6">
                 <div className="flex items-center gap-2 mb-3">
                   <TrendingUp className="w-4 h-4 text-emerald-400" />
-                  <h3 className="font-semibold">{copy("Resultado")}</h3>
+                  <h2 className="font-semibold !text-base">{copy("Resultado")}</h2>
                 </div>
                 <p className="text-sm text-muted-foreground leading-relaxed">{c.outcome}</p>
               </GlassCard>
@@ -262,7 +262,7 @@ export function CaseStudyPage() {
 
             <div className="mt-12 grid md:grid-cols-2 gap-6">
               <GlassCard className="p-6">
-                <h3 className="font-semibold mb-3">{copy("Stack utilizada")}</h3>
+                <h2 className="font-semibold !text-base mb-3">{copy("Stack utilizada")}</h2>
                 <div className="flex flex-wrap gap-2">
                   {c.technologies.map((t) => (
                     <span key={t} className="text-xs px-2.5 py-1 rounded-md border border-white/10 bg-white/5">{t}</span>
@@ -270,7 +270,7 @@ export function CaseStudyPage() {
                 </div>
               </GlassCard>
               <GlassCard className="p-6">
-                <h3 className="font-semibold mb-3">{copy("Serviços envolvidos")}</h3>
+                <h2 className="font-semibold !text-base mb-3">{copy("Serviços envolvidos")}</h2>
                 <ul className="space-y-1 text-sm text-muted-foreground">
                   {c.services.map((s) => <li key={s}>· {s}</li>)}
                 </ul>

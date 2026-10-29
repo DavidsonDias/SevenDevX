@@ -196,6 +196,7 @@ const About = () => {
       />
       <div className="min-h-screen bg-background text-foreground">
         <Header />
+        <main id="main-content" tabIndex={-1} className="focus:outline-none">
 
         {/* Hero */}
         <section className="relative pt-32 pb-20 px-4 overflow-hidden">
@@ -332,6 +333,7 @@ const About = () => {
           </motion.div>
         </section>
 
+        </main>
         <Footer />
       </div>
     </>
