@@ -36,7 +36,8 @@ export function publicFirstPaint(): Plugin {
               import {LanguageSnapshotProvider} from './src/i18n/LanguageContext';
               import {translations} from './src/i18n/translations';
               export const markups = Object.fromEntries(Object.entries(translations).map(([language,t])=>
-                [language,renderToString(React.createElement(LanguageSnapshotProvider,{value:{language,t,setLanguage:()=>{}}},React.createElement(Hero)),{identifierPrefix:'public-hero-'})]));`,
+                [language,Object.fromEntries([false,true].map(initialMobile=>
+                  [initialMobile?'mobile':'desktop',renderToString(React.createElement(LanguageSnapshotProvider,{value:{language,t,setLanguage:()=>{}}},React.createElement(Hero,{initialMobile})),{identifierPrefix:'public-hero-'})]))]));`,
             resolveDir: root,
             loader: "tsx",
           },
@@ -57,13 +58,13 @@ export function publicFirstPaint(): Plugin {
             },
           }],
         });
-        const exports: { markups?: Record<string, string> } = {};
+        const exports: { markups?: Record<string, { desktop: string; mobile: string }> } = {};
         const compiled = { exports };
         new Function("module", "exports", "require", result.outputFiles[0].text)(compiled, exports, createRequire(path.join(root, "package.json")));
         const rendered = compiled.exports;
-        if (!rendered.markups?.pt?.includes("<h1")) throw new Error("Public first paint did not render the hero");
-        const templates = Object.entries(rendered.markups).map(([locale,markup])=>
-          `<template data-public-first-paint="${locale}">${markup}</template>`).join("");
+        if (!rendered.markups?.pt?.desktop?.includes("<h1")) throw new Error("Public first paint did not render the hero");
+        const templates = Object.entries(rendered.markups).flatMap(([locale,views])=>Object.entries(views).map(([viewport,markup])=>
+          `<template data-public-first-paint="${locale}" data-first-paint-viewport="${viewport}">${markup}</template>`)).join("");
         const bootstrap = `${templates}<script data-public-first-paint-bootstrap>
           (function(){
             var templates=Array.from(document.querySelectorAll('template[data-public-first-paint]')),root=document.getElementById('root');
@@ -72,9 +73,11 @@ export function publicFirstPaint(): Plugin {
             try{saved=localStorage.getItem('sevendevx-language');}catch(e){}
             var language=languages.includes(saved)?saved:(navigator.language||'pt').toLowerCase().slice(0,2);
             if(!languages.includes(language))language='pt';
-            var template=templates.find(function(t){return t.getAttribute('data-public-first-paint')===language;});
+            var viewport=window.innerWidth<768?'mobile':'desktop';
+            var template=templates.find(function(t){return t.getAttribute('data-public-first-paint')===language&&t.getAttribute('data-first-paint-viewport')===viewport;});
             var shell=document.createElement('div');shell.id='public-first-paint-shell';shell.style.display='contents';
             shell.appendChild(template.content);
+            var video=shell.querySelector('video');if(video)video.muted=true;
             var contact=shell.querySelector('button');
             function initialContact(event){
               event.preventDefault();

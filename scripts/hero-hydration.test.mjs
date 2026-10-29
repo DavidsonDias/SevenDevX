@@ -11,6 +11,7 @@ test('home hydration preserves its first H1, survives StrictMode, changes langua
  const html=fs.readFileSync('dist/index.html','utf8');
  const dom=new JSDOM(html,{url:'https://www.sevendevx.com/',runScripts:'outside-only',pretendToBeVisual:true});
  const {window}=dom;
+ Object.defineProperty(window,'innerWidth',{value:390});
  window.localStorage.setItem('sevendevx-language','en');
  window.eval(html.match(/<script data-public-first-paint-bootstrap>([\s\S]*?)<\/script>/)[1]);
  for(const key of ['window','document','navigator','HTMLElement','SVGElement','Element','Event','MutationObserver'])
@@ -32,6 +33,9 @@ test('home hydration preserves its first H1, survives StrictMode, changes langua
  const {createRoot}=await import('react-dom/client');
  const root=createRoot(window.document.getElementById('public-app-root'));
  const h1=window.document.querySelector('h1');
+ const video=window.document.querySelector('video');
+ assert.ok(video,'Mobile poster exists before hydration');
+ assert.equal(video.querySelector('source'),null,'Video bytes remain deferred');
  const shellParent=window.document.getElementById('public-first-paint-shell').parentNode;
  const errors=[];
  const originalError=console.error;
@@ -41,6 +45,7 @@ test('home hydration preserves its first H1, survives StrictMode, changes langua
  try{
   await act(async()=>{root.render(view('en'));});
   assert.equal(window.document.querySelector('h1'),h1,'Hydration must keep the original DOM node');
+  assert.equal(window.document.querySelector('video'),video,'Mobile video poster must not be recreated');
   assert.equal(window.document.getElementById('public-first-paint-shell').parentNode,shellParent,'Hydration must not reparent the hero');
   assert.equal(window.document.querySelectorAll('h1').length,1);
   await act(async()=>{root.render(view('es'));});

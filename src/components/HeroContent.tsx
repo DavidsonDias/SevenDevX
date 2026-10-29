@@ -34,7 +34,7 @@ const HERO_VIDEO_MOBILE = "/videos/hero-bg-mobile.mp4";
 // 🏗️ MAIN COMPONENT
 // ============================================================================
 
-const Hero = () => {
+const Hero = ({ initialMobile = false }: { initialMobile?: boolean }) => {
   const { t } = useLanguage();
   const { copy } = usePublicCopy();
 
@@ -42,8 +42,7 @@ const Hero = () => {
   const [videoFailed, setVideoFailed] = useState(false);
   const [ctaActive, setCtaActive] = useState(false);
 
-  const isMobile =
-    typeof window !== "undefined" && window.innerWidth < 768;
+  const isMobile = typeof window !== "undefined" ? window.innerWidth < 768 : initialMobile;
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
@@ -125,6 +124,9 @@ const Hero = () => {
 
   useEffect(() => {
     if (shouldLoadVideo && videoRef.current && !videoFailed) {
+      // Mobile keeps the poster element from first paint; select its deferred
+      // source explicitly. Desktop retains its existing mount/play behavior.
+      if (isMobile) videoRef.current.load();
       videoRef.current.play().catch(() => {
         setVideoFailed(true);
       });
@@ -170,7 +172,7 @@ const Hero = () => {
           decoding="async"
         />
 
-        {shouldLoadVideo && !videoFailed && (
+        {(isMobile || shouldLoadVideo) && !videoFailed && (
           <video
             ref={videoRef}
             muted
@@ -182,14 +184,14 @@ const Hero = () => {
             className="absolute inset-0 w-full h-full object-cover"
             onError={() => setVideoFailed(true)}
           >
-            <source
+            {shouldLoadVideo && <source
               src={
                 isMobile
                   ? HERO_VIDEO_MOBILE
                   : HERO_VIDEO_DESKTOP
               }
               type="video/mp4"
-            />
+            />}
           </video>
         )}
 
