@@ -87,13 +87,7 @@ export function publicFirstPaint(): Plugin {
             var template=templates.find(function(t){return t.getAttribute('data-public-first-paint')===language&&t.getAttribute('data-first-paint-viewport')===viewport;});
             var shell=document.createElement('div');shell.id='public-first-paint-shell';shell.style.display='contents';
             shell.appendChild(template.content);
-            var video=shell.querySelector('video');if(video){
-              video.muted=true;
-              var connection=navigator.connection;
-              var slow=connection&&(connection.saveData||/2g|slow-2g|3g/.test(connection.effectiveType||''));
-              var reduced=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-              if(slow||reduced)video.querySelectorAll('source').forEach(function(source){source.remove();});
-            }
+            var video=shell.querySelector('video');if(video)video.muted=true;
             var contact=shell.querySelector('button');
             function initialContact(event){
               event.preventDefault();

@@ -72,7 +72,7 @@ test('initial entry stays below its transfer-source budget and robots uses crawl
  assert.ok(read('index.html').includes('rel="ard"'), 'Discover resources through HTML without unsupported robots directives');
 });
 
-test('mobile video starts before app hydration and respects data-saving preferences',()=>{
+test('only mobile gets an initial video poster, with no early video download',()=>{
  const html=read('dist/index.html');
  const bootstrap=html.match(/<script data-public-first-paint-bootstrap>([\s\S]*?)<\/script>/)[1];
  for(const width of [390,767,768,1280])for(const locale of ['pt','en','es']){
@@ -82,19 +82,10 @@ test('mobile video starts before app hydration and respects data-saving preferen
   dom.window.eval(bootstrap);
   const shell=dom.window.document.getElementById('public-first-paint-shell');
   assert.equal(shell.querySelectorAll('video').length,width<768?1:0);
-  assert.equal(shell.querySelectorAll('source').length,width<768?1:0);
+  assert.equal(shell.querySelectorAll('source').length,0);
   assert.equal(shell.querySelectorAll('h1').length,1);
   const video=shell.querySelector('video');
   if(video){assert.equal(video.muted,true);assert.equal(video.preload,'none');assert.equal(video.poster,shell.querySelector('img').src);}
-  dom.window.close();
- }
- for(const reduced of [false,true]){
-  const dom=new JSDOM(html,{url:'https://www.sevendevx.com/',runScripts:'outside-only'});
-  Object.defineProperty(dom.window,'innerWidth',{value:390});
-  Object.defineProperty(dom.window.navigator,'connection',{value:{saveData:!reduced,effectiveType:'4g'}});
-  dom.window.matchMedia=()=>({matches:reduced});
-  dom.window.eval(bootstrap);
-  assert.equal(dom.window.document.querySelectorAll('#public-first-paint-shell source').length,0,'No autoplay download with Save-Data or reduced motion');
   dom.window.close();
  }
 });
