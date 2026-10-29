@@ -30,7 +30,7 @@ export function publicFirstPaint(): Plugin {
         // Discover the existing mobile poster before the application modules.
         // The media condition leaves desktop loading behavior unchanged.
         html = html.replace(/(<meta\s+name="viewport"[^>]*>)/,
-          `$1\n<link rel="preload" as="image" href="/${poster}" fetchpriority="high" media="(max-width: 767px)">`);
+          `$1\n<link rel="preload" as="image" href="/${poster}" fetchpriority="high" media="(max-width: 767px) and (min-aspect-ratio: 9/16)">`);
         // The mobile LCP is the title. Embed its exact existing 16 KB font so
         // rendering does not wait for a competing font request or repaint when
         // that request finishes. Desktop keeps its original font selection.
@@ -65,6 +65,10 @@ export function publicFirstPaint(): Plugin {
                 contents: `export default ${JSON.stringify("/" + poster)}`,
                 loader: "js",
               }));
+              builder.onLoad({ filter: /hero-tech-workspace-mobile\.webp$/ }, () => ({
+                contents: `export default ${JSON.stringify("data:image/webp;base64," + readFileSync("src/assets/images/hero-tech-workspace-mobile.webp").toString("base64"))}`,
+                loader: "js",
+              }));
             },
           }],
         });
@@ -73,8 +77,9 @@ export function publicFirstPaint(): Plugin {
         new Function("module", "exports", "require", result.outputFiles[0].text)(compiled, exports, createRequire(path.join(root, "package.json")));
         const rendered = compiled.exports;
         if (!rendered.markups?.pt?.desktop?.includes("<h1")) throw new Error("Public first paint did not render the hero");
+        const mobilePoster = "data:image/webp;base64," + readFileSync("src/assets/images/hero-tech-workspace-mobile.webp").toString("base64");
         const templates = Object.entries(rendered.markups).flatMap(([locale,views])=>Object.entries(views).map(([viewport,markup])=>
-          `<template data-public-first-paint="${locale}" data-first-paint-viewport="${viewport}">${markup}</template>`)).join("");
+          `<template data-public-first-paint="${locale}" data-first-paint-viewport="${viewport}">${markup.replaceAll(mobilePoster, "__MOBILE_POSTER__")}</template>`)).join("");
         const bootstrap = `${templates}<script data-public-first-paint-bootstrap>
           (function(){
             var templates=Array.from(document.querySelectorAll('template[data-public-first-paint]')),root=document.getElementById('root');
@@ -87,6 +92,8 @@ export function publicFirstPaint(): Plugin {
             var template=templates.find(function(t){return t.getAttribute('data-public-first-paint')===language&&t.getAttribute('data-first-paint-viewport')===viewport;});
             var shell=document.createElement('div');shell.id='public-first-paint-shell';shell.style.display='contents';
             shell.appendChild(template.content);
+            var mobilePosterSource=shell.querySelector('source[data-mobile-poster]');
+            if(mobilePosterSource)mobilePosterSource.setAttribute('srcset',${JSON.stringify(mobilePoster)});
             var video=shell.querySelector('video');if(video)video.muted=true;
             var contact=shell.querySelector('button');
             function initialContact(event){

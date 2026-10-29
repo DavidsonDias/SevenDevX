@@ -82,7 +82,14 @@ test('first paint uses the existing image before deferred video mounts at every 
   dom.window.eval(bootstrap);
   const shell=dom.window.document.getElementById('public-first-paint-shell');
   assert.equal(shell.querySelectorAll('video').length,0);
-  assert.equal(shell.querySelectorAll('source').length,0);
+  assert.equal(shell.querySelectorAll('video source').length,0);
+  const mobilePoster=shell.querySelector('source[data-mobile-poster]');
+  assert.equal(!!mobilePoster,width<768);
+  if(mobilePoster){
+   const data=mobilePoster.getAttribute('srcset').split(',')[1];
+   assert.deepEqual(Buffer.from(data,'base64'),fs.readFileSync('src/assets/images/hero-tech-workspace-mobile.webp'));
+   assert.equal(html.split(data).length-1,1,'Store inline mobile bytes once rather than once per locale');
+  }
   assert.equal(shell.querySelectorAll('h1').length,1);
   const video=shell.querySelector('video');
   if(video){assert.equal(video.muted,true);assert.equal(video.preload,'none');assert.equal(video.poster,shell.querySelector('img').src);}
@@ -108,7 +115,7 @@ test('mobile service preview avoids downloading the complete desktop icon namesp
  };
  assert.ok(closureBytes('ServicesPreview')-closureBytes('ServicesPreviewMobile')>300_000,'Mobile must avoid the full icon-library parse cost');
  const html=read('dist/index.html');
- assert.match(html,/<link rel="preload" as="image"[^>]+media="\(max-width: 767px\)"/);
+ assert.match(html,/<link rel="preload" as="image"[^>]+media="\(max-width: 767px\) and \(min-aspect-ratio: 9\/16\)"/);
 });
 
 test('individual icon assets preserve the complete installed library without a client namespace import',()=>{

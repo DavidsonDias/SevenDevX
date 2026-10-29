@@ -11,6 +11,7 @@ export default function Hero() {
   const language = useLanguage();
   const shell = useRef(typeof document === "undefined" ? null : document.getElementById("public-first-paint-shell"));
   const island = useRef<Root | null>(null);
+  const mobilePoster = useRef(shell.current?.querySelector('source[data-mobile-poster]')?.getAttribute('srcset') || undefined);
   const currentLanguage = useRef(language.language);
   const mounted = useRef(false);
 
@@ -20,11 +21,11 @@ export default function Hero() {
     mounted.current = true;
     if (!island.current) {
       island.current = hydrateRoot(element,
-        <LanguageSnapshotProvider value={language}><HeroContent /></LanguageSnapshotProvider>,
+        <LanguageSnapshotProvider value={language}><HeroContent initialMobilePoster={mobilePoster.current} /></LanguageSnapshotProvider>,
         { identifierPrefix: "public-hero-" });
       element.dispatchEvent(new Event("public-hero:attached"));
     } else if (currentLanguage.current !== language.language) {
-      island.current.render(<LanguageSnapshotProvider value={language}><HeroContent /></LanguageSnapshotProvider>);
+      island.current.render(<LanguageSnapshotProvider value={language}><HeroContent initialMobilePoster={mobilePoster.current} /></LanguageSnapshotProvider>);
     }
     currentLanguage.current = language.language;
     return () => {

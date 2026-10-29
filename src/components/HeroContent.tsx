@@ -20,6 +20,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import heroBackground from "@/assets/images/hero-tech-workspace.webp";
+import heroMobileBackground from "@/assets/images/hero-tech-workspace-mobile.webp";
 import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { useLanguage } from "@/i18n/LanguageContext";
 
@@ -34,7 +35,7 @@ const HERO_VIDEO_MOBILE = "/videos/hero-bg-mobile.mp4";
 // 🏗️ MAIN COMPONENT
 // ============================================================================
 
-const Hero = ({ initialMobile = false }: { initialMobile?: boolean }) => {
+const Hero = ({ initialMobile = false, initialMobilePoster }: { initialMobile?: boolean; initialMobilePoster?: string }) => {
   const { t } = useLanguage();
   const { copy } = usePublicCopy();
 
@@ -43,6 +44,14 @@ const Hero = ({ initialMobile = false }: { initialMobile?: boolean }) => {
   const [ctaActive, setCtaActive] = useState(false);
 
   const isMobile = typeof window !== "undefined" ? window.innerWidth < 768 : initialMobile;
+  const [portraitMobile, setPortraitMobile] = useState(() => typeof window === "undefined" ? initialMobile : window.innerWidth < 768 && window.innerWidth / window.innerHeight <= 9 / 16);
+  useEffect(() => {
+    const update = () => setPortraitMobile(window.innerWidth < 768 && window.innerWidth / window.innerHeight <= 9 / 16);
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+  const mobilePoster = initialMobilePoster || heroMobileBackground;
+  const videoPoster = portraitMobile ? mobilePoster : heroBackground;
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
@@ -158,7 +167,12 @@ const Hero = ({ initialMobile = false }: { initialMobile?: boolean }) => {
       {/* ================================================================== */}
 
       <div className="absolute inset-0 z-0">
-        <img
+        {isMobile ? <picture>
+          <source data-mobile-poster media="(max-aspect-ratio: 9/16)" srcSet={mobilePoster} type="image/webp" />
+          <img src={heroBackground} alt="SevenDevX" width={1920} height={2880}
+            className="absolute inset-0 w-full h-full object-cover" loading="eager"
+            {...{ fetchpriority: "high" }} decoding="async" />
+        </picture> : <img
           src={heroBackground}
           alt="SevenDevX"
           width={1920}
@@ -167,7 +181,7 @@ const Hero = ({ initialMobile = false }: { initialMobile?: boolean }) => {
           loading="eager"
           {...{ fetchpriority: "high" }}
           decoding="async"
-        />
+        />}
 
         {shouldLoadVideo && !videoFailed && (
           <video
@@ -177,7 +191,7 @@ const Hero = ({ initialMobile = false }: { initialMobile?: boolean }) => {
             playsInline
             autoPlay
             preload="none"
-            poster={heroBackground}
+            poster={videoPoster}
             className="absolute inset-0 w-full h-full object-cover"
             onError={() => setVideoFailed(true)}
           >

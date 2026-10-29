@@ -26,7 +26,7 @@ test('home hydration preserves its first H1, survives StrictMode, changes langua
   export {LanguageSnapshotProvider} from './src/i18n/LanguageContext';
   export {translations} from './src/i18n/translations';`,resolveDir:process.cwd(),loader:'tsx'},
   bundle:true,write:false,platform:'node',format:'cjs',packages:'external',jsx:'automatic',
-  alias:{'@':path.resolve('src')},plugins:[{name:'poster',setup(b){b.onLoad({filter:/hero-tech-workspace\.webp$/},()=>({contents:`export default ${JSON.stringify(poster)}`,loader:'js'}));}}]});
+  alias:{'@':path.resolve('src')},plugins:[{name:'poster',setup(b){b.onLoad({filter:/hero-tech-workspace\.webp$/},()=>({contents:`export default ${JSON.stringify(poster)}`,loader:'js'}));b.onLoad({filter:/hero-tech-workspace-mobile\.webp$/},()=>({contents:'export default "/mobile-poster.webp"',loader:'js'}));}}]});
  const module={exports:{}};
  new Function('module','exports','require',compiled.outputFiles[0].text)(module,module.exports,createRequire(import.meta.url));
  const {Hero,LanguageSnapshotProvider,translations}=module.exports;
