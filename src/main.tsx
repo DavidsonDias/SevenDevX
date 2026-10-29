@@ -26,10 +26,7 @@
  * ═══════════════════════════════════════════════════════════════════════
  */
 
-import React from 'react';
-import ReactDOM from 'react-dom/client';
 import './utils/browserStorageGuard';
-import App from './App';
 import './index.css';
 
 // ═══════════════════════════════════════════════════════════════════
@@ -59,11 +56,17 @@ if (isPreviewHost || isInIframe) {
 // 🎨 RENDER REACT APP
 // ═══════════════════════════════════════════════════════════════════
 
-// On a first visit to home, leave the server-rendered public hero in place.
-// Other URLs and client-side visits continue through the ordinary app root.
-const appMount = document.getElementById('public-app-root') || document.getElementById('root');
-ReactDOM.createRoot(appMount as HTMLElement).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+// Let the already-rendered mobile home paint before evaluating the whole app.
+// Other routes and desktop begin loading immediately. CSS remains in this
+// small entry so the first-paint island never depends on application loading.
+const startApplication = () => import('./mountApp').then(() => {});
+const paintedMobileHome = location.pathname === '/' && window.innerWidth < 768 &&
+  !!document.getElementById('public-first-paint-shell');
+const applicationReady = paintedMobileHome
+  ? new Promise<void>((resolve, reject) => {
+      requestAnimationFrame(() => requestAnimationFrame(() => { startApplication().then(resolve, reject); }));
+    })
+  : startApplication();
+// The PWA cache installer waits for these essential modules rather than
+// competing with application startup after the earlier window.load event.
+(window as Window & { sevendevxApplicationReady?: Promise<void> }).sevendevxApplicationReady = applicationReady;
