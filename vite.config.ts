@@ -84,6 +84,9 @@ export default defineConfig(({ mode }) => ({
       },
 
       registerType: "prompt",
+      // Registration still waits for window.load; fetching its helper must not
+      // block parsing and first paint on a slow mobile connection.
+      injectRegister: "script-defer",
 
       devOptions: {
         enabled: false,
