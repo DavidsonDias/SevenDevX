@@ -30,14 +30,6 @@ import { useLanguage } from "@/i18n/LanguageContext";
 const HERO_VIDEO_DESKTOP = "/videos/hero-bg.mp4";
 const HERO_VIDEO_MOBILE = "/videos/hero-bg-mobile.mp4";
 
-const mobileVideoCanStart = (initialMobile: boolean) => {
-  if (typeof window === "undefined") return initialMobile;
-  const connection = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection;
-  return window.innerWidth < 768 && !connection?.saveData &&
-    !/2g|slow-2g|3g/.test(connection?.effectiveType || "") &&
-    !window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
-};
-
 // ============================================================================
 // 🏗️ MAIN COMPONENT
 // ============================================================================
@@ -46,7 +38,7 @@ const Hero = ({ initialMobile = false }: { initialMobile?: boolean }) => {
   const { t } = useLanguage();
   const { copy } = usePublicCopy();
 
-  const [shouldLoadVideo, setShouldLoadVideo] = useState(() => mobileVideoCanStart(initialMobile));
+  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
   const [videoFailed, setVideoFailed] = useState(false);
   const [ctaActive, setCtaActive] = useState(false);
 
@@ -72,7 +64,6 @@ const Hero = ({ initialMobile = false }: { initialMobile?: boolean }) => {
   // ==========================================================================
 
   useEffect(() => {
-    if (shouldLoadVideo) return;
     if (!sectionRef.current) return;
 
     const conn = (navigator as any).connection;
@@ -135,7 +126,7 @@ const Hero = ({ initialMobile = false }: { initialMobile?: boolean }) => {
     if (shouldLoadVideo && videoRef.current && !videoFailed) {
       // Mobile keeps the poster element from first paint; select its deferred
       // source explicitly. Desktop retains its existing mount/play behavior.
-      if (isMobile && !videoRef.current.currentSrc) videoRef.current.load();
+      if (isMobile) videoRef.current.load();
       videoRef.current.play().catch(() => {
         setVideoFailed(true);
       });
