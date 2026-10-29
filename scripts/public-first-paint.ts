@@ -26,6 +26,10 @@ export function publicFirstPaint(): Plugin {
         });
         const poster = Object.keys(ctx.bundle || {}).find(name => /hero-tech-workspace.*\.webp$/.test(name));
         if (!poster) throw new Error("Public first paint requires the real hero poster");
+        // Discover the existing mobile poster before the application modules.
+        // The media condition leaves desktop loading behavior unchanged.
+        html = html.replace(/(<meta\s+name="viewport"[^>]*>)/,
+          `$1\n<link rel="preload" as="image" href="/${poster}" fetchpriority="high" media="(max-width: 767px)">`);
         const root = process.cwd();
         const result = await build({
           absWorkingDir: root,

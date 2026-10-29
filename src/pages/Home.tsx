@@ -43,7 +43,9 @@ import { useAnalytics } from "@/hooks/useAnalytics";
 // 🏗️ MAIN COMPONENT
 // ============================================================================
 
-const ServicesPreview = lazy(() => import("@/components/ServicesPreview"));
+const ServicesPreview = lazy(() => typeof window !== "undefined" && window.innerWidth < 768
+  ? import("@/components/ServicesPreviewMobile")
+  : import("@/components/ServicesPreview"));
 const FeaturedProjects = lazy(() => import("@/components/FeaturedProjects"));
 const TechPreview = lazy(() => import("@/components/TechPreview"));
 const TestimonialsCarousel3D = lazy(() => import("@/components/TestimonialsCarousel3D"));

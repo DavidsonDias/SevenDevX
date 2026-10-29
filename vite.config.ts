@@ -21,6 +21,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { componentTagger } from "lovable-tagger";
 import { techIconAssets } from "./scripts/tech-icon-assets";
+import { lucideIconAssets } from "./scripts/lucide-icon-assets";
 import { publicFirstPaint } from "./scripts/public-first-paint";
 import { VitePWA } from "vite-plugin-pwa";
 
@@ -39,6 +40,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     techIconAssets(),
+    lucideIconAssets(),
     publicFirstPaint(),
 
     // Executa o componentTagger apenas no modo desenvolvimento
@@ -69,6 +71,7 @@ export default defineConfig(({ mode }) => ({
         globIgnores: [
           "**/node_modules/**/*",
           "**/tech-icons/**",
+          "**/lucide-icons/**",
           "**/sw.ts",
           "**/workbox-*.js",
           "**/*.mp4",
@@ -120,6 +123,7 @@ export default defineConfig(({ mode }) => ({
 
     rollupOptions: {
       output: {
+        onlyExplicitManualChunks: true,
         manualChunks: {
           "react-vendor": ["react", "react-dom", "react-router-dom"],
 
@@ -133,12 +137,12 @@ export default defineConfig(({ mode }) => ({
             "@radix-ui/react-tooltip",
           ],
 
-          "landing-core": [
-            "@/components/Header",
-            "@/components/Footer",
-            "@/components/WhatsAppButton",
-            "@/components/SEOHead",
-          ],
+          // Group data/runtime dependencies without hoisting the complete
+          // dynamic icon namespace through the public Header's barrel imports.
+          "application-copy": ["@/i18n/LanguageContext", "@/i18n/publicCopy"],
+          "supabase-client": ["@supabase/supabase-js"],
+          "query-vendor": ["@tanstack/react-query"],
+          "public-navigation": ["@/components/Header", "@/components/Footer", "@/components/WhatsAppButton", "@/components/SEOHead"],
         },
 
         entryFileNames: "assets/[name]-[hash].js",
