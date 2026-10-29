@@ -46,7 +46,7 @@ import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import ScrollToTop from "@/components/ScrollToTop";
-import AppLoaderOrbital from "@/components/ui/AppLoaderOrbital";
+import PublicRouteFallback from "@/components/PublicRouteFallback";
 import AppViewport from "@/components/AppViewport";
 import UnsavedNavigationGuard from "@/components/UnsavedNavigationGuard";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
@@ -171,7 +171,7 @@ function AnimatedRoutes() {
         variants={pageTransition}
         className="min-h-screen"
       >
-        <Suspense fallback={<AppLoaderOrbital />}>
+        <Suspense fallback={<PublicRouteFallback pathname={location.pathname} />}>
           <Routes location={location}>
             <Route path="/" element={<Index />} />
             <Route path="/about" element={<About />} />
