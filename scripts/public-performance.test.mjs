@@ -16,6 +16,15 @@ test('initial styles preserve the emitted CSS exactly without a blocking stylesh
  assert.doesNotMatch(html,/<link\b[^>]*rel="stylesheet"/);
 });
 
+test('PWA registration preserves the single worker without blocking HTML parsing',()=>{
+ const html=read('dist/index.html');
+ const scripts=[...html.matchAll(/<script\b[^>]*src="\/registerSW\.js"[^>]*>/g)];
+ assert.equal(scripts.length,1);
+ assert.match(scripts[0][0],/\bdefer\b/);
+ assert.match(read('dist/registerSW.js'),/window\.addEventListener\('load'/);
+ assert.match(read('dist/registerSW.js'),/register\('\/sw\.js', \{ scope: '\/' \}\)/);
+});
+
 test('built first paint preserves exact locale markup only on the public home',()=>{
  const html=read('dist/index.html');
  const bootstrap=html.match(/<script data-public-first-paint-bootstrap>([\s\S]*?)<\/script>/)[1];
