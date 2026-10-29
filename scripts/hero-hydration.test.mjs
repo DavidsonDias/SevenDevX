@@ -30,8 +30,9 @@ test('home hydration preserves its first H1, survives StrictMode, changes langua
  new Function('module','exports','require',compiled.outputFiles[0].text)(module,module.exports,createRequire(import.meta.url));
  const {Hero,LanguageSnapshotProvider,translations}=module.exports;
  const {createRoot}=await import('react-dom/client');
- const root=createRoot(window.document.getElementById('root'));
+ const root=createRoot(window.document.getElementById('public-app-root'));
  const h1=window.document.querySelector('h1');
+ const shellParent=window.document.getElementById('public-first-paint-shell').parentNode;
  const errors=[];
  const originalError=console.error;
  console.error=(...args)=>errors.push(args.join(' '));
@@ -40,6 +41,7 @@ test('home hydration preserves its first H1, survives StrictMode, changes langua
  try{
   await act(async()=>{root.render(view('en'));});
   assert.equal(window.document.querySelector('h1'),h1,'Hydration must keep the original DOM node');
+  assert.equal(window.document.getElementById('public-first-paint-shell').parentNode,shellParent,'Hydration must not reparent the hero');
   assert.equal(window.document.querySelectorAll('h1').length,1);
   await act(async()=>{root.render(view('es'));});
   assert.equal(window.document.querySelector('h1'),h1,'Language changes update the same node');

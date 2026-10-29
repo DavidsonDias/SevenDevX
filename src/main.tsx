@@ -59,7 +59,10 @@ if (isPreviewHost || isInIframe) {
 // 🎨 RENDER REACT APP
 // ═══════════════════════════════════════════════════════════════════
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+// On a first visit to home, leave the server-rendered public hero in place.
+// Other URLs and client-side visits continue through the ordinary app root.
+const appMount = document.getElementById('public-app-root') || document.getElementById('root');
+ReactDOM.createRoot(appMount as HTMLElement).render(
   <React.StrictMode>
     <App />
   </React.StrictMode>

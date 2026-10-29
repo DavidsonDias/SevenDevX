@@ -32,7 +32,7 @@
 
 import { lazy, Suspense } from "react";
 import { usePublicCopy } from "@/i18n/usePublicCopy";
-import Header from "@/components/Header";
+import Header from "@/components/PublicHomeHeader";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import WhatsAppButton from "@/components/WhatsAppButton";

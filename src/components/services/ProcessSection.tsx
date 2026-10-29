@@ -30,6 +30,7 @@ import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { useDefaultProcessTemplate } from "@/hooks/useEcosystem";
+import { useAuthContext } from "@/contexts/AuthContext";
 
 // ============================================================================
 // 🏗️ MAIN COMPONENT
@@ -41,7 +42,11 @@ const ProcessSection = () => {
   const { trackEvent } = useAnalytics();
   const reduce = useReducedMotion();
   const data = t.servicesPage.process;
-  const { data: tpl } = useDefaultProcessTemplate();
+  const { isAdmin } = useAuthContext();
+  const { data: privateTemplate } = useDefaultProcessTemplate(isAdmin);
+  // Anonymous visitors already use the reviewed public copy. Do not request
+  // internal templates or render an administrator's previously cached result.
+  const tpl = isAdmin ? privateTemplate : undefined;
 
   // DB-first hybrid: build steps from process_template_stages, fallback to i18n
   const steps = useMemo(() => {

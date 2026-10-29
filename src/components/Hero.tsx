@@ -9,7 +9,6 @@ import HeroContent from "./HeroContent";
  */
 export default function Hero() {
   const language = useLanguage();
-  const host = useRef<HTMLDivElement>(null);
   const shell = useRef(typeof document === "undefined" ? null : document.getElementById("public-first-paint-shell"));
   const island = useRef<Root | null>(null);
   const currentLanguage = useRef(language.language);
@@ -17,10 +16,9 @@ export default function Hero() {
 
   useLayoutEffect(() => {
     const element = shell.current;
-    if (!element || !host.current) return;
+    if (!element) return;
     mounted.current = true;
     if (!island.current) {
-      host.current.appendChild(element);
       island.current = hydrateRoot(element,
         <LanguageSnapshotProvider value={language}><HeroContent /></LanguageSnapshotProvider>,
         { identifierPrefix: "public-hero-" });
@@ -43,5 +41,5 @@ export default function Hero() {
     };
   }, [language]);
 
-  return shell.current ? <div ref={host} style={{ display: "contents" }} /> : <HeroContent />;
+  return shell.current ? null : <HeroContent />;
 }
