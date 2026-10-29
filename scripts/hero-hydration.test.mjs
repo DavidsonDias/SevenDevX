@@ -34,8 +34,7 @@ test('home hydration preserves its first H1, survives StrictMode, changes langua
  const root=createRoot(window.document.getElementById('public-app-root'));
  const h1=window.document.querySelector('h1');
  const video=window.document.querySelector('video');
- assert.ok(video,'Mobile poster exists before hydration');
- assert.equal(video.querySelector('source'),null,'Video bytes remain deferred');
+ assert.equal(video,null,'The existing image owns first paint; video mounts only when ready');
  const shellParent=window.document.getElementById('public-first-paint-shell').parentNode;
  const errors=[];
  const originalError=console.error;
@@ -45,7 +44,7 @@ test('home hydration preserves its first H1, survives StrictMode, changes langua
  try{
   await act(async()=>{root.render(view('en'));});
   assert.equal(window.document.querySelector('h1'),h1,'Hydration must keep the original DOM node');
-  assert.equal(window.document.querySelector('video'),video,'Mobile video poster must not be recreated');
+  assert.equal(window.document.querySelector('video'),video,'Hydration must not mount video before its loading trigger');
   assert.equal(window.document.getElementById('public-first-paint-shell').parentNode,shellParent,'Hydration must not reparent the hero');
   assert.equal(window.document.querySelectorAll('h1').length,1);
   await act(async()=>{root.render(view('es'));});
