@@ -124,9 +124,6 @@ const Hero = ({ initialMobile = false }: { initialMobile?: boolean }) => {
 
   useEffect(() => {
     if (shouldLoadVideo && videoRef.current && !videoFailed) {
-      // Mobile keeps the poster element from first paint; select its deferred
-      // source explicitly. Desktop retains its existing mount/play behavior.
-      if (isMobile) videoRef.current.load();
       videoRef.current.play().catch(() => {
         setVideoFailed(true);
       });
@@ -172,7 +169,7 @@ const Hero = ({ initialMobile = false }: { initialMobile?: boolean }) => {
           decoding="async"
         />
 
-        {(isMobile || shouldLoadVideo) && !videoFailed && (
+        {shouldLoadVideo && !videoFailed && (
           <video
             ref={videoRef}
             muted

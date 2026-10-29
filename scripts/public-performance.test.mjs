@@ -72,7 +72,7 @@ test('initial entry stays below its transfer-source budget and robots uses crawl
  assert.ok(read('index.html').includes('rel="ard"'), 'Discover resources through HTML without unsupported robots directives');
 });
 
-test('only mobile gets an initial video poster, with no early video download',()=>{
+test('first paint uses the existing image before deferred video mounts at every viewport',()=>{
  const html=read('dist/index.html');
  const bootstrap=html.match(/<script data-public-first-paint-bootstrap>([\s\S]*?)<\/script>/)[1];
  for(const width of [390,767,768,1280])for(const locale of ['pt','en','es']){
@@ -81,7 +81,7 @@ test('only mobile gets an initial video poster, with no early video download',()
   dom.window.localStorage.setItem('sevendevx-language',locale);
   dom.window.eval(bootstrap);
   const shell=dom.window.document.getElementById('public-first-paint-shell');
-  assert.equal(shell.querySelectorAll('video').length,width<768?1:0);
+  assert.equal(shell.querySelectorAll('video').length,0);
   assert.equal(shell.querySelectorAll('source').length,0);
   assert.equal(shell.querySelectorAll('h1').length,1);
   const video=shell.querySelector('video');
