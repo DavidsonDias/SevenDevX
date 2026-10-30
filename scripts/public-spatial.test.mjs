@@ -55,6 +55,9 @@ for(const [name,preference] of [['reduced motion',{reduced:true}],['data saver',
    assert.equal(w.document.querySelector('.universe-space'),null);assert.equal(w.document.querySelectorAll('.universe-tiles img').length,0);assert.ok(w.document.querySelector('.universe-reduced img'));
    await f.change(()=>[...w.document.querySelectorAll('button')].find(b=>b.textContent.includes('Explore projects')).click());
    assert.equal(w.document.activeElement,target);assert.equal(w.lastScroll.behavior,'instant');
+   const nextContent=w.document.createElement('section');nextContent.textContent='Original sales content';w.document.querySelector('.public-project-universe').after(nextContent);
+   await f.change(()=>[...w.document.querySelectorAll('button')].find(b=>b.textContent.includes('Skip experience')).click());
+   assert.equal(w.document.activeElement,nextContent,'Skip must focus the immediately following content, not jump past sales content to a later gallery');
   }finally{await f.close();}
  });
 }
