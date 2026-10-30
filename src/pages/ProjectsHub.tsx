@@ -82,12 +82,13 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import PublicSpatialCatalog from '@/components/PublicSpatialCatalog';
+import PublicProjectUniverse from '@/components/PublicProjectUniverse';
 import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { useState, useMemo, useCallback, memo, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ExternalLink, Github, Sparkles, ArrowLeft, X } from "lucide-react";
+import { ExternalLink, Github, Sparkles, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useNavigate } from "react-router-dom";
 
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -456,7 +457,6 @@ const FILTER_TAGS = ["React", "TypeScript", "Node.js", "SaaS", "3D", "AI", "PWA"
 const ProjectsHub = () => {
   const { copy } = usePublicCopy();
   const { t } = useLanguage();
-  const navigate = useNavigate();
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const [openProject, setOpenProject] = useState<UIProject | null>(null);
   const [scrolled, setScrolled] = useState(false);
@@ -488,8 +488,6 @@ const ProjectsHub = () => {
     });
   }, [projects, selectedFilters]);
 
-  const heroProject = projects.find((p) => p.featuredLevel === "primary");
-  const featuredCount = projects.filter((p) => p.featuredLevel !== "none").length;
 
   const handleOpenModal = useCallback((project: UIProject) => {
     setOpenProject(project);
@@ -510,48 +508,9 @@ const ProjectsHub = () => {
         <Header />
 
         <main className="pt-20">
-          {/* Hero */}
-          <section className="relative overflow-hidden py-20 sm:py-24 md:py-32 lg:py-40">
-            <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background to-background" />
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px] opacity-50" />
-
-            <div className="relative z-10 w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] }}
-                className="text-center space-y-5 sm:space-y-6"
-              >
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => navigate("/")}
-                  className="text-muted-foreground hover:text-foreground mb-2"
-                >
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  {t.projectsHub.backButton}
-                </Button>
-
-                <h1 className="text-[clamp(1.8rem,5vw,4.5rem)] font-orbitron font-bold tracking-tight">
-                  {t.projectsHub.heroTitle}
-                </h1>
-                <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-                  {t.projectsHub.heroSubtitle}
-                </p>
-
-                <div className="flex items-center justify-center gap-4 pt-4 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-2">
-                    <span className="w-2 h-2 bg-primary rounded-full animate-pulse" />
-                    {projects.length} {t.projectsHub.projects}
-                  </span>
-                  <span>•</span>
-                  <span>{featuredCount} {t.projectsHub.highlights}</span>
-                </div>
-              </motion.div>
-            </div>
-          </section>
-
-          {/* Filters */}
+<h1 className="sr-only">{t.projectsHub.heroTitle}</h1>
+          <PublicProjectUniverse projects={projects.filter(p => p.featuredLevel !== "none").slice(0, 8).map(p => ({ title: p.title, image: p.image, description: p.description }))} />
+{/* Filters */}
           <div
             className={`sticky top-0 z-40 border-b transition-all duration-300 ${
               scrolled
@@ -596,7 +555,7 @@ const ProjectsHub = () => {
           </div>
 
           {/* Grid */}
-          <section id="projects-grid" className="py-10 sm:py-16 md:py-24">
+          <section id="projects-grid" className="pt-6 pb-12">
             <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
               <AnimatePresence mode="wait">
                 {filtered.length === 0 ? (
@@ -613,29 +572,18 @@ const ProjectsHub = () => {
                     </Button>
                   </motion.div>
                 ) : (
-                  <motion.div
-                    key={selectedFilters.join(",")}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8"
-                  >
+                  <PublicSpatialCatalog key={selectedFilters.join(",")} items={filtered.map(p => ({title: p.title, image: p.image}))}>
                     {filtered.map((project, index) => (
                       <ProjectCard
                         key={project.dbId}
                         project={project}
-                        index={index}
+                        index={0}
                         isFeatured={project.featuredLevel !== "none"}
-                        isHero={
-                          selectedFilters.length === 0 &&
-                          !!heroProject &&
-                          project.dbId === heroProject.dbId
-                        }
+                        isHero={false}
                         onOpenModal={handleOpenModal}
                       />
                     ))}
-                  </motion.div>
+                  </PublicSpatialCatalog>
                 )}
               </AnimatePresence>
             </div>
