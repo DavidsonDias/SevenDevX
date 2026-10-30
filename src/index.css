@@ -538,3 +538,13 @@ select optgroup { background-color: #0a0a0a; color: rgba(255,255,255,.6); }
   }
   html[data-pwa-surface="solid"] [data-public-header] { background: #000; }
 }
+
+/* Tablet landscape: retain the public desktop navigation without changing portrait or desktop. */
+@media (min-width: 1024px) and (max-width: 1279px) and (orientation: landscape) {
+  [data-public-header] a:has(> img) { position: static; left: auto; transform: none; flex-shrink: 0; }
+  [data-public-header] a > img { height: 2.75rem; }
+  [data-public-header] nav { display: flex; gap: .75rem; margin-left: auto; margin-right: .75rem; white-space: nowrap; }
+  [data-public-header] nav > a, [data-public-header] nav > div > a, [data-public-header] nav > div > button { font-size: .625rem; letter-spacing: .1em; }
+  [data-public-header] nav > div.flex { gap: .75rem; }
+  [data-public-header] nav + button { margin-left: 0; flex-shrink: 0; }
+}
