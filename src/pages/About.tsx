@@ -1,3 +1,5 @@
+import {AboutBrandScene,AboutChapterNav,AboutTimelineSelector,AboutSectionMotion,AboutSectionScene} from '@/components/AboutJourney';
+import {useExperienceMotion} from '@/hooks/useExperienceMotion';
 /**
  * 🚀 About.tsx — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -117,7 +119,8 @@ const StatCounter = ({ value, suffix, label, icon: Icon }: { value: number; suff
   const { copy } = usePublicCopy();
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
-  const count = useCounter(value, isInView);
+  const {reduced}=useExperienceMotion();
+  const count = useCounter(value, isInView&&!reduced);
   return (
     <motion.div ref={ref} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
       transition={{ duration: 0.6 }} className="text-center group">
@@ -125,7 +128,7 @@ const StatCounter = ({ value, suffix, label, icon: Icon }: { value: number; suff
         <Icon className="w-6 h-6 text-foreground/70" />
       </div>
       <div className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-1">
-        {count}{suffix}
+        {reduced?value:count}{suffix}
       </div>
       <div className="text-xs sm:text-sm text-muted-foreground uppercase tracking-widest">{copy(label)}</div>
     </motion.div>
@@ -143,6 +146,7 @@ const About = () => {
 
   useEffect(() => { window.scrollTo(0, 0); }, []);
 
+  const [focusedValue,setFocusedValue]=useState(0);
   const timelineItems = t.aboutPage.timeline.items;
   const values = [
     { icon: Target, ...t.aboutPage.values.items[0] },
@@ -196,10 +200,12 @@ const About = () => {
       />
       <div className="min-h-screen bg-background text-foreground">
         <Header />
-        <main id="main-content" tabIndex={-1} className="focus:outline-none">
+        <main id="main-content" tabIndex={-1} className="about-preview focus:outline-none">
 
+        <AboutSectionMotion />
         {/* Hero */}
-        <section className="relative pt-32 pb-20 px-4 overflow-hidden">
+        <section className="about-hero relative pt-32 pb-20 px-4 overflow-hidden">
+          <AboutBrandScene />
           <div className="absolute inset-0 bg-gradient-to-b from-foreground/5 via-transparent to-transparent" />
           <div className="max-w-6xl mx-auto relative z-10">
             <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="text-center">
@@ -209,6 +215,7 @@ const About = () => {
           </div>
         </section>
 
+        <AboutChapterNav />
         {/* Stats Section */}
         <section className="py-16 px-4 border-y border-border">
           <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
@@ -219,7 +226,8 @@ const About = () => {
         </section>
 
         {/* Story */}
-        <section className="py-16 px-4">
+        <section id="about-story" className="py-16 px-4">
+          <AboutSectionScene kind="story" />
           <div className="max-w-4xl mx-auto">
             <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
               className="text-3xl md:text-4xl font-bold mb-8 text-center">{t.aboutPage.storyTitle}</motion.h2>
@@ -232,16 +240,17 @@ const About = () => {
         </section>
 
         {/* Timeline */}
-        <section className="py-20 px-4 bg-card/30 overflow-x-clip">
+        <section id="about-timeline" className="py-20 px-4 bg-card/30 overflow-x-clip">
           <div className="max-w-5xl mx-auto">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.aboutPage.timeline.title}</h2>
               <p className="text-muted-foreground text-lg">{t.aboutPage.timeline.subtitle}</p>
             </motion.div>
+            <AboutTimelineSelector items={timelineItems} />
             <div className="relative">
               <div className="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-foreground/30 via-foreground/15 to-foreground/5 transform md:-translate-x-1/2" />
               {timelineItems.map((item, index) => (
-                <motion.div key={index}
+                <motion.div key={index} id={`about-milestone-${index}`} tabIndex={-1}
                   initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
@@ -266,7 +275,8 @@ const About = () => {
         </section>
 
         {/* Mission & Vision */}
-        <section className="py-20 px-4">
+        <section id="about-purpose" className="py-20 px-4">
+          <AboutSectionScene kind="purpose" />
           <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">
             <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
               className="bg-foreground/5 border border-border p-8 hover:border-foreground/20 transition-all">
@@ -292,7 +302,8 @@ const About = () => {
         </section>
 
         {/* Values */}
-        <section className="py-20 px-4 bg-card/30">
+        <section id="about-values" className="py-20 px-4 bg-card/30">
+          <AboutSectionScene kind="values" />
           <div className="max-w-6xl mx-auto">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">{t.aboutPage.values.title}</h2>
@@ -302,8 +313,9 @@ const About = () => {
               {values.map((value, index) => {
                 const Icon = value.icon;
                 return (
-                  <motion.div key={index} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                  <motion.div key={index} data-value-selected={focusedValue===index} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}>
+                    <button type="button" className="about-value-select" aria-pressed={focusedValue===index} onClick={()=>setFocusedValue(index)}>
                     <ServiceCard3D tiltIntensity={8} glowIntensity={0.15} glowColor="255, 255, 255">
                       <div className="bg-card border border-border p-6 hover:border-foreground/20 transition-all group h-full">
                         <div className="w-12 h-12 bg-foreground/5 flex items-center justify-center mb-4 group-hover:bg-foreground/10 transition-colors">
@@ -313,18 +325,21 @@ const About = () => {
                         <p className="text-muted-foreground">{copy(value.description)}</p>
                       </div>
                     </ServiceCard3D>
+                    </button>
                   </motion.div>
                 );
               })}
             </div>
+            <div className="about-value-detail" aria-live="polite"><span>{String(focusedValue+1).padStart(2,'0')} / 06</span><div><small>{{pt:'Valor em foco',en:'Value in focus',es:'Valor destacado'}[language]}</small><h3>{copy(values[focusedValue].title)}</h3><p>{copy(values[focusedValue].description)}</p></div><a href="/projects-hub">{{pt:'Conheça nosso trabalho',en:'Explore our work',es:'Conoce nuestro trabajo'}[language]} ↗</a></div>
           </div>
         </section>
 
         {/* CTA */}
-        <section className="py-20 px-4">
+        <section className="about-final py-20 px-4">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">{t.aboutPage.cta.title}</h2>
             <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">{t.aboutPage.cta.subtitle}</p>
+            <div className="about-related"><a href="/services">{{pt:'Conheça os serviços',en:'Explore services',es:'Explora los servicios'}[language]} ↗</a><a href="/projects-hub">{{pt:'Veja os projetos',en:'View projects',es:'Ver proyectos'}[language]} ↗</a></div>
             <a href="/#contact"
               className="inline-flex items-center gap-2 border-2 border-foreground px-8 py-4 text-sm tracking-widest uppercase font-semibold hover:bg-foreground hover:text-background transition-all duration-300">
               <Zap className="w-4 h-4" />
