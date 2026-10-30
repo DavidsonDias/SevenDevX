@@ -1,3 +1,4 @@
+import PublicServicesJourney from '@/components/PublicServicesJourney';
 /**
  * 🚀 Services.tsx — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -83,6 +84,7 @@
 // ============================================================================
 
 import { optimizedServiceImage } from "@/lib/optimizedServiceImages";
+import PublicServicesExperience from '@/components/PublicServicesExperience';
 import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { motion } from "framer-motion";
 import Header from "@/components/Header";
@@ -224,91 +226,7 @@ const Services = () => {
           {/* ---------------------------------------------------------
               HERO SECTION (Full-Screen Layout)
              --------------------------------------------------------- */}
-          <motion.section
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8 }}
-            className="viewport-feature relative min-h-[100svh] flex items-center overflow-hidden bg-black"
-            aria-label={t.servicesPage.heroTitle}
-            role="region"
-          >
-            {/* ===========================
-                MOBILE LAYOUT (Stacked)
-               =========================== */}
-            <div className="flex flex-col w-full md:hidden">
-              {/* Image */}
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="viewport-feature-image w-full h-[50svh] min-h-[280px] relative"
-              >
-                <picture>
-                  <source srcSet={serviceDev} type="image/webp" />
-                  <img
-                    src={serviceDev}
-                    alt=""
-                    aria-hidden="true"
-                    loading="eager"
-                    className="w-full h-full object-cover"
-                  />
-                </picture>
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/80"></div>
-              </motion.div>
-
-              {/* Content */}
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="px-4 py-10 text-center space-y-4"
-              >
-                <h1 className="text-3xl xs:text-4xl sm:text-5xl font-bold uppercase tracking-tight leading-tight">
-                  {t.servicesPage.heroTitle}
-                </h1>
-                <p className="text-sm xs:text-base text-white/90 leading-relaxed max-w-xl mx-auto">
-                  {t.servicesPage.heroSubtitle}
-                </p>
-              </motion.div>
-            </div>
-
-            {/* ===========================
-                DESKTOP LAYOUT (Background + Overlay)
-               =========================== */}
-            <div className="viewport-feature-desktop hidden md:flex md:items-end w-full min-h-[100svh]">
-              {/* Background Image */}
-              <div className="absolute inset-0 z-0" aria-hidden="true">
-                <picture>
-                  <source srcSet={serviceDev} type="image/webp" />
-                  <img
-                    src={serviceDev}
-                    alt=""
-                    aria-hidden="true"
-                    loading="eager"
-                    className="w-full h-full object-cover"
-                  />
-                </picture>
-                <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/65 to-black/90"></div>
-              </div>
-
-              {/* Content */}
-              <div className="viewport-feature-content relative z-10 w-full px-6 md:px-10 lg:px-16 xl:px-24 pb-20 md:pb-24 lg:pb-32">
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.3 }}
-                  className="max-w-4xl mx-auto lg:max-w-5xl xl:max-w-6xl"
-                >
-                  <h1 className="text-4xl md:text-5xl lg:text-7xl xl:text-8xl font-bold mb-6 uppercase tracking-tight leading-tight">
-                    {t.servicesPage.heroTitle}
-                  </h1>
-                  <p className="text-lg md:text-xl text-white/90 max-w-2xl leading-relaxed">
-                    {t.servicesPage.heroSubtitle}
-                  </p>
-                </motion.div>
-              </div>
-            </div>
-          </motion.section>
+          <PublicServicesExperience services={services} title={t.servicesPage.heroTitle} subtitle={t.servicesPage.heroSubtitle} />
 
           {/* 🔽 DIVISOR 1 — HERO → SERVIÇOS */}
           <SectionDivider
@@ -321,7 +239,7 @@ const Services = () => {
           {/* ---------------------------------------------------------
               SERVIÇOS GRID COM CARDS 3D
              --------------------------------------------------------- */}
-          <section className="py-20 px-4 md:px-8 lg:px-16 bg-background">
+          <PublicServicesJourney kind="catalogue"><section id="services-original" className="py-20 px-4 md:px-8 lg:px-16 bg-background">
             <div className="container mx-auto">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -410,7 +328,7 @@ const Services = () => {
                 })}
               </div>
             </div>
-          </section>
+          </section></PublicServicesJourney>
 
           {/* 🔽 DIVISOR — SERVIÇOS → PROCESSO */}
           <SectionDivider
@@ -423,7 +341,7 @@ const Services = () => {
           {/* ---------------------------------------------------------
               PROCESSO (How It Works) — Enterprise Premium
              --------------------------------------------------------- */}
-          <ProcessSection />
+          <PublicServicesJourney kind="process"><ProcessSection /></PublicServicesJourney>
 
           {/* 🔽 DIVISOR — PROCESSO → FAQ */}
           <SectionDivider
