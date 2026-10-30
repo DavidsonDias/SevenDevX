@@ -1,3 +1,5 @@
+import PublicProjectMotion from '@/components/PublicProjectMotion';
+import PublicProjectChapter from '@/components/PublicProjectChapter';
 /**
  * 🚀 Projects.tsx — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -81,6 +83,7 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import PublicDepthScene from '@/components/PublicDepthScene';
 import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { Suspense, lazy, useEffect } from "react";
 import { motion } from "framer-motion";
@@ -142,6 +145,7 @@ const Projects = () => {
          ========================= */}
       <div className="min-h-screen bg-background text-foreground">
         <Header />
+        <PublicProjectMotion />
 
         <main id="main-content" className="pt-20 focus:outline-none" tabIndex={-1}>
           {/* ---------------------------------------------------------
@@ -155,6 +159,7 @@ const Projects = () => {
   aria-label={t.projects.heroTitle}
   role="region"
 >
+<PublicDepthScene kind="projects" images={[]} />
   {/* ===========================
       MOBILE LAYOUT (Stacked)
      =========================== */}
@@ -235,17 +240,12 @@ const Projects = () => {
 
 
           {/* 🔽 DIVISOR 1 — HERO → TECH (Grande, dramático) */}
-          <SectionDivider
-            size="lg"
-            speed={1.4}
-            glowIntensity="intense"
-            className="my-20"
-          />
+          <PublicProjectChapter kind="technology" />
 
           {/* ---------------------------------------------------------
              TECH SHOWCASE (Lazy-loaded)
              --------------------------------------------------------- */}
-          <section aria-label={t.projects.techShowcaseTitle} role="region">
+          <section id="project-technologies" className="project-catalog-stage" aria-label={t.projects.techShowcaseTitle} role="region">
             <Suspense
               fallback={
                 <div 
@@ -264,18 +264,13 @@ const Projects = () => {
           </section>
 
           {/* 🔽 DIVISOR 2 — TECH → PORTFOLIO (Médio, padrão) */}
-          <SectionDivider
-            size="md"
-            speed={1}
-            glowIntensity="default"
-            className="my-24"
-          />
+          <PublicProjectChapter kind="portfolio" />
 
           {/* ---------------------------------------------------------
              PORTFOLIO SECTION (Lazy-loaded)
              --------------------------------------------------------- */}
           <section
-            className="relative min-h-screen flex items-center py-16 md:py-24 lg:py-32 overflow-hidden"
+            id="project-portfolio" className="project-catalog-stage relative min-h-screen flex items-center py-16 md:py-24 lg:py-32 overflow-hidden"
             aria-label={t.projects.portfolioTitle}
             role="region"
           >
@@ -293,6 +288,7 @@ const Projects = () => {
               <div className="absolute inset-0 bg-gradient-to-b from-black via-black/90 to-black" />
             </div>
 
+            <div className="project-portfolio-rails" aria-hidden="true"><i/><i/><i/></div>
             <div className="relative z-10 w-full">
               <Suspense fallback={<AppLoaderOrbital />}>
                 <PortfolioCarousel3D />
