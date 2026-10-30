@@ -9,7 +9,7 @@ const experienceCopy = {
     gallery: 'Galeria de projetos', projects: 'SEVENDEVX / PROJETOS', empty: 'Nenhum projeto',
     compact: 'Visão compacta', spatial: 'Voltar à galeria 3D', previous: 'Projeto anterior', next: 'Próximo projeto',
     select: 'Selecionar projeto', selectPrefix: 'Selecionar',
-    help: 'Explore pelos controles ou selecione um projeto. Os detalhes e tecnologias continuam nos cards.',
+    help: 'Deslize para os lados, use os controles ou selecione um projeto. Os detalhes e tecnologias continuam nos cards.',
   },
   en: {
     universeLabel: 'SevenDevX project universe', signature: 'SEVENDEVX® / DESIGN + ENGINEERING',
@@ -19,7 +19,7 @@ const experienceCopy = {
     gallery: 'Project gallery', projects: 'SEVENDEVX / PROJECTS', empty: 'No projects',
     compact: 'Compact view', spatial: 'Back to 3D gallery', previous: 'Previous project', next: 'Next project',
     select: 'Select project', selectPrefix: 'Select',
-    help: 'Use the controls or select a project. Details and technologies remain in the cards.',
+    help: 'Swipe sideways, use the controls or select a project. Details and technologies remain in the cards.',
   },
   es: {
     universeLabel: 'Universo de proyectos SevenDevX', signature: 'SEVENDEVX® / DISEÑO + INGENIERÍA',
@@ -29,7 +29,7 @@ const experienceCopy = {
     gallery: 'Galería de proyectos', projects: 'SEVENDEVX / PROYECTOS', empty: 'Ningún proyecto',
     compact: 'Vista compacta', spatial: 'Volver a la galería 3D', previous: 'Proyecto anterior', next: 'Siguiente proyecto',
     select: 'Seleccionar proyecto', selectPrefix: 'Seleccionar',
-    help: 'Usa los controles o selecciona un proyecto. Los detalles y las tecnologías siguen en las tarjetas.',
+    help: 'Desliza hacia los lados, usa los controles o selecciona un proyecto. Los detalles y las tecnologías siguen en las tarjetas.',
   },
 } as const;
 
