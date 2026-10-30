@@ -71,7 +71,18 @@ export default function PublicProjectUniverse({ projects }: { projects: Scene[] 
     window.addEventListener('scroll', schedule, { passive: true }); window.addEventListener('resize', schedule); document.addEventListener('visibilitychange', schedule); schedule();
     return () => { cancelAnimationFrame(raf); observer.disconnect(); target?.removeEventListener('pointermove', move); target?.removeEventListener('pointerleave', reset); window.removeEventListener('scroll', schedule); window.removeEventListener('resize', schedule); document.removeEventListener('visibilitychange', schedule); };
   }, [dots, reduced, scenes.length]);
-  const jump = (end: boolean) => { const el = root.current; if (!el) return; if (reduced) end = true; if (end) document.querySelector<HTMLElement>('.spatial-catalog')?.focus({ preventScroll: true }); window.scrollTo({ top: scrollY + el.getBoundingClientRect().top + (end ? el.offsetHeight - 80 : (el.offsetHeight - innerHeight) * .28), behavior: reduced ? 'instant' : 'smooth' }); };
+  const jump = (end: boolean) => {
+    const el = root.current;
+    if (!el) return;
+    if (reduced) end = true;
+    if (end) {
+      // Focus the content actually reached by the skip, rather than a later gallery.
+      const next = el.nextElementSibling as HTMLElement | null;
+      const target = next || document.querySelector<HTMLElement>('.spatial-catalog');
+      if (target) { target.tabIndex = -1; target.focus({ preventScroll: true }); }
+    }
+    window.scrollTo({ top: scrollY + el.getBoundingClientRect().top + (end ? el.offsetHeight - 80 : (el.offsetHeight - innerHeight) * .28), behavior: reduced ? 'instant' : 'smooth' });
+  };
   if (!scenes.length) return null;
   return <section ref={root} className={`public-project-universe motion-universe${reduced ? ' is-reduced' : ''}`} aria-label={text.universeLabel}>
     <div ref={stage} className="universe-stage">
