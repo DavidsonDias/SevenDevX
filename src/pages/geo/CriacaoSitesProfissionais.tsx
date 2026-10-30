@@ -85,6 +85,8 @@
 // 📦 IMPORTS
 // ============================================================================
 
+import PublicSpatialCatalog from '@/components/PublicSpatialCatalog';
+import PublicProjectUniverse from '@/components/PublicProjectUniverse';
 import { usePublicCopy } from "@/i18n/usePublicCopy";
 import { Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
@@ -321,7 +323,8 @@ export default function CriacaoSitesProfissionais() {
         { name: "Criação de Sites Profissionais", url: "/criacao-de-sites-profissionais" },
       ]} />
       <Header />
-      <main className="min-h-screen bg-background text-foreground pt-24 overflow-x-hidden">
+      <main className="min-h-screen bg-background text-foreground pt-24 overflow-x-clip">
+        <PublicProjectUniverse projects={showcaseProjects.slice(0, 6).map((sp: any) => ({ title: sp.override_title || sp.project?.title || "", image: sp.override_image_url || resolveProjectImage(sp.project?.cover_image) || sp.project?.image || sp.project?.cover_url || "", description: sp.override_description || sp.project?.description || "" }))} />
         {/* HERO */}
         <Section>
           <Container>
@@ -477,8 +480,8 @@ export default function CriacaoSitesProfissionais() {
                 {copy("Ver portfólio completo")} <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {showcaseProjects.map((sp: any, i: number) => {
+            <PublicSpatialCatalog items={showcaseProjects.map((sp: any) => { const p = sp.project || sp; return { title: sp.override_title || p.title, image: sp.override_image_url || p.image || resolveProjectImage(p.cover_image || p.cover_url) }; })}>
+              {showcaseProjects.map((sp: any) => {
                 const p = sp.project || sp;
                 const title = sp.override_title || p.title;
                 const desc = sp.override_description || p.description;
@@ -495,7 +498,7 @@ export default function CriacaoSitesProfissionais() {
                     href={url}
                     target={openInTab ? "_blank" : undefined}
                     rel="noopener noreferrer"
-                    initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ delay: i * 0.08, duration: 0.6 }} whileHover={{ y: -8 }}
+                    initial={false} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }} whileHover={{ y: -8 }}
                     className={`group block rounded-2xl border ${isHighlight ? "border-primary/40" : "border-border"} bg-card overflow-hidden hover:border-foreground/40 transition-colors relative`}
                   >
                     {isHighlight && (
@@ -552,7 +555,7 @@ export default function CriacaoSitesProfissionais() {
                   </motion.a>
                 );
               })}
-            </div>
+            </PublicSpatialCatalog>
           </Container>
         </Section>
 
