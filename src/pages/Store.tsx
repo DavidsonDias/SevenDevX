@@ -1,3 +1,9 @@
+import StoreHeroShowroom from '@/components/StoreHeroShowroom';
+import StoreScopeBuilder from '@/components/StoreScopeBuilder';
+import StoreProjectProof from '@/components/StoreProjectProof';
+import StoreSectionNav from '@/components/StoreSectionNav';
+import '@/components/store-refinements.css';
+import StoreSolutionGuide from '@/components/StoreSolutionGuide';
 /**
  * 🚀 Store.tsx — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -292,18 +298,22 @@ const buildJsonLd = (copy: (value: string) => string) => {
    Comparison Table component (inline)
    - ajuda conversão: o usuário compara planos rápido
    ------------------------- */
-const ComparisonTable: React.FC = () => {
+const ComparisonTable = ({selected}:{selected:string|null}) => {
   const { copy } = usePublicCopy();
+  const [differences,setDifferences]=useState(false);
+  const {language}=useLanguage();
+  const differenceLabel={pt:'Mostrar só diferenças',en:'Show differences only',es:'Mostrar solo diferencias'}[language];
   return (
-    <section aria-labelledby="compare-heading" className="py-12">
-      <div className="max-w-6xl mx-auto px-4 overflow-x-auto">
+    <section id="store-compare" aria-labelledby="compare-heading" className="py-12">
+      <div className="max-w-6xl mx-auto px-4 store-comparison-scroll" role="region" aria-label={copy("Comparativo Rápido")} tabIndex={0}>
         <h3 id="compare-heading" className="text-2xl font-bold mb-6 uppercase tracking-tight">{copy("Comparativo Rápido")}</h3>
+        <button type="button" className="store-differences" aria-pressed={differences} onClick={()=>setDifferences(value=>!value)}>{differenceLabel} {differences?"✓":""}</button>
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="text-sm text-white/70">
-              <th className="pb-3">{copy("Recurso")}</th>
+              <th scope="col" className="pb-3">{copy("Recurso")}</th>
               {plans.map((p) => (
-                <th key={p.id} className="pb-3 text-right">{copy(p.name)}</th>
+                <th scope="col" key={p.id} data-selected={selected===p.id} className="pb-3 text-right">{copy(p.name)}</th>
               ))}
             </tr>
           </thead>
@@ -315,12 +325,12 @@ const ComparisonTable: React.FC = () => {
               ["Integrações API", false, "Opções", true],
               ["Suporte Incluso", "7 dias", "3 meses", "Sob contrato"],
               ["Entrega Estimada", "7 dias", "14 dias", "Sob estimativa"],
-            ].map((row, i) => (
+            ].filter(row=>!differences||new Set(row.slice(1)).size>1).map((row, i) => (
               <tr key={i} className="border-t border-white/6">
-                <td className="py-3 text-sm text-white/70">{copy(row[0])}</td>
+                <th scope="row" className="py-3 text-sm text-white/70 font-normal">{copy(row[0])}</th>
                 {row.slice(1).map((cell, idx) => (
-                  <td key={idx} className="py-3 text-sm text-right">
-                    {cell === true ? <Check className="inline-block mr-1" /> : copy(cell)}
+                  <td key={idx} data-selected={selected===plans[idx]?.id} className="py-3 text-sm text-right">
+                    {cell === true ? <Check className="inline-block mr-1" aria-label={copy("Incluído")} /> : cell === false ? <span aria-label={copy("Não incluído")}>—</span> : copy(cell)}
                   </td>
                 ))}
               </tr>
@@ -342,7 +352,12 @@ const ComparisonTable: React.FC = () => {
    ------------------------- */
 const Store: React.FC = () => {
   const { copy, message } = usePublicCopy();
-  const { t } = useLanguage();
+  const { t,language } = useLanguage();
+  const scopeWords={pt:["Montar escopo","Adicionar ao escopo","Montar meu escopo antes de conversar"],en:["Build scope","Add to scope","Build my scope before getting in touch"],es:["Crear alcance","Añadir al alcance","Crear mi alcance antes de contactar"]}[language];
+  const [scopePlanId,setScopePlanId]=useState<string>();
+  const [scopePlanRevision,setScopePlanRevision]=useState(0);
+  const [requestedService,setRequestedService]=useState<{id:string;nonce:number}>();
+  const startScope=(id:string)=>{setScopePlanId(id);setScopePlanRevision(value=>value+1);document.getElementById("store-scope")?.scrollIntoView({behavior:"auto",block:"start"});};
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
 
   const plans = useMemo(() => [
@@ -421,69 +436,14 @@ const Store: React.FC = () => {
           <Header />
         </Suspense>
 
-        <main id="main-content" className="pt-20 focus:outline-none" tabIndex={-1}>
+        <main id="main-content" className="store-refined pt-20 focus:outline-none" tabIndex={-1}>
           {/* Hero */}
-          <section
-            className="viewport-hero relative min-h-[70svh] md:min-h-[100svh] flex items-end overflow-hidden section-overlay"
-            aria-label={copy("Catálogo de Soluções Digitais")}
-          >
-            <div className="absolute inset-0 z-0">
-              <img
-                src={heroBackground}
-                alt={copy("Soluções digitais premium SevenDevX")}
-                loading="eager"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/65 to-black/95" />
-            </div>
+          <StoreHeroShowroom plans={plans} onBuild={startScope} />
 
-            <div className="viewport-hero-content container mx-auto px-6 pb-20 md:pb-32 relative z-10">
-              <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8 }}
-                className="max-w-4xl"
-              >
-                <div className="inline-flex items-center space-x-2 border border-white/30 px-4 py-2 mb-6 text-xs uppercase tracking-widest">
-                  <Sparkles size={14} className="text-white/80" />
-                  <span className="text-white/80">{copy("Soluções Premium")}</span>
-                </div>
-
-                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-6 uppercase tracking-tight leading-tight">
-                  {copy("Transforme sua Visão em Realidade Digital")}
-                </h1>
-
-                <p className="text-base sm:text-lg md:text-xl text-white/90 max-w-2xl leading-relaxed mb-8">
-                  {copy("Do conceito ao lançamento — entregamos soluções com design premium, performance otimizada e suporte que garante resultados.")}
-                </p>
-
-                <div className="flex gap-4 flex-wrap">
-                  <button
-                    onClick={() => {
-                      // focus first plan card
-                      const el = document.querySelector<HTMLElement>("[data-plan-id='institucional']");
-                      el?.focus();
-                      setSelectedPlanId("institucional");
-                    }}
-                    className="inline-flex items-center gap-2 border-2 border-white px-6 py-3 text-sm uppercase tracking-widest font-semibold hover:bg-white hover:text-black transition-all duration-300"
-                  >
-                    {copy("Ver Plano Mais Popular")}
-                    <ArrowRight size={16} />
-                  </button>
-
-                  <a
-                    href="#plans"
-                    className="inline-flex items-center gap-2 border-2 border-white/40 px-6 py-3 text-sm uppercase tracking-widest font-semibold hover:bg-white/5 transition-all duration-300"
-                  >
-                    {copy("Ver Todos os Planos")}
-                  </a>
-                </div>
-              </motion.div>
-            </div>
-          </section>
-
+          <StoreSectionNav />
+          <StoreSolutionGuide plans={plans} onChoose={id=>{setSelectedPlanId(id);const el=document.querySelector<HTMLElement>(`[data-plan-id='${id}']`);el?.scrollIntoView({behavior:'auto',block:'center'});el?.focus({preventScroll:true});}} />
           {/* Plans */}
-          <section id="plans" aria-labelledby="plans-heading" className="relative py-20 md:py-32 bg-black">
+          <section id="plans" data-store-section="02" aria-labelledby="plans-heading" className="relative py-20 md:py-32 bg-black">
             <div className="container mx-auto px-6">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -514,7 +474,7 @@ const Store: React.FC = () => {
                       viewport={{ once: true }}
                       transition={{ duration: 0.6, delay: index * 0.08 }}
                       className={`relative border rounded-xl p-8 transition-all duration-300 group ${
-                        plan.highlight ? "bg-white/5 border-white" : "border-white/10 hover:border-white/30"
+                        selectedPlanId===plan.id ? "bg-white/5 border-white store-plan-selected" : plan.highlight ? "bg-white/5 border-white" : "border-white/10 hover:border-white/30"
                       }`}
                       onFocus={() => setSelectedPlanId(plan.id)}
                     >
@@ -562,25 +522,26 @@ const Store: React.FC = () => {
                         </button>
 
                         <button
-                          onClick={() => setSelectedPlanId(plan.id)}
+                          onClick={() => {setSelectedPlanId(plan.id);const el=document.getElementById("store-compare");el?.scrollIntoView({behavior:"auto",block:"start"});el?.querySelector<HTMLElement>("[role=region]")?.focus({preventScroll:true});}}
                           className="px-3 py-3 border border-white/10 text-sm"
                           aria-pressed={selectedPlanId === plan.id}
                         >
-                          {copy("Ver")}
+                          {copy("Comparar")}
                         </button>
                       </div>
+                    <button className="store-use-scope" type="button" onClick={()=>startScope(plan.id)}>{scopeWords[0]} ↗</button>
                     </motion.article>
                   );
                 })}
               </div>
 
               {/* Comparison table for conversion clarity */}
-              <ComparisonTable />
+              <ComparisonTable selected={selectedPlanId} />
             </div>
           </section>
 
           {/* Services */}
-          <section className="relative py-20 md:py-32 bg-black border-t border-white/10 overflow-x-clip" aria-label={copy("Serviços Premium")}>
+          <section id="store-services" data-store-section="03" className="relative py-20 md:py-32 bg-black border-t border-white/10 overflow-x-clip" aria-label={copy("Serviços Premium")}>
             <div className="container mx-auto px-6">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -605,6 +566,7 @@ const Store: React.FC = () => {
                     transition={{ duration: 0.6, delay: idx * 0.08 }}
                     className="border border-white/10 p-8 hover:border-white/30 hover:bg-white/5 transition-all duration-300"
                   >
+                    <div className="store-service-marker" aria-hidden="true">{String(idx+1).padStart(2,"0")}<span>{React.createElement([Sparkles,Zap,Check,Shield][idx],{size:20})}</span></div>
                     <h3 className="text-xl md:text-2xl font-bold mb-3 uppercase tracking-tight">{copy(service.title)}</h3>
                     <p className="text-white/70 text-sm mb-6 leading-relaxed">{copy(service.description)}</p>
                     <div className="flex items-center justify-between">
@@ -616,14 +578,17 @@ const Store: React.FC = () => {
                         {copy("Contratar")}
                       </button>
                     </div>
+                    <button className="store-use-scope" type="button" onClick={()=>{setRequestedService({id:service.id,nonce:Date.now()});document.getElementById("store-scope")?.scrollIntoView({behavior:"auto",block:"start"});}}>{scopeWords[1]} +</button>
                   </motion.div>
                 ))}
               </div>
             </div>
           </section>
 
+          <StoreScopeBuilder plans={plans} services={services} onContact={handleContact} initialPlanId={scopePlanId} initialPlanRevision={scopePlanRevision} requestedService={requestedService} />
+          <StoreProjectProof />
           {/* Testimonials & Social Proof */}
-          <section className="relative py-16 md:py-24 bg-black border-t border-white/10" aria-label={copy("Depoimentos")}>
+          <section id="store-stories" data-store-section="04" className="relative py-16 md:py-24 bg-black border-t border-white/10" aria-label={copy("Depoimentos")}>
             <div className="container mx-auto px-6">
               <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="text-center mb-10">
                 <h2 className="text-3xl md:text-4xl font-bold mb-4 uppercase tracking-tight">{copy("Depoimentos")}</h2>
@@ -642,11 +607,12 @@ const Store: React.FC = () => {
           </section>
 
           {/* Final CTA */}
-          <section className="relative py-20 md:py-32 bg-black border-t border-white/10 overflow-x-clip">
+          <section id="store-contact" data-store-section="05" className="relative py-20 md:py-32 bg-black border-t border-white/10 overflow-x-clip">
             <div className="container mx-auto px-6">
               <motion.div initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.8 }} className="max-w-4xl mx-auto text-center">
                 <h2 className="text-3xl md:text-5xl font-bold mb-6 uppercase tracking-tight">{copy("Pronto para Decolar?")}</h2>
                 <p className="text-lg text-white/70 mb-8 leading-relaxed">{copy("Fale com a nossa equipe e receba uma análise gratuita do seu projeto com recomendações práticas.")}</p>
+                <a className="store-contact-scope-link" href="#store-scope">{scopeWords[2]} ↗</a>
                 <motion.button onClick={() => handleContact("Consultoria Gratuita")} whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="inline-flex items-center gap-3 border-2 border-white bg-white text-black px-8 py-4 text-sm uppercase font-semibold transition-all duration-300">
                   <span>{copy("Falar com Especialista")}</span>
                   <ArrowRight size={16} />
