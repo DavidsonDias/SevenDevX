@@ -87,8 +87,6 @@ body {
 @layer base {
   * {
     @apply border-border;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
   }
 
   body {
@@ -128,8 +126,8 @@ body {
    Text selection (subtle)
    ========================= */
 ::selection {
-  background-color: hsla(var(--primary), 0.18);
-  color: hsl(var(--primary-foreground));
+  background-color: hsl(var(--primary) / 0.24);
+  color: hsl(var(--foreground));
 }
 
 /* =========================
@@ -167,8 +165,8 @@ select:focus-visible {
    ========================= */
 /* Tablet portrait adjustments */
 @media (min-width: 768px) and (max-width: 1023px) and (orientation: portrait) {
-  h1 { font-size: clamp(2rem, 5vw, 3.5rem) !important; }
-  h2 { font-size: clamp(1.75rem, 4vw, 3rem) !important; }
+  h1 { font-size: clamp(2rem, 5vw, 3.5rem); }
+  h2 { font-size: clamp(1.75rem, 4vw, 3rem); }
 }
 
 /* High resolution / 4k */
@@ -207,10 +205,11 @@ select:focus-visible {
   animation: shimmer 3s infinite;
 }
 
-/* Smooth transitions for interactive elements */
-button, a, input, textarea, select {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+/*
+ * Não aplicar transition: all globalmente: ele compete com transform/scale,
+ * animações do Framer Motion e estados controlados pelos componentes.
+ * Elementos que precisam de transições devem defini-las localmente.
+ */
 
 /* Orbit slow spin utility (use para loader orbital) */
 @keyframes spin-slow {
@@ -421,19 +420,27 @@ select optgroup { background-color: #0a0a0a; color: rgba(255,255,255,.6); }
   padding-right: 1rem;
 }
 
-/* Utilities que ajudam ao usar Tailwind + componentes shadcn */
+/*
+ * Compatibilidade com componentes legados: estas classes não encapsuladas
+ * podem sobrescrever utilitários homônimos do Tailwind.
+ * Mantidas para evitar regressão; migrar após mapear usos de .bg-card/.text-muted.
+ */
 .bg-card { background-color: rgba(0,0,0,0.6); }
 .text-muted { color: rgba(255,255,255,0.65); }
 
-/* =========================
-   FIM — SevenDevX Global Styles v2.0 Enterprise
-   ========================= *//* Keep administrative floating controls clear of an open mobile keyboard. */
+/* ============================================================================
+   SEVENOS — CONTROLES FLUTUANTES E TECLADO VIRTUAL
+   ============================================================================ */
+/* Oculta controles administrativos flutuantes quando o teclado mobile abre. */
 @media (max-width: 767px) {
   html[data-sevenos-keyboard="true"] [data-sevenos-floating] { display: none !important; }
 }
 
 
-/* Responsive layout refinements: content sets height; decorative sections never size overlays. */
+/* ============================================================================
+   SITE PÚBLICO E SEVENOS — SAFE AREAS E RESPONSIVIDADE
+   ============================================================================ */
+/* Conteúdo determina a altura; elementos decorativos não dimensionam overlays. */
 .viewport-hero-content { padding-top: calc(5rem + env(safe-area-inset-top)); }
 .viewport-feature-content { padding-top: calc(7rem + env(safe-area-inset-top)); }
 .sevenos-shell main, .sevenos-page-actions > * { min-width: 0; max-width: 100%; }
@@ -515,8 +522,10 @@ select optgroup { background-color: #0a0a0a; color: rgba(255,255,255,.6); }
   body:has([data-sevenos-fab]) .sevenos-shell > main { padding-left: max(4.5rem, calc(env(safe-area-inset-left) + 4.5rem)); }
 }
 
-/* Installed apps: paint only the system insets exposed to web content.
-   Native bars outside the viewport remain controlled by the browser/OS. */
+/*
+ * PWA: pinta apenas as áreas seguras expostas ao conteúdo web.
+ * Barras nativas fora da viewport permanecem sob controle do navegador/OS.
+ */
 @media (display-mode: standalone) {
   body::after {
     content: "";
@@ -547,4 +556,17 @@ select optgroup { background-color: #0a0a0a; color: rgba(255,255,255,.6); }
   [data-public-header] nav > a, [data-public-header] nav > div > a, [data-public-header] nav > div > button { font-size: .625rem; letter-spacing: .1em; }
   [data-public-header] nav > div.flex { gap: .75rem; }
   [data-public-header] nav + button { margin-left: 0; flex-shrink: 0; }
+}
+/* ============================================================================
+   A11Y — ALTO CONTRASTE (SEM MUDAR O TEMA PADRÃO)
+   ============================================================================ */
+@media (forced-colors: active) {
+  *:focus-visible {
+    outline-color: Highlight;
+  }
+
+  .bp-halo-multicolor,
+  .bp-ring-multicolor {
+    forced-color-adjust: auto;
+  }
 }
