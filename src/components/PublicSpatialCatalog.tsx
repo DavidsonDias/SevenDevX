@@ -1,6 +1,6 @@
 import { useExperienceCopy } from '@/i18n/publicExperienceCopy';
 import { usePublicMotionPreference } from '@/hooks/usePublicMotionPreference';
-import { Children, type ReactNode, useEffect, useState } from 'react';
+import { Children, type ReactNode, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import './public-spatial-catalog.css';
 
@@ -12,6 +12,8 @@ export default function PublicSpatialCatalog({ children, items }: { children: Re
   const [compact, setCompact] = useState(false);
   const { reduced } = usePublicMotionPreference();
   const safeIndex = Math.min(index, Math.max(0, cards.length - 1));
+  const gesture = useRef<{id:number;x:number;y:number}|null>(null);
+  const suppressClick = useRef(false);
   const [direction, setDirection] = useState(1);
   const itemKey = JSON.stringify(items.map(item => item.title));
   useEffect(() => { setIndex(0); }, [itemKey]);
@@ -30,7 +32,20 @@ export default function PublicSpatialCatalog({ children, items }: { children: Re
         <label><span className="sr-only">{text.select}</span><select value={safeIndex} onChange={event => choose(Number(event.target.value))}>{items.map((item, i) => <option key={i} value={i}>{String(i + 1).padStart(2, '0')} · {item.title}</option>)}</select></label>
         <button type="button" disabled={safeIndex >= cards.length - 1} onClick={() => choose(safeIndex + 1)} aria-label={text.next}>→</button>
       </div>
-      <div className="spatial-stage">
+      <div className="spatial-stage" style={{touchAction:'pan-y pinch-zoom'}} onPointerDown={event=>{
+        suppressClick.current=false;
+        if(event.pointerType!=='touch'&&event.pointerType!=='pen')return;
+        if((event.target as HTMLElement).closest('input,select,textarea'))return;
+        if(!event.isPrimary){gesture.current=null;return;}
+        gesture.current={id:event.pointerId,x:event.clientX,y:event.clientY};
+      }} onPointerCancel={()=>{gesture.current=null;}} onPointerUp={event=>{
+        const start=gesture.current;gesture.current=null;
+        if(!start||start.id!==event.pointerId)return;
+        const dx=event.clientX-start.x,dy=event.clientY-start.y;
+        if(Math.abs(dx)<48||Math.abs(dx)<Math.abs(dy)*1.3)return;
+        suppressClick.current=true;
+        choose(safeIndex+(dx<0?1:-1));
+      }} onClickCapture={event=>{if(suppressClick.current){event.preventDefault();event.stopPropagation();suppressClick.current=false;}}}>
         <div className="spatial-grid-floor" aria-hidden="true" />
         {safeIndex > 0 && <button type="button" className="spatial-neighbor spatial-left" onClick={() => choose(safeIndex - 1)} aria-label={`${text.selectPrefix} ${items[safeIndex - 1]?.title}`}><img src={items[safeIndex - 1]?.image || undefined} alt="" loading="lazy" /><span>{items[safeIndex - 1]?.title}</span></button>}
         <div className="spatial-current"><AnimatePresence mode="wait" initial={false} custom={direction}>

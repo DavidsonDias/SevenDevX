@@ -67,3 +67,22 @@ test('site creation retains sticky-compatible overflow and avoids nested entranc
  assert.match(source,/<main[^>]+overflow-x-clip/);assert.doesNotMatch(source,/<main[^>]+overflow-x-hidden/);
  assert.match(source,/initial=\{false\} animate=\{\{ opacity: 1, y: 0 \}\}/);
 });
+
+
+test('touch gallery swipes preserve vertical scroll, taps, boundaries and cancel handling',async()=>{
+ const f=await fixture('PublicSpatialCatalog');const {w}=f;
+ try{
+ await f.render({items:[0,1,2].map(i=>({title:'P'+i})),children:[0,1,2].map(i=>React.createElement('article',{key:i},React.createElement('h3',null,'P'+i),React.createElement('a',{href:'#details',onClick:()=>{w.opened=i;}},'Details')))});
+ const pointer=(type,x,y,id=1)=>{const e=new w.Event(type,{bubbles:true,cancelable:true});Object.assign(e,{pointerType:'touch',pointerId:id,isPrimary:true,clientX:x,clientY:y});w.document.querySelector('.spatial-stage').dispatchEvent(e);};
+ const swipe=async(x,y)=>{await f.change(()=>pointer('pointerdown',250,200));await f.change(()=>pointer('pointerup',x,y));};
+ await swipe(120,210);assert.equal(w.document.querySelector('select').value,'1');
+ await f.change(()=>w.document.querySelector('.spatial-current a').click());assert.equal(w.opened,undefined,'swipe must not activate card link');
+ await swipe(270,350);assert.equal(w.document.querySelector('select').value,'1','vertical gesture must not navigate');
+ await swipe(235,202);assert.equal(w.document.querySelector('select').value,'1','small motion remains a tap');
+ await f.change(()=>w.document.querySelector('.spatial-current a').click());assert.equal(w.opened,1);
+ await swipe(350,205);assert.equal(w.document.querySelector('select').value,'0');
+ await swipe(350,205);assert.equal(w.document.querySelector('select').value,'0','boundary clamps');
+ await f.change(()=>{pointer('pointerdown',250,200);pointer('pointercancel',250,200);pointer('pointerup',50,200);});assert.equal(w.document.querySelector('select').value,'0');
+ assert.match(w.document.querySelector('.spatial-stage').getAttribute('style'),/pan-y pinch-zoom/);
+ }finally{await f.close();}
+});
