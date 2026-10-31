@@ -67,7 +67,7 @@ const Header = () => {
     { name: t.header.about, path: "/about" },
     { name: t.header.services, path: "/services" },
     { name: t.header.projects, path: "/projects" },
-    { name: t.header.contact, path: "/#contact" },
+    { name: t.header.contact, path: "/contact" },
     { name: t.header.store, path: "/store" },
     { name: "BLOG", path: "/blog" },
   ];

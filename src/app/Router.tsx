@@ -43,7 +43,7 @@
 // ============================================================================
 
 import { lazy, Suspense } from "react";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import ScrollToTop from "@/components/ScrollToTop";
 import PublicRouteFallback from "@/components/PublicRouteFallback";
@@ -68,6 +68,7 @@ const Projects = lazy(() => import("@/pages/Projects"));
 const Store = lazy(() => import("@/pages/Store"));
 const PrivacyPolicy = lazy(() => import("@/pages/PrivacyPolicy"));
 const Fornecedores = lazy(() => import("@/pages/Fornecedores"));
+const ContactPage = lazy(() => import("@/pages/ContactPage"));
 const Blog = lazy(() => import("@/pages/Blog"));
 const BlogPost = lazy(() => import("@/pages/BlogPost"));
 const Auth = lazy(() => import("@/pages/Auth"));
@@ -161,6 +162,8 @@ function AnimatedRoutes() {
   useNavHistoryTracker();
   useAiReferralTracker();
 
+  if (location.pathname === "/" && location.hash === "#contact") return <Navigate to={`/contact${location.search}`} replace />;
+
   return (
     <AnimatePresence mode="wait" initial={false}>
       <motion.div
@@ -174,6 +177,7 @@ function AnimatedRoutes() {
         <Suspense fallback={<PublicRouteFallback pathname={location.pathname} />}>
           <Routes location={location}>
             <Route path="/" element={<Index />} />
+            <Route path="/contact" element={<ContactPage />} />
             <Route path="/about" element={<About />} />
             <Route path="/services" element={<Services />} />
             <Route path="/projects" element={<Projects />} />

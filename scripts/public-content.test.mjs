@@ -115,6 +115,6 @@ test('blog route clears stale state, ignores superseded responses, guards short 
   assert.match(source, /return \(\) => \{ cancelled = true; \}/);
   assert.match(source, /total > 0/);
   assert.match(source, /post\.slug !== slug/);
-  assert.match(source, /href === "\/contact" \? "\/#contact"/);
+  assert.match(source, /href === "\/#contact" \? "\/contact"/);
   assert.doesNotMatch(source, /dangerouslySetInnerHTML|copy\(displayPost\.(title|content)\)/);
 });

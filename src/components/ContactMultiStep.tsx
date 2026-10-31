@@ -1,3 +1,7 @@
+import "@/components/contact-experience.css";
+import DOMPurify from "dompurify";
+import { useContacts } from "@/hooks/useContacts";
+import ContactGuide from "@/components/ContactGuide";
 /**
  * ContactMultiStep.tsx — SevenDevX
  * ─────────────────────────────────────────────────────────────────────
@@ -24,13 +28,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 import { ChevronRight, ChevronLeft, Check, Send } from "lucide-react";
 import contactBackground from "@/assets/images/contact-background.webp";
-import DOMPurify from "dompurify";
-import { useContacts } from "@/hooks/useContacts";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 // ============================================================================
@@ -40,7 +42,7 @@ import { useLanguage } from "@/i18n/LanguageContext";
 const ContactMultiStep: React.FC = () => {
   const { copy } = usePublicCopy();
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { saveAndOpenWhatsApp, isSubmitting } = useContacts();
 
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -53,6 +55,15 @@ const ContactMultiStep: React.FC = () => {
   const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
 
   const totalSteps = 3;
+  const formRef = useRef<HTMLFormElement>(null);
+  const stepTitle = useRef<HTMLHeadingElement>(null);
+  const previousStep = useRef(currentStep);
+  useEffect(() => {
+    if (previousStep.current === currentStep) return;
+    previousStep.current = currentStep;
+    stepTitle.current?.focus({preventScroll:true});
+    stepTitle.current?.scrollIntoView({block:'nearest',behavior:'auto'});
+  }, [currentStep]);
 
   const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
@@ -60,7 +71,7 @@ const ContactMultiStep: React.FC = () => {
     const newErrors: { [key: string]: boolean } = {};
     if (step === 1) {
       if (!formData.name.trim() || formData.name.length > 100) newErrors.name = true;
-      if (!formData.phone.trim() || formData.phone.length > 20) newErrors.phone = true;
+      if (formData.phone.replace(/\D/g, "").length < 10 || formData.phone.length > 20) newErrors.phone = true;
       if (!formData.email.trim() || !validateEmail(formData.email) || formData.email.length > 255) newErrors.email = true;
     }
     if (step === 2) {
@@ -73,6 +84,8 @@ const ContactMultiStep: React.FC = () => {
     }
     if (formData.hp_email && formData.hp_email.trim().length > 0) newErrors.hp = true;
     setErrors(newErrors);
+    const firstError=Object.keys(newErrors)[0];
+    if(firstError) requestAnimationFrame(()=>formRef.current?.querySelector<HTMLElement>(`[id="${firstError}"]`)?.focus());
     return Object.keys(newErrors).length === 0;
   };
 
@@ -136,7 +149,7 @@ const ContactMultiStep: React.FC = () => {
   const stepLabels = [t.contact.step1, t.contact.step2, t.contact.step3];
 
   return (
-    <section id="contact" className="relative min-h-screen flex items-center py-12 sm:py-16 md:py-20 lg:py-32 overflow-hidden bg-background">
+    <section id="contact" className="contact-experience relative min-h-screen flex items-center py-12 sm:py-16 md:py-20 lg:py-32 overflow-hidden bg-background">
       {/* Background */}
       <div className="absolute inset-0 z-0">
         <img src={contactBackground} alt="" aria-hidden="true" loading="lazy" className="w-full h-full object-cover" />
@@ -144,7 +157,7 @@ const ContactMultiStep: React.FC = () => {
       </div>
 
       <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
+        <div className="contact-preview-layout"><ContactGuide step={currentStep}/><div className="contact-form-column">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -186,6 +199,8 @@ const ContactMultiStep: React.FC = () => {
 
           {/* Form */}
           <motion.form
+            ref={formRef}
+            noValidate
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -193,6 +208,9 @@ const ContactMultiStep: React.FC = () => {
             onSubmit={handleSubmit}
             className="space-y-5 sm:space-y-6 bg-card/40 backdrop-blur-sm border border-border p-5 xs:p-6 sm:p-8 md:p-10 lg:p-12"
           >
+            <div className="contact-step-heading"><span>{String(currentStep).padStart(2,'0')} / 03</span><h3 ref={stepTitle} tabIndex={-1}>{stepLabels[currentStep-1]}</h3></div>
+            <p className="contact-required">{{pt:'Campos obrigatórios, exceto o orçamento.',en:'All fields required except budget.',es:'Campos obligatorios, excepto el presupuesto.'}[language]}</p>
+            {Object.values(errors).some(Boolean) && <p className="contact-error-summary" role="alert">{{pt:'Revise os campos indicados para continuar.',en:'Review the highlighted fields to continue.',es:'Revisa los campos indicados para continuar.'}[language]}</p>}
             {/* Honeypot */}
             <div className="sr-only" aria-hidden>
               <label htmlFor="hp_email">{copy("Leave empty")}</label>
@@ -205,21 +223,21 @@ const ContactMultiStep: React.FC = () => {
                 <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }} className="space-y-6">
                   <div>
                     <label htmlFor="name" className="block text-[10px] xs:text-xs text-muted-foreground mb-2 uppercase tracking-widest font-semibold">{t.contact.nameLabel}</label>
-                    <Input id="name" name="name" value={formData.name} onChange={handleChange} placeholder={t.contact.namePlaceholder} aria-invalid={!!errors.name} maxLength={100}
+                    <Input id="name" name="name" autoComplete="name" aria-describedby={errors.name ? "contact-name-error" : undefined} value={formData.name} onChange={handleChange} placeholder={t.contact.namePlaceholder} aria-invalid={!!errors.name} maxLength={100}
                       className={`bg-background/40 border ${errors.name ? "border-destructive" : "border-border"} text-foreground placeholder:text-muted-foreground h-12 sm:h-14 text-xs sm:text-sm focus:border-foreground transition-all`} />
-                    {errors.name && <p className="text-destructive text-xs mt-1 uppercase tracking-wide">{t.forms.fieldRequired}</p>}
+                    {errors.name && <p id="contact-name-error" className="text-destructive text-xs mt-1 uppercase tracking-wide">{t.forms.fieldRequired}</p>}
                   </div>
                   <div>
                     <label htmlFor="phone" className="block text-[10px] xs:text-xs text-muted-foreground mb-2 uppercase tracking-widest font-semibold">{t.contact.phoneLabel}</label>
-                    <Input id="phone" name="phone" value={formData.phone} onChange={handlePhoneChange} placeholder={t.contact.phonePlaceholder} aria-invalid={!!errors.phone} maxLength={20}
+                    <Input id="phone" name="phone" type="tel" inputMode="tel" autoComplete="tel-national" aria-describedby={errors.phone ? "contact-phone-error" : undefined} value={formData.phone} onChange={handlePhoneChange} placeholder={t.contact.phonePlaceholder} aria-invalid={!!errors.phone} maxLength={20}
                       className={`bg-background/40 border ${errors.phone ? "border-destructive" : "border-border"} text-foreground placeholder:text-muted-foreground h-12 sm:h-14 text-xs sm:text-sm focus:border-foreground transition-all`} />
-                    {errors.phone && <p className="text-destructive text-xs mt-1 uppercase tracking-wide">{t.forms.invalidPhone}</p>}
+                    {errors.phone && <p id="contact-phone-error" className="text-destructive text-xs mt-1 uppercase tracking-wide">{t.forms.invalidPhone}</p>}
                   </div>
                   <div>
                     <label htmlFor="email" className="block text-[10px] xs:text-xs text-muted-foreground mb-2 uppercase tracking-widest font-semibold">{t.contact.emailLabel}</label>
-                    <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} placeholder={t.contact.emailPlaceholder} aria-invalid={!!errors.email} maxLength={255}
+                    <Input id="email" name="email" type="email" autoComplete="email" inputMode="email" aria-describedby={errors.email ? "contact-email-error" : undefined} value={formData.email} onChange={handleChange} placeholder={t.contact.emailPlaceholder} aria-invalid={!!errors.email} maxLength={255}
                       className={`bg-background/40 border ${errors.email ? "border-destructive" : "border-border"} text-foreground placeholder:text-muted-foreground h-12 sm:h-14 text-xs sm:text-sm focus:border-foreground transition-all`} />
-                    {errors.email && <p className="text-destructive text-xs mt-1 uppercase tracking-wide">{t.forms.invalidEmail}</p>}
+                    {errors.email && <p id="contact-email-error" className="text-destructive text-xs mt-1 uppercase tracking-wide">{t.forms.invalidEmail}</p>}
                   </div>
                 </motion.div>
               )}
@@ -229,14 +247,14 @@ const ContactMultiStep: React.FC = () => {
                 <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }} className="space-y-6">
                   <div>
                     <label htmlFor="projectType" className="block text-xs text-muted-foreground mb-2 uppercase tracking-widest font-semibold">{t.contact.projectTypeLabel}</label>
-                    <select id="projectType" name="projectType" value={formData.projectType} onChange={handleChange} aria-invalid={!!errors.projectType}
+                    <select id="projectType" name="projectType" aria-describedby={errors.projectType ? "contact-projectType-error" : undefined} value={formData.projectType} onChange={handleChange} aria-invalid={!!errors.projectType}
                       className={`w-full bg-background/40 border ${errors.projectType ? "border-destructive" : "border-border"} text-foreground h-12 sm:h-14 px-3 text-sm focus:border-foreground transition-all`}>
                       <option value="" className="bg-background">{t.contact.projectTypePlaceholder}</option>
                       {t.contact.projectTypes.map((type) => (
                         <option key={type} value={type} className="bg-background">{type}</option>
                       ))}
                     </select>
-                    {errors.projectType && <p className="text-destructive text-xs mt-1 uppercase tracking-wide">{t.forms.selectOption}</p>}
+                    {errors.projectType && <p id="contact-projectType-error" className="text-destructive text-xs mt-1 uppercase tracking-wide">{t.forms.selectOption}</p>}
                   </div>
                   <div>
                     <label htmlFor="budget" className="block text-xs text-muted-foreground mb-2 uppercase tracking-widest font-semibold">{t.contact.budgetLabel}</label>
@@ -250,9 +268,10 @@ const ContactMultiStep: React.FC = () => {
                   </div>
                   <div>
                     <label htmlFor="message" className="block text-xs text-muted-foreground mb-2 uppercase tracking-widest font-semibold">{t.contact.messageLabel}</label>
-                    <Textarea id="message" name="message" value={formData.message} onChange={handleChange} placeholder={t.contact.messagePlaceholder} rows={6} aria-invalid={!!errors.message}
+                    <Textarea id="message" name="message" maxLength={1000} aria-describedby={errors.message ? "contact-message-error" : "contact-message-hint"} value={formData.message} onChange={handleChange} placeholder={t.contact.messagePlaceholder} rows={6} aria-invalid={!!errors.message}
                       className={`bg-background/40 border ${errors.message ? "border-destructive" : "border-border"} text-foreground placeholder:text-muted-foreground text-sm focus:border-foreground resize-none transition-all`} />
-                    {errors.message && <p className="text-destructive text-xs mt-1 uppercase tracking-wide">{t.forms.fieldRequired}</p>}
+                    <p id="contact-message-hint" className="contact-message-hint">{{pt:'Conte o objetivo, o público e o que você precisa. Não inclua senhas ou dados sensíveis.',en:'Describe your goal, audience and needs. Do not include passwords or sensitive data.',es:'Describe tu objetivo, público y necesidades. No incluyas contraseñas ni datos sensibles.'}[language]} <span>{formData.message.length}/1000</span></p>
+                    {errors.message && <p id="contact-message-error" className="text-destructive text-xs mt-1 uppercase tracking-wide">{t.forms.fieldRequired}</p>}
                   </div>
                 </motion.div>
               )}
@@ -266,6 +285,8 @@ const ContactMultiStep: React.FC = () => {
                     <p className="text-xs text-muted-foreground"><span className="text-foreground/90 font-semibold">{t.contact.phoneLabel}:</span> {formData.phone}</p>
                     <p className="text-xs text-muted-foreground"><span className="text-foreground/90 font-semibold">{t.contact.emailLabel}:</span> {formData.email}</p>
                     <p className="text-xs text-muted-foreground"><span className="text-foreground/90 font-semibold">{t.contact.projectTypeLabel}:</span> {copy(formData.projectType || "—")}</p>
+                    <p className="contact-review-message"><span>{t.contact.messageLabel}:</span>{formData.message}</p>
+                    <div className="contact-review-actions"><button type="button" onClick={()=>setCurrentStep(1)}>{{pt:'Editar contato',en:'Edit contact',es:'Editar contacto'}[language]}</button><button type="button" onClick={()=>setCurrentStep(2)}>{{pt:'Editar projeto',en:'Edit project',es:'Editar proyecto'}[language]}</button></div>
                     {formData.budget && <p className="text-xs text-muted-foreground"><span className="text-foreground/90 font-semibold">{t.contact.budgetLabel}:</span> {formData.budget}</p>}
                   </div>
                   <div className="space-y-4">
@@ -308,12 +329,13 @@ const ContactMultiStep: React.FC = () => {
                 <button type="submit" disabled={isSubmitting}
                   className="flex-1 flex items-center justify-center gap-2 bg-foreground text-background font-bold py-3 sm:py-4 px-5 sm:px-8 text-xs sm:text-sm tracking-widest uppercase transition-all duration-300 hover:bg-foreground/90 disabled:opacity-50">
                   <Send size={16} />
-                  <span>{t.contact.submit}</span>
+                  <span>{isSubmitting ? ({pt:"Enviando…",en:"Sending…",es:"Enviando…"}[language]) : t.contact.submit}</span>
                 </button>
               )}
             </div>
           </motion.form>
-        </div>
+
+        </div></div>
       </div>
     </section>
   );

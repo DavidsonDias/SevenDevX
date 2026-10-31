@@ -49,7 +49,7 @@ const ServicesPreview = lazy(() => typeof window !== "undefined" && window.inner
 const FeaturedProjects = lazy(() => import("@/components/FeaturedProjects"));
 const TechPreview = lazy(() => import("@/components/TechPreview"));
 const TestimonialsCarousel3D = lazy(() => import("@/components/TestimonialsCarousel3D"));
-const ContactMultiStep = lazy(() => import("@/components/ContactMultiStep"));
+const ContactCallout = lazy(() => import("@/components/ContactCallout"));
 const ExitIntentPopup = lazy(() => import("@/components/ExitIntentPopup"));
 const SectionDivider = lazy(() => import("@/components/SectionDivider"));
 
@@ -146,9 +146,9 @@ const Home = () => {
           />
 
           {/* ---------------------------------------------------------
-             CONTACT MULTI-STEP (Formulário / WhatsApp)
+             CONTACT CALLOUT (Página dedicada)
              --------------------------------------------------------- */}
-          <ContactMultiStep />
+          <ContactCallout />
 
           {/* 🔽 DIVISOR 5 — CONTACT → FOOTER (Pequeno, discreto) */}
           <SectionDivider

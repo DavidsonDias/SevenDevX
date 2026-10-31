@@ -1,0 +1,7 @@
+import { Link } from 'react-router-dom';
+import { useLanguage } from '@/i18n/LanguageContext';
+export default function ContactCallout(){
+ const {language}=useLanguage();
+ const text={pt:['SEVENDEVX / PRÓXIMO PASSO','Vamos tirar sua ideia do papel?','Conte o que você precisa em uma página dedicada, com espaço para organizar e revisar seu projeto.','Conversar sobre meu projeto'],en:['SEVENDEVX / NEXT STEP','Ready to bring your idea to life?','Tell us what you need on a dedicated page, with room to organize and review your project.','Tell us about your project'],es:['SEVENDEVX / SIGUIENTE PASO','¿Llevamos tu idea a la realidad?','Cuéntanos lo que necesitas en una página dedicada para organizar y revisar tu proyecto.','Hablar sobre mi proyecto']}[language];
+ return <section id="contact" className="px-5 py-20 md:py-28 border-y border-white/10 bg-black"><div className="max-w-5xl mx-auto text-center"><span className="text-xs tracking-widest text-white/60">{text[0]}</span><h2 className="text-2xl md:text-4xl leading-relaxed my-6">{text[1]}</h2><p className="text-base text-white/70 leading-relaxed max-w-2xl mx-auto mb-8">{text[2]}</p><Link to="/contact" className="inline-flex gap-5 items-center border-2 border-white px-6 py-4 text-sm uppercase tracking-wider hover:bg-white hover:text-black focus-visible:outline focus-visible:outline-offset-4">{text[3]} <span aria-hidden="true">↗</span></Link></div></section>;
+}
