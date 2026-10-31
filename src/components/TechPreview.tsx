@@ -1,3 +1,4 @@
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 /**
  * TechPreview.tsx — SevenDevX
  * ─────────────────────────────────────────────────────────────────────
@@ -36,6 +37,7 @@ import { useLanguage } from "@/i18n/LanguageContext";
 // ============================================================================
 
 const TechPreview = () => {
+  const { copy } = usePublicCopy();
   const { t } = useLanguage();
   const sectionRef = useRef<HTMLElement>(null);
   const [selectedTech, setSelectedTech] = useState<Technology | null>(null);
@@ -126,7 +128,7 @@ const TechPreview = () => {
               >
                 <Sparkles className="w-3.5 h-3.5 text-foreground/60" />
                 <span className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-muted-foreground font-medium">
-                  Stack Tecnológico
+                  {copy("Stack Tecnológico")}
                 </span>
               </motion.div>
 

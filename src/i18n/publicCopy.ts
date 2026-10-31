@@ -8,6 +8,9 @@ import { articleHeadlines } from "./editorial/headlines";
 
 /** Reviewed supplemental copy for public routes. Brands, URLs and source content stay intact. */
 export const publicCopy: Record<string, readonly [string, string]> = {
+  "Comparar": ["Compare", "Comparar"],
+  "Loja - SevenDevX": ["Store - SevenDevX", "Tienda - SevenDevX"],
+  "Email": ["Email", "Correo electrónico"],
   "Solução SevenDevX": ["SevenDevX Solution", "Solución SevenDevX"],
   "PERFIL": ["PROFILE", "PERFIL"],
   "SAIR": ["SIGN OUT", "SALIR"],

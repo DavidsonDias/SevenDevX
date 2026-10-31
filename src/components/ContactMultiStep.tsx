@@ -283,7 +283,7 @@ const ContactMultiStep: React.FC = () => {
                 <motion.div key="step3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} transition={{ duration: 0.3 }} className="space-y-6">
                   <div className="bg-foreground/5 p-6 space-y-3 border border-border">
                     <h3 className="text-sm font-semibold uppercase tracking-wider mb-4">{t.contact.step3}</h3>
-                    <p className="text-xs text-muted-foreground"><span className="text-foreground/90 font-semibold">{t.contact.nameLabel}:</span> {copy(formData.name)}</p>
+                    <p className="text-xs text-muted-foreground"><span className="text-foreground/90 font-semibold">{t.contact.nameLabel}:</span> {formData.name}</p>
                     <p className="text-xs text-muted-foreground"><span className="text-foreground/90 font-semibold">{t.contact.phoneLabel}:</span> {formData.phone}</p>
                     <p className="text-xs text-muted-foreground"><span className="text-foreground/90 font-semibold">{t.contact.emailLabel}:</span> {formData.email}</p>
                     <p className="text-xs text-muted-foreground"><span className="text-foreground/90 font-semibold">{t.contact.projectTypeLabel}:</span> {copy(formData.projectType || "—")}</p>

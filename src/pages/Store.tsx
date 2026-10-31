@@ -125,12 +125,15 @@ const SEOHead = lazy(() => import("@/components/SEOHead"));
 const planIcons = [Zap, Sparkles, Shield];
 
 // Simple suspense fallback
-const Fallback = () => (
+const Fallback = () => {
+  const { copy } = usePublicCopy();
+  return (
   <div className="w-full flex items-center justify-center py-8">
     <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-white/40" aria-hidden />
-    <span className="sr-only">Carregando...</span>
+    <span className="sr-only">{copy("Carregando...")}</span>
   </div>
 );
+};
 
 /* -------------------------
    Business Data (editable)
