@@ -1,3 +1,5 @@
+import { BlogEditorialScene, BlogReadingGuide } from "@/components/BlogEditorial";
+import "@/components/blog-editorial.css";
 /**
  * 🚀 Blog.tsx — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -337,6 +339,7 @@ const Blog = () => {
   }, [searchQuery]);
 
   useEffect(() => {
+    let cancelled = false;
     const fetchData = async () => {
       setIsLoading(true);
 
@@ -345,6 +348,7 @@ const Blog = () => {
         .select("*")
         .order("name");
 
+      if (cancelled) return;
       if (categoriesData) setCategories(categoriesData);
 
       let query = supabase
@@ -363,6 +367,7 @@ const Blog = () => {
 
       const { data: postsData } = await query;
 
+      if (cancelled) return;
       if (postsData) {
         const transformedPosts: BlogPost[] = postsData.map(post => ({
           ...post,
@@ -374,7 +379,8 @@ const Blog = () => {
       setIsLoading(false);
     };
 
-    fetchData();
+    void fetchData();
+    return () => { cancelled = true; };
   }, [selectedCategory]);
 
   const filteredPosts = useMemo(() => {
@@ -405,9 +411,10 @@ const Blog = () => {
       <div className="min-h-screen bg-background text-foreground">
         <Header />
 
-        <main className="pt-20">
+        <main id="main-content" tabIndex={-1} className="blog-editorial pt-20 focus:outline-none">
           {/* Hero */}
-          <Section className="border-b border-border/10 py-16 md:py-24">
+          <Section className="blog-editorial-hero border-b border-border/10 py-16 md:py-24">
+            <BlogEditorialScene />
             <Container>
               <motion.div
                 initial="hidden"
@@ -441,14 +448,16 @@ const Blog = () => {
             </Container>
           </Section>
 
+          <BlogReadingGuide />
           {/* Filters — Sticky */}
-          <div className="py-5 border-b border-border/10 sticky top-16 bg-background/95 backdrop-blur-xl z-30">
+          <div id="blog-explore" className="blog-editorial-filters py-5 border-b border-border/10 sticky top-16 bg-background/95 backdrop-blur-xl z-30">
             <Container>
               <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
                 <div className="relative w-full sm:w-80">
                   <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
                   <input
                     type="text"
+                    aria-label={t.blog.searchPlaceholder}
                     placeholder={t.blog.searchPlaceholder}
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -458,6 +467,7 @@ const Blog = () => {
 
                 <div className="flex gap-1.5 flex-wrap justify-center">
                   <button
+                    aria-pressed={!selectedCategory}
                     onClick={() => setSelectedCategory(null)}
                     className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all ${
                       !selectedCategory
@@ -470,6 +480,7 @@ const Blog = () => {
                   {categories.map(category => (
                     <button
                       key={category.id}
+                      aria-pressed={selectedCategory === category.id}
                       onClick={() => setSelectedCategory(category.id)}
                       className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all ${
                         selectedCategory === category.id
@@ -486,7 +497,8 @@ const Blog = () => {
           </div>
 
           {/* Content */}
-          <Section className="py-16 md:py-20">
+          <Section className="blog-editorial-content py-16 md:py-20">
+            <div className="blog-results" role="status" aria-live="polite">{isLoading ? ({pt:"Carregando artigos…",en:"Loading articles…",es:"Cargando artículos…"}[language]) : `${filteredPosts.length} ${{pt:"artigos encontrados",en:"articles found",es:"artículos encontrados"}[language]}`}</div>
             <Container>
               {isLoading ? (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -500,6 +512,7 @@ const Blog = () => {
                     <FeaturedArticle post={featuredPost} lang={language} />
                   )}
 
+                  <div className="blog-catalog-heading"><span>SEVENDEVX / JOURNAL</span><h2>{{pt:"Explore os artigos",en:"Explore the articles",es:"Explora los artículos"}[language]}</h2></div>
                   <motion.div
                     initial="hidden"
                     animate="visible"
@@ -536,7 +549,7 @@ const Blog = () => {
           </Section>
 
           {/* CTA */}
-          <Section className="border-t border-border/10">
+          <Section className="blog-editorial-cta border-t border-border/10">
             <Container>
               <motion.div
                 initial={{ opacity: 0, y: 30 }}

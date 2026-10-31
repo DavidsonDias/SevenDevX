@@ -1,3 +1,5 @@
+import ArticleReadingTools from "@/components/ArticleReadingTools";
+import "@/components/blog-editorial.css";
 /**
  * 🚀 BlogPost.tsx — SevenDevX Enterprise Platform
  * ═══════════════════════════════════════════════════════════════════════
@@ -158,6 +160,14 @@ const formatDate = (dateString: string | null, lang: string) => {
 // 🏗️ MAIN COMPONENT
 // ============================================================================
 
+const articleMarkdownComponents: import('react-markdown').Components = {
+  h2: ({ node, children }) => <h2 id={`article-section-${node?.position?.start.line}`} tabIndex={-1}>{children}</h2>,
+  h3: ({ node, children }) => <h3 id={`article-section-${node?.position?.start.line}`} tabIndex={-1}>{children}</h3>,
+  a: ({ href, children }) => <a href={href === "/contact" ? "/#contact" : href}>{children}</a>,
+  table: ({ children }) => <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Table"><table>{children}</table></div>,
+  pre: ({ children }) => <pre className="overflow-x-auto" tabIndex={0}>{children}</pre>,
+};
+
 const BlogPost = () => {
   const { copy } = usePublicCopy();
   const { slug } = useParams<{ slug: string }>();
@@ -170,16 +180,21 @@ const BlogPost = () => {
 
   // Reading progress bar
   useEffect(() => {
-    const handleScroll = () => {
-      const el = document.getElementById("article-content");
+    let frame = 0;
+    const paint = () => {
+      frame = 0;
+      const el = document.getElementById("article-body");
       if (!el) return;
       const rect = el.getBoundingClientRect();
       const total = el.scrollHeight - window.innerHeight;
       const scrolled = -rect.top;
-      setReadProgress(total > 0 ? Math.min(Math.max(scrolled / total, 0), 1) * 100 : 100);
+      setReadProgress(Math.round(total > 0 ? Math.min(Math.max(scrolled / total, 0), 1) * 100 : rect.top <= window.innerHeight ? 100 : 0));
     };
+    const handleScroll = () => { if (!frame) frame = requestAnimationFrame(paint); };
     window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleScroll);
+    handleScroll();
+    return () => { cancelAnimationFrame(frame); window.removeEventListener("scroll", handleScroll); window.removeEventListener("resize", handleScroll); };
   }, [post]);
 
   useEffect(() => {
@@ -366,10 +381,10 @@ const BlogPost = () => {
 
         <Header />
 
-        <main className="pt-20" id="article-content">
+        <main className="blog-article pt-20" id="article-content">
           {/* Hero Image */}
           {displayPost.cover_image && (
-            <div className="relative h-[35vh] md:h-[45vh] w-full overflow-hidden">
+            <div className="article-cover relative h-[35vh] md:h-[45vh] w-full overflow-hidden">
               <img
                 src={displayPost.cover_image}
                 alt={displayPost.title}
@@ -380,7 +395,7 @@ const BlogPost = () => {
           )}
 
           {/* Article */}
-          <article lang={contentLanguage === "pt" ? "pt-BR" : contentLanguage}>
+          <article className="article-editorial-body" lang={contentLanguage === "pt" ? "pt-BR" : contentLanguage}>
             <Container narrow className="py-12">
               {/* Back */}
               <motion.div
@@ -401,7 +416,7 @@ const BlogPost = () => {
               <motion.header
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="mb-14"
+                className="article-introduction mb-14"
               >
                 {displayPost.category && (
                   <span
@@ -457,12 +472,14 @@ const BlogPost = () => {
                 </div>
               </motion.header>
 
+              <ArticleReadingTools content={displayPost.content} />
               {/* Content — Premium Typography */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
-                className="min-w-0 [overflow-wrap:anywhere] [&_pre]:max-w-full [&_pre]:overflow-x-auto [&_pre]:overscroll-x-contain [&_pre]:[overflow-wrap:normal] prose prose-invert prose-lg max-w-none
+                id="article-body"
+                className="article-reading-content min-w-0 [overflow-wrap:anywhere] [&_pre]:max-w-full [&_pre]:overflow-x-auto [&_pre]:overscroll-x-contain [&_pre]:[overflow-wrap:normal] prose prose-invert prose-lg max-w-none
                   prose-headings:font-bold prose-headings:tracking-tight
                   prose-h2:text-2xl prose-h2:mt-14 prose-h2:mb-5
                   prose-h3:text-xl prose-h3:mt-10 prose-h3:mb-4
@@ -478,7 +495,7 @@ const BlogPost = () => {
               >
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm]}
-                  components={{ a: ({ href, children }) => <a href={href === "/contact" ? "/#contact" : href}>{children}</a>, table: ({ children }) => <div className="overflow-x-auto"><table>{children}</table></div>, pre: ({ children }) => <pre className="overflow-x-auto">{children}</pre> }}
+                  components={articleMarkdownComponents}
                 >{displayPost.content}</ReactMarkdown>
               </motion.div>
 
@@ -505,7 +522,7 @@ const BlogPost = () => {
               )}
 
               {/* Author Signature */}
-              <div className="mt-14 p-6 rounded-xl bg-card/30 border border-border/20">
+              <div className="article-signature mt-14 p-6 rounded-xl bg-card/30 border border-border/20">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center flex-shrink-0">
                     <span className="text-xl font-bold text-primary">S</span>
@@ -529,7 +546,7 @@ const BlogPost = () => {
 
           {/* Related Posts */}
           {relatedPosts.length > 0 && (
-            <Section className="border-t border-border/10">
+            <Section className="article-related border-t border-border/10">
               <Container>
                 <h2 className="text-xl md:text-2xl font-bold mb-8 tracking-tight">
                   {t.blog.continuReading}
@@ -569,7 +586,7 @@ const BlogPost = () => {
           )}
 
           {/* Internal Links — SEO */}
-          <Section className="border-t border-border/10">
+          <Section className="article-conclusion border-t border-border/10">
             <Container className="text-center space-y-6">
               <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
                 {t.blog.likedContent}
