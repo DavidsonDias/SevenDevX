@@ -1,3 +1,4 @@
+import { normalizeBlogSearch } from "@/lib/blogSearch";
 import { BlogEditorialScene, BlogReadingGuide } from "@/components/BlogEditorial";
 import "@/components/blog-editorial.css";
 /**
@@ -329,6 +330,8 @@ const Blog = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [categories, setCategories] = useState<BlogCategory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [retry, setRetry] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -342,8 +345,10 @@ const Blog = () => {
     let cancelled = false;
     const fetchData = async () => {
       setIsLoading(true);
+      setLoadError(false);
+      try {
 
-      const { data: categoriesData } = await supabase
+      const { data: categoriesData, error: categoriesError } = await supabase
         .from("blog_categories")
         .select("*")
         .order("name");
@@ -365,7 +370,8 @@ const Blog = () => {
         query = query.eq("category_id", selectedCategory);
       }
 
-      const { data: postsData } = await query;
+      const { data: postsData, error: postsError } = await query;
+      if (categoriesError || postsError) throw new Error("Catalogue unavailable");
 
       if (cancelled) return;
       if (postsData) {
@@ -376,22 +382,24 @@ const Blog = () => {
         setPosts(transformedPosts);
       }
 
-      setIsLoading(false);
+      } catch {
+        if (!cancelled) { setLoadError(true); setPosts([]); }
+      } finally { if (!cancelled) setIsLoading(false); }
     };
 
     void fetchData();
     return () => { cancelled = true; };
-  }, [selectedCategory]);
+  }, [selectedCategory, retry]);
 
   const filteredPosts = useMemo(() => {
     if (!debouncedSearch) return posts;
-    const q = debouncedSearch.toLowerCase();
+    const q = normalizeBlogSearch(debouncedSearch);
     return posts.filter(post =>
-      copy(post.title).toLowerCase().includes(q) ||
-      copy(post.excerpt)?.toLowerCase().includes(q) ||
-      post.title.toLowerCase().includes(q) ||
-      post.excerpt?.toLowerCase().includes(q) ||
-      post.tags?.some(tag => tag.toLowerCase().includes(q))
+      normalizeBlogSearch(copy(post.title)).includes(q) ||
+      normalizeBlogSearch(copy(post.excerpt) || "").includes(q) ||
+      normalizeBlogSearch(post.title).includes(q) ||
+      normalizeBlogSearch(post.excerpt || "").includes(q) ||
+      post.tags?.some(tag => normalizeBlogSearch(tag).includes(q))
     );
   }, [posts, debouncedSearch, copy]);
 
@@ -456,7 +464,7 @@ const Blog = () => {
                 <div className="relative w-full sm:w-80">
                   <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
                   <input
-                    type="text"
+                    type="search"
                     aria-label={t.blog.searchPlaceholder}
                     placeholder={t.blog.searchPlaceholder}
                     value={searchQuery}
@@ -493,14 +501,15 @@ const Blog = () => {
                   ))}
                 </div>
               </div>
+              {(searchQuery || selectedCategory) && <div className="blog-filter-summary"><span>{{pt:'Filtros ativos',en:'Active filters',es:'Filtros activos'}[language]}: {copy(categories.find(c=>c.id===selectedCategory)?.name || t.blog.allCategories)}{searchQuery && ` · “${searchQuery}”`}</span><button type="button" onClick={()=>{setSearchQuery('');setDebouncedSearch('');setSelectedCategory(null);}}>{{pt:'Limpar filtros',en:'Clear filters',es:'Limpiar filtros'}[language]} ×</button></div>}
             </Container>
           </div>
 
           {/* Content */}
           <Section className="blog-editorial-content py-16 md:py-20">
-            <div className="blog-results" role="status" aria-live="polite">{isLoading ? ({pt:"Carregando artigos…",en:"Loading articles…",es:"Cargando artículos…"}[language]) : `${filteredPosts.length} ${{pt:"artigos encontrados",en:"articles found",es:"artículos encontrados"}[language]}`}</div>
+            <div className="blog-results" role="status" aria-live="polite">{loadError ? ({pt:"Não foi possível carregar os artigos.",en:"Unable to load articles.",es:"No se pudieron cargar los artículos."}[language]) : isLoading ? ({pt:"Carregando artigos…",en:"Loading articles…",es:"Cargando artículos…"}[language]) : `${filteredPosts.length} ${(filteredPosts.length===1 ? {pt:"artigo encontrado",en:"article found",es:"artículo encontrado"} : {pt:"artigos encontrados",en:"articles found",es:"artículos encontrados"})[language]}`}</div>
             <Container>
-              {isLoading ? (
+              {loadError ? <div className="blog-load-error" role="alert"><h2>{{pt:"Não conseguimos carregar o Blog agora.",en:"We could not load the Blog right now.",es:"No pudimos cargar el Blog ahora."}[language]}</h2><p>{{pt:"Confira sua conexão e tente novamente.",en:"Check your connection and try again.",es:"Comprueba tu conexión e inténtalo de nuevo."}[language]}</p><button type="button" onClick={()=>setRetry(n=>n+1)}>{{pt:"Tentar novamente",en:"Try again",es:"Intentar de nuevo"}[language]}</button></div> : isLoading ? (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {[...Array(6)].map((_, i) => (
                     <BlogPostSkeleton key={i} />
