@@ -459,15 +459,15 @@ const Fornecedores = () => {
                             {item.href ? (
                               <a
                                 href={item.href}
-                                aria-label={item.ariaLabel}
+                                aria-label={copy(item.ariaLabel)}
                                 className="text-white/70 hover:text-white transition-colors inline-flex items-center gap-2 group"
                               >
-                                <span>{item.value}</span>
+                                <span>{copy(item.value)}</span>
                                 <Send className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
                               </a>
                             ) : (
-                              <p className="text-white/70" aria-label={item.ariaLabel}>
-                                {item.value}
+                              <p className="text-white/70" aria-label={copy(item.ariaLabel)}>
+                                {copy(item.value)}
                               </p>
                             )}
                           </div>

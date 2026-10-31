@@ -128,3 +128,16 @@ test('all programmatic solution labels and descriptions are translated, not just
   }
   visit(source);assert.equal(descriptions.length,20);
 });
+
+test('supplier cards translate rendered values and accessible labels without changing contact destinations', async () => {
+  const {build}=await import('esbuild');const {createRequire}=await import('node:module');const path=await import('node:path');const React=await import('react');const {renderToStaticMarkup}=await import('react-dom/server');
+  const result=await build({stdin:{contents:`export {default as Suppliers} from './src/pages/Fornecedores';export {locale} from './src/i18n/LanguageContext';`,resolveDir:process.cwd(),loader:'tsx'},bundle:true,write:false,platform:'node',format:'cjs',packages:'external',jsx:'automatic',alias:{'@':path.resolve('src')},plugins:[{name:'public-render-fixture',setup(b){
+    b.onLoad({filter:/components[\\/](Header|Footer|WhatsAppButton|SEOHead)\.tsx$/},()=>({loader:'js',contents:'export default function Stub(){return null}'}));
+    b.onLoad({filter:/LanguageContext\.tsx$/},()=>({loader:'js',contents:"import {translations} from './translations';export const locale={value:'en'};export const useLanguage=()=>({language:locale.value,t:translations[locale.value]});"}));
+  }}]});
+  const module={exports:{}};new Function('module','exports','require',result.outputFiles[0].text)(module,module.exports,createRequire(import.meta.url));
+  const {Suppliers,locale}=module.exports;
+  locale.value='en';let html=renderToStaticMarkup(React.createElement(Suppliers));assert.match(html,/Mon–Fri: 9am–6pm/);assert.match(html,/aria-label="Email SevenDevX"/);assert.match(html,/href="mailto:contato@sevendevx.com"/);assert.doesNotMatch(html,/Seg - Sex: 9h/);
+  locale.value='es';html=renderToStaticMarkup(React.createElement(Suppliers));assert.match(html,/Lun–vie: 9:00–18:00/);assert.match(html,/aria-label="Enviar correo a SevenDevX"/);assert.match(html,/href="tel:\+5531984740625"/);
+  locale.value='pt';html=renderToStaticMarkup(React.createElement(Suppliers));assert.match(html,/Seg - Sex: 9h às 18h/);
+});

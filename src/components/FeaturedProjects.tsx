@@ -261,7 +261,7 @@ const ProjectCard = memo(({ project, index, onOpen }: ProjectCardProps) => {
               onClick={e => e.stopPropagation()}
               className="inline-flex items-center gap-1 text-[11px] uppercase tracking-widest font-semibold border border-foreground/30 px-3 py-1.5 rounded-sm hover:bg-foreground hover:text-background transition-all"
             >
-              Ver Projeto <ArrowUpRight size={12} />
+              {copy("Ver Projeto")} <ArrowUpRight size={12} />
             </a>
           )}
         </div>
