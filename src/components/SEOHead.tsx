@@ -140,7 +140,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
       contactType: "Suporte ao Cliente",
       email,
       telephone: phone,
-      url: `${origin}/#contact`,
+      url: `${origin}/contact`,
     },
     sameAs: [
       "https://www.instagram.com/sevendevx",

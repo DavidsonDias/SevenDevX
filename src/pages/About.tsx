@@ -340,7 +340,7 @@ const About = () => {
             <h2 className="text-3xl md:text-4xl font-bold mb-6">{t.aboutPage.cta.title}</h2>
             <p className="text-muted-foreground text-lg mb-8 max-w-2xl mx-auto">{t.aboutPage.cta.subtitle}</p>
             <div className="about-related"><a href="/services">{{pt:'Conheça os serviços',en:'Explore services',es:'Explora los servicios'}[language]} ↗</a><a href="/projects-hub">{{pt:'Veja os projetos',en:'View projects',es:'Ver proyectos'}[language]} ↗</a></div>
-            <a href="/#contact"
+            <a href="/contact"
               className="inline-flex items-center gap-2 border-2 border-foreground px-8 py-4 text-sm tracking-widest uppercase font-semibold hover:bg-foreground hover:text-background transition-all duration-300">
               <Zap className="w-4 h-4" />
               {t.aboutPage.cta.button}

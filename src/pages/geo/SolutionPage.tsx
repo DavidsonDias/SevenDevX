@@ -189,7 +189,7 @@ export default function SolutionPage() {
         <div className="mt-16 p-6 border border-white/10 rounded-2xl bg-gradient-to-br from-emerald-500/5 to-cyan-500/5 text-center">
           <h3 className="text-lg font-bold mb-2">{copy("Pronto para começar?")}</h3>
           <p className="text-sm text-white/60 mb-4">{copy("Solicite um orçamento gratuito em 24h.")}</p>
-          <Link to="/#contact" className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-black rounded-full text-xs uppercase tracking-wider font-bold hover:bg-emerald-400 transition">
+          <Link to="/contact" className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-black rounded-full text-xs uppercase tracking-wider font-bold hover:bg-emerald-400 transition">
             {copy("Solicitar orçamento")} <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

@@ -573,7 +573,7 @@ const Blog = () => {
                   {t.blog.ctaSubtitle}
                 </p>
                 <Link
-                  to="/#contact"
+                  to="/contact"
                   className="inline-flex items-center gap-2 border-2 border-foreground px-8 py-3.5 text-xs tracking-widest uppercase font-semibold hover:bg-foreground hover:text-background transition-all duration-300"
                 >
                   {t.blog.ctaButton}

@@ -275,7 +275,7 @@ const ProcessSection = () => {
 
                               {/* CTA por etapa */}
                               <a
-                                href="#contact"
+                                href="/contact"
                                 onClick={() => handleCtaClick(step.n, step.cta)}
                                 className="inline-flex items-center gap-2 mt-5 text-sm font-semibold text-primary hover:text-primary/80 transition-colors group/cta"
                               >

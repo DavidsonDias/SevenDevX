@@ -163,7 +163,7 @@ const formatDate = (dateString: string | null, lang: string) => {
 const articleMarkdownComponents: import('react-markdown').Components = {
   h2: ({ node, children }) => <h2 id={`article-section-${node?.position?.start.line}`} tabIndex={-1}>{children}</h2>,
   h3: ({ node, children }) => <h3 id={`article-section-${node?.position?.start.line}`} tabIndex={-1}>{children}</h3>,
-  a: ({ href, children }) => <a href={href === "/contact" ? "/#contact" : href}>{children}</a>,
+  a: ({ href, children }) => <a href={href === "/#contact" ? "/contact" : href}>{children}</a>,
   table: ({ children }) => <div className="overflow-x-auto" tabIndex={0} role="region" aria-label="Table"><table>{children}</table></div>,
   pre: ({ children }) => <pre className="overflow-x-auto" tabIndex={0}>{children}</pre>,
 };
@@ -537,7 +537,7 @@ const BlogPost = () => {
                       {t.blog.authorDescription}
                     </p>
                     <Link
-                      to="/#contact"
+                      to="/contact"
                       className="text-primary text-sm font-medium mt-1 inline-flex items-center gap-1 hover:underline"
                     >
                       {t.blog.contactLink} <ArrowRight className="w-3 h-3" />
@@ -600,7 +600,7 @@ const BlogPost = () => {
               </p>
               <div className="flex gap-4 justify-center flex-wrap">
                 <Link
-                  to="/#contact"
+                  to="/contact"
                   className="inline-flex items-center gap-2 border-2 border-foreground px-8 py-3.5 text-xs tracking-widest uppercase font-semibold hover:bg-foreground hover:text-background transition-all duration-300"
                 >
                   {t.blog.ctaButton}

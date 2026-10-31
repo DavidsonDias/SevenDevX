@@ -300,7 +300,7 @@ const FAQSection = () => {
             {data.ctaSubtitle}
           </p>
           <a
-            href="#contact"
+            href="/contact"
             onClick={handleCtaClick}
             className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-all shadow-[0_8px_30px_-8px_hsl(var(--primary)/0.5)] hover:shadow-[0_12px_40px_-8px_hsl(var(--primary)/0.7)] hover:-translate-y-0.5"
           >

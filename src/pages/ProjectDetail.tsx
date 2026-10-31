@@ -313,7 +313,7 @@ const ProjectDetail = () => {
               </p>
               <div className="flex flex-wrap justify-center gap-3 pt-2">
                 <Button asChild size="lg">
-                  <Link to="/#contact">{copy("Solicitar orçamento")}</Link>
+                  <Link to="/contact">{copy("Solicitar orçamento")}</Link>
                 </Button>
                 <Button asChild size="lg" variant="outline">
                   <Link to="/projects-hub">{copy("Ver todos os projetos")}</Link>
