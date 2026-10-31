@@ -16,6 +16,7 @@ test('dedicated contact retains details, requires confirmation and sends one san
  b.onLoad({filter:/LanguageContext\.tsx$/},()=>({loader:'js',contents:"import {translations} from './translations';export const useLanguage=()=>({language:'pt',t:translations.pt});"}));
  b.onLoad({filter:/usePublicCopy\.ts$/},()=>({loader:'js',contents:'export const usePublicCopy=()=>({copy:value=>value});'}));
  b.onLoad({filter:/use-toast\.ts$/},()=>({loader:'js',contents:'export const useToast=()=>({toast(){}});'}));
+ b.onLoad({filter:/EditorialAtmosphere\.tsx$/},()=>({loader:'js',contents:'export default function Atmosphere(){return null}'}));
  b.onLoad({filter:/ContactGuide\.tsx$/},()=>({loader:'js',contents:'export default function Guide(){return null}'}));
  b.onResolve({filter:/^react(?:\/.*)?$/},args=>({path:args.path,external:true}));
  b.onResolve({filter:/^framer-motion$/},()=>({path:'motion',namespace:'fixture'}));

@@ -1,3 +1,4 @@
+import EditorialAtmosphere from "@/components/EditorialAtmosphere";
 import { normalizeBlogSearch } from "@/lib/blogSearch";
 import { BlogEditorialScene, BlogReadingGuide } from "@/components/BlogEditorial";
 import "@/components/blog-editorial.css";
@@ -420,6 +421,7 @@ const Blog = () => {
         <Header />
 
         <main id="main-content" tabIndex={-1} className="blog-editorial pt-20 focus:outline-none">
+          <EditorialAtmosphere target=".blog-editorial" version={`${isLoading}-${filteredPosts.map(post=>post.id).join(',')}`} />
           {/* Hero */}
           <Section className="blog-editorial-hero border-b border-border/10 py-16 md:py-24">
             <BlogEditorialScene />

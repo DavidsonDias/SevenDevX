@@ -1,3 +1,4 @@
+import EditorialAtmosphere from "@/components/EditorialAtmosphere";
 import ArticleReadingTools from "@/components/ArticleReadingTools";
 import "@/components/blog-editorial.css";
 /**
@@ -385,6 +386,7 @@ const BlogPost = () => {
         <Header />
 
         <main className="blog-article pt-20" id="article-content" style={{"--article-font-size": `${fontSize}px`} as import("react").CSSProperties}>
+          <EditorialAtmosphere target=".blog-article" version={`${displayPost.id}-${contentLanguage}`} />
           {/* Hero Image */}
           {displayPost.cover_image && (
             <div className="article-cover relative h-[35vh] md:h-[45vh] w-full overflow-hidden">
