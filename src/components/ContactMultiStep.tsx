@@ -1,3 +1,4 @@
+import EditorialAtmosphere from "@/components/EditorialAtmosphere";
 import "@/components/contact-experience.css";
 import DOMPurify from "dompurify";
 import { useContacts } from "@/hooks/useContacts";
@@ -150,10 +151,11 @@ const ContactMultiStep: React.FC = () => {
 
   return (
     <section id="contact" className="contact-experience relative min-h-screen flex items-center py-12 sm:py-16 md:py-20 lg:py-32 overflow-hidden bg-background">
+      <EditorialAtmosphere target=".contact-experience" version={String(currentStep)} />
       {/* Background */}
-      <div className="absolute inset-0 z-0">
+      <div className="contact-background absolute inset-0 z-0">
         <img src={contactBackground} alt="" aria-hidden="true" loading="lazy" className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/80 to-background/90" />
+        <div className="contact-photo-shade absolute inset-0" />
       </div>
 
       <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8">
