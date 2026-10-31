@@ -177,6 +177,7 @@ const BlogPost = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [relatedPosts, setRelatedPosts] = useState<BlogPostData[]>([]);
   const [readProgress, setReadProgress] = useState(0);
+  const [fontSize, setFontSize] = useState(18);
 
   // Reading progress bar
   useEffect(() => {
@@ -282,10 +283,12 @@ const BlogPost = () => {
         });
       } catch { /* cancelled */ }
     } else {
-      await navigator.clipboard.writeText(window.location.href);
-      toast({ title: copy("Link copiado!"), description: copy("Link do artigo copiado para a área de transferência.") });
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        toast({ title: copy("Link copiado!"), description: copy("Link do artigo copiado para a área de transferência.") });
+      } catch { toast({ title: ({pt:"Não foi possível copiar o link.",en:"Unable to copy the link.",es:"No se pudo copiar el enlace."}[language]), description: ({pt:"Copie o endereço na barra do navegador.",en:"Copy the address from your browser address bar.",es:"Copia la dirección de la barra del navegador."}[language]) }); }
     }
-  }, [displayPost, toast, copy]);
+  }, [displayPost, toast, copy, language]);
 
   if (isLoading || (post && post.slug !== slug)) {
     return (
@@ -381,7 +384,7 @@ const BlogPost = () => {
 
         <Header />
 
-        <main className="blog-article pt-20" id="article-content">
+        <main className="blog-article pt-20" id="article-content" style={{"--article-font-size": `${fontSize}px`} as import("react").CSSProperties}>
           {/* Hero Image */}
           {displayPost.cover_image && (
             <div className="article-cover relative h-[35vh] md:h-[45vh] w-full overflow-hidden">
@@ -434,6 +437,7 @@ const BlogPost = () => {
                   {displayPost.title}
                 </h1>
 
+                {displayPost.excerpt && <p className="article-deck">{displayPost.excerpt}</p>}
                 <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-8">
                   <span className="flex items-center gap-1.5">
                     <Calendar className="w-4 h-4" />
@@ -472,7 +476,7 @@ const BlogPost = () => {
                 </div>
               </motion.header>
 
-              <ArticleReadingTools content={displayPost.content} />
+              <ArticleReadingTools content={displayPost.content} fontSize={fontSize} onFontSize={setFontSize} />
               {/* Content — Premium Typography */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
