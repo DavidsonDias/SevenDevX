@@ -47,3 +47,24 @@ test('contact is lazy routed with legacy hash redirect; homepage only offers a c
  const home=fs.readFileSync('src/pages/Home.tsx','utf8');assert.match(home,/<ContactCallout \/>/);assert.doesNotMatch(home,/import\("@\/components\/ContactMultiStep"\)/);
  assert.match(fs.readFileSync('src/components/ContactMultiStep.tsx','utf8'),/contact-background\.webp/);
 });
+
+test('floating WhatsApp prepares the current language after switching without remount or real messages',async()=>{
+ const dom=new JSDOM('<div id="root"></div>',{url:'https://www.sevendevx.com/',pretendToBeVisual:true});const w=dom.window;
+ for(const key of ['window','document','navigator','HTMLElement','Element','Event'])Object.defineProperty(globalThis,key,{configurable:true,value:w[key]});
+ globalThis.IS_REACT_ACT_ENVIRONMENT=true;const opened=[];w.open=(...args)=>opened.push(args);
+ const result=await build({stdin:{contents:`export {default as Button} from './src/components/WhatsAppButton';export {locale} from './src/i18n/LanguageContext';`,resolveDir:process.cwd(),loader:'tsx'},bundle:true,write:false,platform:'node',format:'cjs',packages:'external',jsx:'automatic',alias:{'@':path.resolve('src')},plugins:[{name:'locale-fixture',setup(b){
+ b.onResolve({filter:/^react(?:\/.*)?$/},args=>({path:args.path,external:true}));
+ b.onLoad({filter:/LanguageContext\.tsx$/},()=>({loader:'js',contents:"export const locale={value:'pt'};export const useLanguage=()=>({language:locale.value});"}));
+ b.onResolve({filter:/^framer-motion$/},()=>({path:'motion',namespace:'fixture'}));
+ b.onLoad({filter:/.*/,namespace:'fixture'},()=>({loader:'js',contents:`import React from 'react';const cache={};export const motion=new Proxy({}, {get:(_,tag)=>cache[tag]??=React.forwardRef(({children,initial,animate,exit,transition,whileHover,whileTap,onAnimationComplete,...props},ref)=>React.createElement(tag,{...props,ref},children))});export const AnimatePresence=({children})=>children;`}));
+ }}]});
+ const module={exports:{}};new Function('module','exports','require',result.outputFiles[0].text)(module,module.exports,createRequire(import.meta.url));const {Button,locale}=module.exports;const {createRoot}=await import('react-dom/client');const root=createRoot(w.document.getElementById('root'));
+ try{
+ await act(async()=>{root.render(React.createElement(Button,{delay:0}));});await act(async()=>{await new Promise(r=>setTimeout(r,10));});
+ for(const [language,expected] of [['pt','Olá, gostaria'],['en','Hello, I would'],['es','¡Hola! Me gustaría']]){
+ locale.value=language;await act(()=>root.render(React.createElement(Button,{delay:0})));await act(()=>w.document.querySelector('button').click());
+ const [url,target,features]=opened.at(-1);assert.equal(new URL(url).hostname,'wa.me');assert.equal(new URL(url).pathname,'/5531984740625');assert.ok(new URL(url).searchParams.get('text').startsWith(expected));assert.equal(target,'_blank');assert.equal(features,'noopener,noreferrer');
+ }
+ assert.equal(opened.length,3);
+ }finally{await act(()=>root.unmount());w.close();}
+});

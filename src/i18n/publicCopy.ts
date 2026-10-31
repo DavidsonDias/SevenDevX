@@ -8,6 +8,7 @@ import { articleHeadlines } from "./editorial/headlines";
 
 /** Reviewed supplemental copy for public routes. Brands, URLs and source content stay intact. */
 export const publicCopy: Record<string, readonly [string, string]> = {
+  "Olá! Gostaria de ser fornecedor parceiro da SevenDevX": ["Hello! I would like to become a SevenDevX supplier partner", "¡Hola! Me gustaría ser proveedor asociado de SevenDevX"],
   "Comparar": ["Compare", "Comparar"],
   "Loja - SevenDevX": ["Store - SevenDevX", "Tienda - SevenDevX"],
   "Email": ["Email", "Correo electrónico"],
