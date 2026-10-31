@@ -83,7 +83,7 @@ const WhatsAppButton: React.FC<WhatsAppButtonProps> = ({
   const handleClick = useCallback(() => {
     const url = `https://wa.me/${phone}?text=${encodeURIComponent(copy(message))}`;
     window.open(url, "_blank", "noopener,noreferrer");
-  }, [phone, message]);
+  }, [phone, message, copy]);
 
   const positionClass = position === "left" ? "left-6" : "right-6";
 

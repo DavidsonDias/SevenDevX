@@ -137,7 +137,7 @@ test('supplier cards translate rendered values and accessible labels without cha
   }}]});
   const module={exports:{}};new Function('module','exports','require',result.outputFiles[0].text)(module,module.exports,createRequire(import.meta.url));
   const {Suppliers,locale}=module.exports;
-  locale.value='en';let html=renderToStaticMarkup(React.createElement(Suppliers));assert.match(html,/Mon–Fri: 9am–6pm/);assert.match(html,/aria-label="Email SevenDevX"/);assert.match(html,/href="mailto:contato@sevendevx.com"/);assert.doesNotMatch(html,/Seg - Sex: 9h/);
+  locale.value='en';let html=renderToStaticMarkup(React.createElement(Suppliers));assert.match(html,/Mon–Fri: 9am–6pm/);assert.match(html,/aria-label="Email SevenDevX"/);assert.match(html,/href="mailto:contato@sevendevx.com"/);assert.doesNotMatch(html,/Seg - Sex: 9h/);assert.match(html,/Hello!%20I%20would%20like%20to%20become%20a%20SevenDevX%20supplier%20partner/);
   locale.value='es';html=renderToStaticMarkup(React.createElement(Suppliers));assert.match(html,/Lun–vie: 9:00–18:00/);assert.match(html,/aria-label="Enviar correo a SevenDevX"/);assert.match(html,/href="tel:\+5531984740625"/);
   locale.value='pt';html=renderToStaticMarkup(React.createElement(Suppliers));assert.match(html,/Seg - Sex: 9h às 18h/);
 });

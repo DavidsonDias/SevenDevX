@@ -503,7 +503,7 @@ const Fornecedores = () => {
                   </motion.a>
 
                   <motion.a
-                    href="https://wa.me/5531984740625?text=Olá! Gostaria de ser fornecedor parceiro da SevenDevX"
+                    href={`https://wa.me/5531984740625?text=${encodeURIComponent(copy("Olá! Gostaria de ser fornecedor parceiro da SevenDevX"))}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     whileHover={prefersReducedMotion ? undefined : { scale: 1.05 }}
