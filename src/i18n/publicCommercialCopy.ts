@@ -1,5 +1,10 @@
 /** Supplemental public-site copy, reviewed in English and Spanish. BRL prices are not converted. */
 export const commercialCopy: Record<string, readonly [string, string]> = {
+  "GPT-4 vs Claude vs Gemini": ["GPT-4 vs Claude vs Gemini", "GPT-4 frente a Claude y Gemini"],
+  "Performance Lighthouse 95+ garantida": ["Guaranteed Lighthouse 95+ performance", "Rendimiento Lighthouse de 95+ garantizado"],
+  "Quanto custa criar um site profissional?": ["How much does it cost to build a professional website?", "¿Cuánto cuesta crear un sitio web profesional?"],
+  "Quanto custa um sistema personalizado?": ["How much does a custom system cost?", "¿Cuánto cuesta un sistema personalizado?"],
+  "CRM personalizado vs Pipedrive/HubSpot": ["Custom CRM vs Pipedrive/HubSpot", "CRM personalizado frente a Pipedrive/HubSpot"],
   "LCP < 2s, CLS zero, imagens otimizadas.": ["LCP < 2s, zero CLS, optimized images.", "LCP < 2s, CLS cero e imágenes optimizadas."],
   "HTTPS, CSP, rate limiting, RLS.": ["HTTPS, CSP, rate limiting and RLS.", "HTTPS, CSP, límites de solicitudes y RLS."],
   "Performance 90+ Lighthouse": ["90+ Lighthouse performance", "Rendimiento de 90+ en Lighthouse"],
