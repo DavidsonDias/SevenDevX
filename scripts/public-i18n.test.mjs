@@ -141,3 +141,28 @@ test('supplier cards translate rendered values and accessible labels without cha
   locale.value='es';html=renderToStaticMarkup(React.createElement(Suppliers));assert.match(html,/Lun–vie: 9:00–18:00/);assert.match(html,/aria-label="Enviar correo a SevenDevX"/);assert.match(html,/href="tel:\+5531984740625"/);
   locale.value='pt';html=renderToStaticMarkup(React.createElement(Suppliers));assert.match(html,/Seg - Sex: 9h às 18h/);
 });
+
+test('website creation fallback copy is covered before CMS data resolves', () => {
+  const { hasReviewedPublicText } = load('publicCopy');
+  const file = fs.readFileSync(new URL('../src/pages/geo/CriacaoSitesProfissionais.tsx', import.meta.url), 'utf8');
+  const source = ts.createSourceFile('page.tsx', file, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const fields = new Set(['label', 'title', 'description', 'criterion', 'value_a', 'value_b', 'question', 'answer']);
+  let checked = 0;
+  for (const statement of source.statements) {
+    if (!ts.isVariableStatement(statement)) continue;
+    for (const declaration of statement.declarationList.declarations) {
+      if (!declaration.name.getText(source).startsWith('FB_') || !declaration.initializer) continue;
+      const visit = node => {
+        if (ts.isPropertyAssignment(node) && fields.has(node.name.getText(source)) && ts.isStringLiteralLike(node.initializer) && /[A-Za-zÀ-ÿ]/.test(node.initializer.text)) {
+          const text = node.initializer.text;
+          assert.ok(hasReviewedPublicText(text), `${declaration.name.getText(source)}: ${text}`);
+          assert.equal(copy(text, 'pt'), text);
+          checked++;
+        }
+        ts.forEachChild(node, visit);
+      };
+      visit(declaration.initializer);
+    }
+  }
+  assert.ok(checked >= 50, 'cover every fallback section, not just the hero');
+});

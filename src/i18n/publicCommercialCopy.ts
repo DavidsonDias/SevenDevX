@@ -1,5 +1,11 @@
 /** Supplemental public-site copy, reviewed in English and Spanish. BRL prices are not converted. */
 export const commercialCopy: Record<string, readonly [string, string]> = {
+  "LCP < 2s, CLS zero, imagens otimizadas.": ["LCP < 2s, zero CLS, optimized images.", "LCP < 2s, CLS cero e imágenes optimizadas."],
+  "HTTPS, CSP, rate limiting, RLS.": ["HTTPS, CSP, rate limiting and RLS.", "HTTPS, CSP, límites de solicitudes y RLS."],
+  "Performance 90+ Lighthouse": ["90+ Lighthouse performance", "Rendimiento de 90+ en Lighthouse"],
+  "Performance (Lighthouse)": ["Performance (Lighthouse)", "Rendimiento (Lighthouse)"],
+  "Cloud-native": ["Cloud-native", "Nativo de la nube"],
+  "Launch & Growth": ["Launch & Growth", "Lanzamiento y crecimiento"],
   "Ilimitada": ["Unlimited", "Ilimitada"],
   "Código próprio, performance 90+ no Lighthouse, SEO técnico e design sob medida. A alternativa real a templates genéricos e plataformas engessadas.": ["Custom code, 90+ Lighthouse performance, technical SEO and bespoke design. A real alternative to generic templates and rigid platforms.", "Código propio, rendimiento de 90+ en Lighthouse, SEO técnico y diseño a medida. Una alternativa real a las plantillas genéricas y las plataformas rígidas."],
   "Arquitetura React/TypeScript feita para escalar — sem plugins pesados, sem lock-in de plataforma.": ["React/TypeScript architecture built to scale — without heavy plugins or platform lock-in.", "Arquitectura React/TypeScript diseñada para escalar, sin plugins pesados ni dependencia de una plataforma."],
