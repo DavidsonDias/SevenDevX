@@ -45,3 +45,14 @@ test('pending mobile home route keeps first paint visible; desktop and other rou
   await act(async()=>root.unmount());dom.window.close();
  }
 });
+
+test('legacy PWA entry aliases keep query and anchor while leaving admin and valid public routes untouched',async()=>{
+ const result=await build({entryPoints:['src/utils/legacyPublicEntry.ts'],bundle:true,write:false,platform:'node',format:'cjs'});const module={exports:{}};new Function('module','exports',result.outputFiles[0].text)(module,module.exports);const {legacyPublicEntry}=module.exports;
+ for(const pathname of ['/index.html','/home']){
+  assert.equal(legacyPublicEntry({pathname}),'/');
+  assert.equal(legacyPublicEntry({pathname,search:'?utm_source=referral&lang=es',hash:'#projects'}),'/?utm_source=referral&lang=es#projects');
+  assert.equal(legacyPublicEntry({pathname,search:'?from=old',hash:'#contact'}),'/contact?from=old');
+ }
+ for(const pathname of ['/','/contact','/services','/admin','/admin/index.html','/index.html/unknown'])assert.equal(legacyPublicEntry({pathname}),null);
+ const router=fs.readFileSync('src/app/Router.tsx','utf8');assert.ok(router.includes('legacyPublicEntry(location)'));assert.ok(router.includes('<Navigate to={legacyEntry} replace />'));
+});

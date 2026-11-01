@@ -62,6 +62,7 @@ import AIChatbot from "@/components/AIChatbot";
 
 // The small home/hero shell is critical; below-fold home sections remain lazy.
 import Index from "@/pages/Index";
+import { legacyPublicEntry } from "@/utils/legacyPublicEntry";
 const About = lazy(() => import("@/pages/About"));
 const Services = lazy(() => import("@/pages/Services"));
 const Projects = lazy(() => import("@/pages/Projects"));
@@ -161,6 +162,9 @@ function AnimatedRoutes() {
   const location = useLocation();
   useNavHistoryTracker();
   useAiReferralTracker();
+
+  const legacyEntry = legacyPublicEntry(location);
+  if (legacyEntry) return <Navigate to={legacyEntry} replace />;
 
   if (location.pathname === "/" && location.hash === "#contact") return <Navigate to={`/contact${location.search}`} replace />;
 
