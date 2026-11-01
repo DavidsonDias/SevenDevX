@@ -1,0 +1,19 @@
+.account-experience { position: relative; isolation: isolate; background: #030405; color: #f5f7fa; }
+.account-backdrop { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; background: radial-gradient(ellipse at 15% 25%, #16303c70, transparent 48%), radial-gradient(ellipse at 90% 90%, #17263b60, transparent 45%), #030405; }
+.account-grid { position: absolute; inset: 0; opacity: .16; background-image: linear-gradient(#99c9dc25 1px, transparent 1px),linear-gradient(90deg,#99c9dc25 1px,transparent 1px); background-size: 64px 64px; transform: perspective(700px) rotateX(58deg) scale(1.8); transform-origin: center bottom; mask-image: linear-gradient(transparent,black); }
+.account-orbit { position: absolute; width: min(65vw,850px); aspect-ratio: 1; border: 1px solid #8bd4ec28; border-radius: 50%; box-shadow: inset 0 0 70px #7dceef06; }
+.account-orbit-one { top: -40%; right: -15%; transform: rotateX(55deg) rotateZ(-28deg); }
+.account-orbit-two { bottom: -55%; left: -20%; transform: rotateX(48deg) rotateY(30deg); }
+.account-beacon { position: absolute; top: 15%; left: 9%; width: 100px; aspect-ratio: 1; border: 1px solid #c0e6f02b; border-radius: 24px; display: grid; place-items: center; transform: perspective(600px) rotateY(25deg) rotateZ(-12deg); background: linear-gradient(135deg,#ffffff10,#ffffff02); box-shadow: 18px 22px 60px #0008,inset 1px 1px #ffffff20; }
+.account-beacon span { font: 32px monospace; color: #d0eaf1; text-shadow: 0 0 25px #86d7ff65; }
+.account-panel { background: linear-gradient(145deg,#171b20ed,#080a0df5); border: 1px solid #d6e5ef26; border-radius: 24px; box-shadow: 0 28px 90px #0008,inset 0 1px #ffffff12; }
+.account-experience input:focus-visible,.account-experience textarea:focus-visible,.account-experience button:focus-visible,.account-experience a:focus-visible { outline: 2px solid #a5ddeb; outline-offset: 4px; }
+.account-action { min-height: 48px; padding: 12px 20px; border: 1px solid #ffffff30; border-radius: 12px; font-weight: 600; transition: background .15s,border-color .15s; }
+.account-action:hover { background: #ffffff0c; border-color: #b7dfeb70; }
+.account-action:disabled { opacity: .5; cursor: not-allowed; }
+.account-primary { color: #080a0d; background: #f2f7fa; border-color: #f2f7fa; }
+.account-primary:hover { background: #dcedf4; }
+.account-code { width: 100%; min-height: 64px; text-align: center; letter-spacing: .4em; font-size: clamp(24px,6vw,32px); font-variant-numeric: tabular-nums; background: #030509; border: 1px solid #b3d6e04d; border-radius: 14px; }
+.account-profile .account-panel { border-radius: 20px; }
+@media(max-width:640px) { .account-beacon { top: 5%; left: auto; right: -20px; width: 80px; opacity: .4; } .account-orbit { width: 110vw; } }
+@media(prefers-reduced-motion:reduce) { .account-experience * { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }

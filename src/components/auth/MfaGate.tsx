@@ -2,9 +2,13 @@ import { useEffect, useState } from "react";
 import { sessionIdentity } from "@/lib/sessionContinuity";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthContext } from "@/contexts/AuthContext";
+import { AccountBackdrop } from "./AccountBackdrop";
+import { ShieldCheck, Loader2, LogOut } from "lucide-react";
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 
 /** Navigation gate only. Backend AAL enforcement must be audited separately. */
 export function MfaGate({ children }: { children: React.ReactNode }) {
+  const { copy } = usePublicCopy();
   const { session, signOut } = useAuthContext();
   const token = session?.access_token;
   const identity = sessionIdentity(session);
@@ -40,8 +44,9 @@ export function MfaGate({ children }: { children: React.ReactNode }) {
     {!blocked && state.error && <div className="fixed bottom-24 inset-x-4 z-[200] bg-zinc-950 border rounded-xl p-4" role="status">
       {state.error} <button onClick={() => setRetry(value => value + 1)} className="underline min-h-11">Tentar novamente</button>
     </div>}
-    {blocked && (state.pending || !sameIdentity) ? <div className="min-h-screen flex items-center justify-center" role="status">Verificando autenticação…</div> : blocked ? <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-6">
-    <form className="max-w-md space-y-4" onSubmit={event => {
+    {blocked && (state.pending || !sameIdentity) ? <div className="account-experience min-h-screen flex items-center justify-center gap-3" role="status"><AccountBackdrop /><Loader2 className="h-5 w-5 animate-spin" />{copy("Verificando autenticação…")}</div> : blocked ? <div className="account-experience min-h-screen flex items-center justify-center px-4 py-10 sm:p-8">
+    <AccountBackdrop />
+    <form className="account-panel w-full max-w-md p-6 sm:p-9 space-y-6" aria-busy={busy} onSubmit={event => {
       event.preventDefault();
       if (!state.factor || code.length !== 6 || busy) return;
       setBusy(true);
@@ -50,14 +55,15 @@ export function MfaGate({ children }: { children: React.ReactNode }) {
         else { setCode(""); setRetry(value => value + 1); }
       }).catch(() => setState(previous => ({ ...previous, error: "Falha na confirmação. Tente novamente." }))).finally(() => setBusy(false));
     }}>
-      <h1 className="text-2xl font-bold">Confirme seu autenticador</h1>
-      {state.error && <p role="alert">{state.error}</p>}
+      <div className="flex items-center gap-3 border-b border-white/10 pb-5"><ShieldCheck aria-hidden="true" className="h-8 w-8 text-cyan-100" /><span className="font-orbitron text-sm tracking-wider">SEVENDEVX <span className="block text-[10px] text-slate-400 mt-1">2FA / TOTP</span></span></div>
+      <div><h1 className="text-xl sm:text-2xl font-bold font-orbitron leading-snug">{copy("Confirme seu autenticador")}</h1><p className="text-sm text-slate-300 mt-3 leading-relaxed">{copy("Digite o código do seu aplicativo autenticador para concluir o acesso.")}</p></div>
+      {state.error && <p className="rounded-xl border border-amber-300/30 bg-amber-300/5 p-3 text-sm text-amber-100" role="alert">{copy(state.error)}</p>}
       {state.factor ? <>
-        <label htmlFor="login-mfa">Código de seis dígitos</label>
-        <input id="login-mfa" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" required value={code} onChange={event => setCode(event.target.value.replace(/\D/g, "").slice(0, 6))} className="block bg-black border rounded p-3" />
-        <button disabled={busy || code.length !== 6}>{busy ? "Confirmando…" : "Confirmar"}</button>
-      </> : <button type="button" onClick={() => setRetry(value => value + 1)}>Tentar novamente</button>}
-      <button type="button" disabled={busy} onClick={() => void signOut()}>Sair</button>
+        <div className="space-y-3"><label htmlFor="login-mfa" className="block text-sm font-medium">{copy("Código de seis dígitos")}</label>
+        <input id="login-mfa" autoFocus inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required value={code} onChange={event => setCode(event.target.value.replace(/\D/g, "").slice(0, 6))} className="account-code" /></div>
+        <button className="account-action account-primary w-full flex items-center justify-center gap-2" disabled={busy || code.length !== 6}>{busy && <Loader2 aria-hidden="true" className="h-4 w-4 animate-spin" />}{copy(busy ? "Confirmando…" : "Confirmar")}</button>
+      </> : <button className="account-action w-full" type="button" onClick={() => setRetry(value => value + 1)}>{copy("Tentar novamente")}</button>}
+      <button className="account-action w-full flex items-center justify-center gap-2" type="button" disabled={busy} onClick={() => void signOut()}><LogOut aria-hidden="true" className="h-4 w-4" />{copy("Sair")}</button>
     </form>
   </div> : null}
   </>;
