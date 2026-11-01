@@ -601,8 +601,8 @@ const Store: React.FC = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
                 {testimonials.map((t, i) => (
                   <motion.blockquote key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: i * 0.08 }} className="p-6 border border-white/10 rounded-lg">
-                    <p className="text-white/80 mb-4">“{t.message}”</p>
-                    <footer className="text-sm text-white/60 font-semibold">{t.name} — <span className="font-normal">{t.role}</span></footer>
+                    <p className="text-white/80 mb-4">“{copy(t.message)}”</p>
+                    <footer className="text-sm text-white/60 font-semibold">{t.name} — <span className="font-normal">{copy(t.role)}</span></footer>
                   </motion.blockquote>
                 ))}
               </div>

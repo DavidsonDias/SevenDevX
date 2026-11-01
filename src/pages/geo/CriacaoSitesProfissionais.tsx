@@ -694,12 +694,12 @@ export default function CriacaoSitesProfissionais() {
                 </p>
                 {ctaAction === "diagnostico" ? (
                   <button onClick={openDiagnostico} className="group inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-foreground text-background text-sm font-bold uppercase tracking-wider hover:opacity-90 transition">
-                    {ctaButton}
+                    {copy(ctaButton)}
                     <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </button>
                 ) : (
                   <Link to={ctaUrl} className="group inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-foreground text-background text-sm font-bold uppercase tracking-wider hover:opacity-90 transition">
-                    {ctaButton}
+                    {copy(ctaButton)}
                     <ArrowRightIcon className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </Link>
                 )}
