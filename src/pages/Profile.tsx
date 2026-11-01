@@ -219,7 +219,7 @@ const Profile = () => {
   return (
     <>
       <SEOHead title={copy("Perfil - SevenDevX")} description={copy("Visualize e edite seus dados pessoais")} url="https://www.sevendevx.com/profile" />
-      <div className="account-experience account-profile min-h-screen py-8 px-4 sm:px-6">
+      <div className="account-experience account-profile min-h-screen pt-8 pb-32 px-4 sm:px-6">
         <AccountBackdrop />
 
         <div className="relative z-10 max-w-5xl mx-auto pt-4 sm:pt-10">
@@ -239,7 +239,7 @@ const Profile = () => {
             <GlassCard className="account-panel p-6 sm:p-8 mb-6 relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] via-transparent to-transparent pointer-events-none" />
               <div className="relative flex flex-col sm:flex-row sm:items-center gap-6">
-                <div className="relative">
+                <div className="relative w-fit shrink-0">
                   <Avatar className="w-24 h-24 sm:w-28 sm:h-28 border-2 border-white/20 shadow-2xl">
                     <AvatarImage src={form.avatarUrl || undefined} alt={copy(form.fullName || user?.email || "")} />
                     <AvatarFallback className="bg-gradient-to-br from-white/15 to-white/5 text-2xl font-orbitron">
