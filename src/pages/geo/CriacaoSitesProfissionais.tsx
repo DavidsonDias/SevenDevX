@@ -576,7 +576,7 @@ export default function CriacaoSitesProfissionais() {
                   </div>
                   <h3 className="text-lg font-bold mb-2">{copy(p.title)}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">{copy(p.description)}</p>
-                  {p.estimated_time && <p className="text-[11px] uppercase tracking-wider text-primary/70 mt-2">{p.estimated_time}</p>}
+                  {p.estimated_time && <p className="text-[11px] uppercase tracking-wider text-primary/70 mt-2">{copy(p.estimated_time)}</p>}
                 </motion.div>
               ))}
             </div>
@@ -652,7 +652,7 @@ export default function CriacaoSitesProfissionais() {
                   })}
                 </div>
                 {roiCfg.source_note && (
-                  <p className="text-[11px] text-muted-foreground/60 mt-8 italic">{roiCfg.source_note}</p>
+                  <p className="text-[11px] text-muted-foreground/60 mt-8 italic">{copy(roiCfg.source_note)}</p>
                 )}
               </div>
             </GlassCard>
