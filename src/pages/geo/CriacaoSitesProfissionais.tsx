@@ -292,15 +292,14 @@ export default function CriacaoSitesProfissionais() {
 
   // JSON-LD dinâmico
   const jsonLd = [
-    { "@context":"https://schema.org","@type":"Service", name:"Criação de Sites Profissionais",
-      serviceType:"Desenvolvimento Web",
+    { "@context":"https://schema.org","@type":"Service", name:copy("Criação de Sites Profissionais"),
+      serviceType:copy("Desenvolvimento Web"),
       provider:{ "@type":"Organization", name:"SevenDevX", url:"https://www.sevendevx.com" },
       areaServed:{ "@type":"Country", name:"Brasil" },
-      description:DESCRIPTION,
-      offers:{ "@type":"Offer", priceCurrency:"BRL", price:"4900", url:CANONICAL } },
+      description:copy(DESCRIPTION) },
     { "@context":"https://schema.org","@type":"FAQPage",
-      mainEntity: faqs.map(f => ({ "@type":"Question", name:f.question,
-        acceptedAnswer:{ "@type":"Answer", text:f.answer } })) },
+      mainEntity: faqs.map(f => ({ "@type":"Question", name:copy(f.question),
+        acceptedAnswer:{ "@type":"Answer", text:copy(f.answer) } })) },
   ];
 
   return (

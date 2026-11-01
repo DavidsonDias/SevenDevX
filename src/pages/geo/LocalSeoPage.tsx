@@ -99,29 +99,26 @@ export default function LocalSeoPage() {
   const url = `https://www.sevendevx.com/local/${cityData.slug}`;
   const title = `${message("Desenvolvimento Web em {city}", { city: cityData.name })} — SevenDevX`;
   const descriptions = {
-    pt: `Criação de sites, landing pages e sistemas sob demanda em ${cityData.name}/${cityData.state}. Software house full stack com performance Lighthouse 95+ e design enterprise.`,
-    en: `Websites, landing pages and custom systems in ${cityData.name}/${cityData.state}, Brazil. Full-stack software development with Lighthouse 95+ performance and enterprise design.`,
-    es: `Sitios web, landing pages y sistemas a medida en ${cityData.name}/${cityData.state}, Brasil. Desarrollo full stack con rendimiento Lighthouse 95+ y diseño empresarial.`,
+    pt: `Criação de sites, landing pages e sistemas sob demanda em ${cityData.name}/${cityData.state}. Software house full stack com foco em desempenho, clareza e design profissional.`,
+    en: `Websites, landing pages and custom systems in ${cityData.name}/${cityData.state}, Brazil. Full-stack software development focused on performance, clarity and professional design.`,
+    es: `Sitios web, landing pages y sistemas a medida en ${cityData.name}/${cityData.state}, Brasil. Desarrollo full stack centrado en rendimiento, claridad y diseño profesional.`,
   };
   const description = descriptions[language];
 
-  const localBusinessSchema = {
+  // A served city is not a physical branch or postal address.
+  const serviceSchema = {
     "@context": "https://schema.org",
-    "@type": "ProfessionalService",
+    "@type": "Service",
     name: title,
+    serviceType: copy("Desenvolvimento Web"),
+    description,
     image: "https://www.sevendevx.com/logo-512.png",
     url,
-    telephone: "+55-31-98474-0625",
-    email: "contato@sevendevx.com",
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: cityData.name,
-      addressRegion: cityData.state,
-      addressCountry: "BR",
+    areaServed: { "@type": "City", name: cityData.name, containedInPlace: { "@type": "State", name: cityData.state } },
+    provider: {
+      "@type": "Organization", name: "SevenDevX", url: "https://www.sevendevx.com",
+      telephone: "+55-31-98474-0625", email: "contato@sevendevx.com",
     },
-    areaServed: { "@type": "City", name: cityData.name },
-    priceRange: "$$",
-    provider: { "@type": "Organization", name: "SevenDevX", url: "https://www.sevendevx.com" },
   };
 
   return (
@@ -135,7 +132,7 @@ export default function LocalSeoPage() {
         <meta property="og:title" content={copy(title)} />
         <meta property="og:description" content={copy(description)} />
         <meta property="og:url" content={url} />
-        <script type="application/ld+json">{JSON.stringify(localBusinessSchema)}</script>
+        <script type="application/ld+json">{JSON.stringify(serviceSchema)}</script>
       </Helmet>
 
       <Header />
@@ -150,7 +147,7 @@ export default function LocalSeoPage() {
                 {copy("Desenvolvimento Web em")} {copy(cityData.name)}
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
-                {message("A SevenDevX atende empresas em {city}/{state} com criação de sites, landing pages, sistemas sob demanda, automações e integração de IA. Stack moderna, performance Lighthouse 95+ e design enterprise.", { city: cityData.name, state: cityData.state })}
+                {message("A SevenDevX atende empresas em {city}/{state} com criação de sites, landing pages, sistemas sob demanda, automações e integração de IA. Tecnologia moderna com foco em desempenho, clareza e design profissional.", { city: cityData.name, state: cityData.state })}
               </p>
             </motion.div>
           </Container>

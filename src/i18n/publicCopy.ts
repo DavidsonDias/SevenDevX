@@ -8,6 +8,8 @@ import { articleHeadlines } from "./editorial/headlines";
 
 /** Reviewed supplemental copy for public routes. Brands, URLs and source content stay intact. */
 export const publicCopy: Record<string, readonly [string, string]> = {
+  "Landing: 7-14 dias. Institucional: 3-5 semanas. Plataformas: 6-12 semanas.": ["Landing page: 7–14 days. Business website: 3–5 weeks. Platforms: 6–12 weeks.", "Landing page: 7–14 días. Sitio institucional: 3–5 semanas. Plataformas: 6–12 semanas."],
+  "A SevenDevX atende empresas em {city}/{state} com criação de sites, landing pages, sistemas sob demanda, automações e integração de IA. Tecnologia moderna com foco em desempenho, clareza e design profissional.": ["SevenDevX serves businesses in {city}/{state} with websites, landing pages, custom systems, automation and AI integration. Modern technology focused on performance, clarity and professional design.", "SevenDevX atiende empresas en {city}/{state} con sitios web, landing pages, sistemas a medida, automatización e integración de IA. Tecnología moderna centrada en rendimiento, claridad y diseño profesional."],
   "Solicitar": ["Request", "Solicitar"],
   "Instalar": ["Install", "Instalar"],
   "AI Answer": ["AI Answer", "Respuesta de IA"],
