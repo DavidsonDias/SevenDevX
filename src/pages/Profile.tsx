@@ -86,6 +86,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import SEOHead from "@/components/SEOHead";
+import { AccountBackdrop } from "@/components/auth/AccountBackdrop";
 import GlassCard from "@/components/GlassCard";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useAuthContext } from "@/contexts/AuthContext";
@@ -218,22 +219,10 @@ const Profile = () => {
   return (
     <>
       <SEOHead title={copy("Perfil - SevenDevX")} description={copy("Visualize e edite seus dados pessoais")} url="https://www.sevendevx.com/profile" />
-      <div className="relative min-h-screen bg-background text-foreground py-12 px-4 sm:px-6 overflow-hidden">
-        {/* Backdrop */}
-        <div className="fixed inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-white/[0.04] rounded-full blur-[140px]" />
-          <div className="absolute bottom-0 -right-1/4 w-1/2 h-1/2 bg-white/[0.03] rounded-full blur-[140px]" />
-          <div
-            className="absolute inset-0 opacity-[0.025]"
-            style={{
-              backgroundImage:
-                "linear-gradient(rgba(255,255,255,.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.5) 1px, transparent 1px)",
-              backgroundSize: "48px 48px",
-            }}
-          />
-        </div>
+      <div className="account-experience account-profile min-h-screen pt-8 pb-32 px-4 sm:px-6">
+        <AccountBackdrop />
 
-        <div className="relative z-10 max-w-5xl mx-auto pt-16">
+        <div className="relative z-10 max-w-5xl mx-auto pt-4 sm:pt-10">
           <motion.button
             initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }}
             onClick={() => navigate(-1)}
@@ -247,10 +236,10 @@ const Profile = () => {
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <GlassCard className="p-6 sm:p-8 mb-6 relative overflow-hidden">
+            <GlassCard className="account-panel p-6 sm:p-8 mb-6 relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-white/[0.04] via-transparent to-transparent pointer-events-none" />
               <div className="relative flex flex-col sm:flex-row sm:items-center gap-6">
-                <div className="relative">
+                <div className="relative w-fit shrink-0">
                   <Avatar className="w-24 h-24 sm:w-28 sm:h-28 border-2 border-white/20 shadow-2xl">
                     <AvatarImage src={form.avatarUrl || undefined} alt={copy(form.fullName || user?.email || "")} />
                     <AvatarFallback className="bg-gradient-to-br from-white/15 to-white/5 text-2xl font-orbitron">
@@ -304,19 +293,19 @@ const Profile = () => {
             transition={{ duration: 0.5, delay: 0.05 }}
             className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6"
           >
-            <GlassCard className="p-4">
+            <GlassCard className="account-panel p-4">
               <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
                 <Calendar className="w-3 h-3" /> {copy("Membro desde")}
               </div>
               <p className="text-sm font-semibold">{memberSince}</p>
             </GlassCard>
-            <GlassCard className="p-4">
+            <GlassCard className="account-panel p-4">
               <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
                 <KeyRound className="w-3 h-3" /> {copy("Último acesso")}
               </div>
               <p className="text-sm font-semibold truncate">{lastSignIn}</p>
             </GlassCard>
-            <GlassCard className="p-4 col-span-2 sm:col-span-1">
+            <GlassCard className="account-panel p-4 col-span-2 sm:col-span-1">
               <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground mb-1">
                 <UserIcon className="w-3 h-3" /> ID
               </div>
@@ -338,7 +327,7 @@ const Profile = () => {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="lg:col-span-2"
             >
-              <GlassCard className="p-6 sm:p-8">
+              <GlassCard className="account-panel p-6 sm:p-8">
                 <div className="mb-6">
                   <h2 className="text-lg font-bold font-orbitron">{copy("Dados pessoais")}</h2>
                   <p className="text-xs text-muted-foreground mt-1">
@@ -353,26 +342,26 @@ const Profile = () => {
                 ) : (
                   <form onSubmit={onSave} className="space-y-5">
                     <div>
-                      <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-2">
+                      <label htmlFor="profile-name" className="block text-xs uppercase tracking-wider text-muted-foreground mb-2">
                         {copy("Nome completo")}
                       </label>
                       <div className="relative">
                         <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <input
-                          type="text" value={form.fullName} onChange={onChange("fullName")} placeholder={copy("Seu nome")}
+                          id="profile-name" type="text" value={form.fullName} onChange={onChange("fullName")} placeholder={copy("Seu nome")}
                           className="w-full pl-11 pr-4 py-3 bg-secondary/60 border border-border rounded-lg text-sm placeholder:text-muted-foreground focus:outline-none focus:border-foreground/40 focus:bg-secondary transition-all"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-2">
+                      <label htmlFor="profile-email" className="block text-xs uppercase tracking-wider text-muted-foreground mb-2">
                         {copy("E-mail")}
                       </label>
                       <div className="relative">
                         <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <input
-                          type="email" value={user?.email || ""} disabled
+                          id="profile-email" type="email" value={user?.email || ""} disabled
                           className="w-full pl-11 pr-4 py-3 bg-secondary/40 border border-border rounded-lg text-sm opacity-60 cursor-not-allowed"
                         />
                       </div>
@@ -380,11 +369,11 @@ const Profile = () => {
                     </div>
 
                     <div>
-                      <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-2">
+                      <label htmlFor="profile-bio" className="block text-xs uppercase tracking-wider text-muted-foreground mb-2">
                         {copy("Bio")}
                       </label>
                       <textarea
-                        value={form.bio} onChange={onChange("bio")} rows={4}
+                        id="profile-bio" value={form.bio} onChange={onChange("bio")} rows={4}
                         placeholder={copy("Conte um pouco sobre você, sua experiência e seus interesses.")}
                         className="w-full px-4 py-3 bg-secondary/60 border border-border rounded-lg text-sm placeholder:text-muted-foreground focus:outline-none focus:border-foreground/40 focus:bg-secondary transition-all resize-none"
                         maxLength={500}
@@ -395,13 +384,13 @@ const Profile = () => {
                     </div>
 
                     <div>
-                      <label className="block text-xs uppercase tracking-wider text-muted-foreground mb-2">
+                      <label htmlFor="profile-avatar" className="block text-xs uppercase tracking-wider text-muted-foreground mb-2">
                         {copy("Avatar URL")}
                       </label>
                       <div className="relative">
                         <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <input
-                          type="url" value={form.avatarUrl} onChange={onChange("avatarUrl")}
+                          id="profile-avatar" type="url" value={form.avatarUrl} onChange={onChange("avatarUrl")}
                           placeholder={copy("https://exemplo.com/avatar.jpg")}
                           className="w-full pl-11 pr-4 py-3 bg-secondary/60 border border-border rounded-lg text-sm placeholder:text-muted-foreground focus:outline-none focus:border-foreground/40 focus:bg-secondary transition-all"
                         />
@@ -426,7 +415,7 @@ const Profile = () => {
               transition={{ duration: 0.5, delay: 0.15 }}
               className="space-y-6"
             >
-              <GlassCard className="p-6">
+              <GlassCard className="account-panel p-6">
                 <h3 className="text-sm font-bold font-orbitron mb-1">{copy("Segurança")}</h3>
                 <p className="text-xs text-muted-foreground mb-4">{copy("Gerencie acesso e credenciais.")}</p>
                 <button
@@ -442,7 +431,7 @@ const Profile = () => {
               </GlassCard>
 
               {isAdmin && (
-                <GlassCard className="p-6">
+                <GlassCard className="account-panel p-6">
                   <h3 className="text-sm font-bold font-orbitron mb-1 flex items-center gap-2">
                     <Compass className="w-4 h-4" /> {copy("Tour Guiado")}
                   </h3>
@@ -457,7 +446,7 @@ const Profile = () => {
               )}
 
               {isAdmin && (
-                <GlassCard className="p-6 border-amber-400/20">
+                <GlassCard className="account-panel p-6 border-amber-400/20">
                   <h3 className="text-sm font-bold font-orbitron mb-1 flex items-center gap-2">
                     <Shield className="w-4 h-4 text-amber-300" /> {copy("Área Admin")}
                   </h3>
@@ -471,7 +460,7 @@ const Profile = () => {
                 </GlassCard>
               )}
 
-              <GlassCard className="p-6 border-red-500/20">
+              <GlassCard className="account-panel p-6 border-red-500/20">
                 <h3 className="text-sm font-bold font-orbitron mb-1">{copy("Sessão")}</h3>
                 <p className="text-xs text-muted-foreground mb-4">{copy("Sair desta conta neste dispositivo.")}</p>
                 <button

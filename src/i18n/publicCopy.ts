@@ -8,6 +8,16 @@ import { articleHeadlines } from "./editorial/headlines";
 
 /** Reviewed supplemental copy for public routes. Brands, URLs and source content stay intact. */
 export const publicCopy: Record<string, readonly [string, string]> = {
+  "Confirme seu autenticador": ["Confirm your authenticator", "Confirma tu autenticador"],
+  "Digite o código do seu aplicativo autenticador para concluir o acesso.": ["Enter the code from your authenticator app to finish signing in.", "Introduce el código de tu aplicación de autenticación para completar el acceso."],
+  "Código de seis dígitos": ["Six-digit code", "Código de seis dígitos"],
+  "Verificando autenticação…": ["Checking authentication…", "Verificando autenticación…"],
+  "Confirmando…": ["Confirming…", "Confirmando…"],
+  "Código inválido ou expirado. Tente novamente.": ["Invalid or expired code. Try again.", "Código no válido o caducado. Inténtalo de nuevo."],
+  "Não foi possível verificar o autenticador. Tente novamente.": ["Unable to check the authenticator. Try again.", "No se pudo verificar el autenticador. Inténtalo de nuevo."],
+  "Falha na confirmação. Tente novamente.": ["Confirmation failed. Try again.", "Error de confirmación. Inténtalo de nuevo."],
+  "Ocultar senha": ["Hide password", "Ocultar contraseña"],
+  "Mostrar senha": ["Show password", "Mostrar contraseña"],
   "Aplicações web modernas com React, TypeScript e arquitetura escalável.": ["Modern web applications with React, TypeScript and scalable architecture.", "Aplicaciones web modernas con React, TypeScript y arquitectura escalable."],
   "Landing Pages de Alta Conversão": ["High-conversion Landing Pages", "Landing Pages de Alta Conversión"],
   "Páginas otimizadas para conversão com Framer Motion e Core Web Vitals 95+.": ["Conversion-optimized pages with Framer Motion and Core Web Vitals 95+.", "Páginas optimizadas para la conversión con Framer Motion y Core Web Vitals 95+."],

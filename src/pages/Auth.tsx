@@ -67,9 +67,9 @@
 // ============================================================================
 
 import { usePublicCopy } from "@/i18n/usePublicCopy";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { Mail, Lock, User, Eye, EyeOff, ArrowLeft, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { useAuthContext } from "@/contexts/AuthContext";
@@ -77,6 +77,8 @@ import { useToast } from "@/hooks/use-toast";
 import SEOHead from "@/components/SEOHead";
 import GlassCard from "@/components/GlassCard";
 import { getAuthErrorToast } from "@/utils/authErrors";
+import { MfaGate } from "@/components/auth/MfaGate";
+import { AccountBackdrop } from "@/components/auth/AccountBackdrop";
 import { safeAuthRedirect } from "@/utils/authRedirect";
 
 const loginSchema = z.object({
@@ -113,12 +115,6 @@ const Auth = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState({ fullName: "", email: "", password: "", confirmPassword: "" });
 
-  useEffect(() => {
-    if (user && !authLoading) {
-      navigate(safeAuthRedirect(searchParams.get("redirect")));
-    }
-  }, [user, authLoading, navigate, searchParams]);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -148,8 +144,7 @@ const Auth = () => {
           return;
         }
         if (data?.session) {
-          toast({ title: copy("Bem-vindo!"), description: copy("Login realizado com sucesso") });
-          navigate(safeAuthRedirect(searchParams.get("redirect")));
+          setFormData(previous => ({ ...previous, password: "", confirmPassword: "" }));
         }
       } else {
         const result = signupSchema.safeParse(formData);
@@ -170,7 +165,7 @@ const Auth = () => {
         }
         if (data?.session) {
           toast({ title: copy("Bem-vindo!"), description: copy("Conta criada com sucesso") });
-          navigate(safeAuthRedirect(searchParams.get("redirect")));
+          setFormData(previous => ({ ...previous, password: "", confirmPassword: "" }));
         } else {
           toast({ title: copy("Conta criada!"), description: copy("Verifique seu email para confirmar a conta.") });
           setMode("login");
@@ -187,21 +182,22 @@ const Auth = () => {
     return <div className="min-h-screen bg-background flex items-center justify-center"><Loader2 className="w-8 h-8 animate-spin text-foreground" /></div>;
   }
 
+  if (user) {
+    return <MfaGate><Navigate to={safeAuthRedirect(searchParams.get("redirect"))} replace /></MfaGate>;
+  }
+
   return (
     <>
       <SEOHead title={copy(mode === "login" ? "Login - SevenDevX" : "Cadastro - SevenDevX")} description={copy("Acesse sua conta SevenDevX")} url="https://www.sevendevx.com/auth" />
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-6">
-        <div className="fixed inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/4 -left-1/4 w-1/2 h-1/2 bg-white/5 rounded-full blur-[120px]" />
-          <div className="absolute bottom-1/4 -right-1/4 w-1/2 h-1/2 bg-white/3 rounded-full blur-[120px]" />
-        </div>
+      <div className="account-experience min-h-screen flex items-center justify-center px-4 py-10 sm:p-8">
+        <AccountBackdrop />
 
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md relative z-10">
           <button onClick={() => navigate("/")} className="flex items-center gap-2 text-muted-foreground hover:text-foreground mb-8 transition-colors">
             <ArrowLeft className="w-4 h-4" /> {copy("Voltar ao site")}
           </button>
 
-          <GlassCard className="p-8">
+          <GlassCard className="account-panel p-6 sm:p-8">
             <div className="text-center mb-8">
               <h1 className="text-2xl font-bold font-orbitron mb-2">{copy("SEVEN")}<span className="text-muted-foreground">{copy("DEVX")}</span></h1>
               <p className="text-muted-foreground text-sm">{copy(mode === "login" ? "Entre na sua conta" : "Crie sua conta")}</p>
@@ -210,10 +206,10 @@ const Auth = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               {mode === "signup" && (
                 <div>
-                  <label className="block text-sm font-medium mb-2">{copy("Nome completo")}</label>
+                  <label htmlFor="auth-fullName" className="block text-sm font-medium mb-2">{copy("Nome completo")}</label>
                   <div className="relative">
                     <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                    <input type="text" name="fullName" value={formData.fullName} onChange={handleChange} placeholder={copy("Seu nome")}
+                    <input type="text" id="auth-fullName" autoComplete="name" name="fullName" value={formData.fullName} onChange={handleChange} placeholder={copy("Seu nome")}
                       className="w-full pl-12 pr-4 py-3 bg-secondary border border-border rounded-lg placeholder:text-muted-foreground focus:outline-none focus:border-foreground/30" />
                   </div>
                   {errors.fullName && <p className="text-destructive text-xs mt-1">{copy(errors.fullName)}</p>}
@@ -221,22 +217,22 @@ const Auth = () => {
               )}
 
               <div>
-                <label className="block text-sm font-medium mb-2">{copy("Email")}</label>
+                <label htmlFor="auth-email" className="block text-sm font-medium mb-2">{copy("Email")}</label>
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                  <input type="email" name="email" value={formData.email} onChange={handleChange} placeholder={copy("seu@email.com")}
+                  <input type="email" id="auth-email" autoComplete="email" name="email" value={formData.email} onChange={handleChange} placeholder={copy("seu@email.com")}
                     className="w-full pl-12 pr-4 py-3 bg-secondary border border-border rounded-lg placeholder:text-muted-foreground focus:outline-none focus:border-foreground/30" />
                 </div>
                 {errors.email && <p className="text-destructive text-xs mt-1">{copy(errors.email)}</p>}
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">{copy("Senha")}</label>
+                <label htmlFor="auth-password" className="block text-sm font-medium mb-2">{copy("Senha")}</label>
                 <div className="relative">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                  <input type={showPassword ? "text" : "password"} name="password" value={formData.password} onChange={handleChange} placeholder="••••••••"
+                  <input type={showPassword ? "text" : "password"} id="auth-password" autoComplete={mode === "login" ? "current-password" : "new-password"} name="password" value={formData.password} onChange={handleChange} placeholder="••••••••"
                     className="w-full pl-12 pr-12 py-3 bg-secondary border border-border rounded-lg placeholder:text-muted-foreground focus:outline-none focus:border-foreground/30" />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+                  <button type="button" aria-label={copy(showPassword ? "Ocultar senha" : "Mostrar senha")} aria-pressed={showPassword} onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
@@ -245,10 +241,10 @@ const Auth = () => {
 
               {mode === "signup" && (
                 <div>
-                  <label className="block text-sm font-medium mb-2">{copy("Confirmar senha")}</label>
+                  <label htmlFor="auth-confirmPassword" className="block text-sm font-medium mb-2">{copy("Confirmar senha")}</label>
                   <div className="relative">
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                    <input type={showPassword ? "text" : "password"} name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder="••••••••"
+                    <input type={showPassword ? "text" : "password"} id="auth-confirmPassword" autoComplete="new-password" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder="••••••••"
                       className="w-full pl-12 pr-4 py-3 bg-secondary border border-border rounded-lg placeholder:text-muted-foreground focus:outline-none focus:border-foreground/30" />
                   </div>
                   {errors.confirmPassword && <p className="text-destructive text-xs mt-1">{copy(errors.confirmPassword)}</p>}
