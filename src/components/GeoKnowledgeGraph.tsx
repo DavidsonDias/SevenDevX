@@ -16,6 +16,7 @@
 // ============================================================================
 
 import { Helmet } from "react-helmet";
+import { usePublicCopy } from "@/i18n/usePublicCopy";
 
 /**
  * 🧠 GeoKnowledgeGraph
@@ -280,12 +281,21 @@ const PROFESSIONAL_SERVICE = {
 // ============================================================================
 
 export default function GeoKnowledgeGraph() {
+  const { copy } = usePublicCopy();
+  // Translate descriptive copy only. Identity, URLs, contact data and schema types stay intact.
+  const textFields = new Set(["name", "description", "slogan", "knowsAbout", "serviceType", "jobTitle", "contactType"]);
+  const localize = (value: unknown, field = ""): unknown => {
+    if (typeof value === "string") return textFields.has(field) ? copy(value) : value;
+    if (Array.isArray(value)) return value.map(item => localize(item, field));
+    if (value && typeof value === "object") return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, localize(item, key)]));
+    return value;
+  };
   return (
     <Helmet>
-      <script type="application/ld+json">{JSON.stringify(ORGANIZATION)}</script>
-      <script type="application/ld+json">{JSON.stringify(WEBSITE)}</script>
-      <script type="application/ld+json">{JSON.stringify(PROFESSIONAL_SERVICE)}</script>
-      <script type="application/ld+json">{JSON.stringify(TECH_KNOWLEDGE)}</script>
+      <script type="application/ld+json">{JSON.stringify(localize(ORGANIZATION))}</script>
+      <script type="application/ld+json">{JSON.stringify(localize(WEBSITE))}</script>
+      <script type="application/ld+json">{JSON.stringify(localize(PROFESSIONAL_SERVICE))}</script>
+      <script type="application/ld+json">{JSON.stringify(localize(TECH_KNOWLEDGE))}</script>
     </Helmet>
   );
 }
