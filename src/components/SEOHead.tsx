@@ -19,6 +19,7 @@
 import { Helmet } from "react-helmet";
 import { useLocation } from "react-router-dom";
 import { usePublicCopy } from "@/i18n/usePublicCopy";
+import { translatePublicText } from "@/i18n/publicCopy";
 
 // ============================================================================
 // 🧩 TYPES & CONTRACTS
@@ -221,7 +222,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
       {imageType && <meta property="og:image:type" content={imageType} />}
       <meta
         property="og:image:alt"
-        content="SevenDevX - Soluções Digitais e Desenvolvimento de Software"
+        content={translatePublicText("SevenDevX - Soluções Digitais e Desenvolvimento de Software", metadataLanguage)}
       />
       <meta property="og:locale" content={locale.replace("-", "_")} />
       <meta property="og:site_name" content="SevenDevX" />

@@ -167,3 +167,49 @@ test('every served city is described as a service area, never as an invented phy
  }}]});const module={exports:{}};const require=createRequire(import.meta.url);new Function('module','exports','require',result.outputFiles[0].text)(module,module.exports,require);const {MemoryRouter,Routes,Route}=await import('react-router-dom');const {Helmet}=require('react-helmet');
  for(const language of ['pt','en','es']){module.exports.locale.value=language;for(const city of GEO_PROGRAMMATIC.cities){const html=renderToStaticMarkup(React.createElement(MemoryRouter,{initialEntries:['/local/'+city.slug],future:{v7_startTransition:true,v7_relativeSplatPath:true}},React.createElement(Routes,null,React.createElement(Route,{path:'/local/:city',element:React.createElement(module.exports.LocalPage)}))));const head=Helmet.renderStatic();const schemas=[...head.script.toString().matchAll(/<script[^>]*>(.*?)<\/script>/g)].map(m=>JSON.parse(m[1]));const service=schemas.find(s=>s['@type']==='Service');assert.ok(service,city.slug);assert.equal(service.areaServed.name,city.name);assert.equal(service.areaServed.containedInPlace.name,city.state);assert.equal(service.provider.name,'SevenDevX');assert.equal(service.provider.url,'https://www.sevendevx.com');assert.equal(service.provider.telephone,'+55-31-98474-0625');assert.equal(service.address,undefined);assert.equal(service.provider.address,undefined);assert.equal(service.priceRange,undefined);assert.doesNotMatch(service.description,/Lighthouse 95/);assert.ok(head.link.toString().includes('/local/'+city.slug));assert.doesNotMatch(html,/NOT_FOUND/);}}
 });
+
+test('global entity copy follows locale while identifiers, contacts and schema structure remain stable', async () => {
+  const { build } = await import('esbuild');
+  const { createRequire } = await import('node:module');
+  const result = await build({
+    stdin: { contents: `export { default as Graph } from './src/components/GeoKnowledgeGraph'; export { default as SEOHead } from './src/components/SEOHead'; export { locale } from './src/i18n/LanguageContext';`, resolveDir: root, loader: 'tsx' },
+    bundle: true, write: false, platform: 'node', format: 'cjs', packages: 'external', jsx: 'automatic', alias: { '@': path.join(root, 'src') },
+    plugins: [{ name: 'graph-locale-fixture', setup(b) {
+      b.onLoad({ filter: /LanguageContext\.tsx$/ }, () => ({ loader: 'js', contents: "export const locale={value:'pt'};export const useLanguage=()=>({language:locale.value});" }));
+    } }],
+  });
+  const module = { exports: {} }; const require = createRequire(import.meta.url);
+  new Function('module', 'exports', 'require', result.outputFiles[0].text)(module, module.exports, require);
+  const { Helmet } = require('react-helmet');
+  const descriptive = new Set(['name', 'description', 'slogan', 'knowsAbout', 'serviceType', 'jobTitle', 'contactType']);
+  const structural = (value, field = '') => {
+    if (typeof value === 'string') return descriptive.has(field) ? '[copy]' : value;
+    if (Array.isArray(value)) return value.map(item => structural(item, field));
+    if (value && typeof value === 'object') return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, structural(item, key)]));
+    return value;
+  };
+  const readGraph = language => {
+    module.exports.locale.value = language;
+    renderToStaticMarkup(React.createElement(module.exports.Graph));
+    return [...Helmet.renderStatic().script.toString().matchAll(/<script[^>]*>(.*?)<\/script>/g)].map(m => JSON.parse(m[1]));
+  };
+  const original = readGraph('pt'); assert.equal(original.length, 4);
+  for (const language of ['en', 'es']) {
+    const localized = readGraph(language);
+    assert.deepEqual(structural(localized), structural(original));
+    const org = localized.find(entity => entity['@id'].endsWith('#organization'));
+    assert.equal(org.name, 'SevenDevX'); assert.equal(org.founder.name, 'Davidson Dias');
+    assert.deepEqual(org.address, original[0].address); assert.deepEqual(org.geo, original[0].geo);
+    assert.equal(org.telephone, '+55-31-98474-0625'); assert.equal(org.email, 'contato@sevendevx.com');
+    assert.notEqual(org.description, original[0].description);
+    assert.notEqual(org.hasOfferCatalog.itemListElement[0].itemOffered.description, original[0].hasOfferCatalog.itemListElement[0].itemOffered.description);
+    assert.deepEqual(localized[3].itemListElement.map(row => row.item.name), original[3].itemListElement.map(row => row.item.name));
+  }
+  assert.deepEqual(readGraph('pt'), original);
+  const { MemoryRouter } = await import('react-router-dom');
+  module.exports.locale.value = 'es';
+  renderToStaticMarkup(React.createElement(MemoryRouter, { initialEntries: ['/blog'], future: { v7_startTransition: true, v7_relativeSplatPath: true } }, React.createElement(module.exports.SEOHead, { contentLanguage: 'pt', translateContent: false })));
+  const meta = Helmet.renderStatic().meta.toString();
+  assert.match(meta, /property="og:image:alt" content="SevenDevX - Soluções Digitais e Desenvolvimento de Software"/);
+  assert.match(meta, /property="og:locale" content="pt_BR"/);
+});
