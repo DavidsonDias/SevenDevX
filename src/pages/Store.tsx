@@ -425,7 +425,7 @@ const Store: React.FC = () => {
           keywords="desenvolvimento web, landing page, site institucional, sistema customizado, consultoria digital, UI/UX design"
           url="https://www.sevendevx.com/store"
           type="website"
-          image="https://www.sevendevx.com/og-image.jpg"
+          image="https://www.sevendevx.com/logo-512.png"
         />
       </Suspense>
 

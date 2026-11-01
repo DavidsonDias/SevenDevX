@@ -118,3 +118,42 @@ test('blog route clears stale state, ignores superseded responses, guards short 
   assert.match(source, /href === "\/#contact" \? "\/contact"/);
   assert.doesNotMatch(source, /dangerouslySetInnerHTML|copy\(displayPost\.(title|content)\)/);
 });
+
+test('public case outcomes exclude unverified metrics while preserving original records and reviewed languages',()=>{
+ const {resolvePublishedCase}=load('src/i18n/editorial/publishedCases');
+ for(const source of CASE_STUDIES){
+  const before=JSON.stringify(source);
+  for(const lang of ['pt','en','es']){const result=resolvePublishedCase(source,lang);assert.equal(result.language,lang);assert.deepEqual(result.caseStudy.metrics,[]);assert.ok(result.caseStudy.outcome.length>30);assert.doesNotMatch(result.caseStudy.outcome,/\d+%|99\.95|zero incident/i);assert.equal(result.caseStudy.slug,source.slug);}
+  assert.equal(JSON.stringify(source),before);
+ }
+ const source=CASE_STUDIES[0];const proof={sourceUrl:'https://example.com/measured-report',period:'2026-10',sourceRevision:caseFingerprint(source),metricLabels:[source.metrics[0].label]};
+ assert.equal(resolvePublishedCase(source,'en',proof).caseStudy.metrics.length,1);
+ assert.equal(resolvePublishedCase(source,'en',{...proof,sourceRevision:'outdated'}).caseStudy.metrics.length,0);
+ assert.equal(resolvePublishedCase(source,'en',{...proof,sourceUrl:'javascript:alert(1)'}).caseStudy.metrics.length,0);
+});
+
+test('sitemap contains the reviewed published catalogue once and excludes stale sample blog links',()=>{
+ const xml=fs.readFileSync('public/sitemap.xml','utf8');const urls=[...xml.matchAll(/<loc>([^<]+)<\/loc>/g)].map(m=>m[1]);assert.equal(new Set(urls).size,urls.length);
+ const {GEO_ARTICLES,GEO_PROGRAMMATIC}=load('src/data/geoContent');
+ const paths=['/contact','/integracoes',...CASE_STUDIES.map(c=>'/cases/'+c.slug),...blogs.map(b=>'/blog/'+b.slug),...projects.map(p=>'/projects/'+p.slug),...GEO_ARTICLES.map(a=>`/${a.category==='answer'?'answers':'knowledge-base'}/${a.slug}`),...GEO_PROGRAMMATIC.services.map(s=>'/solucoes/'+s.slug),...GEO_PROGRAMMATIC.cities.map(c=>'/local/'+c.slug)];
+ for(const route of paths)assert.ok(urls.includes('https://www.sevendevx.com'+route),route);
+ for(const url of urls){assert.equal(new URL(url).origin,'https://www.sevendevx.com');assert.doesNotMatch(new URL(url).pathname,/^\/(admin|auth|profile)(\/|$)/);if(url.includes('/blog/'))assert.ok(blogs.some(b=>url.endsWith('/blog/'+b.slug)),url);}
+});
+
+test('all case pages render a localized contact action, one main and the preserved scope in three languages',async()=>{
+ const {build}=await import('esbuild');const {createRequire}=await import('node:module');const result=await build({stdin:{contents:`export {CaseStudyPage} from './src/pages/geo/CaseStudies';export {locale} from './src/i18n/LanguageContext';`,resolveDir:root,loader:'tsx'},bundle:true,write:false,platform:'node',format:'cjs',packages:'external',jsx:'automatic',alias:{'@':path.join(root,'src')},plugins:[{name:'case-fixture',setup(b){
+ b.onLoad({filter:/components[\\/](Header|Footer)\.tsx$/},()=>({loader:'js',contents:'export default function Stub(){return null}'}));
+ b.onLoad({filter:/pages[\\/]NotFound\.tsx$/},()=>({loader:'jsx',contents:'export default function NotFound(){return <h1>NOT_FOUND</h1>}'}));
+ b.onLoad({filter:/LanguageContext\.tsx$/},()=>({loader:'js',contents:"export const locale={value:'pt'};export const useLanguage=()=>({language:locale.value});"}));
+ }}]});const module={exports:{}};new Function('module','exports','require',result.outputFiles[0].text)(module,module.exports,createRequire(import.meta.url));const {MemoryRouter,Routes,Route}=await import('react-router-dom');
+ for(const language of ['pt','en','es']){module.exports.locale.value=language;for(const source of CASE_STUDIES){const element=React.createElement(MemoryRouter,{initialEntries:['/cases/'+source.slug],future:{v7_startTransition:true,v7_relativeSplatPath:true}},React.createElement(Routes,null,React.createElement(Route,{path:'/cases/:slug',element:React.createElement(module.exports.CaseStudyPage)})));const html=renderToStaticMarkup(element);assert.equal((html.match(/<main\b/g)||[]).length,1);assert.equal((html.match(/<h1\b/g)||[]).length,1);assert.match(html,/href="\/contact"/);assert.match(html,/id="main-content"/);assert.ok(html.includes(source.technologies[0]));assert.doesNotMatch(html,/NOT_FOUND/);}}
+});
+
+test('shared SEO metadata uses real image assets and separates page canonical from organization identity',async()=>{
+ const {build}=await import('esbuild');const {createRequire}=await import('node:module');const result=await build({stdin:{contents:`export {default as SEOHead} from './src/components/SEOHead';`,resolveDir:root,loader:'tsx'},bundle:true,write:false,platform:'node',format:'cjs',packages:'external',jsx:'automatic',alias:{'@':path.join(root,'src')},plugins:[{name:'seo-fixture',setup(b){b.onLoad({filter:/LanguageContext\.tsx$/},()=>({loader:'js',contents:"export const useLanguage=()=>({language:'en'});"}));}}]});const module={exports:{}};const require=createRequire(import.meta.url);new Function('module','exports','require',result.outputFiles[0].text)(module,module.exports,require);const {MemoryRouter}=await import('react-router-dom');const {Helmet}=require('react-helmet');
+ for(const [image,mime] of [['/logo-512.png','image/png'],['https://example.com/photo.jpg?v=1','image/jpeg']]){
+ renderToStaticMarkup(React.createElement(MemoryRouter,{initialEntries:['/services'],future:{v7_startTransition:true,v7_relativeSplatPath:true}},React.createElement(module.exports.SEOHead,{image})));const head=Helmet.renderStatic();assert.match(head.meta.toString(),new RegExp(mime));assert.ok(head.link.toString().includes('https://www.sevendevx.com/services'));const schemas=[...head.script.toString().matchAll(/<script[^>]*>(.*?)<\/script>/g)].map(m=>JSON.parse(m[1]));assert.equal(schemas.find(x=>x['@type']==='Organization').url,'https://www.sevendevx.com');assert.equal(schemas.find(x=>x['@type']==='WebSite').url,'https://www.sevendevx.com');assert.equal(schemas.find(x=>x['@type']==='WebPage').url,'https://www.sevendevx.com/services');
+ }
+ assert.ok(fs.existsSync('public/logo-512.png'));
+ const config=JSON.parse(fs.readFileSync('vercel.json','utf8'));for(const source of ['/home','/index.html']){const redirect=config.redirects.find(r=>r.source===source);assert.equal(redirect.destination,'https://www.sevendevx.com/');assert.equal(redirect.permanent,true);}
+});

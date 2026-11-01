@@ -176,7 +176,7 @@ const ProjectDetail = () => {
       <div className="min-h-screen bg-background text-foreground">
         <Header />
 
-        <main lang={contentLanguage === "pt" ? "pt-BR" : contentLanguage} className="pt-20">
+        <main id="main-content" tabIndex={-1} lang={contentLanguage === "pt" ? "pt-BR" : contentLanguage} className="pt-20">
           {/* Hero */}
           <section className="relative overflow-hidden py-16 sm:py-20 lg:py-28 border-b border-border/30">
             <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background to-background" />

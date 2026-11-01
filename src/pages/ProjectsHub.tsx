@@ -507,7 +507,7 @@ const ProjectsHub = () => {
       <div className="min-h-screen bg-background text-foreground">
         <Header />
 
-        <main className="pt-20">
+        <main id="main-content" tabIndex={-1} className="pt-20">
 <h1 className="sr-only">{t.projectsHub.heroTitle}</h1>
           <PublicProjectUniverse projects={projects.filter(p => p.featuredLevel !== "none").slice(0, 8).map(p => ({ title: p.title, image: p.image, description: p.description }))} />
 {/* Filters */}

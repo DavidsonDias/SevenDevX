@@ -63,7 +63,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
   translateContent = true,
   title = "SevenDevX | Soluções Tecnológicas Modernas e Inovadoras",
   description = "Desenvolvimento web, criação de sites e sistemas, instalação de software e manutenção de computadores. Soluções digitais modernas e inovadoras para o seu negócio.",
-  image = "/assets/img/share.webp",
+  image = "/logo-512.png",
   url,
   type = "website",
   keywords = "SevenDevX, desenvolvimento web, criação de sites, software, manutenção de computadores, tecnologia, Belo Horizonte",
@@ -106,6 +106,8 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     description = copy(description);
   }
   const fullImageUrl = image.startsWith("http") ? image : new URL(image, origin).href;
+  const imageExtension = new URL(fullImageUrl).pathname.split(".").pop()?.toLowerCase();
+  const imageType = ({ png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", webp: "image/webp" } as Record<string, string>)[imageExtension ?? ""];
   const pageTitle = title.includes("SevenDevX")
     ? title
     : `${title} | SevenDevX`;
@@ -115,9 +117,9 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "SevenDevX",
-    url,
-    logo: `${origin}/assets/img/logo.svg`,
-    image: `${origin}/assets/img/banner.jpg`,
+    url: origin,
+    logo: `${origin}/logo-512.png`,
+    image: `${origin}/logo-512.png`,
     email,
     telephone: phone,
     foundingDate: "2024-01-10",
@@ -159,14 +161,14 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "SevenDevX",
-    url,
+    url: origin,
     description:
       "Criação de sites, otimização de sistemas e suporte técnico especializado.",
     inLanguage: locale,
     creator: {
       "@type": "Organization",
       name: "SevenDevX",
-      url,
+      url: origin,
     },
   };
 
@@ -178,8 +180,8 @@ const SEOHead: React.FC<SEOHeadProps> = ({
     description,
     inLanguage: locale,
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
-    isPartOf: { "@type": "WebSite", url },
-    creator: { "@type": "Organization", name: "SevenDevX", url },
+    isPartOf: { "@type": "WebSite", url: origin },
+    creator: { "@type": "Organization", name: "SevenDevX", url: origin },
   };
 
   const offerCatalogSchema = {
@@ -216,7 +218,7 @@ const SEOHead: React.FC<SEOHeadProps> = ({
       <meta property="og:title" content={pageTitle} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={fullImageUrl} />
-      <meta property="og:image:type" content="image/webp" />
+      {imageType && <meta property="og:image:type" content={imageType} />}
       <meta
         property="og:image:alt"
         content="SevenDevX - Soluções Digitais e Desenvolvimento de Software"

@@ -75,7 +75,7 @@
 // ============================================================================
 
 import { usePublicCopy } from "@/i18n/usePublicCopy";
-import { Link, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
 import { ArrowLeft, Clock, MessageCircleQuestion } from "lucide-react";
@@ -116,7 +116,7 @@ export function GeoArticleIndex({ basePath, filterCategory, title, intro }: Prop
         <link rel="canonical" href={`https://www.sevendevx.com/${basePath}`} />
       </Helmet>
       <Header />
-      <main className="min-h-screen bg-background text-foreground pt-24">
+      <main id="main-content" tabIndex={-1} className="min-h-screen bg-background text-foreground pt-24">
         <Section>
           <Container>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
@@ -173,6 +173,8 @@ export function GeoArticlePage({ basePath }: { basePath: "answers" | "knowledge-
   const { slug } = useParams<{ slug: string }>();
   const sourceArticle = GEO_ARTICLES.find((a) => a.slug === slug);
   if (!sourceArticle) return <NotFound />;
+  const canonicalBase = sourceArticle.category === "answer" ? "answers" : "knowledge-base";
+  if (basePath !== canonicalBase) return <Navigate to={`/${canonicalBase}/${sourceArticle.slug}`} replace />;
   const { article, language: contentLanguage } = resolveGeoArticle(sourceArticle, language);
   const locale = contentLanguage === "pt" ? "pt-BR" : contentLanguage === "es" ? "es-ES" : "en-US";
   const url = `https://www.sevendevx.com/${basePath}/${article.slug}`;
@@ -236,7 +238,7 @@ export function GeoArticlePage({ basePath }: { basePath: "answers" | "knowledge-
         <script type="application/ld+json">{JSON.stringify(speakableSchema)}</script>
       </Helmet>
       <Header />
-      <main className="min-h-screen bg-background text-foreground pt-24 pb-16">
+      <main id="main-content" tabIndex={-1} className="min-h-screen bg-background text-foreground pt-24 pb-16">
         <Container narrow>
           <Link to={`/${basePath}`} className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition mb-8">
             <ArrowLeft className="w-4 h-4" /> {copy("Voltar")}

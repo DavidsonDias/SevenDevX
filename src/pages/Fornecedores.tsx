@@ -230,7 +230,7 @@ const Fornecedores = () => {
     "@type": "Organization",
     name: "SevenDevX",
     url: "https://www.sevendevx.com",
-    logo: "https://www.sevendevx.com/logo.png",
+    logo: "https://www.sevendevx.com/logo-512.png",
     contactPoint: {
       "@type": "ContactPoint",
       telephone: "+55-31-98474-0625",
@@ -293,13 +293,6 @@ const Fornecedores = () => {
       <div className="min-h-screen bg-black text-white">
         <Header />
 
-        {/* Skip to content link (A11y) */}
-        <a
-          href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-6 focus:py-3 focus:bg-white focus:text-black focus:font-bold"
-        >
-          {copy("Pular para o conteúdo principal")}
-        </a>
 
         <main
           id="main-content"

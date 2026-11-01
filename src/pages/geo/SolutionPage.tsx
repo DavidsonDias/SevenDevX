@@ -125,7 +125,7 @@ export default function SolutionPage() {
 
       <Header />
 
-      <main className="container mx-auto px-4 sm:px-6 py-16 max-w-5xl">
+      <main id="main-content" tabIndex={-1} className="container mx-auto px-4 sm:px-6 py-16 max-w-5xl">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
           <p className="text-[10px] uppercase tracking-[0.3em] text-emerald-400 mb-3">{copy("Solução SevenDevX")}</p>
           <h1 className="text-3xl sm:text-5xl font-bold font-orbitron mb-4">{copy(service.name)}</h1>
@@ -214,7 +214,7 @@ export function SolutionsIndex() {
         <link rel="canonical" href={`${BASE}/solucoes`} />
       </Helmet>
       <Header />
-      <main className="container mx-auto px-4 sm:px-6 py-16 max-w-5xl">
+      <main id="main-content" tabIndex={-1} className="container mx-auto px-4 sm:px-6 py-16 max-w-5xl">
         <h1 className="text-3xl sm:text-5xl font-bold font-orbitron mb-4">{copy("Soluções")}</h1>
         <p className="text-white/60 mb-10">{copy("Selecione uma vertical para ver detalhes técnicos e exemplos.")}</p>
         <div className="grid sm:grid-cols-2 gap-3">

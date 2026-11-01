@@ -295,7 +295,7 @@ const BlogPost = () => {
     return (
       <div className="min-h-screen bg-background text-foreground">
         <Header />
-        <main className="pt-20">
+        <main id="main-content" tabIndex={-1} className="pt-20">
           <Container narrow className="py-20">
             <BlogPostSkeleton />
           </Container>
@@ -309,7 +309,7 @@ const BlogPost = () => {
     return (
       <div className="min-h-screen bg-background text-foreground">
         <Header />
-        <main className="pt-20">
+        <main id="main-content" tabIndex={-1} className="pt-20">
           <Container className="py-20 text-center">
             <div className="text-6xl mb-4 opacity-20">📝</div>
             <h1 className="text-3xl font-bold mb-4">{t.blog.noResults}</h1>
@@ -385,7 +385,7 @@ const BlogPost = () => {
 
         <Header />
 
-        <main className="blog-article pt-20" id="article-content" style={{"--article-font-size": `${fontSize}px`} as import("react").CSSProperties}>
+        <main className="blog-article pt-20" id="main-content" tabIndex={-1} style={{"--article-font-size": `${fontSize}px`} as import("react").CSSProperties}>
           <EditorialAtmosphere target=".blog-article" version={`${displayPost.id}-${contentLanguage}`} />
           {/* Hero Image */}
           {displayPost.cover_image && (
@@ -400,7 +400,7 @@ const BlogPost = () => {
           )}
 
           {/* Article */}
-          <article className="article-editorial-body" lang={contentLanguage === "pt" ? "pt-BR" : contentLanguage}>
+          <article id="article-content" className="article-editorial-body" lang={contentLanguage === "pt" ? "pt-BR" : contentLanguage}>
             <Container narrow className="py-12">
               {/* Back */}
               <motion.div

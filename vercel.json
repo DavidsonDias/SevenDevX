@@ -8,6 +8,8 @@
   ],
 
   "redirects": [
+    { "source": "/index.html", "destination": "https://www.sevendevx.com/", "permanent": true },
+    { "source": "/home", "destination": "https://www.sevendevx.com/", "permanent": true },
     {
       "source": "/(.*)",
       "has": [

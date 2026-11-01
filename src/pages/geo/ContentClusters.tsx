@@ -54,7 +54,7 @@ export default function ContentClusters() {
         ))}
       </Helmet>
       <Header />
-      <main className="min-h-screen bg-background text-foreground pt-24">
+      <main id="main-content" tabIndex={-1} className="min-h-screen bg-background text-foreground pt-24">
         <Section>
           <Container>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
