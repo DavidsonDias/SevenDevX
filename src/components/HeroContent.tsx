@@ -154,7 +154,7 @@ const Hero = ({ initialMobile = false, initialMobilePoster }: { initialMobile?: 
 
   return (
     <section
-      id="main-content"
+      id="hero-content"
       ref={sectionRef}
       className="viewport-hero relative min-h-[100svh] flex items-end overflow-hidden"
       tabIndex={-1}

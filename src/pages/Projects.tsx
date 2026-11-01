@@ -137,7 +137,7 @@ const Projects = () => {
         keywords="portfólio desenvolvimento web, projetos React, sites profissionais, SaaS, landing pages, sistemas web, dashboard, e-commerce, SevenDevX, full stack, aplicações web modernas"
         url="https://www.sevendevx.com/projects"
         type="website"
-        image="https://www.sevendevx.com/og-image.jpg"
+        image="https://www.sevendevx.com/logo-512.png"
       />
 
       {/* =========================

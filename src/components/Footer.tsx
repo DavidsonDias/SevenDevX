@@ -59,7 +59,7 @@ export default function Footer() {
     "@type": "Organization",
     name: "SevenDevX",
     url: "https://sevendevx.com",
-    logo: "https://sevendevx.com/assets/img/logo.svg",
+    logo: "https://www.sevendevx.com/logo-512.png",
     sameAs: socialLinks.map((link) => link.url),
   };
 

@@ -86,7 +86,7 @@ import { Section } from "@/components/layout/Section";
 import GlassCard from "@/components/GlassCard";
 import NotFound from "@/pages/NotFound";
 import { CASE_STUDIES, getCaseStudyBySlug } from "@/data/caseStudies";
-import { resolveCaseStudy } from "@/i18n/editorial/cases";
+import { resolvePublishedCase } from "@/i18n/editorial/publishedCases";
 
 // ============================================================================
 // ⚙️ CONSTANTS & CONFIGURATION
@@ -100,7 +100,7 @@ const BASE = "https://www.sevendevx.com";
 
 export function CaseStudiesIndex() {
   const { copy, language } = usePublicCopy();
-  const cases = CASE_STUDIES.map(source => resolveCaseStudy(source, language));
+  const cases = CASE_STUDIES.map(source => resolvePublishedCase(source, language));
   const itemList = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -122,16 +122,16 @@ export function CaseStudiesIndex() {
         <script type="application/ld+json">{JSON.stringify(itemList)}</script>
       </Helmet>
       <Header />
-      <main className="min-h-screen bg-background text-foreground pt-24">
+      <main id="main-content" tabIndex={-1} className="min-h-screen bg-background text-foreground pt-24">
         <Section>
           <Container>
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
               <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-4">{copy("Case Studies")}</p>
               <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-6 max-w-3xl">
-                {copy("Projetos reais. Resultados mensuráveis.")}
+                {copy("Projetos. Escopo. Implementação.")}
               </h1>
               <p className="text-lg text-muted-foreground max-w-2xl leading-relaxed">
-                {copy("Cada case abaixo mostra o problema original do cliente, a solução técnica que entregamos e os números reais do impacto. Tecnologias, prazos e arquitetura totalmente transparentes.")}
+                {copy("Conheça o contexto, a abordagem técnica e o escopo de cada projeto. Explore as tecnologias utilizadas e converse com a SevenDevX sobre uma solução para o seu negócio.")}
               </p>
             </motion.div>
 
@@ -166,6 +166,11 @@ export function CaseStudiesIndex() {
                 </motion.div>
               ))}
             </div>
+            <div className="mt-12 text-center">
+              <Link to="/contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 transition-opacity">
+                {copy("Conversar sobre meu projeto")}
+              </Link>
+            </div>
           </Container>
         </Section>
       </main>
@@ -183,7 +188,7 @@ export function CaseStudyPage() {
   const { slug } = useParams<{ slug: string }>();
   const source = slug ? getCaseStudyBySlug(slug) : undefined;
   if (!source) return <NotFound />;
-  const { caseStudy: c, language: contentLanguage } = resolveCaseStudy(source, language);
+  const { caseStudy: c, language: contentLanguage } = resolvePublishedCase(source, language);
   const locale = contentLanguage === "pt" ? "pt-BR" : contentLanguage === "en" ? "en-US" : "es-ES";
 
   const caseSchema = {
@@ -212,7 +217,7 @@ export function CaseStudyPage() {
         <script type="application/ld+json">{JSON.stringify(caseSchema)}</script>
       </Helmet>
       <Header />
-      <main lang={locale} className="min-h-screen bg-background text-foreground pt-24">
+      <main id="main-content" tabIndex={-1} lang={locale} className="min-h-screen bg-background text-foreground pt-24">
         <Section>
           <Container>
             <Link to="/cases" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8">
@@ -227,14 +232,14 @@ export function CaseStudyPage() {
               <p className="text-lg text-muted-foreground max-w-3xl leading-relaxed">{c.summary}</p>
             </motion.div>
 
-            <div className="grid md:grid-cols-4 gap-3 mt-10">
+            {c.metrics.length > 0 && <div className="grid md:grid-cols-4 gap-3 mt-10">
               {c.metrics.map((m) => (
                 <GlassCard key={m.label} className="p-4 text-center">
                   <p className="text-2xl font-bold text-primary">{m.value}</p>
                   <p className="text-xs text-muted-foreground mt-1">{m.label}</p>
                 </GlassCard>
               ))}
-            </div>
+            </div>}
 
             <div className="grid md:grid-cols-3 gap-6 mt-12">
               <GlassCard className="p-6">
@@ -254,7 +259,7 @@ export function CaseStudyPage() {
               <GlassCard className="p-6">
                 <div className="flex items-center gap-2 mb-3">
                   <TrendingUp className="w-4 h-4 text-emerald-400" />
-                  <h2 className="font-semibold !text-base">{copy("Resultado")}</h2>
+                  <h2 className="font-semibold !text-base">{copy("Entrega em foco")}</h2>
                 </div>
                 <p className="text-sm text-muted-foreground leading-relaxed">{c.outcome}</p>
               </GlassCard>
@@ -289,6 +294,11 @@ export function CaseStudyPage() {
                 </a>
               </div>
             )}
+            <div className="mt-12 text-center">
+              <Link to="/contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 transition-opacity">
+                {copy("Conversar sobre meu projeto")}
+              </Link>
+            </div>
           </Container>
         </Section>
       </main>

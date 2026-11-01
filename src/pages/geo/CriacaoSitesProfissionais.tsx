@@ -323,7 +323,7 @@ export default function CriacaoSitesProfissionais() {
         { name: "Criação de Sites Profissionais", url: "/criacao-de-sites-profissionais" },
       ]} />
       <Header />
-      <main className="min-h-screen bg-background text-foreground pt-24 overflow-x-clip">
+      <main id="main-content" tabIndex={-1} className="min-h-screen bg-background text-foreground pt-24 overflow-x-clip">
         <PublicProjectUniverse projects={showcaseProjects.slice(0, 6).map((sp: any) => ({ title: sp.override_title || sp.project?.title || "", image: sp.override_image_url || resolveProjectImage(sp.project?.cover_image) || sp.project?.image || sp.project?.cover_url || "", description: sp.override_description || sp.project?.description || "" }))} />
         {/* HERO */}
         <Section>

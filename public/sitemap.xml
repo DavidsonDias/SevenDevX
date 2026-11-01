@@ -161,42 +161,6 @@
 
 
   <!-- ── BLOG ARTICLES ──────────────────────────────────── -->
-  <url>
-    <loc>https://www.sevendevx.com/blog/react-typescript-frontend-escalavel</loc>
-    <lastmod>2026-06-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.sevendevx.com/blog/performance-web-core-vitals</loc>
-    <lastmod>2026-06-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.sevendevx.com/blog/arquitetura-saas-moderno</loc>
-    <lastmod>2026-06-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.sevendevx.com/blog/design-system-tokens</loc>
-    <lastmod>2026-06-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.sevendevx.com/blog/backend-nodejs-supabase</loc>
-    <lastmod>2026-06-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.sevendevx.com/blog/landing-page-alta-conversao</loc>
-    <lastmod>2026-06-11</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
 
   <!-- ── OUTROS ─────────────────────────────────────────── -->
   <url>
@@ -318,4 +282,45 @@
   <url><loc>https://www.sevendevx.com/cases/logix-rastreamento-frota-logistica</loc><lastmod>2026-06-13</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.sevendevx.com/cases/edutrack-gestao-escola-particular</loc><lastmod>2026-06-13</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://www.sevendevx.com/cases/medflow-prontuario-clinica-multiprofissional</loc><lastmod>2026-06-13</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+
+  <!-- Published routes reconciled against the public catalogue; no invented modification dates. -->
+  <url><loc>https://www.sevendevx.com/integracoes</loc></url>
+  <url><loc>https://www.sevendevx.com/blog/apis-modernas-padroes-robustos</loc></url>
+  <url><loc>https://www.sevendevx.com/blog/arquitetura-fullstack-moderna</loc></url>
+  <url><loc>https://www.sevendevx.com/blog/do-design-ao-codigo</loc></url>
+  <url><loc>https://www.sevendevx.com/blog/frontend-escalavel-react-typescript</loc></url>
+  <url><loc>https://www.sevendevx.com/blog/interfaces-que-convertem</loc></url>
+  <url><loc>https://www.sevendevx.com/blog/lighthouse-90-sem-sacrificar-ux</loc></url>
+  <url><loc>https://www.sevendevx.com/blog/microinteracoes-interfaces-premium</loc></url>
+  <url><loc>https://www.sevendevx.com/blog/o-que-define-produto-premium</loc></url>
+  <url><loc>https://www.sevendevx.com/blog/performance-web-pratica</loc></url>
+  <url><loc>https://www.sevendevx.com/blog/por-que-sites-nao-convertem</loc></url>
+  <url><loc>https://www.sevendevx.com/blog/produto-digital-nivel-enterprise</loc></url>
+  <url><loc>https://www.sevendevx.com/blog/react-typescript-escalavel</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/acaios</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/agendamento-medico</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/amigo-oculto-inteligente</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/analytics-pro</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/arquitetura-premium</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/art-lar-planejados</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/barbearia-george-fiuza</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/clinicone</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/ct031</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/delivery-express</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/erp-empresarial</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/fashion-plus</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/fitflow-pro</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/foodops-x</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/geizamarketing</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/github-repo-viewer</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/homeos</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/ibanps</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/losinestetica</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/nutrismart</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/osena</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/portfolio-davidson</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/psicologa-roane</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/psicoone</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/stellar-navigator</loc></url>
+  <url><loc>https://www.sevendevx.com/projects/vortexx</loc></url>
 </urlset>

@@ -8,6 +8,14 @@ import { articleHeadlines } from "./editorial/headlines";
 
 /** Reviewed supplemental copy for public routes. Brands, URLs and source content stay intact. */
 export const publicCopy: Record<string, readonly [string, string]> = {
+  "Solicitar": ["Request", "Solicitar"],
+  "Instalar": ["Install", "Instalar"],
+  "AI Answer": ["AI Answer", "Respuesta de IA"],
+  "Knowledge": ["Knowledge", "Conocimiento"],
+  "Projetos. Escopo. Implementação.": ["Projects. Scope. Implementation.", "Proyectos. Alcance. Implementación."],
+  "Conheça o contexto, a abordagem técnica e o escopo de cada projeto. Explore as tecnologias utilizadas e converse com a SevenDevX sobre uma solução para o seu negócio.": ["Explore each project's context, technical approach and scope. Discover the technologies used and discuss a solution for your business with SevenDevX.", "Conoce el contexto, el enfoque técnico y el alcance de cada proyecto. Explora las tecnologías utilizadas y conversa con SevenDevX sobre una solución para tu negocio."],
+  "Entrega em foco": ["Delivery focus", "Enfoque de la entrega"],
+  "Conversar sobre meu projeto": ["Discuss my project", "Hablar de mi proyecto"],
   "Olá! Gostaria de ser fornecedor parceiro da SevenDevX": ["Hello! I would like to become a SevenDevX supplier partner", "¡Hola! Me gustaría ser proveedor asociado de SevenDevX"],
   "Comparar": ["Compare", "Comparar"],
   "Loja - SevenDevX": ["Store - SevenDevX", "Tienda - SevenDevX"],

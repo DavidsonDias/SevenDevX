@@ -67,7 +67,7 @@ const Home = () => {
         title={copy("SevenDevX | Criação de Sites & Desenvolvimento Web Profissional")}
         description={copy("Criação de sites profissionais, landing pages de alta conversão, sistemas web e SaaS. Desenvolvimento full stack com React, TypeScript e Node.js em Belo Horizonte.")}
         keywords="criação de sites, desenvolvimento web, landing page, desenvolvedor full stack, criação de sites profissionais, sistemas web, SaaS, React, TypeScript, Node.js, Belo Horizonte, SevenDevX, como criar um site profissional, quanto custa um site, melhores tecnologias para desenvolvimento web"
-        image="https://www.sevendevx.com/og-image.jpg"
+        image="https://www.sevendevx.com/logo-512.png"
         url="https://www.sevendevx.com"
         type="website"
       />

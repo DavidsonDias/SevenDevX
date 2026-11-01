@@ -115,6 +115,9 @@ const Header = () => {
 
   return (
     <>
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] bg-white text-black px-4 py-3 rounded-md font-medium">
+        {copy("Pular para o conteúdo principal")}
+      </a>
       <header
         data-public-header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${

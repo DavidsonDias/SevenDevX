@@ -86,6 +86,7 @@
  * pela Edge Function gsc-insights e API oficial do Google.
  */
 import { useEffect, useState } from "react";
+import { searchConsoleSummary } from "@/utils/searchConsoleSummary";
 import { motion } from "framer-motion";
 import { Search, TrendingUp, MousePointerClick, Eye, Loader2, RefreshCcw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -145,12 +146,9 @@ export default function SearchConsoleAdmin() {
   useEffect(() => { loadSites(); }, []);
   useEffect(() => { load(); /* eslint-disable-next-line */ }, [site, days, dim]);
 
-  const totals = rows.reduce(
-    (acc, r) => ({ clicks: acc.clicks + r.clicks, impressions: acc.impressions + r.impressions }),
-    { clicks: 0, impressions: 0 },
-  );
-  const avgCtr = totals.impressions ? (totals.clicks / totals.impressions) * 100 : 0;
-  const avgPos = rows.length ? rows.reduce((s, r) => s + r.position, 0) / rows.length : 0;
+  const totals = searchConsoleSummary(rows);
+  const avgCtr = totals.ctr;
+  const avgPos = totals.position;
 
   return (
     <AdminPageShell title="Search Console" subtitle="Performance orgânica no Google — queries, páginas, países e devices.">
@@ -181,13 +179,16 @@ export default function SearchConsoleAdmin() {
       {error && <div className="p-4 mb-6 rounded-lg border border-destructive/30 bg-destructive/5 text-sm text-destructive">{error}</div>}
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <Kpi icon={MousePointerClick} label="Cliques" value={error || !site ? "—" : totals.clicks.toLocaleString()} />
-        <Kpi icon={Eye} label="Impressões" value={error || !site ? "—" : totals.impressions.toLocaleString()} />
-        <Kpi icon={TrendingUp} label="CTR médio" value={error || !site ? "—" : `${avgCtr.toFixed(2)}%`} />
-        <Kpi icon={Search} label="Posição média" value={error || !site ? "—" : avgPos.toFixed(1)} />
+        <Kpi icon={MousePointerClick} label="Cliques" value={loading || error || !site ? "—" : totals.clicks.toLocaleString()} />
+        <Kpi icon={Eye} label="Impressões" value={loading || error || !site ? "—" : totals.impressions.toLocaleString()} />
+        <Kpi icon={TrendingUp} label="CTR médio" value={loading || error || !site ? "—" : `${avgCtr.toFixed(2)}%`} />
+        <Kpi icon={Search} label="Posição média" value={loading || error || !site ? "—" : avgPos.toFixed(1)} />
       </div>
 
-      <div className="rounded-2xl border border-border bg-card overflow-hidden">
+      <p className="text-sm text-muted-foreground mb-4" role="status">
+        {loading ? "Consultando o Google…" : "Resumo das linhas retornadas (até 50). Consultas omitidas pelo Google e linhas fora do limite não estão incluídas; estes valores não são os totais completos da propriedade."}
+      </p>
+      <div className="rounded-2xl border border-border bg-card overflow-hidden" aria-busy={loading}>
         <table className="w-full text-sm">
           <thead className="bg-muted/40">
             <tr className="text-left text-xs uppercase tracking-wider text-muted-foreground">
@@ -199,7 +200,7 @@ export default function SearchConsoleAdmin() {
             </tr>
           </thead>
           <tbody>
-            {rows.map((r, i) => (
+            {!loading && rows.map((r, i) => (
               <motion.tr key={i} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: i * 0.01 }}
                 className="border-t border-border/50 hover:bg-muted/30">
                 <td className="p-3 font-medium truncate max-w-md">{r.keys.join(" · ")}</td>

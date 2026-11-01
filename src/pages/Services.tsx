@@ -213,7 +213,7 @@ const Services = () => {
         keywords={currentSeo.keywords}
         url="https://www.sevendevx.com/services"
         type="website"
-        image="https://www.sevendevx.com/og-image.jpg"
+        image="https://www.sevendevx.com/logo-512.png"
       />
 
       {/* =========================
@@ -385,21 +385,18 @@ const Services = () => {
                 <p className="text-lg md:text-xl text-white/70 mb-12 max-w-2xl mx-auto">
                   {t.servicesPage.ctaSubtitle}
                 </p>
-                <a
+                <motion.a
                   href="https://wa.me/5531984740625"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={t.servicesPage.ctaButton}
-                >
-                  <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="inline-flex items-center space-x-2 border-2 border-white px-8 py-4 text-sm tracking-widest uppercase font-semibold hover:bg-white hover:text-black transition-all duration-300"
                   >
                     <span>{t.servicesPage.ctaButton}</span>
                     <ArrowRight size={16} aria-hidden="true" />
-                  </motion.button>
-                </a>
+                </motion.a>
               </motion.div>
             </div>
           </section>

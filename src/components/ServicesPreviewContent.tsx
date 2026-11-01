@@ -157,14 +157,14 @@ const ServicesPreviewContent = ({ resolveIcon }: { resolveIcon: (name?: string |
                   to="/services"
                   aria-label={copy(`${t.services.viewMore} - ${service.title}`)}
                 >
-                  <motion.button
+                  <motion.span tabIndex={-1}
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     className="inline-flex items-center space-x-2 border-2 border-white px-6 py-3 text-xs tracking-widest uppercase font-semibold hover:bg-white hover:text-black transition-all duration-300 mt-6"
                   >
                     <span>{t.services.viewMore}</span>
                     <ArrowRight size={14} aria-hidden="true" />
-                  </motion.button>
+                  </motion.span>
                 </Link>
               </motion.div>
             </div>
@@ -219,14 +219,14 @@ const ServicesPreviewContent = ({ resolveIcon }: { resolveIcon: (name?: string |
                     to="/services"
                     aria-label={copy(`${t.services.viewMore} - ${service.title}`)}
                   >
-                    <motion.button
+                    <motion.span tabIndex={-1}
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       className="inline-flex items-center space-x-2 border-2 border-white px-8 py-4 text-sm tracking-widest uppercase font-semibold hover:bg-white hover:text-black transition-all duration-300"
                     >
                       <span>{t.services.viewMore}</span>
                       <ArrowRight size={16} aria-hidden="true" />
-                    </motion.button>
+                    </motion.span>
                   </Link>
                 </motion.div>
               </div>

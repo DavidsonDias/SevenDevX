@@ -139,17 +139,19 @@ export default function IntegrationsMarketplace() {
           health_status: "unknown", required_secrets: p.secrets,
         }, { onConflict: "id" });
         if (error) throw error;
-        await supabase.from("marketplace_installs" as any).insert({
+        const { error: installError } = await supabase.from("marketplace_installs" as any).insert({
           provider_slug: p.id, provider_name: p.name, installed_by: user.id,
           requested_secrets: p.secrets, status: "installed",
         });
+        if (installError) throw installError;
         toast({ title: message("{provider} instalado", { provider: p.name }), description: copy("Configure em /admin/integrations") });
       } else {
         // Não-admins: solicita instalação
-        await supabase.from("marketplace_installs" as any).insert({
+        const { error: installError } = await supabase.from("marketplace_installs" as any).insert({
           provider_slug: p.id, provider_name: p.name, installed_by: user.id,
           requested_secrets: p.secrets, status: "requested",
         });
+        if (installError) throw installError;
         toast({ title: copy("Solicitação enviada"), description: copy("Um admin será notificado.") });
       }
     } catch (e: any) {
@@ -180,7 +182,7 @@ export default function IntegrationsMarketplace() {
         description={message("Conectamos seu produto a {count}+ ferramentas enterprise. GitHub, Vercel, Stripe, OpenAI, Slack, WhatsApp e muito mais.", { count: PROVIDER_CATALOG.length })}
       />
       <Header />
-      <main className="min-h-screen bg-background pt-24 pb-24">
+      <main id="main-content" tabIndex={-1} className="min-h-screen bg-background pt-24 pb-24">
         {/* Hero */}
         <section className="container mx-auto px-4 mb-12">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center max-w-3xl mx-auto">
@@ -296,11 +298,11 @@ export default function IntegrationsMarketplace() {
             <p className="text-white/60 max-w-xl mx-auto mb-8">
               {copy("Construímos integrações sob demanda. Webhooks customizados, OAuth, sync bidirecional, automações complexas — diga o que você precisa.")}
             </p>
-            <Link to="/store">
-              <Button size="lg" className="bg-white text-black hover:bg-white/90">
+            <Button asChild size="lg" className="bg-white text-black hover:bg-white/90">
+              <Link to="/contact">
                 {copy("Solicitar integração customizada")} <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </motion.div>
         </section>
       </main>
