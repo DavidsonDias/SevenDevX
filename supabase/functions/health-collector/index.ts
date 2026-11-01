@@ -201,10 +201,12 @@ Deno.serve(async (req) => {
       }),
       check('edge_functions', async () => {
         const r = await fetch(`${SUPABASE_URL}/functions/v1/push-public-key`, {
+          method: 'POST',
           headers: { Authorization: `Bearer ${SERVICE_KEY}`, apikey: SERVICE_KEY },
           signal: AbortSignal.timeout(7000),
         });
-        return r.ok;
+        if (!r.ok) throw new Error(`Edge probe HTTP ${r.status}`);
+        return true;
       }),
       check('ai_gateway', async () => {
         if (!OPENAI_API_KEY) return false;
