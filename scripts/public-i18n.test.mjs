@@ -166,3 +166,32 @@ test('website creation fallback copy is covered before CMS data resolves', () =>
   }
   assert.ok(checked >= 50, 'cover every fallback section, not just the hero');
 });
+
+test('all cluster links and shared solution benefits have reviewed locale coverage', () => {
+  const { hasReviewedPublicText, translatePublicText } = load('publicCopy');
+  const { CONTENT_CLUSTERS, buildClusterJsonLd } = load('../data/contentClusters');
+  const original = buildClusterJsonLd();
+  for (const language of ['en', 'es']) {
+    const copy = text => translatePublicText(text, language);
+    const schema = buildClusterJsonLd(copy);
+    for (const [i, cluster] of CONTENT_CLUSTERS.entries()) {
+      for (const text of [cluster.hub.title, cluster.description, ...cluster.spokes.map(link => link.title)]) assert.ok(hasReviewedPublicText(text), text);
+      assert.equal(schema[i]['@id'], original[i]['@id']);
+      assert.deepEqual(schema[i].hasDefinedTerm.map(term => term.url), original[i].hasDefinedTerm.map(term => term.url));
+    }
+  }
+  const file = fs.readFileSync(new URL('../src/pages/geo/SolutionPage.tsx', import.meta.url), 'utf8');
+  const source = ts.createSourceFile('solution.tsx', file, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  let benefits = 0;
+  const visit = node => {
+    if (ts.isArrayLiteralExpression(node) && node.elements.some(item => ts.isStringLiteralLike(item) && item.text === 'Performance Lighthouse 95+ garantida')) {
+      for (const item of node.elements) {
+        assert.ok(ts.isStringLiteralLike(item));
+        assert.ok(hasReviewedPublicText(item.text), item.text);
+        benefits++;
+      }
+    }
+    ts.forEachChild(node, visit);
+  };
+  visit(source); assert.equal(benefits, 7);
+});
