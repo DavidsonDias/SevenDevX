@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { sessionIdentity } from "@/lib/sessionContinuity";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthContext } from "@/contexts/AuthContext";
-import { AccountBackdrop } from "./AccountBackdrop";
-import { ShieldCheck, Loader2, LogOut } from "lucide-react";
+import { AccountBackdrop, AccountBrand } from "./AccountBackdrop";
+import { Loader2, LogOut } from "lucide-react";
 import { usePublicCopy } from "@/i18n/usePublicCopy";
 
 /** Navigation gate only. Backend AAL enforcement must be audited separately. */
@@ -55,7 +55,7 @@ export function MfaGate({ children }: { children: React.ReactNode }) {
         else { setCode(""); setRetry(value => value + 1); }
       }).catch(() => setState(previous => ({ ...previous, error: "Falha na confirmação. Tente novamente." }))).finally(() => setBusy(false));
     }}>
-      <div className="flex items-center gap-3 border-b border-white/10 pb-5"><ShieldCheck aria-hidden="true" className="h-8 w-8 text-cyan-100" /><span className="font-orbitron text-sm tracking-wider">SEVENDEVX <span className="block text-[10px] text-slate-400 mt-1">2FA / TOTP</span></span></div>
+      <div className="flex items-center gap-3 border-b border-white/10 pb-5"><div className="[&>img]:m-0 [&>img]:w-12"><AccountBrand /></div><span className="font-orbitron text-sm tracking-wider">SEVENDEVX <span className="block text-[10px] text-slate-400 mt-1">2FA / TOTP</span></span></div>
       <div><h1 className="text-xl sm:text-2xl font-bold font-orbitron leading-snug">{copy("Confirme seu autenticador")}</h1><p className="text-sm text-slate-300 mt-3 leading-relaxed">{copy("Digite o código do seu aplicativo autenticador para concluir o acesso.")}</p></div>
       {state.error && <p className="rounded-xl border border-amber-300/30 bg-amber-300/5 p-3 text-sm text-amber-100" role="alert">{copy(state.error)}</p>}
       {state.factor ? <>
