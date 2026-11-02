@@ -4,8 +4,20 @@
 .account-orbit { position: absolute; width: min(65vw,850px); aspect-ratio: 1; border: 1px solid #8bd4ec28; border-radius: 50%; box-shadow: inset 0 0 70px #7dceef06; }
 .account-orbit-one { top: -40%; right: -15%; transform: rotateX(55deg) rotateZ(-28deg); }
 .account-orbit-two { bottom: -55%; left: -20%; transform: rotateX(48deg) rotateY(30deg); }
-.account-beacon { position: absolute; top: 15%; left: 9%; width: 100px; aspect-ratio: 1; border: 1px solid #c0e6f02b; border-radius: 24px; display: grid; place-items: center; transform: perspective(600px) rotateY(25deg) rotateZ(-12deg); background: linear-gradient(135deg,#ffffff10,#ffffff02); box-shadow: 18px 22px 60px #0008,inset 1px 1px #ffffff20; }
-.account-beacon span { font: 32px monospace; color: #d0eaf1; text-shadow: 0 0 25px #86d7ff65; }
+.account-sculpture { position:absolute; top:24%; left:5%; width:clamp(150px,24vw,330px); aspect-ratio:1; perspective:900px; }
+.account-brand-volume { position:absolute; inset:14% 7% 26%; transform-style:preserve-3d; transform:rotateX(10deg) rotateY(-24deg) rotateZ(-9deg); animation:account-brand-float 18s ease-in-out infinite alternate; }
+.account-brand-volume img { position:absolute; width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 12px 20px #0009); }
+.account-brand-volume img:nth-child(1) { transform:translateZ(-20px) translate(7px,7px); opacity:.12; }
+.account-brand-volume img:nth-child(2) { transform:translateZ(-10px) translate(3px,3px); opacity:.28; }
+.account-brand-volume img:nth-child(3) { transform:translateZ(8px); filter:drop-shadow(0 0 24px #b7edff35); }
+.account-sculpture-ring { position:absolute; inset:0; border:1px solid #c3e6f032; border-radius:50%; transform:rotateY(-30deg) rotateX(30deg); box-shadow:inset 0 0 40px #8cdbff08; }
+.account-brand-plinth { position:absolute; inset:73% 5% 4%; border:1px solid #c3e6f026; border-radius:50%; transform:rotateX(65deg); background:radial-gradient(ellipse,#b8e5ff1a,transparent 65%); box-shadow:0 0 35px #8ed4ff0b; }
+.account-brand-seal { display:block; width:64px; height:46px; object-fit:contain; margin:0 auto 20px; filter:drop-shadow(0 7px 12px #0008); }
+.account-panel { position:relative; }
+.account-panel::before { content:""; position:absolute; pointer-events:none; top:0; left:18%; right:18%; height:1px; background:linear-gradient(90deg,transparent,#d5efff9c,transparent); }
+.account-panel:hover { border-color:#d6e5ef40; }
+.account-profile .account-sculpture { top:18%; left:-3%; opacity:.5; }
+@keyframes account-brand-float { from { transform:translateY(0) rotateX(10deg) rotateY(-24deg) rotateZ(-9deg); } to { transform:translateY(-12px) rotateX(-4deg) rotateY(-12deg) rotateZ(-4deg); } }
 .account-panel { background: linear-gradient(145deg,#171b20ed,#080a0df5); border: 1px solid #d6e5ef26; border-radius: 24px; box-shadow: 0 28px 90px #0008,inset 0 1px #ffffff12; }
 .account-experience input:focus-visible,.account-experience textarea:focus-visible,.account-experience button:focus-visible,.account-experience a:focus-visible { outline: 2px solid #a5ddeb; outline-offset: 4px; }
 .account-action { min-height: 48px; padding: 12px 20px; border: 1px solid #ffffff30; border-radius: 12px; font-weight: 600; transition: background .15s,border-color .15s; }
@@ -15,5 +27,6 @@
 .account-primary:hover { background: #dcedf4; }
 .account-code { width: 100%; min-height: 64px; text-align: center; letter-spacing: .4em; font-size: clamp(24px,6vw,32px); font-variant-numeric: tabular-nums; background: #030509; border: 1px solid #b3d6e04d; border-radius: 14px; }
 .account-profile .account-panel { border-radius: 20px; }
-@media(max-width:640px) { .account-beacon { top: 5%; left: auto; right: -20px; width: 80px; opacity: .4; } .account-orbit { width: 110vw; } }
+@media(max-width:1050px) { .account-sculpture { left:-7%; opacity:.3; } }
+@media(max-width:640px) { .account-sculpture,.account-profile .account-sculpture { top:-12px; left:auto; right:-40px; width:160px; opacity:.2; } .account-orbit { width:110vw; } .account-brand-volume { animation:none; } }
 @media(prefers-reduced-motion:reduce) { .account-experience * { scroll-behavior: auto !important; transition: none !important; animation: none !important; } }

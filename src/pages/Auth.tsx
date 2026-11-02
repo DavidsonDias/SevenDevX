@@ -78,7 +78,7 @@ import SEOHead from "@/components/SEOHead";
 import GlassCard from "@/components/GlassCard";
 import { getAuthErrorToast } from "@/utils/authErrors";
 import { MfaGate } from "@/components/auth/MfaGate";
-import { AccountBackdrop } from "@/components/auth/AccountBackdrop";
+import { AccountBackdrop, AccountBrand } from "@/components/auth/AccountBackdrop";
 import { safeAuthRedirect } from "@/utils/authRedirect";
 
 const loginSchema = z.object({
@@ -199,6 +199,7 @@ const Auth = () => {
 
           <GlassCard className="account-panel p-6 sm:p-8">
             <div className="text-center mb-8">
+              <AccountBrand />
               <h1 className="text-2xl font-bold font-orbitron mb-2">{copy("SEVEN")}<span className="text-muted-foreground">{copy("DEVX")}</span></h1>
               <p className="text-muted-foreground text-sm">{copy(mode === "login" ? "Entre na sua conta" : "Crie sua conta")}</p>
             </div>
@@ -238,6 +239,8 @@ const Auth = () => {
                 </div>
                 {errors.password && <p className="text-destructive text-xs mt-1">{copy(errors.password)}</p>}
               </div>
+
+              {mode === "login" && <div className="flex justify-end"><a href="/auth/reset" className="text-sm text-slate-300 underline underline-offset-4 hover:text-white">{copy("Esqueceu sua senha?")}</a></div>}
 
               {mode === "signup" && (
                 <div>
